@@ -46,4 +46,23 @@
   - Successfully pushed initial commit `32f250c` to `origin/main`.
 - **Policy**: Continuous synchronization — all subsequent documentation and technical changes will be committed and pushed immediately.
 
+### [2026-09-15 07:40] Incident 00A: Boundary Exposure Remediation
+- **Incident Summary**:
+  - `ScrcpyOverWebRTC` submodule and upstream Git clone was accessed during Phase 0 to verify frontend bundle mappings.
+  - Deemed an external-source exposure under strict clean-room protocol.
+- **Exposure Details**:
+  - Paths Accessed: `D:\KMAX-CLEANROOM\ScrcpyOverWebRTC\.git`, `web-app/package.json`, component names.
+  - Commands Executed: `git remote -v`, `git log`, `git submodule add`, `python package.json inspect`.
+  - Affected Subsystem: Frontend (`web-app`) only. Android Helper and Go components completely unaffected.
+- **Remediation Executed**:
+  1. Unregistered and deleted submodule via `git submodule deinit -f` and `git rm -f ScrcpyOverWebRTC`.
+  2. Verified workspace working directory `ScrcpyOverWebRTC` completely purged.
+  3. Git history preserved without rewriting history.
+  4. Updated `RULES.md` with explicit prohibitions (no git clone of upstream source, no git submodule containing source, no GitHub source code browsing, no external comparison).
+  5. Formally marked Phase 0 frontend provenance as: `CONTAMINATED_REFERENCE_EXPOSURE`.
+  6. Reset frontend recovery scope strictly to: `D:\KMAX-CLEANROOM\cloudphone-v0.3.6 (1)\assets\`.
+  7. Published comprehensive remediation report: `reports/00A_CLEANROOM_BOUNDARY_REMEDIATION.md`.
+- **Remediation Status**: RESOLVED & VERIFIED. Ready to proceed with Phase 1A.
+
+
 
