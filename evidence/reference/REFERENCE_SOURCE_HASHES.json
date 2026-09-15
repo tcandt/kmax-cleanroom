@@ -1,0 +1,124 @@
+{
+  "reference_sources": [
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/introduction.md",
+      "sha256": "631fe7a3a752fa4a00e3cb8c1da9d8a4fa3dddeee3338b7343247d6b68dd8527",
+      "git_blob_sha": "660e89afbe1dc4e99f4a327273869dcdc8bd95d9",
+      "size_bytes": 3434,
+      "line_count": 53,
+      "materialized_path": "evidence/reference/raw/docs/introduction.md"
+    },
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/agent-deploy.md",
+      "sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
+      "git_blob_sha": "cdd44cf77c95a1597c03906448f0ae0843688546",
+      "size_bytes": 5072,
+      "line_count": 87,
+      "materialized_path": "evidence/reference/raw/docs/agent-deploy.md"
+    },
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/quickstart.md",
+      "sha256": "2d64c3d8caa86a9dd7c4908b4b9571585aca155d3140d0447d4b005e74b0868a",
+      "git_blob_sha": "d1fd5dc961b3380c61c7aeb2237550c58e823b5e",
+      "size_bytes": 4291,
+      "line_count": 80,
+      "materialized_path": "evidence/reference/raw/docs/quickstart.md"
+    },
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/web-development.md",
+      "sha256": "b1fbe3e97517fa6e23746e5e6f3252bcd80bcc545db64e63aa750741a09f4257",
+      "git_blob_sha": "ae80d4732f70052078b3696c40c709e304f931b9",
+      "size_bytes": 5967,
+      "line_count": 92,
+      "materialized_path": "evidence/reference/raw/docs/web-development.md"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/composables/useWebRTC.js",
+      "sha256": "0d1fecfc1be8a8adb3d10837b9bd1c7b5e36e0b88bae0eea6d1dbd83e2c0e54e",
+      "git_blob_sha": "3fc24b6d45a4ba730831bc50fd2097c80897bc54",
+      "size_bytes": 53633,
+      "line_count": 1622,
+      "materialized_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/composables/useWebSocketStream.js",
+      "sha256": "7bcdd6f9ca126e894579c30234c2016fbd15134f11f8d216d542f593b9f017b5",
+      "git_blob_sha": "d8a5ba2ba40d7ee43a4df6287d37eb4be3d33745",
+      "size_bytes": 24173,
+      "line_count": 807,
+      "materialized_path": "evidence/reference/raw/web-app/src/composables/useWebSocketStream.js"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/stores/devices.js",
+      "sha256": "6b10cfcb72deed4dbf269229e692d0c7883ef78043d4fefe4a9c184596a0ad4e",
+      "git_blob_sha": "45d4e99f30005a55c9fe1abd61612703ed178c56",
+      "size_bytes": 35172,
+      "line_count": 1048,
+      "materialized_path": "evidence/reference/raw/web-app/src/stores/devices.js"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/stores/auth.js",
+      "sha256": "77c308afc0e2a72d0b4d921b4876542eb99ba43ea491f3f4e7c7a2048bfe8306",
+      "git_blob_sha": "9ac9041f70622737c42eab516663621ece42306d",
+      "size_bytes": 5984,
+      "line_count": 188,
+      "materialized_path": "evidence/reference/raw/web-app/src/stores/auth.js"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/stores/tags.js",
+      "sha256": "500dbea8268545163ecc3266bda1c8abdfbc65339118ec1821fba47378969978",
+      "git_blob_sha": "aa74e806fa21207f4c296dde8e6241c28bfd2495",
+      "size_bytes": 7503,
+      "line_count": 276,
+      "materialized_path": "evidence/reference/raw/web-app/src/stores/tags.js"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/views/DeviceClient.vue",
+      "sha256": "5a29c399271c53be8e9f70772d69e85622a75849652d7077c13010bc388d1ad8",
+      "git_blob_sha": "58684b024c4b633117c55d7d1031baaaad18b9f5",
+      "size_bytes": 121083,
+      "line_count": 3263,
+      "materialized_path": "evidence/reference/raw/web-app/src/views/DeviceClient.vue"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/mock/demoEngine.js",
+      "sha256": "310d4556725cd159ca7f274369cd09ea031b4c2f8925f350b7def65272d9a33d",
+      "git_blob_sha": "302199ef584859c35f52845db35c34b6dd21dc41",
+      "size_bytes": 11487,
+      "line_count": 329,
+      "materialized_path": "evidence/reference/raw/web-app/src/mock/demoEngine.js"
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/.env.demo",
+      "sha256": "eb3056627098c13ea13866c8a8d2e471975c522106b9b5ef7592a5a00fa9f334",
+      "git_blob_sha": "2799ebed2f39518ff60f9668673429bfe052db82",
+      "size_bytes": 79,
+      "line_count": 2,
+      "materialized_path": "evidence/reference/raw/web-app/.env.demo"
+    }
+  ]
+}

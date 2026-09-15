@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "title": "Reference Lane External-Read Exception Audit",
+    "milestone": "Phase 2R.1 — Reference Evidence Normalization & Audit",
+    "timestamp": "2026-09-16T06:00:00+07:00",
+    "classification": "AUTHORIZED_REFERENCE_LANE_EXTERNAL_READ"
+  },
+  "policy_statement": {
+    "isolation_status": "Lane A source reconstruction remained strictly isolated. Lane B reference reads were explicitly quarantined to reference analysis and did not write into reconstructed_source/.",
+    "boundary_note": "Historical strict workspace-root-only rule was crossed during Phase 2R for public reference analysis. This audit formalizes that access as an authorized external-read exception.",
+    "future_enforcement": "Going forward, all reference extraction tools read exclusively from immutable local snapshots in evidence/reference/raw/. Mutable external checkouts are decoupled."
+  },
+  "external_access_records": [
+    {
+      "path_accessed": "d:/ScrcpyOverWebRTC/web-app",
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "expected_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "actual_local_checkout_commit_sha": "79201f47490e627be7d147e533adaadb1d532ba2",
+      "dirty_working_tree_status": "DIRTY (untracked subdirectories present in parent checkout: 'ScrcpyOverWebRTC-FullSource Backup/', 'ScrcpyOverWebRTC-FullSource/', 'ScrcpyOverWebRTC-Raw/')",
+      "purpose": "Extraction of client-side WebRTC signaling flow, DataChannel message schemas (touch, scroll, text, keycode), and pinia store REST routes",
+      "read_only": true,
+      "files_consumed": [
+        "web-app/src/composables/useWebRTC.js",
+        "web-app/src/composables/useWebSocketStream.js",
+        "web-app/src/stores/devices.js",
+        "web-app/src/stores/auth.js",
+        "web-app/src/stores/tags.js",
+        "web-app/src/views/DeviceClient.vue",
+        "web-app/src/mock/demoEngine.js",
+        "web-app/.env.demo"
+      ],
+      "mitigation_action": "All 8 consumed files have been materialized into immutable local storage at evidence/reference/raw/web-app/ and cryptographically verified in REFERENCE_SOURCE_HASHES.json."
+    },
+    {
+      "path_accessed": "external/cloudphone-official (via public documentation files)",
+      "repository": "hqw700/cloudphone-official",
+      "expected_commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "actual_local_checkout_commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "dirty_working_tree_status": "CLEAN",
+      "purpose": "Extraction of public architecture docs, agent deployment CLI flag documentation, and REST endpoints",
+      "read_only": true,
+      "files_consumed": [
+        "docs/introduction.md",
+        "docs/agent-deploy.md",
+        "docs/quickstart.md",
+        "docs/web-development.md"
+      ],
+      "mitigation_action": "All 4 consumed files materialized at evidence/reference/raw/docs/ and cryptographically verified in REFERENCE_SOURCE_HASHES.json."
+    }
+  ]
+}

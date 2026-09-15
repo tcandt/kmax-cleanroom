@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "title": "Clean-Room Binary Artifact Identity Audit",
+    "description": "Complete census and classification of distributed binaries used across clean-room reverse engineering and reference cross-correlation",
+    "audit_timestamp": "2026-09-16T06:00:00+07:00"
+  },
+  "canonical_artifacts": [
+    {
+      "path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+      "size_bytes": 8417428,
+      "file_type": "ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=...",
+      "os": "linux",
+      "arch": "amd64",
+      "artifact_role": "PRIMARY_SIGNALING_SERVER_LINUX",
+      "classification": "CANONICAL_CLEANROOM_ARTIFACT"
+    },
+    {
+      "path": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+      "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+      "size_bytes": 8676352,
+      "file_type": "PE32+ executable (console) x86-64 (stripped to external PDB), for MS Windows",
+      "os": "windows",
+      "arch": "amd64",
+      "artifact_role": "PRIMARY_SIGNALING_SERVER_WINDOWS",
+      "classification": "CANONICAL_CLEANROOM_ARTIFACT"
+    },
+    {
+      "path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "size_bytes": 13828244,
+      "file_type": "ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked",
+      "os": "android",
+      "arch": "arm64",
+      "artifact_role": "PRIMARY_AGENT_DAEMON_ANDROID",
+      "classification": "CANONICAL_CLEANROOM_ARTIFACT"
+    }
+  ],
+  "supplemental_artifacts": [
+    {
+      "path": "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-arm64",
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "size_bytes": 13828244,
+      "file_type": "ELF 64-bit LSB executable, ARM aarch64",
+      "os": "android",
+      "arch": "arm64",
+      "artifact_role": "AGENT_DAEMON_PACKAGED_COPY",
+      "classification": "BYTE_IDENTICAL_ALIAS",
+      "canonical_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "audit_notes": "Byte-identical duplicate distributed in agentd directory"
+    },
+    {
+      "path": "cloudphone-v0.3.6 (1)/assets/agent/cloudphone-agent-arm64",
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "size_bytes": 13828244,
+      "file_type": "ELF 64-bit LSB executable, ARM aarch64",
+      "os": "android",
+      "arch": "arm64",
+      "artifact_role": "AGENT_DAEMON_EMBEDDED_ASSET",
+      "classification": "BYTE_IDENTICAL_ALIAS",
+      "canonical_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "audit_notes": "Byte-identical duplicate embedded in signaling server download asset folder"
+    },
+    {
+      "path": "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64",
+      "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16",
+      "size_bytes": 14663828,
+      "file_type": "ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked",
+      "os": "linux",
+      "arch": "amd64",
+      "artifact_role": "CONTAINER_AGENT_DAEMON_X86_64",
+      "classification": "SUPPLEMENTAL_DISTRIBUTED_ARTIFACT",
+      "canonical_target": null,
+      "audit_notes": "x86_64 agent binary used for Redroid container virtualization on AMD64 servers. Shares symbol table and CLI structure with canonical ARM64 agent."
+    },
+    {
+      "path": "cloudphone-v0.3.6 (1)/assets/agent/cloudphone-agent-amd64",
+      "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16",
+      "size_bytes": 14663828,
+      "file_type": "ELF 64-bit LSB executable, x86-64",
+      "os": "linux",
+      "arch": "amd64",
+      "artifact_role": "CONTAINER_AGENT_EMBEDDED_ASSET",
+      "classification": "BYTE_IDENTICAL_ALIAS",
+      "canonical_target": "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64",
+      "audit_notes": "Byte-identical copy embedded in signaling server download asset folder"
+    },
+    {
+      "path": "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-armeabi-v7a",
+      "sha256": "936f828fb30df461a2b45d5faa7fe1a50b0e6150cc2eda551c5f74bcefc815e5",
+      "size_bytes": 14155924,
+      "file_type": "ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV)",
+      "os": "android",
+      "arch": "arm32",
+      "artifact_role": "LEGACY_32BIT_AGENT_DAEMON",
+      "classification": "SUPPLEMENTAL_DISTRIBUTED_ARTIFACT",
+      "canonical_target": null,
+      "audit_notes": "32-bit ARM agent build provided for older 32-bit Android device targets"
+    }
+  ]
+}

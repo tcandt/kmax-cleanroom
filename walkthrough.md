@@ -173,51 +173,92 @@ Audit Summary:
 
 ---
 
-## 5. Phase 2R: Reference Intelligence Extraction & Cross-Mapping
+## 5. Phase 2R / 2R.1: Reference Intelligence Normalization & Reproducibility Closure
 
-**Status**: COMPLETE, AUDITED, AND FULLY VERIFIED (Report 11: `reports/11_REFERENCE_INTELLIGENCE_CROSSMAP.md`)
+**Milestone**: `PHASE_2R.1_REFERENCE_EVIDENCE_REMEDIATION`  
+**Report**: [Report 11R](file:///d:/KMAX-CLEANROOM/reports/11R_REFERENCE_EVIDENCE_REMEDIATION.md) (Supersedes historical Report 11)  
+**Cleanroom Commit Baseline**: `906b9aff14d25a8743bcef1ce223acd3ece32e47`  
+**Reference Sources Pinned**:
+- `tcandt/scrcpyoverwebrtc`: `65567d777bccb11d2a6d93b6acc735478e880b5b`
+- `hqw700/cloudphone-official`: `ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39`  
+**Status**: COMPLETE, AUDITED, AND FULLY VERIFIED (26/26 MASTER VERIFIER INVARIANTS PASS)
 
-### A. Provenance Policy & Cleanroom Baseline Freeze
-- Frozen cleanroom commit baseline at `906b9aff14d25a8743bcef1ce223acd3ece32e47` (`CLEANROOM_AUTH_HTTP_BASELINE`) in [BASELINE.json](file:///d:/KMAX-CLEANROOM/evidence/reference/BASELINE.json).
-- Pinned reference repository commit SHAs:
-  - `hqw700/cloudphone-official`: `ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39`
-  - `tcandt/scrcpyoverwebrtc`: `65567d777bccb11d2a6d93b6acc735478e880b5b`
-- Strict 2-lane boundary: Zero reference implementation code is copied into `reconstructed_source/`. All reference items are classified as `PUBLIC_REFERENCE_INTELLIGENCE` or `SOURCE_REFERENCE_CANDIDATE`.
-- Full line-by-line attribution of 12 reference files in [REFERENCE_SOURCES.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_SOURCES.json).
+### A. Canonical Artifact Identity Repair & Census
+- Reconciled [BASELINE.json](file:///d:/KMAX-CLEANROOM/evidence/reference/BASELINE.json) with exact canonical hashes in `EXPECTED_HASHES`:
+  - `cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling`: `6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3`
+  - `cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe`: `374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917`
+  - `cloudphone-v0.3.6 (1)/android/cloudphone-agent`: `9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4`
+- Formalized canonical vs supplemental census in [ARTIFACT_IDENTITY_AUDIT.md](file:///d:/KMAX-CLEANROOM/evidence/reference/ARTIFACT_IDENTITY_AUDIT.md) and [ARTIFACT_IDENTITY_AUDIT.json](file:///d:/KMAX-CLEANROOM/evidence/reference/ARTIFACT_IDENTITY_AUDIT.json). `agentd/cloudphone-agent-amd64` classified as `SUPPLEMENTAL_DISTRIBUTED_ARTIFACT`; `agentd/cloudphone-agent-arm64` classified as `BYTE_IDENTICAL_ALIAS`. Zero symbol/VA mixing.
 
-### B. Reference Protocol & DataChannel Inventories
-- Indexed 37 HTTP endpoints, 14 WebSocket `message_type` values, and 6 SDP/ICE forward payload types in [REFERENCE_PROTOCOL_INDEX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_PROTOCOL_INDEX.json) and [REFERENCE_PROTOCOL_INDEX.md](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_PROTOCOL_INDEX.md).
-- Cataloged all 6 WebRTC DataChannels in [DATACHANNEL_REFERENCE_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/DATACHANNEL_REFERENCE_MATRIX.json):
-  - `input-channel` (Agent creates, binary control protocol, touch/key injection)
-  - `clipboard-channel` (Agent creates, JSON clipboard synchronization)
-  - `camera-channel` (Agent creates, virtual camera control & frame injection)
-  - `file-channel` (Browser creates, binary chunk file transfer)
-  - `ai-command-channel` (Browser creates, JSON shell command request/response)
-  - `adb-channel` (Browser creates, raw ADB tunnel)
-- Modeled complete deterministic 8-transition client signaling state machine in [CLIENT_SIGNALING_STATE_MACHINE.json](file:///d:/KMAX-CLEANROOM/evidence/reference/CLIENT_SIGNALING_STATE_MACHINE.json).
+### B. Reference External-Read Exception & Pinned Content Hashes
+- Formalized authorized Lane B external-read exception in [REFERENCE_ACCESS_AUDIT.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_ACCESS_AUDIT.json) (`AUTHORIZED_REFERENCE_LANE_EXTERNAL_READ`). Confirmed Lane A source reconstruction remained strictly isolated.
+- Materialized all 12 reference source files into immutable local snapshots under `evidence/reference/raw/`.
+- Cryptographically pinned all 12 files with git blob SHA, SHA256, byte size, and line count in [REFERENCE_SOURCE_HASHES.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_SOURCE_HASHES.json).
 
-### C. Demo Mode Separation & Agent CLI Contract
-- Analyzed `web-app/.env.demo` (`VITE_DEMO_MODE=true`) and `web-app/src/mock/demoEngine.js` in [DEMO_MODE_ANALYSIS.md](file:///d:/KMAX-CLEANROOM/evidence/reference/DEMO_MODE_ANALYSIS.md). Proved demo mode completely bypasses WebSocket and WebRTC (`useWebRTC.js:69`). Established that demo artifacts must never be used as a backend protocol oracle.
-- Cross-verified 10 agent CLI flags in [AGENT_CLI_REFERENCE_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/AGENT_CLI_REFERENCE_MATRIX.json), confirming all 6 documented flags (`-id`, `-signaling`, `-jar`, `-external-addr`, `-webrtc-port`, `-root`) and 4 discovered flags (`-camera-addr`, `-camera-size`, `-camera-facing`, `-ice-servers`) directly in `cloudphone-agent-amd64` `.rodata`.
-- Cross-mapped 24 reference items to binary static evidence in [REFERENCE_TO_BINARY_CROSSMAP.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_TO_BINARY_CROSSMAP.json), each verified with $\ge 2$ independent evidence classes.
+### C. Committed Extraction Tooling & Reproducibility
+- Committed all 5 extraction scripts and master reproducibility verifier into `tools/reference/`:
+  - [extract_protocol_index.py](file:///d:/KMAX-CLEANROOM/tools/reference/extract_protocol_index.py)
+  - [extract_datachannels.py](file:///d:/KMAX-CLEANROOM/tools/reference/extract_datachannels.py)
+  - [extract_signaling_state_machine.py](file:///d:/KMAX-CLEANROOM/tools/reference/extract_signaling_state_machine.py)
+  - [extract_agent_cli.py](file:///d:/KMAX-CLEANROOM/tools/reference/extract_agent_cli.py)
+  - [build_reference_crossmap.py](file:///d:/KMAX-CLEANROOM/tools/reference/build_reference_crossmap.py)
+  - [reproduce_reference_evidence.py](file:///d:/KMAX-CLEANROOM/tools/reference/reproduce_reference_evidence.py)
+- All tools read exclusively from local snapshots in `evidence/reference/raw/`.
+- `reproduce_reference_evidence.py` regenerates into a temp directory and performs bit/key exact verification across all 5 JSON matrices with zero discrepancies (**PASS**).
+
+### D. Corrected WebRTC DataChannel Protocol Matrix
+- Corrected `input-channel` in [DATACHANNEL_REFERENCE_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/DATACHANNEL_REFERENCE_MATRIX.json) to JSON string framing (`type: 'touch'` / `type: 'inject_scroll'`) directly observed in `useWebRTC.js:1031-1044, 1141-1152`. Demoted binary control protocol claim to `UNPROVEN_HYPOTHESIS`.
+- Downgraded unproven `ordered` and `binaryType` properties on agent-created channels (`input-channel`, `clipboard-channel`, `camera-channel`) to `UNKNOWN_FROM_FRONTEND`.
+- Browser-created channels (`file-channel`, `ai-command-channel`, `adb-channel`) verified from direct frontend source code.
+
+### E. Corrected Client Signaling State Machine
+- Purged unsupported speculative timeouts (10s, 5s, 15s, 3s) from T01–T06, T08 in [CLIENT_SIGNALING_STATE_MACHINE.json](file:///d:/KMAX-CLEANROOM/evidence/reference/CLIENT_SIGNALING_STATE_MACHINE.json); all set to `null` with `timeout_evidence: "NOT_OBSERVED"`.
+- Retained `timeout_ms: 15000` solely for T07 (`executeCommandP2P`) where directly observed in source.
+- Removed speculative automatic TCP fallback to `useWebSocketStream` from T06; verified that frontend only emits `message_type: 'webrtc_failed'`.
+
+### F. Granular Evidence Classes & Strong Multi-Evidence Gate
+- Replaced coarse `STATIC_BINARY_EVIDENCE` with 8 granular binary classes in [REFERENCE_TO_BINARY_CROSSMAP.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_TO_BINARY_CROSSMAP.json).
+- Enforced strong multi-evidence gate: `BINARY_SEMANTIC_CONFIRMED` requires `PUBLIC_REFERENCE` + at least 2 independent binary classes (23 items confirmed; 1 corroborated).
+
+### G. Reclassified Agent CLI Flags
+- Reclassified all 10 flags in [AGENT_CLI_REFERENCE_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/AGENT_CLI_REFERENCE_MATRIX.json).
+- Documented flags (`-id`, `-signaling`, `-jar`, `-external-addr`, `-webrtc-port`, `-root`) confirmed with `SEMANTIC_XREF_CONFIRMED` or `FLAG_REGISTRATION_CONFIRMED` (HIGH confidence).
+- Undocumented flags (`-camera-addr`, `-camera-size`, `-camera-facing`, `-ice-servers`) classified as `STRING_PRESENT` with `MEDIUM_INFERRED` confidence. Supplemental artifact explicitly cited.
+
+### H. Mathematically Defined Progress & Coverage Metrics
+- In [Report 11R](file:///d:/KMAX-CLEANROOM/reports/11R_REFERENCE_EVIDENCE_REMEDIATION.md), replaced unsupported percentages with deterministically measured metrics:
+  - `SIGNALING_FUNCTION_TABLE_COVERAGE`: 7,571 / 7,571 (100.0%)
+  - `AGENT_FUNCTION_TABLE_COVERAGE`: 15,398 / 15,398 (100.0%)
+  - `ROUTE_DISCOVERY_COVERAGE`: 43 / 43 (100.0%)
+  - `FRONTEND_ROUTE_BINARY_MATCH`: 35 / 37 (94.6%)
+  - `RECONSTRUCTED_ROUTE_COUNT`: 4 / 43 (9.3%)
+  - `IMPLEMENTED_SURFACE_DIFFERENTIAL_PASS_RATE`: 38 / 38 (100.0%)
+  - `ESTIMATED_FUNCTIONAL_RECONSTRUCTION_PROGRESS`: ~15–20% (ESTIMATE, NOT A FORENSIC COVERAGE METRIC)
 
 ---
 
-## 6. Phase 2R Exit Gate Checklist
+## 6. Phase 2R.1 Exit Gate Checklist
 
-- [x] Cleanroom baseline frozen in `evidence/reference/BASELINE.json` (commit `906b9aff...`).
-- [x] Reference repository SHAs pinned (`cloudphone-official:ceb66b2`, `scrcpyoverwebrtc:65567d7`).
-- [x] Zero reference implementation code copied into `reconstructed_source/`.
-- [x] Protocol inventory generated (`REFERENCE_PROTOCOL_INDEX.json` and `.md`).
-- [x] WebRTC DataChannel reference matrix generated (`DATACHANNEL_REFERENCE_MATRIX.json`).
-- [x] Client signaling state machine generated (`CLIENT_SIGNALING_STATE_MACHINE.json`).
-- [x] Demo mode mock path separated from real protocol path (`DEMO_MODE_ANALYSIS.md`).
-- [x] Agent CLI candidate flags cross-checked and verified against binary (`AGENT_CLI_REFERENCE_MATRIX.json`).
-- [x] Reference-to-binary crossmap generated with $\ge 2$ evidence classes per confirmed mapping (`REFERENCE_TO_BINARY_CROSSMAP.json`).
-- [x] Multi-dimensional coverage metrics documented in `reports/11_REFERENCE_INTELLIGENCE_CROSSMAP.md`.
-- [x] All previous cleanroom test suites (`persistence`, `auth`, `http`, Go unit tests, provenance auditor) remain unchanged and PASS.
-- [x] Master verifier `tools/verify_phase2.py` passes all 24 invariant checks.
+- [x] Canonical artifact hashes repaired in `BASELINE.json` (matches `EXPECTED_HASHES`).
+- [x] Supplemental agent artifact classified (`agentd/cloudphone-agent-amd64`).
+- [x] No artifact identity mixing between ARM64 Android and AMD64 Linux.
+- [x] Reference external-read audit recorded (`REFERENCE_ACCESS_AUDIT.json`).
+- [x] All 12 reference files content-hashed and materialized (`REFERENCE_SOURCE_HASHES.json`).
+- [x] Extraction tools committed under `tools/reference/`.
+- [x] Phase 2R evidence reproducible from pinned inputs (`reproduce_reference_evidence.py` PASS).
+- [x] `input-channel` JSON framing corrected; binary protocol hypothesis demoted.
+- [x] Unsupported DataChannel properties downgraded to `UNKNOWN_FROM_FRONTEND`.
+- [x] Unsupported signaling timeouts removed (nullified with `NOT_OBSERVED`).
+- [x] Unsupported TCP fallback removed from state machine.
+- [x] Granular evidence classes implemented (8 independent classes).
+- [x] Strong multi-evidence rule enforced ($\ge 2$ independent binary classes for confirmed).
+- [x] CLI flag semantics no longer inferred from string presence alone; rodata flags marked `STRING_PRESENT`.
+- [x] Coverage metrics mathematically defined with explicit numerators/denominators in Report 11R.
+- [x] Previous persistence (8/8), auth core (12/12), and auth HTTP (18/18) suites still PASS.
+- [x] Provenance auditor passes 59/59 declared functions.
+- [x] Master verifier `tools/verify_phase2.py` passes all 26 invariant checks.
+- [x] Zero Phase 2C.3B backend source written (strict HOLD maintained).
 
-**PHASE 2R COMPLETE.**  
-Awaiting user review before proceeding to Phase 2C.3B (Devices/Registry REST family).
+**PHASE 2R.1 COMPLETE.**  
+Awaiting user review before opening Phase 2C.3B (Devices/Registry REST family).
 

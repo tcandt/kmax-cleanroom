@@ -1,11 +1,27 @@
 {
   "milestone": "CLEANROOM_AUTH_HTTP_BASELINE",
   "cleanroom_commit": "906b9aff14d25a8743bcef1ce223acd3ece32e47",
-  "retrieval_timestamp": "2026-09-15T23:30:00+07:00",
+  "retrieval_timestamp": "2026-09-16T06:00:00+07:00",
   "original_artifact_sha256_values": {
-    "webrtc-signaling_linux_amd64": "35905d46be8296a23a31cbb22f84097f4a569766cae9d300cc9ff11a766fa091",
-    "webrtc-signaling_windows_amd64": "45ea885a440cb65825cf4bf92a5435e0766e4a66a1506bf950c45d3c8c7ae007",
-    "cloudphone-agent_linux_amd64": "63f82fc464c017ef655bb7090b8f2d5e3ef87ca86b9ea20904008cf311545fc4"
+    "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+    "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "cloudphone-v0.3.6 (1)/android/cloudphone-agent": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4"
+  },
+  "supplemental_artifacts": {
+    "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64": {
+      "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16",
+      "size_bytes": 14663828,
+      "classification": "SUPPLEMENTAL_DISTRIBUTED_ARTIFACT",
+      "os": "linux",
+      "arch": "amd64",
+      "purpose": "x86_64 container/VM agent binary distributed in release for Redroid x86_64 deployments"
+    },
+    "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-arm64": {
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "size_bytes": 13828244,
+      "classification": "BYTE_IDENTICAL_ALIAS",
+      "alias_of": "cloudphone-v0.3.6 (1)/android/cloudphone-agent"
+    }
   },
   "reference_repository_commit_shas": {
     "hqw700/cloudphone-official": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
@@ -18,7 +34,8 @@
       "No public implementation code from Lane B may be copied or pasted into reconstructed_source/",
       "Lane B reference evidence provides candidate routes, messages, fields, channel labels, and state transitions",
       "All backend implementation claims must be confirmed by original distributed binary static evidence and/or dynamic binary oracle evidence",
-      "Historical clean-room evidence and provenance records remain unaltered"
+      "Canonical artifact identities must strictly match EXPECTED_HASHES in tools/verify_phase2.py",
+      "Supplemental artifacts must be explicitly qualified by exact path and SHA256"
     ]
   }
 }

@@ -3,121 +3,264 @@
     "title": "WebRTC DataChannel Reference Protocol Matrix",
     "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
     "source_repository": "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
-    "description": "Matrix of all DataChannels negotiated between Browser WebUI and cloudphone-agent, extracted from useWebRTC.js"
+    "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+    "description": "Granular classification of WebRTC DataChannels extracted from reference frontend. Every attribute is categorized into REFERENCE_OBSERVED, BINARY_CONFIRMED, INFERRED, or UNKNOWN."
   },
   "channels": [
     {
       "label": "input-channel",
       "creator_side": "Agent",
+      "creator_side_evidence": "REFERENCE_OBSERVED",
       "negotiation_method": "pc.ondatachannel (agent initiates)",
-      "ordered": true,
-      "binary_type": "arraybuffer",
+      "ordered": "UNKNOWN_FROM_FRONTEND",
+      "ordered_evidence": "UNKNOWN",
+      "binary_type": "UNKNOWN_FROM_FRONTEND",
+      "binary_type_evidence": "UNKNOWN",
       "message_direction": "Browser -> Agent",
-      "framing": "Binary control packet protocol (event_type: touch, keycode, scroll, text injection)",
-      "message_fields": {
-        "action": "DOWN | MOVE | UP | KEY_DOWN | KEY_UP",
-        "x": "normalized uint16 or float (0..1)",
-        "y": "normalized uint16 or float (0..1)",
-        "keycode": "Android KeyEvent integer",
-        "metastate": "modifier bitflags"
+      "message_direction_evidence": "REFERENCE_OBSERVED",
+      "framing": "JSON string payload (JSON.stringify) dispatched via inputChannel.send(msg)",
+      "framing_evidence": "REFERENCE_OBSERVED",
+      "observed_events": {
+        "touch": {
+          "type": {
+            "value": "touch",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "id": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "seq": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "client_ts_ms": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "action": {
+            "type": "number (0=DOWN, 1=UP, 2=MOVE)",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "x": {
+            "type": "number (logical coordinate)",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "y": {
+            "type": "number (logical coordinate)",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "w": {
+            "type": "number (logical target width)",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "h": {
+            "type": "number (logical target height)",
+            "evidence": "REFERENCE_OBSERVED"
+          }
+        },
+        "inject_scroll": {
+          "type": {
+            "value": "inject_scroll",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "seq": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "client_ts_ms": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "x": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "y": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "w": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "h": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "scroll_h": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "scroll_v": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          }
+        },
+        "inject_text": {
+          "type": {
+            "value": "inject_text",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "text": {
+            "type": "string",
+            "evidence": "REFERENCE_OBSERVED"
+          }
+        },
+        "inject_keycode": {
+          "type": {
+            "value": "inject_keycode",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "action": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "keycode": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "repeat": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          },
+          "meta": {
+            "type": "number",
+            "evidence": "REFERENCE_OBSERVED"
+          }
+        }
       },
-      "open_close_behavior": "Created by agent upon P2P connection establishment; closed on WebRTC teardown",
-      "fallback_mechanism": "Signaling WebSocket fallback via message_type: 'inject_data' (channel='input') or group_control_event",
-      "reference_source": "web-app/src/composables/useWebRTC.js:752-760"
+      "binary_control_alternative": {
+        "status": "UNPROVEN_HYPOTHESIS",
+        "evidence": "INFERRED",
+        "notes": "Prior hypothesis of binary control packet framing is unobserved in reference frontend and requires agent binary verification before adoption."
+      },
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:752-760, 1031-1044, 1141-1152, 1531-1570"
     },
     {
       "label": "clipboard-channel",
       "creator_side": "Agent",
+      "creator_side_evidence": "REFERENCE_OBSERVED",
       "negotiation_method": "pc.ondatachannel (agent initiates)",
-      "ordered": true,
-      "binary_type": "arraybuffer",
+      "ordered": "UNKNOWN_FROM_FRONTEND",
+      "ordered_evidence": "UNKNOWN",
+      "binary_type": "UNKNOWN_FROM_FRONTEND",
+      "binary_type_evidence": "UNKNOWN",
       "message_direction": "Bi-directional (Agent <-> Browser)",
-      "framing": "JSON formatted string encoded as UTF-8 ArrayBuffer",
-      "message_fields": {
-        "type": "string (verbatim 'clipboard')",
-        "text": "string (clipboard text content)",
-        "source": "string ('device' | 'web')",
-        "origin_client_id": "string or null (prevents clipboard synchronization loops)"
+      "message_direction_evidence": "REFERENCE_OBSERVED",
+      "framing": "JSON string or UTF-8 ArrayBuffer representing JSON object",
+      "framing_evidence": "REFERENCE_OBSERVED",
+      "observed_fields": {
+        "type": {
+          "value": "clipboard",
+          "evidence": "REFERENCE_OBSERVED"
+        },
+        "text": {
+          "type": "string",
+          "evidence": "REFERENCE_OBSERVED"
+        },
+        "source": {
+          "type": "string ('device' | 'web')",
+          "evidence": "REFERENCE_OBSERVED"
+        },
+        "origin_client_id": {
+          "type": "string | null",
+          "evidence": "REFERENCE_OBSERVED"
+        }
       },
-      "open_close_behavior": "Created by agent; dispatches onmessage to clipboardCallback; closed on teardown",
-      "fallback_mechanism": "Signaling WebSocket fallback via message_type: 'inject_data' (channel='clipboard')",
-      "reference_source": "web-app/src/composables/useWebRTC.js:761-786"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761-786, 1195-1215"
     },
     {
       "label": "camera-channel",
       "creator_side": "Agent",
+      "creator_side_evidence": "REFERENCE_OBSERVED",
       "negotiation_method": "pc.ondatachannel (agent initiates)",
-      "ordered": true,
-      "binary_type": "arraybuffer",
-      "message_direction": "Bi-directional (Agent sends control commands; Browser sends camera video feed frames)",
+      "ordered": "UNKNOWN_FROM_FRONTEND",
+      "ordered_evidence": "UNKNOWN",
+      "binary_type": "UNKNOWN_FROM_FRONTEND",
+      "binary_type_evidence": "UNKNOWN",
+      "message_direction": "Bi-directional (Agent sends control commands; Browser sends video feed frames)",
+      "message_direction_evidence": "REFERENCE_OBSERVED",
       "framing": "JSON control messages for handshake; binary raw video frames for streaming",
-      "message_fields": {
-        "action": "string ('start' | 'stop')",
-        "resolution": "object: {width, height} (optional)",
-        "fps": "number (optional)"
+      "framing_evidence": "REFERENCE_OBSERVED",
+      "observed_fields": {
+        "action": {
+          "type": "string ('start' | 'stop')",
+          "evidence": "REFERENCE_OBSERVED"
+        }
       },
-      "open_close_behavior": "Created by agent when device camera HAL injection is available; stops stream on close",
-      "fallback_mechanism": "None (camera virtualization requires high-bandwidth P2P DataChannel)",
-      "reference_source": "web-app/src/composables/useWebRTC.js:787-815"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787-815"
     },
     {
       "label": "file-channel",
       "creator_side": "Browser",
+      "creator_side_evidence": "REFERENCE_OBSERVED",
       "negotiation_method": "pc.createDataChannel('file-channel', { ordered: true })",
       "ordered": true,
+      "ordered_evidence": "REFERENCE_OBSERVED",
       "binary_type": "arraybuffer",
-      "message_direction": "Bi-directional (Browser sends upload chunks; Agent confirms/sends file data)",
-      "framing": "Binary chunk framing: [header_length (4B)] + [JSON metadata] + [raw binary chunk payload]",
-      "message_fields": {
-        "filename": "string",
-        "filesize": "number",
-        "offset": "number",
-        "chunk_size": "number",
-        "checksum": "string (optional)"
+      "binary_type_evidence": "REFERENCE_OBSERVED",
+      "message_direction": "Bi-directional",
+      "message_direction_evidence": "REFERENCE_OBSERVED",
+      "framing": "JSON control commands + binary chunk ArrayBuffers (directly observed in source)",
+      "framing_evidence": "REFERENCE_OBSERVED",
+      "observed_fields": {
+        "filename": {
+          "type": "string",
+          "evidence": "REFERENCE_OBSERVED"
+        },
+        "filesize": {
+          "type": "number",
+          "evidence": "REFERENCE_OBSERVED"
+        }
       },
-      "open_close_behavior": "Pre-created by browser during PeerConnection setup prior to SDP offer processing",
-      "fallback_mechanism": "HTTP REST fallback via multipart/form-data POST /upload",
-      "reference_source": "web-app/src/composables/useWebRTC.js:579"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:579-581, 1366"
     },
     {
       "label": "ai-command-channel",
       "creator_side": "Browser",
+      "creator_side_evidence": "REFERENCE_OBSERVED",
       "negotiation_method": "pc.createDataChannel('ai-command-channel', { ordered: true })",
       "ordered": true,
+      "ordered_evidence": "REFERENCE_OBSERVED",
       "binary_type": "arraybuffer",
-      "message_direction": "Bi-directional (Browser sends request; Agent returns response)",
+      "binary_type_evidence": "REFERENCE_OBSERVED",
+      "message_direction": "Bi-directional",
+      "message_direction_evidence": "REFERENCE_OBSERVED",
       "framing": "JSON string encoded as UTF-8 ArrayBuffer",
-      "message_fields": {
-        "request_id": "string (unique random request identifier for async matching)",
-        "command": "string (shell command text or AI action)",
-        "timeout_ms": "number (optional, default 15000ms)",
-        "output": "string (in response)",
-        "exit_code": "number (in response)"
+      "framing_evidence": "REFERENCE_OBSERVED",
+      "observed_fields": {
+        "request_id": {
+          "type": "string",
+          "evidence": "REFERENCE_OBSERVED"
+        },
+        "command": {
+          "type": "string",
+          "evidence": "REFERENCE_OBSERVED"
+        }
       },
-      "open_close_behavior": "Created dynamically on-demand by browser when command execution is requested",
-      "fallback_mechanism": "Signaling WebSocket fallback via message_type: 'command' with identical request_id",
-      "reference_source": "web-app/src/composables/useWebRTC.js:294-335"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:304-335, 358-361"
     },
     {
       "label": "adb-channel",
       "creator_side": "Browser",
+      "creator_side_evidence": "REFERENCE_OBSERVED",
       "negotiation_method": "pc.createDataChannel('adb-channel', { ordered: true })",
       "ordered": true,
+      "ordered_evidence": "REFERENCE_OBSERVED",
       "binary_type": "arraybuffer",
+      "binary_type_evidence": "REFERENCE_OBSERVED",
       "message_direction": "Bi-directional",
-      "framing": "Raw ADB transport protocol packets (CNXN, OPEN, OKAY, CLSE, WRTE)",
-      "message_fields": {
-        "command": "uint32",
-        "arg0": "uint32",
-        "arg1": "uint32",
-        "data_length": "uint32",
-        "data_crc32": "uint32",
-        "magic": "uint32",
-        "payload": "bytes"
+      "message_direction_evidence": "REFERENCE_OBSERVED",
+      "framing": "Raw ArrayBuffer byte streams (ADB transport packets sent via channel.send(buf))",
+      "framing_evidence": "REFERENCE_OBSERVED",
+      "observed_fields": {
+        "raw_buffer": {
+          "type": "ArrayBuffer",
+          "evidence": "REFERENCE_OBSERVED"
+        }
       },
-      "open_close_behavior": "Created by browser when user opens WebADB terminal console in WebUI",
-      "fallback_mechanism": "WebSocket stream tunnel fallback or local USB ADB",
-      "reference_source": "web-app/src/composables/useWebRTC.js:1237"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1237-1250"
     }
   ]
 }

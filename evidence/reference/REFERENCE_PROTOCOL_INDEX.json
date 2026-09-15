@@ -6,7 +6,7 @@
       "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
       "hqw700/cloudphone-official (commit: ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39)"
     ],
-    "description": "Comprehensive reference protocol index extracted from public frontend and official documentation. Every entry is a hypothesis/candidate until corroborated by binary evidence."
+    "description": "Comprehensive reference protocol index extracted from public frontend and official documentation materialized under evidence/reference/raw/. Every entry is a hypothesis/candidate until corroborated by binary evidence."
   },
   "transport_endpoints": {
     "websocket_signaling": [
@@ -18,7 +18,7 @@
           "share_token": "Share link authorization token (optional)",
           "share_pwd": "Share link password (optional, if protected)"
         },
-        "source_reference": "web-app/src/composables/useWebRTC.js:78-83, web-app/src/stores/devices.js:669",
+        "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:78-83, evidence/reference/raw/web-app/src/stores/devices.js:669",
         "classification": "SOURCE_REFERENCE_CANDIDATE"
       },
       {
@@ -27,7 +27,7 @@
         "query_parameters": {
           "id": "Agent / device unique identifier (passed via -id CLI flag)"
         },
-        "source_reference": "hqw700/cloudphone-official:docs/agent-deploy.md, tcandt/scrcpyoverwebrtc:docs/DEVELOPMENT.md",
+        "source_reference": "evidence/reference/raw/docs/agent-deploy.md",
         "classification": "SOURCE_REFERENCE_CANDIDATE"
       }
     ],
@@ -265,7 +265,7 @@
           "device_id": "string"
         },
         "description": "Sent by client immediately after WebSocket connection to target device session",
-        "source": "web-app/src/composables/useWebRTC.js:92-95"
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:92-95"
       },
       {
         "message_type": "forward",
@@ -275,7 +275,7 @@
           "payload": "object"
         },
         "description": "Wraps signaling payloads (request-offer, answer, ice-candidate) forwarded to Agent",
-        "source": "web-app/src/composables/useWebRTC.js:140"
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:140"
       },
       {
         "message_type": "command",
@@ -286,7 +286,7 @@
           "command": "string"
         },
         "description": "Direct shell/command execution request forwarded to agent via signaling server",
-        "source": "web-app/src/composables/useWebRTC.js:271-276"
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:271-276"
       },
       {
         "message_type": "inject_data",
@@ -294,44 +294,38 @@
           "message_type": "inject_data",
           "device_id": "string",
           "channel": "string",
-          "payload": "any",
-          "target_device_ids": "array (optional)"
+          "data": "any"
         },
-        "description": "Injects touch/input/clipboard data into agent channel via signaling fallback or multicast",
-        "source": "web-app/src/composables/useWebRTC.js:253-262, web-app/src/stores/devices.js:610"
+        "description": "WebSocket fallback for touch/clipboard when DataChannel is unavailable",
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:254-265, evidence/reference/raw/web-app/src/stores/devices.js:610"
       },
       {
         "message_type": "group_control_event",
         "fields": {
           "message_type": "group_control_event",
-          "origin_device_id": "string",
-          "target_device_ids": "array",
+          "device_ids": "array",
           "event": "object"
         },
-        "description": "Multicast batch control event replicated across group of target devices",
-        "source": "web-app/src/stores/devices.js:593"
+        "description": "Multi-device synchronized control broadcast across multiple phone sessions",
+        "source": "evidence/reference/raw/web-app/src/stores/devices.js:583-587"
       },
       {
-        "message_type": "action",
+        "message_type": "webrtc_failed",
         "fields": {
-          "message_type": "start_preview | stop_preview",
+          "message_type": "webrtc_failed",
           "device_id": "string",
-          "fps": "number",
-          "max_size": "number",
-          "bitrate": "number",
-          "stay_awake": "boolean"
+          "reason": "string"
         },
-        "description": "Controls H.264 preview stream generation on agent",
-        "source": "web-app/src/stores/devices.js:573"
+        "description": "Notifies signaling server that WebRTC ICE negotiation failed",
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:730"
       },
       {
-        "message_type": "quit_agent",
+        "message_type": "get_settings",
         "fields": {
-          "message_type": "quit_agent",
-          "device_id": "string"
+          "message_type": "get_settings"
         },
-        "description": "Requests signaling server to instruct agent to terminate",
-        "source": "web-app/src/stores/devices.js:787"
+        "description": "Requests global system settings from signaling server",
+        "source": "evidence/reference/raw/web-app/src/stores/devices.js:592"
       }
     ],
     "server_to_client": [
@@ -339,161 +333,151 @@
         "message_type": "config",
         "fields": {
           "message_type": "config",
-          "ice_servers": "array of {urls, username, credential}"
+          "ice_servers": "array"
         },
-        "description": "Server acknowledges connect request and provides STUN/TURN ICE configuration",
-        "source": "web-app/src/composables/useWebRTC.js:126-131"
-      },
-      {
-        "message_type": "device_info",
-        "fields": {
-          "message_type": "device_info",
-          "device_info": "object: {app_version, displays: [{x_res, y_res, ...}], ...}"
-        },
-        "description": "Provides agent version, screen resolution, and hardware display metadata",
-        "source": "web-app/src/composables/useWebRTC.js:142, 158-169"
+        "description": "Provides STUN/TURN ICE server configuration to connecting client",
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:126-130"
       },
       {
         "message_type": "device_msg",
         "fields": {
           "message_type": "device_msg",
+          "device_id": "string",
           "payload": "object"
         },
-        "description": "Encapsulates messages routed from Agent to Browser (offer, ice-candidate, command_result, scrcpy_error)",
-        "source": "web-app/src/composables/useWebRTC.js:145-147, 171-249"
+        "description": "Delivers forwarded messages from Agent (offer, ice-candidate, clipboard, etc.)",
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:133-145"
       },
       {
-        "message_type": "screenshot_response",
+        "message_type": "device_online",
         "fields": {
-          "message_type": "screenshot_response",
-          "data": "base64 JPEG/PNG string"
+          "message_type": "device_online",
+          "device": "object"
         },
-        "description": "Returns raw screenshot captured from device display",
-        "source": "web-app/src/composables/useWebRTC.js:148-150"
+        "description": "Broadcasts that a device agent has connected and registered",
+        "source": "evidence/reference/raw/web-app/src/stores/devices.js:675"
       },
       {
-        "message_type": "error",
+        "message_type": "device_offline",
         "fields": {
-          "message_type": "error",
-          "error": "string"
+          "message_type": "device_offline",
+          "device_id": "string"
         },
-        "description": "Notifies client of server-side or device connection error",
-        "source": "web-app/src/composables/useWebRTC.js:151-154"
+        "description": "Broadcasts that a device agent has disconnected",
+        "source": "evidence/reference/raw/web-app/src/stores/devices.js:680"
       },
       {
-        "message_type": "snapshot_update",
+        "message_type": "device_list",
         "fields": {
-          "message_type": "snapshot_update",
-          "device_id": "string",
-          "timestamp": "number"
-        },
-        "description": "Broadcast notification that device thumbnail snapshot has refreshed",
-        "source": "web-app/src/stores/devices.js:682"
-      },
-      {
-        "message_type": "device_list_update",
-        "fields": {
-          "message_type": "device_list_update",
+          "message_type": "device_list",
           "devices": "array"
         },
-        "description": "Broadcast notification of online/offline status changes across device inventory",
-        "source": "web-app/src/stores/devices.js:690"
+        "description": "Initial synchronization of all online devices on WebSocket connect",
+        "source": "evidence/reference/raw/web-app/src/stores/devices.js:670"
       },
       {
-        "message_type": "tags_update",
+        "message_type": "command_result",
         "fields": {
-          "message_type": "tags_update",
-          "tags": "array"
+          "message_type": "command_result",
+          "request_id": "string",
+          "output": "string",
+          "exit_code": "number"
         },
-        "description": "Broadcast notification of modified device tags and categories",
-        "source": "web-app/src/stores/devices.js:692"
+        "description": "Delivers asynchronous shell command execution output back to client",
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:148-155"
       },
       {
-        "message_type": "task_status_updated",
+        "message_type": "auth_error",
         "fields": {
-          "message_type": "task_status_updated",
-          "task_id": "string",
-          "status": "string",
-          "progress": "number"
+          "message_type": "auth_error",
+          "error": "string"
         },
-        "description": "Broadcast notification of progress updates on background asynchronous batch tasks",
-        "source": "web-app/src/stores/devices.js:697"
-      },
-      {
-        "message_type": "license_update",
-        "fields": {
-          "message_type": "license_update",
-          "license": "object"
-        },
-        "description": "Broadcast notification of license entitlement updates",
-        "source": "web-app/src/stores/devices.js:706"
+        "description": "Signals token expiration, invalid permissions, or session kick",
+        "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:156-160"
       }
     ]
   },
   "signaling_forward_payloads": [
     {
-      "payload_type": "request-offer",
+      "type": "request-offer",
       "direction": "Browser -> Signaling -> Agent",
       "fields": {
         "type": "request-offer",
-        "ip_preference": "auto | ipv4 | ipv6",
-        "scrcpy_options": "object (optional)"
+        "ip_preference": "string",
+        "scrcpy_options": "object"
       },
-      "description": "Client triggers Agent to generate and initiate an SDP offer with desired codec/options",
-      "source": "web-app/src/composables/useWebRTC.js:133-139"
+      "description": "Requests Agent to create a WebRTC PeerConnection, start scrcpy, and generate an SDP offer",
+      "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:134"
     },
     {
-      "payload_type": "offer",
+      "type": "offer",
       "direction": "Agent -> Signaling -> Browser",
       "fields": {
         "type": "offer",
-        "sdp": "string (SDP offer text)",
+        "sdp": "string",
         "camera_support": "boolean"
       },
-      "description": "Agent presents WebRTC offer containing H.264 video track and media parameters",
-      "source": "web-app/src/composables/useWebRTC.js:175-186"
+      "description": "Agent SDP offer containing video/audio media tracks and DataChannel attributes",
+      "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:175-185"
     },
     {
-      "payload_type": "answer",
+      "type": "answer",
       "direction": "Browser -> Signaling -> Agent",
       "fields": {
         "type": "answer",
-        "sdp": "string (SDP answer text munged for bitrate and parameters)"
+        "sdp": "string"
       },
-      "description": "Browser accepts offer and submits SDP answer to negotiate P2P media session",
-      "source": "web-app/src/composables/useWebRTC.js:187-206"
+      "description": "Browser SDP answer with munged bandwidth parameters and audio preferences",
+      "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:205"
     },
     {
-      "payload_type": "ice-candidate",
-      "direction": "Bi-directional (Browser <-> Signaling <-> Agent)",
+      "type": "ice-candidate",
+      "direction": "Bi-directional (Browser <-> Agent)",
       "fields": {
         "type": "ice-candidate",
-        "candidate": "object: {candidate, sdpMid, sdpMLineIndex}"
+        "candidate": "string | object"
       },
-      "description": "Trickle ICE candidate exchange to discover viable STUN/TURN host/srflx/relay network pairs",
-      "source": "web-app/src/composables/useWebRTC.js:215-227"
+      "description": "Trickle ICE candidate exchange for P2P UDP/TCP hole punching",
+      "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215-225"
     },
     {
-      "payload_type": "command_result",
-      "direction": "Agent -> Signaling -> Browser",
+      "type": "clipboard",
+      "direction": "Bi-directional",
       "fields": {
-        "type": "command_result",
-        "request_id": "string",
-        "output": "string",
-        "exit_code": "number"
+        "type": "clipboard",
+        "text": "string",
+        "source": "string",
+        "origin_client_id": "string"
       },
-      "description": "Returns execution output and exit status of shell command dispatched to agent",
-      "source": "web-app/src/composables/useWebRTC.js:229-231"
+      "description": "Fallback clipboard payload when clipboard-channel is not established",
+      "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:770"
     },
     {
-      "payload_type": "scrcpy_error",
-      "direction": "Agent -> Signaling -> Browser",
+      "type": "camera",
+      "direction": "Bi-directional",
       "fields": {
-        "type": "scrcpy_error",
-        "message": "string"
+        "type": "camera",
+        "action": "string"
       },
-      "description": "Reports failure in starting scrcpy-server or camera HAL initialization",
-      "source": "web-app/src/composables/useWebRTC.js:233-247"
+      "description": "Camera control signaling fallback",
+      "source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:800"
+    }
+  ],
+  "demo_mock_routes": [
+    {
+      "path": "/api/demo/devices",
+      "mock_source": "demoEngine.js",
+      "classification": "MOCK_ONLY_SYNTHETIC"
+    },
+    {
+      "path": "/api/demo/login",
+      "mock_source": "demoEngine.js",
+      "classification": "MOCK_ONLY_SYNTHETIC"
+    },
+    {
+      "path": "/api/demo/stream",
+      "mock_source": "demoEngine.js",
+      "classification": "MOCK_ONLY_SYNTHETIC"
     }
   ]
 }

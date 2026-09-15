@@ -1,11 +1,15 @@
-# Report 11: Reference Intelligence Extraction & Binary Cross-Mapping
+# Report 11: Reference Intelligence Extraction & Binary Cross-Mapping [SUPERSEDED_BY_11R]
 
-**Milestone**: `PHASE_2R_REFERENCE_INTELLIGENCE`  
+> [!WARNING]
+> **SUPERSEDED NOTICE**: This report is preserved strictly as historical milestone evidence from Phase 2R.  
+> Following the forensic audit in Phase 2R.1, all findings, artifact identities, DataChannel message framings, state machine timeouts, evidence classes, and coverage metrics have been normalized and superseded by [Report 11R](file:///d:/KMAX-CLEANROOM/reports/11R_REFERENCE_EVIDENCE_REMEDIATION.md).
+
+**Milestone**: `PHASE_2R_REFERENCE_INTELLIGENCE` (Historical Snapshot)  
 **Cleanroom Commit Baseline**: `906b9aff14d25a8743bcef1ce223acd3ece32e47`  
 **Reference Sources Snapshot**:
 - `tcandt/scrcpyoverwebrtc` (commit: `65567d777bccb11d2a6d93b6acc735478e880b5b`)
 - `hqw700/cloudphone-official` (commit: `ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39`)  
-**Audit Status**: VERIFIED & AUDITED (STRICT 2-LANE PROVENANCE BOUNDARY MAINTAINED)
+**Audit Status**: SUPERSEDED BY REPORT 11R
 
 ---
 
