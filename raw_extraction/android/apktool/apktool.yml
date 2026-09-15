@@ -1,0 +1,16 @@
+version: 3.0.3
+apkFileName: libsys_core.so
+usesFramework:
+  ids:
+  - 1
+sdkInfo:
+  minSdkVersion: 21
+  targetSdkVersion: 36
+versionInfo:
+  versionCode: 30304
+  versionName: 3.3.4-2af7ccc1
+resourcesInfo:
+  packageId: 0
+  packageName: 
+doNotCompress:
+- arsc

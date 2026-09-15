@@ -25,8 +25,9 @@ This project operates under strict clean-room isolation rules documented in [RUL
 | Phase | Description | Status | Key Deliverables |
 |---|---|---|---|
 | **Phase 0** | Forensic Inventory & Cryptographic Baseline | **DONE** | [00_INVENTORY.md](reports/00_INVENTORY.md), [ARTIFACT_MANIFEST.json](evidence/ARTIFACT_MANIFEST.json), [Hashes](evidence/hashes/) |
-| **Phase 1** | Android APK Decompilation & Go Symbol Extraction | *Ready* | JADX decompilation of `libsys_core.so`, `pclntab` mapping |
-| **Phase 2** | Go Signaling Server & Agent Reverse Engineering | *Pending* | Function callgraphs, HTTP route mapping |
+| **Incident 00A** | Clean-Room Boundary Remediation | **DONE** | [00A_CLEANROOM_BOUNDARY_REMEDIATION.md](reports/00A_CLEANROOM_BOUNDARY_REMEDIATION.md) (Quarantine upstream source) |
+| **Phase 1A** | Android Helper Direct Decompilation | **DONE** | [01_ANDROID_DECOMPILE.md](reports/01_ANDROID_DECOMPILE.md), [CLASS_MAP.json](evidence/android/CLASS_MAP.json), [METHOD_MAP.json](evidence/android/METHOD_MAP.json) |
+| **Phase 1B / 2** | Go Signaling Server & Agent Reverse Engineering | *Pending* | Function callgraphs, HTTP route mapping |
 | **Phase 3** | Web Bundle Verification & Frontend Parity | *Pending* | Vite build comparison against release bundle |
 | **Phase 4** | Native Components & JNI Inspection | *Pending* | IPC & audio capture pipeline analysis |
 | **Phase 5** | Complete Protocol & Contract Reconstruction | *Pending* | REST, WebSocket, & DataChannel protocol specs |

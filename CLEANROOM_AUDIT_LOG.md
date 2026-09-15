@@ -64,5 +64,32 @@
   7. Published comprehensive remediation report: `reports/00A_CLEANROOM_BOUNDARY_REMEDIATION.md`.
 - **Remediation Status**: RESOLVED & VERIFIED. Ready to proceed with Phase 1A.
 
+### [2026-09-15 07:44] Phase 1A: Android Helper Direct Decompilation Completed
+- **Status**: COMPLETE.
+- **Input Analyzed**: `cloudphone-v0.3.6 (1)\android\libsys_core.so` (Preserved 100% read-only).
+- **Execution Engines**: JADX 1.5.6, Apktool 3.0.3, Baksmali 2.5.2.
+- **Raw Outputs Stored Separately**:
+  - `raw_extraction/android/jadx/`
+  - `raw_extraction/android/apktool/`
+  - `raw_extraction/android/smali/`
+- **Quantitative Metrics**:
+  - Total Classes: 154 classes
+  - Total Methods: 1,061 methods
+  - Fully Decompiled Methods: 1,061 (100.00%)
+  - Failed Methods: 0 (0.00%)
+  - Synthetic / Lambda Methods: 121
+  - Reflection Invocations: 78
+  - Estimated Recovery Fidelity: 100.00%
+- **Artifacts Generated**:
+  - `evidence/android/CLASS_MAP.json`
+  - `evidence/android/METHOD_MAP.json`
+  - `evidence/android/FAILED_DECOMPILE_METHODS.md`
+  - `reports/01_ANDROID_DECOMPILE.md`
+- **Integrity Check**:
+  - Original Chinese strings preserved verbatim.
+  - No reconstructed production source written yet.
+  - Zero exposure to forbidden external sources.
+
+
 
 
