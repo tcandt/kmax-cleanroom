@@ -6,7 +6,7 @@
 
 | Test ID | Test Name | Result Class | Status | Forensic Details |
 |---|---|---|---|---|
-| `TC-DIFF-01` | First-Run Directory Structure | `EXACT_MATCH` | **PASS** | Items: {'snapshots', 'device_tags.json', 'downloads', 'users.json'} (shares.json correctly absent in both) |
+| `TC-DIFF-01` | First-Run Directory Structure | `EXACT_MATCH` | **PASS** | Items: {'device_tags.json', 'users.json', 'snapshots', 'downloads'} (shares.json correctly absent in both) |
 | `TC-DIFF-02` | users.json Admin Schema & Defaults | `EXACT_MATCH` | **PASS** | Keys (11): ['assigned_devices', 'expires_at', 'forbid_audio', 'forbid_bitrate', 'forbid_fps', 'forbid_resolution', 'note', 'password', 'role', 'salt', 'username'] |
 | `TC-DIFF-03` | Admin Password Hash Algorithm | `EXACT_MATCH` | **PASS** | SHA256(pwd+salt) matched for both (salt lengths: 32/32) |
 | `TC-DIFF-04` | device_tags.json Schema & Defaults | `EXACT_MATCH` | **PASS** | Content match: {'tags': [], 'deviceTags': {}} |

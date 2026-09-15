@@ -8,21 +8,22 @@
 
 ### Verified Summary Counts (Arithmetic Invariant Checked)
 - **Total Functions Evaluated**: 7571
-- **CONFIRMED_ROLE**: 1968
+- **CONFIRMED_ROLE**: 1970
 - **INFERRED_ROLE**: 37
-- **UNKNOWN**: 5566
-- **Sum Verification**: `1968 + 37 + 5566 == 7571` (PASS)
+- **UNKNOWN**: 5564
+- **Sum Verification**: `1970 + 37 + 5564 == 7571` (PASS)
 
 ### Package Provenance Distribution
 - **GO_RUNTIME**: 1490
-- **PROJECT**: 299
+- **PROJECT**: 300
 - **STDLIB**: 432
-- **UNKNOWN_PACKAGE**: 5350
+- **UNKNOWN_PACKAGE**: 5349
 
 ### Confirmed Application & Project Roles (>= 2 Independent Evidence Classes)
 
 | VA | Symbol Name | Provenance | Semantic Role | Conf | Evidence Classes |
 |---|---|---|---|---|---|
+| `0x6e0340` | `Y0caeZ_zze.MB_aa9i.ServeHTTP` | `PROJECT` | `STATIC_FILE_SERVER` | 0.98 | B: Route registration pointer from main.main closure table for '/downloads/'; E: Clean dynamic oracle confirmed route '/downloads/' is responsive |
 | `0x736ae0` | `main.aOfaLG` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.95 | A: References 'users.json' persistence; C: References user admin credentials |
 | `0x737880` | `main.w3H7BXxDC` | `PROJECT` | `DEVICE_TAGGING_AND_ORGANIZATION` | 0.95 | A: References 'device_tags.json' persistence; C: References deviceTags schema key |
 | `0x73be00` | `main.kWD78W` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.95 | A: References 'shares.json' persistence; C: References sharing protocol parameters |
@@ -41,6 +42,7 @@
 | `0x7464e0` | `main.daDbGP` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/update_note'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/update_note' is responsive |
 | `0x746e80` | `main.rmHttgOpxTKh` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/reset_password'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/reset_password' is responsive |
 | `0x747880` | `main.eIddSiN_g` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/kick'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/kick' is responsive |
+| `0x748c20` | `main.(*OIR9dZw9ZyV).ServeHTTP` | `PROJECT` | `STATIC_WEB_ASSET_SERVER` | 0.98 | B: Route registration pointer from main.main closure table for '/'; E: Clean dynamic oracle confirmed route '/' is responsive |
 | `0x74b6c0` | `main.jcraNgV8Jg` | `PROJECT` | `LICENSE_AND_ENTITLEMENT_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/activate'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/activate' is responsive |
 | `0x74bf60` | `main.yyDyfaokeO` | `PROJECT` | `LICENSE_AND_ENTITLEMENT_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/debug/license'; E: Clean dynamic oracle confirmed route '/debug/license' is responsive |
 | `0x74c220` | `main.xdGI1n` | `PROJECT` | `LICENSE_AND_ENTITLEMENT_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/license_status'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/license_status' is responsive |
@@ -70,4 +72,4 @@
 | `0x76d4c0` | `main.main.func3` | `PROJECT` | `SHORTCUT_SETTINGS_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/shortcuts'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/shortcuts' is responsive |
 | `0x76da00` | `main.main.func5` | `PROJECT` | `SNAPSHOT_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/snapshots/'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/snapshots/' is responsive |
 
-*Total Confirmed Project Roles: 46. Complete mapping in ROLE_MAPPING.json*
+*Total Confirmed Project Roles: 48. Complete mapping in ROLE_MAPPING.json*

@@ -245,3 +245,14 @@ User audit identified two forensic integrity blockers preventing Phase 2 exit:
   - Report written: `reports/06_PHASE2C1_PERSISTENCE.md`.
   - Gate check: `tools/verify_phase2.py` passes all 12 checks.
 - **Phase 2C.1 Exit Gate**: PASSED. Execution stopped. Phase 2C.2 on hold pending user review.
+
+### [2026-09-15 14:15] Phase 2C.1 Refinement: Forward Route Dataflow, Varint Tag Parsing & Markdown Purity
+- **Status**: COMPLETE & VERIFIED.
+- **Remediations**:
+  1. **Forward Register Dataflow for Route Discovery**: Corrected backward register alias tracking in `extract_route_handlers.py` with forward basic-block dataflow simulation. Fully resolved `Handle /downloads/` (`Y0caeZ_zze.MB_aa9i.ServeHTTP`) and `Handle /` (`main.(*OIR9dZw9ZyV).ServeHTTP`), achieving 43/43 route patterns and 43/43 handler functions resolved (100% resolution, 0 unresolved).
+  2. **Varint Tag Length Parsing**: Replaced big-endian 16-bit word assumption in `extract_type_field_evidence.py` with Go's native ULEB128/varint reader for struct field names and tags. Eliminated `.rodata` over-reads and null bytes.
+  3. **Zero Null Byte Purity**: Verified that all `.md` files (`ROUTE_HANDLER_MAP.md`, `TYPE_FIELD_EVIDENCE.md`) and `.json` artifacts contain zero `\x00` null bytes and are recognized as clean text by git.
+  4. **Role Mapping Consistency**: `regenerate_role_mappings.py` synchronized with route handler evidence (`CONFIRMED_ROLE` updated from 1,968 to 1,970; total invariant `7571 == 1970 + 37 + 5564` PASS).
+  5. **Reproducibility & Verification**: `tools/reproduce_phase2.py` (8/8 canonical hashes match, `STATIC_FORENSIC_REPRODUCIBLE`) and `tools/verify_phase2.py` (12/12 checks PASS). All 6 Go storage unit tests and 8/8 differential persistence tests pass.
+- **Gate**: Ready for user review. Phase 2C.2 remains strictly on hold.
+

@@ -143573,12 +143573,13 @@
     "file_offset": "0x2e0340",
     "size_bytes": 96,
     "is_garbled": true,
-    "package_provenance": "UNKNOWN_PACKAGE",
-    "semantic_role": "UNKNOWN",
-    "classification": "UNKNOWN",
-    "confidence_score": 0.2,
+    "package_provenance": "PROJECT",
+    "semantic_role": "STATIC_FILE_SERVER",
+    "classification": "CONFIRMED_ROLE",
+    "confidence_score": 0.98,
     "evidence_classes": [
-      "No unambiguous multi-class evidence; reserved for Phase 2C decompilation"
+      "B: Route registration pointer from main.main closure table for '/downloads/'",
+      "E: Clean dynamic oracle confirmed route '/downloads/' is responsive"
     ],
     "instruction_xrefs": [],
     "callees": [
@@ -161586,11 +161587,12 @@
     "size_bytes": 3072,
     "is_garbled": true,
     "package_provenance": "PROJECT",
-    "semantic_role": "UNKNOWN",
-    "classification": "UNKNOWN",
-    "confidence_score": 0.2,
+    "semantic_role": "STATIC_WEB_ASSET_SERVER",
+    "classification": "CONFIRMED_ROLE",
+    "confidence_score": 0.98,
     "evidence_classes": [
-      "No unambiguous multi-class evidence; reserved for Phase 2C decompilation"
+      "B: Route registration pointer from main.main closure table for '/'",
+      "E: Clean dynamic oracle confirmed route '/' is responsive"
     ],
     "instruction_xrefs": [
       "/index.html",

@@ -11,7 +11,7 @@
     "handle_func_count": 41,
     "handle_count": 2,
     "resolved_patterns": 43,
-    "resolved_handlers": 41,
+    "resolved_handlers": 43,
     "unresolved_count": 0
   },
   "routes": [
@@ -659,17 +659,17 @@
       "call_va": "0x765d6b",
       "registration_type": "Handle",
       "target_symbol": "Handle",
-      "pattern": "(\u0000\u0000\u0000\u0000\u0000\u0000\u0000(\u0000\u0000",
-      "pattern_va": "0x7e0220",
+      "pattern": "/downloads/",
+      "pattern_va": "0x8234ed",
       "pattern_length": 11,
-      "closure_va": "0x8234ed",
-      "handler_va": "0x8234ed",
-      "handler_symbol": "http.Handler_interface",
-      "semantic_role": "UNKNOWN_ROUTE_ROLE",
-      "role_description": "Undocumented route",
+      "closure_va": "0x8bdca0",
+      "handler_va": "0x6e0340",
+      "handler_symbol": "Y0caeZ_zze.MB_aa9i.ServeHTTP",
+      "semantic_role": "STATIC_FILE_SERVER",
+      "role_description": "File server exposing the downloads directory",
       "pattern_resolved": true,
-      "handler_resolved": false,
-      "confidence": "MEDIUM"
+      "handler_resolved": true,
+      "confidence": "HIGH"
     },
     {
       "call_va": "0x765d83",
@@ -695,13 +695,13 @@
       "pattern_va": "0x81bb9f",
       "pattern_length": 1,
       "closure_va": "0x8bdcc0",
-      "handler_va": "0x8bdcc0",
-      "handler_symbol": "http.Handler_interface",
+      "handler_va": "0x748c20",
+      "handler_symbol": "main.(*OIR9dZw9ZyV).ServeHTTP",
       "semantic_role": "STATIC_WEB_ASSET_SERVER",
       "role_description": "Serves root SPA web interface assets from embedded or disk storage",
       "pattern_resolved": true,
-      "handler_resolved": false,
-      "confidence": "MEDIUM"
+      "handler_resolved": true,
+      "confidence": "HIGH"
     }
   ]
 }

@@ -147,33 +147,31 @@ def extract_routes():
                 else:
                     handle_count += 1
 
-                # Trace register dataflow backwards across preceding instructions
+                # Forward simulate register dataflow in basic block before call
+                start_idx = max(0, i - 25)
                 regs = {}
-                # Look back up to 25 instructions before call
-                for prev in reversed(insns[max(0, i - 25) : i]):
+                for prev in insns[start_idx : i]:
                     if prev.mnemonic == "lea":
                         if len(prev.operands) >= 2:
                             op0, op1 = prev.operands[0], prev.operands[1]
-                            r_name = prev.reg_name(op0.reg)
-                            r_name = reg_map_64.get(r_name, r_name)
-                            if r_name not in regs and op1.type == CS_OP_MEM and op1.mem.base != 0:
-                                base_name = prev.reg_name(op1.mem.base)
-                                if base_name == "rip":
-                                    target_addr = prev.address + prev.size + op1.mem.disp
-                                    regs[r_name] = ("lea_rip", target_addr)
+                            if op0.type == CS_OP_REG:
+                                r_dst = reg_map_64.get(prev.reg_name(op0.reg), prev.reg_name(op0.reg))
+                                if op1.type == CS_OP_MEM and op1.mem.base != 0:
+                                    base_name = prev.reg_name(op1.mem.base)
+                                    if base_name == "rip":
+                                        target_addr = prev.address + prev.size + op1.mem.disp
+                                        regs[r_dst] = ("addr", target_addr)
                     elif prev.mnemonic == "mov":
                         if len(prev.operands) >= 2:
                             op0, op1 = prev.operands[0], prev.operands[1]
-                            r_name = prev.reg_name(op0.reg)
-                            r_name = reg_map_64.get(r_name, r_name)
-                            if r_name not in regs:
+                            if op0.type == CS_OP_REG:
+                                r_dst = reg_map_64.get(prev.reg_name(op0.reg), prev.reg_name(op0.reg))
                                 if op1.type == CS_OP_IMM:
-                                    regs[r_name] = ("imm", op1.imm)
+                                    regs[r_dst] = ("imm", op1.imm)
                                 elif op1.type == CS_OP_REG:
-                                    src_r = prev.reg_name(op1.reg)
-                                    src_r = reg_map_64.get(src_r, src_r)
-                                    if src_r in regs:
-                                        regs[r_name] = regs[src_r]
+                                    r_src = reg_map_64.get(prev.reg_name(op1.reg), prev.reg_name(op1.reg))
+                                    if r_src in regs:
+                                        regs[r_dst] = regs[r_src]
 
                 # Resolve pattern string: (RAX = ptr, RBX = len)
                 pattern = ""
@@ -181,51 +179,61 @@ def extract_routes():
                 pattern_len = 0
                 pattern_resolved = False
 
-                if "rax" in regs and regs["rax"][0] == "lea_rip":
+                if "rax" in regs and regs["rax"][0] == "addr":
                     pattern_va = regs["rax"][1]
                     pattern_len = regs.get("rbx", (None, 0))[1]
                     if rodata_base <= pattern_va < rodata_end and 0 < pattern_len < 100:
                         s_off = rodata_sec["offset"] + (pattern_va - rodata_base)
                         try:
-                            pattern = data[s_off : s_off + pattern_len].decode("utf-8")
-                            pattern_resolved = True
+                            pattern = data[s_off : s_off + pattern_len].decode("utf-8").split("\x00")[0]
+                            pattern_resolved = bool(pattern)
                         except UnicodeDecodeError:
-                            pattern = data[s_off : s_off + pattern_len].decode("latin1", errors="replace")
-                            pattern_resolved = True
+                            pattern = data[s_off : s_off + pattern_len].decode("latin1", errors="replace").split("\x00")[0]
+                            pattern_resolved = bool(pattern)
 
-                # Resolve handler closure / function: (RCX in Go ABIInternal)
+                # Resolve handler:
+                # - HandleFunc: RCX holds closure pointer (first 8 bytes in rodata = function entry)
+                # - Handle: RCX holds itab pointer (itab.fun[0] at offset 24 = ServeHTTP method entry)
                 handler_va = None
                 handler_sym = None
                 closure_va = None
                 handler_resolved = False
                 handler_confidence = "UNKNOWN"
 
-                if "rcx" in regs and regs["rcx"][0] == "lea_rip":
-                    closure_va = regs["rcx"][1]
-                    if rodata_base <= closure_va < rodata_end:
-                        # Closure struct in rodata, first 8 bytes is the function entry pointer
-                        c_off = rodata_sec["offset"] + (closure_va - rodata_base)
-                        fn_ptr = struct.unpack_from("<Q", data, c_off)[0]
-                        if fn_ptr in funcs_by_va:
-                            handler_va = fn_ptr
-                            handler_sym = funcs_by_va[fn_ptr]["name"]
-                            handler_resolved = True
-                            handler_confidence = "HIGH"
-                        else:
-                            handler_va = closure_va
-                            handler_sym = "closure_rodata_nonfunc"
-                            handler_confidence = "MEDIUM"
-                    elif closure_va in funcs_by_va:
-                        handler_va = closure_va
-                        handler_sym = funcs_by_va[closure_va]["name"]
+                if "rcx" in regs and regs["rcx"][0] == "addr":
+                    c_va = regs["rcx"][1]
+                    closure_va = c_va
+                    if rodata_base <= c_va < rodata_end:
+                        c_off = rodata_sec["offset"] + (c_va - rodata_base)
+                        if call_type == "HandleFunc":
+                            fn_ptr = struct.unpack_from("<Q", data, c_off)[0]
+                            if fn_ptr in funcs_by_va:
+                                handler_va = fn_ptr
+                                handler_sym = funcs_by_va[fn_ptr]["name"]
+                                handler_resolved = True
+                                handler_confidence = "HIGH"
+                            else:
+                                handler_va = fn_ptr
+                                handler_sym = f"nonfunc_{hex(fn_ptr)}"
+                                handler_confidence = "MEDIUM"
+                        elif call_type == "Handle":
+                            # itab struct in Go: (inter, _type, hash, pad, fun[0])
+                            # fun[0] is at offset 24
+                            fun0 = struct.unpack_from("<QQIIQ", data, c_off)[4]
+                            if fun0 in funcs_by_va:
+                                handler_va = fun0
+                                handler_sym = funcs_by_va[fun0]["name"]
+                                handler_resolved = True
+                                handler_confidence = "HIGH"
+                            else:
+                                handler_va = fun0
+                                handler_sym = f"itab_fun0_{hex(fun0)}"
+                                handler_confidence = "MEDIUM"
+                    elif c_va in funcs_by_va:
+                        handler_va = c_va
+                        handler_sym = funcs_by_va[c_va]["name"]
                         handler_resolved = True
                         handler_confidence = "HIGH"
-
-                # If Handle call (e.g. FileServer), handler is an interface (rcx: type, rdi: data)
-                if call_type == "Handle":
-                    if not handler_resolved:
-                        handler_sym = "http.Handler_interface"
-                        handler_confidence = "MEDIUM"
 
                 role_info = ROUTE_ROLE_MAP.get(pattern, ("UNKNOWN_ROUTE_ROLE", "Undocumented route"))
 

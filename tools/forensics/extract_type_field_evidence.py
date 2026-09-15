@@ -43,21 +43,39 @@ def extract_type_field_evidence():
         off = rodata["offset"] + (va - rodata["addr"])
         raw = data[off : off + 200]
         flags = raw[0]
-        has_tag = bool(flags & 2)
-        l = raw[1]
-        name = raw[2 : 2 + l].decode("latin1", errors="replace")
+        pos = 1
+        name_len = 0
+        shift = 0
+        while True:
+            b = raw[pos]
+            pos += 1
+            name_len |= (b & 0x7f) << shift
+            if not (b & 0x80):
+                break
+            shift += 7
+        name = raw[pos : pos + name_len].decode("latin1", errors="replace")
+        pos += name_len
         tag = ""
-        if has_tag:
-            tag_off = 2 + l
-            tag_l = (raw[tag_off] << 8) | raw[tag_off + 1]
-            tag_bytes = raw[tag_off + 2 : tag_off + 2 + tag_l]
-            tag = tag_bytes.decode("latin1", errors="replace")
-            # Extract json:"..." tag cleanly
-            if 'json:"' in tag:
-                j_start = tag.find('json:"')
-                j_end = tag.find('"', j_start + 6)
+        if flags & 2:
+            tag_len = 0
+            shift = 0
+            while True:
+                b = raw[pos]
+                pos += 1
+                tag_len |= (b & 0x7f) << shift
+                if not (b & 0x80):
+                    break
+                shift += 7
+            tag_raw = raw[pos : pos + tag_len].decode("latin1", errors="replace")
+            if 'json:"' in tag_raw:
+                j_start = tag_raw.find('json:"')
+                j_end = tag_raw.find('"', j_start + 6)
                 if j_end != -1:
-                    tag = tag[j_start : j_end + 1]
+                    tag = tag_raw[j_start : j_end + 1]
+                else:
+                    tag = tag_raw
+            else:
+                tag = tag_raw
         return name, tag
 
     # Struct targets to extract
