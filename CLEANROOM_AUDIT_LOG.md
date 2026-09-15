@@ -90,6 +90,40 @@
   - No reconstructed production source written yet.
   - Zero exposure to forbidden external sources.
 
+### [2026-09-15 07:57] Phase 1B: Go Binaries Forensic Extraction Completed
+- **Status**: COMPLETE.
+- **Targets Analyzed**:
+  - `cloudphone-v0.3.6 (1)\bin\linux_amd64\webrtc-signaling` (Primary)
+  - `cloudphone-v0.3.6 (1)\bin\windows_amd64\webrtc-signaling.exe` (Corroborating)
+  - `cloudphone-v0.3.6 (1)\android\cloudphone-agent` (Primary ARM64)
+  - `cloudphone-agent-magisk-v0.3.6 (1)\binaries\cloudphone-agent-armeabi-v7a` (Corroborating ARMv7)
+- **Rules Enforced**:
+  - Original binaries strictly READ-ONLY.
+  - Zero source reconstructed.
+  - Zero access to forbidden or upstream repositories.
+  - All garbled symbols kept exactly as emitted by `garble`; no fabricated clean names in forensic maps.
+- **Quantitative Metrics - Signaling**:
+  - Total Functions: 7,571 (100% pclntab coverage)
+  - Readable Runtime/Stdlib Functions: 4,218
+  - Garbled Application Functions: 3,353
+  - Recovered HTTP / WebSocket Endpoints: 46
+  - Recovered JSON Schema Keys: 81
+  - Recovered Environment Variables: 14
+- **Quantitative Metrics - Agent**:
+  - Total Functions: 15,398 (100% pclntab coverage)
+  - Readable Runtime/Pion Functions: 8,942
+  - Garbled Application Functions: 6,456
+  - Recovered JSON Keys: 169
+  - Recovered Environment Variables & Flags: 18
+  - IPC Mechanism Decoded: UDS sockets (`[Stream] Dial video UDS`), `/data/local/tmp/libsys_core.so`, UID 2000 shell drop.
+- **Artifacts Generated**:
+  - `evidence/go_signaling/` (FUNCTION_MAP.json, FUNCTION_MAP.md, STRINGS.json, HTTP_ROUTES.md, JSON_FIELDS.md, ENV_VARS.md, CALLGRAPH.json)
+  - `evidence/go_agent/` (FUNCTION_MAP.json, FUNCTION_MAP.md, STRINGS.json, IPC_PROTOCOL.md, DATACHANNEL_MESSAGES.md, ENV_VARS.md, CALLGRAPH.json)
+  - `reports/02_GO_SIGNALING_FORENSICS.md`
+  - `reports/03_GO_AGENT_FORENSICS.md`
+- **Next Step**: Awaiting user approval to proceed to Phase 2 (Protocol Mapping & Clean Source Reconstruction).
+
+
 
 
 

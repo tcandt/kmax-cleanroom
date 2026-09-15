@@ -27,8 +27,8 @@ This project operates under strict clean-room isolation rules documented in [RUL
 | **Phase 0** | Forensic Inventory & Cryptographic Baseline | **DONE** | [00_INVENTORY.md](reports/00_INVENTORY.md), [ARTIFACT_MANIFEST.json](evidence/ARTIFACT_MANIFEST.json), [Hashes](evidence/hashes/) |
 | **Incident 00A** | Clean-Room Boundary Remediation | **DONE** | [00A_CLEANROOM_BOUNDARY_REMEDIATION.md](reports/00A_CLEANROOM_BOUNDARY_REMEDIATION.md) (Quarantine upstream source) |
 | **Phase 1A** | Android Helper Direct Decompilation | **DONE** | [01_ANDROID_DECOMPILE.md](reports/01_ANDROID_DECOMPILE.md), [CLASS_MAP.json](evidence/android/CLASS_MAP.json), [METHOD_MAP.json](evidence/android/METHOD_MAP.json) |
-| **Phase 1B / 2** | Go Signaling Server & Agent Reverse Engineering | *Pending* | Function callgraphs, HTTP route mapping |
-| **Phase 3** | Web Bundle Verification & Frontend Parity | *Pending* | Vite build comparison against release bundle |
+| **Phase 1B** | Go Signaling Server & Agent Forensics | **DONE** | [02_GO_SIGNALING_FORENSICS.md](reports/02_GO_SIGNALING_FORENSICS.md), [03_GO_AGENT_FORENSICS.md](reports/03_GO_AGENT_FORENSICS.md), [HTTP_ROUTES.md](evidence/go_signaling/HTTP_ROUTES.md) |
+| **Phase 2 / 5** | Protocol Contract & Architecture Reconstruction | *Ready* | REST, WebSocket, DataChannel specs, Function mapping |
 | **Phase 4** | Native Components & JNI Inspection | *Pending* | IPC & audio capture pipeline analysis |
 | **Phase 5** | Complete Protocol & Contract Reconstruction | *Pending* | REST, WebSocket, & DataChannel protocol specs |
 | **Phase 6** | Clean Source Code Reconstruction | *Pending* | Buildable Go, Java, and Vue source code |
