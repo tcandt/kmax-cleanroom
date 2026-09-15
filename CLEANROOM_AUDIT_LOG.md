@@ -36,3 +36,14 @@
   4. Packaging archives (`agent-deploy.pkg`, `cloudphone-agent-magisk.pkg`) confirmed to be standard ZIP format containing identical binaries.
 - **Next Step**: Awaiting user approval to proceed with Phase 1 (Android APK decompilation via JADX/apktool/smali & Go pclntab/symbol extraction).
 
+### [2026-09-15 07:37] Git Remote Synchronization Established
+- **Remote Origin**: `https://github.com/tcandt/kmax-cleanroom.git` (Branch: `main`)
+- **Action**:
+  - Initialized Git repository at root `D:\KMAX-CLEANROOM`.
+  - Configured `.gitignore` for transient/temporary build files.
+  - Linked `ScrcpyOverWebRTC` via `.gitmodules` as submodule to official upstream `https://github.com/hqw700/ScrcpyOverWebRTC.git`.
+  - Staged all markdown documentation (`README.md`, `RULES.md`, `CLEANROOM_AUDIT_LOG.md`), reports (`reports/00_INVENTORY.md`), manifests (`evidence/`), and directory `.gitkeep` markers.
+  - Successfully pushed initial commit `32f250c` to `origin/main`.
+- **Policy**: Continuous synchronization — all subsequent documentation and technical changes will be committed and pushed immediately.
+
+
