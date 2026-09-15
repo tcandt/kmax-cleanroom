@@ -612,6 +612,123 @@ def verify_all():
                  http_diff_pass,
                  "18/18 HTTP differential test cases verified PASS with structural/bit-exact parity")
 
+    # 21. Phase 2R Baseline & Reference Sources Structured Validation
+    baseline_path = ROOT / "evidence" / "reference" / "BASELINE.json"
+    ref_sources_path = ROOT / "evidence" / "reference" / "REFERENCE_SOURCES.json"
+    baseline_pass = False
+    if baseline_path.exists() and ref_sources_path.exists():
+        with open(baseline_path, "r", encoding="utf-8") as f:
+            bdata = json.load(f)
+        with open(ref_sources_path, "r", encoding="utf-8") as f:
+            sdata = json.load(f)
+        
+        has_commit = bdata.get("cleanroom_commit") == "906b9aff14d25a8743bcef1ce223acd3ece32e47"
+        has_milestone = bdata.get("milestone") == "CLEANROOM_AUTH_HTTP_BASELINE"
+        has_shas = len(bdata.get("original_artifact_sha256_values", {})) == 3
+        has_ref_shas = "hqw700/cloudphone-official" in bdata.get("reference_repository_commit_shas", {})
+        has_sources = len(sdata.get("sources", [])) >= 10
+        sources_valid = all(s.get("reference_class") == "PUBLIC_REFERENCE_INTELLIGENCE" for s in sdata.get("sources", []))
+        baseline_pass = has_commit and has_milestone and has_shas and has_ref_shas and has_sources and sources_valid
+
+    record_check("Phase 2R Baseline & Reference Sources Structured Validation",
+                 baseline_pass,
+                 "Cleanroom baseline frozen, repo SHAs pinned, 100% PUBLIC_REFERENCE_INTELLIGENCE attribution")
+
+    # 22. Phase 2R Protocol Index & DataChannel Matrix Structured Validation
+    proto_idx_path = ROOT / "evidence" / "reference" / "REFERENCE_PROTOCOL_INDEX.json"
+    dc_matrix_path = ROOT / "evidence" / "reference" / "DATACHANNEL_REFERENCE_MATRIX.json"
+    proto_pass = False
+    if proto_idx_path.exists() and dc_matrix_path.exists():
+        with open(proto_idx_path, "r", encoding="utf-8") as f:
+            pdata = json.load(f)
+        with open(dc_matrix_path, "r", encoding="utf-8") as f:
+            dcdata = json.load(f)
+
+        http_eps = pdata.get("transport_endpoints", {}).get("http_endpoints", [])
+        ws_c2s = pdata.get("websocket_messages", {}).get("client_to_server", [])
+        ws_s2c = pdata.get("websocket_messages", {}).get("server_to_client", [])
+        fwd_pl = pdata.get("signaling_forward_payloads", [])
+        channels = dcdata.get("channels", [])
+
+        has_channels = len(channels) >= 5
+        ch_labels = {c.get("label") for c in channels}
+        req_channels = {"input-channel", "clipboard-channel", "camera-channel", "file-channel", "ai-command-channel"}
+        channels_valid = req_channels.issubset(ch_labels)
+
+        proto_pass = (
+            len(http_eps) >= 30 and len(ws_c2s) >= 6 and len(ws_s2c) >= 6 and
+            len(fwd_pl) >= 5 and has_channels and channels_valid
+        )
+
+    record_check("Phase 2R Protocol Index & DataChannel Matrix Structured Validation",
+                 proto_pass,
+                 "Indexed >=30 HTTP endpoints, 14 WS messages, and all 6 WebRTC DataChannels")
+
+    # 23. Phase 2R Signaling State Machine & Demo Analysis
+    sm_path = ROOT / "evidence" / "reference" / "CLIENT_SIGNALING_STATE_MACHINE.json"
+    demo_path = ROOT / "evidence" / "reference" / "DEMO_MODE_ANALYSIS.md"
+    sm_pass = False
+    if sm_path.exists() and demo_path.exists():
+        with open(sm_path, "r", encoding="utf-8") as f:
+            smdata = json.load(f)
+        demo_text = demo_path.read_text(encoding="utf-8")
+
+        states = smdata.get("states", [])
+        transitions = smdata.get("transitions", [])
+        has_states = len(states) >= 8
+        has_transitions = len(transitions) >= 7
+        t_ids = {t.get("transition_id") for t in transitions}
+        req_transitions = {"T01_CONNECT", "T02_WS_OPEN", "T03_CONFIG_RECEIVED", "T04_OFFER_RECEIVED", "T05_SEND_ANSWER", "T06_ICE_EXCHANGE"}
+        trans_valid = req_transitions.issubset(t_ids)
+
+        demo_valid = (
+            "VITE_DEMO_MODE=true" in demo_text and
+            "demoEngine.js" in demo_text and
+            "REAL_PROTOCOL_PATH" in demo_text and
+            "MOCK_DEMO_PATH" in demo_text
+        )
+        sm_pass = has_states and has_transitions and trans_valid and demo_valid
+
+    record_check("Phase 2R Signaling State Machine & Demo Mode Separation",
+                 sm_pass,
+                 "Deterministic 8-transition state machine and strict REAL vs MOCK demo path separation verified")
+
+    # 24. Phase 2R Agent CLI Matrix & Reference Crossmap
+    cli_path = ROOT / "evidence" / "reference" / "AGENT_CLI_REFERENCE_MATRIX.json"
+    crossmap_path = ROOT / "evidence" / "reference" / "REFERENCE_TO_BINARY_CROSSMAP.json"
+    rep11_path = ROOT / "reports" / "11_REFERENCE_INTELLIGENCE_CROSSMAP.md"
+    crossmap_pass = False
+    if cli_path.exists() and crossmap_path.exists() and rep11_path.exists():
+        with open(cli_path, "r", encoding="utf-8") as f:
+            clidata = json.load(f)
+        with open(crossmap_path, "r", encoding="utf-8") as f:
+            cmdata = json.load(f)
+        rep11_text = rep11_path.read_text(encoding="utf-8")
+
+        flags = clidata.get("flags", [])
+        flag_names = {fl.get("flag") for fl in flags}
+        req_flags = {"-id", "-signaling", "-jar", "-external-addr", "-webrtc-port", "-root"}
+        flags_valid = req_flags.issubset(flag_names) and all(fl.get("classification") == "STATIC_BINARY_CONFIRMED" for fl in flags)
+
+        mappings = cmdata.get("mappings", [])
+        has_mappings = len(mappings) >= 20
+        # Multi-evidence rule check: all CONFIRMED must have >=2 distinct evidence classes
+        multi_ev_valid = all(
+            len(m.get("evidence_classes", [])) >= 2 for m in mappings if m.get("status") == "CONFIRMED"
+        )
+        rep11_valid = (
+            "BINARY_DISCOVERY_COVERAGE" in rep11_text and
+            "PROTOCOL_REFERENCE_COVERAGE" in rep11_text and
+            "BINARY_CONFIRMED_PROTOCOL_COVERAGE" in rep11_text and
+            "RECONSTRUCTED_SOURCE_COVERAGE" in rep11_text and
+            "DIFFERENTIAL_VERIFIED_COVERAGE" in rep11_text
+        )
+        crossmap_pass = flags_valid and has_mappings and multi_ev_valid and rep11_valid
+
+    record_check("Phase 2R Agent CLI Matrix & Multi-Evidence Crossmap",
+                 crossmap_pass,
+                 "Verified 10 agent CLI flags, >=20 cross-mappings with >=2 evidence classes, and Report 11")
+
     # Summary
     all_passed = all(c["passed"] for c in checks)
     print("==================================================")

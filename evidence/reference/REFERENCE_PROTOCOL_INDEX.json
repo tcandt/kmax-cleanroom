@@ -1,0 +1,499 @@
+{
+  "metadata": {
+    "title": "Public Frontend Reference Protocol Index",
+    "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
+    "source_repositories": [
+      "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
+      "hqw700/cloudphone-official (commit: ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39)"
+    ],
+    "description": "Comprehensive reference protocol index extracted from public frontend and official documentation. Every entry is a hypothesis/candidate until corroborated by binary evidence."
+  },
+  "transport_endpoints": {
+    "websocket_signaling": [
+      {
+        "path": "/connect_client",
+        "role": "Browser client signaling connection",
+        "query_parameters": {
+          "token": "Session auth token (optional if share_token is used)",
+          "share_token": "Share link authorization token (optional)",
+          "share_pwd": "Share link password (optional, if protected)"
+        },
+        "source_reference": "web-app/src/composables/useWebRTC.js:78-83, web-app/src/stores/devices.js:669",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/register_agent",
+        "role": "Agent registration and upstream command link",
+        "query_parameters": {
+          "id": "Agent / device unique identifier (passed via -id CLI flag)"
+        },
+        "source_reference": "hqw700/cloudphone-official:docs/agent-deploy.md, tcandt/scrcpyoverwebrtc:docs/DEVELOPMENT.md",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      }
+    ],
+    "http_endpoints": [
+      {
+        "path": "/api/login",
+        "method": "POST",
+        "role": "Authentication: credentials login and session token issuance",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/logout",
+        "method": "ANY",
+        "role": "Authentication: session revocation",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/auth-status",
+        "method": "ANY",
+        "role": "Authentication: check whether noAuth mode is active",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/me",
+        "method": "ANY",
+        "role": "Authentication: retrieve authenticated user profile",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/devices",
+        "method": "GET",
+        "role": "Device: list active and registered devices",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/devices/",
+        "method": "GET/POST/DELETE",
+        "role": "Device: manage specific device by ID",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/tags",
+        "method": "GET/POST/PUT/DELETE",
+        "role": "Tags: manage device categories and label associations",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users",
+        "method": "GET",
+        "role": "Admin: list user accounts",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users/create",
+        "method": "POST",
+        "role": "Admin: create new user account",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users/update",
+        "method": "POST",
+        "role": "Admin: update account properties / expiration",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users/delete",
+        "method": "POST",
+        "role": "Admin: remove user account",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users/reset_password",
+        "method": "POST",
+        "role": "Admin: reset user password",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users/rename",
+        "method": "POST",
+        "role": "Admin: rename user account",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users/update_note",
+        "method": "POST",
+        "role": "Admin: update user note field",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/users/kick",
+        "method": "POST",
+        "role": "Admin: kick active user sessions",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/admin/assign",
+        "method": "POST",
+        "role": "Admin: assign device permissions to user",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/share/create",
+        "method": "POST",
+        "role": "Share: create temporary sharing link for device",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/share/list",
+        "method": "GET",
+        "role": "Share: list active share tokens",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/share/revoke",
+        "method": "POST",
+        "role": "Share: revoke share token",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/share/extend",
+        "method": "POST",
+        "role": "Share: extend share token lifetime",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/share/update",
+        "method": "POST",
+        "role": "Share: update share token properties",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/share/info",
+        "method": "GET",
+        "role": "Share: fetch metadata for shared device",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/share/redeem_card",
+        "method": "POST",
+        "role": "Share: redeem card code for device access",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/default_settings",
+        "method": "GET/POST",
+        "role": "Config: global default settings (bitrate, fps, etc.)",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/ice_servers",
+        "method": "GET/POST",
+        "role": "Config: STUN/TURN server list",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/server/addresses",
+        "method": "GET",
+        "role": "Config: query external server IPs",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/shortcuts",
+        "method": "GET/POST",
+        "role": "Config: keyboard shortcut mappings",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/version",
+        "method": "GET",
+        "role": "System: signaling server version",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/license_status",
+        "method": "GET",
+        "role": "System: query license status",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/activate",
+        "method": "POST",
+        "role": "System: apply license key",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/files",
+        "method": "GET/DELETE",
+        "role": "Files: file management listing and deletion",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/tasks",
+        "method": "GET/POST",
+        "role": "Tasks: batch task execution",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/tasks/details",
+        "method": "GET",
+        "role": "Tasks: query task execution status",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/api/user/ai-config",
+        "method": "GET/POST",
+        "role": "User: AI assistant integration settings",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/upload",
+        "method": "POST",
+        "role": "Upload: file/APK upload endpoint",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/downloads/",
+        "method": "GET",
+        "role": "Static: agent executable / APK downloads",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      },
+      {
+        "path": "/snapshots/",
+        "method": "GET",
+        "role": "Static: device screenshot thumbnail serving",
+        "classification": "SOURCE_REFERENCE_CANDIDATE"
+      }
+    ]
+  },
+  "websocket_messages": {
+    "client_to_server": [
+      {
+        "message_type": "connect",
+        "fields": {
+          "message_type": "connect",
+          "device_id": "string"
+        },
+        "description": "Sent by client immediately after WebSocket connection to target device session",
+        "source": "web-app/src/composables/useWebRTC.js:92-95"
+      },
+      {
+        "message_type": "forward",
+        "fields": {
+          "message_type": "forward",
+          "device_id": "string",
+          "payload": "object"
+        },
+        "description": "Wraps signaling payloads (request-offer, answer, ice-candidate) forwarded to Agent",
+        "source": "web-app/src/composables/useWebRTC.js:140"
+      },
+      {
+        "message_type": "command",
+        "fields": {
+          "message_type": "command",
+          "device_id": "string",
+          "request_id": "string",
+          "command": "string"
+        },
+        "description": "Direct shell/command execution request forwarded to agent via signaling server",
+        "source": "web-app/src/composables/useWebRTC.js:271-276"
+      },
+      {
+        "message_type": "inject_data",
+        "fields": {
+          "message_type": "inject_data",
+          "device_id": "string",
+          "channel": "string",
+          "payload": "any",
+          "target_device_ids": "array (optional)"
+        },
+        "description": "Injects touch/input/clipboard data into agent channel via signaling fallback or multicast",
+        "source": "web-app/src/composables/useWebRTC.js:253-262, web-app/src/stores/devices.js:610"
+      },
+      {
+        "message_type": "group_control_event",
+        "fields": {
+          "message_type": "group_control_event",
+          "origin_device_id": "string",
+          "target_device_ids": "array",
+          "event": "object"
+        },
+        "description": "Multicast batch control event replicated across group of target devices",
+        "source": "web-app/src/stores/devices.js:593"
+      },
+      {
+        "message_type": "action",
+        "fields": {
+          "message_type": "start_preview | stop_preview",
+          "device_id": "string",
+          "fps": "number",
+          "max_size": "number",
+          "bitrate": "number",
+          "stay_awake": "boolean"
+        },
+        "description": "Controls H.264 preview stream generation on agent",
+        "source": "web-app/src/stores/devices.js:573"
+      },
+      {
+        "message_type": "quit_agent",
+        "fields": {
+          "message_type": "quit_agent",
+          "device_id": "string"
+        },
+        "description": "Requests signaling server to instruct agent to terminate",
+        "source": "web-app/src/stores/devices.js:787"
+      }
+    ],
+    "server_to_client": [
+      {
+        "message_type": "config",
+        "fields": {
+          "message_type": "config",
+          "ice_servers": "array of {urls, username, credential}"
+        },
+        "description": "Server acknowledges connect request and provides STUN/TURN ICE configuration",
+        "source": "web-app/src/composables/useWebRTC.js:126-131"
+      },
+      {
+        "message_type": "device_info",
+        "fields": {
+          "message_type": "device_info",
+          "device_info": "object: {app_version, displays: [{x_res, y_res, ...}], ...}"
+        },
+        "description": "Provides agent version, screen resolution, and hardware display metadata",
+        "source": "web-app/src/composables/useWebRTC.js:142, 158-169"
+      },
+      {
+        "message_type": "device_msg",
+        "fields": {
+          "message_type": "device_msg",
+          "payload": "object"
+        },
+        "description": "Encapsulates messages routed from Agent to Browser (offer, ice-candidate, command_result, scrcpy_error)",
+        "source": "web-app/src/composables/useWebRTC.js:145-147, 171-249"
+      },
+      {
+        "message_type": "screenshot_response",
+        "fields": {
+          "message_type": "screenshot_response",
+          "data": "base64 JPEG/PNG string"
+        },
+        "description": "Returns raw screenshot captured from device display",
+        "source": "web-app/src/composables/useWebRTC.js:148-150"
+      },
+      {
+        "message_type": "error",
+        "fields": {
+          "message_type": "error",
+          "error": "string"
+        },
+        "description": "Notifies client of server-side or device connection error",
+        "source": "web-app/src/composables/useWebRTC.js:151-154"
+      },
+      {
+        "message_type": "snapshot_update",
+        "fields": {
+          "message_type": "snapshot_update",
+          "device_id": "string",
+          "timestamp": "number"
+        },
+        "description": "Broadcast notification that device thumbnail snapshot has refreshed",
+        "source": "web-app/src/stores/devices.js:682"
+      },
+      {
+        "message_type": "device_list_update",
+        "fields": {
+          "message_type": "device_list_update",
+          "devices": "array"
+        },
+        "description": "Broadcast notification of online/offline status changes across device inventory",
+        "source": "web-app/src/stores/devices.js:690"
+      },
+      {
+        "message_type": "tags_update",
+        "fields": {
+          "message_type": "tags_update",
+          "tags": "array"
+        },
+        "description": "Broadcast notification of modified device tags and categories",
+        "source": "web-app/src/stores/devices.js:692"
+      },
+      {
+        "message_type": "task_status_updated",
+        "fields": {
+          "message_type": "task_status_updated",
+          "task_id": "string",
+          "status": "string",
+          "progress": "number"
+        },
+        "description": "Broadcast notification of progress updates on background asynchronous batch tasks",
+        "source": "web-app/src/stores/devices.js:697"
+      },
+      {
+        "message_type": "license_update",
+        "fields": {
+          "message_type": "license_update",
+          "license": "object"
+        },
+        "description": "Broadcast notification of license entitlement updates",
+        "source": "web-app/src/stores/devices.js:706"
+      }
+    ]
+  },
+  "signaling_forward_payloads": [
+    {
+      "payload_type": "request-offer",
+      "direction": "Browser -> Signaling -> Agent",
+      "fields": {
+        "type": "request-offer",
+        "ip_preference": "auto | ipv4 | ipv6",
+        "scrcpy_options": "object (optional)"
+      },
+      "description": "Client triggers Agent to generate and initiate an SDP offer with desired codec/options",
+      "source": "web-app/src/composables/useWebRTC.js:133-139"
+    },
+    {
+      "payload_type": "offer",
+      "direction": "Agent -> Signaling -> Browser",
+      "fields": {
+        "type": "offer",
+        "sdp": "string (SDP offer text)",
+        "camera_support": "boolean"
+      },
+      "description": "Agent presents WebRTC offer containing H.264 video track and media parameters",
+      "source": "web-app/src/composables/useWebRTC.js:175-186"
+    },
+    {
+      "payload_type": "answer",
+      "direction": "Browser -> Signaling -> Agent",
+      "fields": {
+        "type": "answer",
+        "sdp": "string (SDP answer text munged for bitrate and parameters)"
+      },
+      "description": "Browser accepts offer and submits SDP answer to negotiate P2P media session",
+      "source": "web-app/src/composables/useWebRTC.js:187-206"
+    },
+    {
+      "payload_type": "ice-candidate",
+      "direction": "Bi-directional (Browser <-> Signaling <-> Agent)",
+      "fields": {
+        "type": "ice-candidate",
+        "candidate": "object: {candidate, sdpMid, sdpMLineIndex}"
+      },
+      "description": "Trickle ICE candidate exchange to discover viable STUN/TURN host/srflx/relay network pairs",
+      "source": "web-app/src/composables/useWebRTC.js:215-227"
+    },
+    {
+      "payload_type": "command_result",
+      "direction": "Agent -> Signaling -> Browser",
+      "fields": {
+        "type": "command_result",
+        "request_id": "string",
+        "output": "string",
+        "exit_code": "number"
+      },
+      "description": "Returns execution output and exit status of shell command dispatched to agent",
+      "source": "web-app/src/composables/useWebRTC.js:229-231"
+    },
+    {
+      "payload_type": "scrcpy_error",
+      "direction": "Agent -> Signaling -> Browser",
+      "fields": {
+        "type": "scrcpy_error",
+        "message": "string"
+      },
+      "description": "Reports failure in starting scrcpy-server or camera HAL initialization",
+      "source": "web-app/src/composables/useWebRTC.js:233-247"
+    }
+  ]
+}

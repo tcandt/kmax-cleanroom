@@ -1,0 +1,123 @@
+{
+  "metadata": {
+    "title": "WebRTC DataChannel Reference Protocol Matrix",
+    "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
+    "source_repository": "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
+    "description": "Matrix of all DataChannels negotiated between Browser WebUI and cloudphone-agent, extracted from useWebRTC.js"
+  },
+  "channels": [
+    {
+      "label": "input-channel",
+      "creator_side": "Agent",
+      "negotiation_method": "pc.ondatachannel (agent initiates)",
+      "ordered": true,
+      "binary_type": "arraybuffer",
+      "message_direction": "Browser -> Agent",
+      "framing": "Binary control packet protocol (event_type: touch, keycode, scroll, text injection)",
+      "message_fields": {
+        "action": "DOWN | MOVE | UP | KEY_DOWN | KEY_UP",
+        "x": "normalized uint16 or float (0..1)",
+        "y": "normalized uint16 or float (0..1)",
+        "keycode": "Android KeyEvent integer",
+        "metastate": "modifier bitflags"
+      },
+      "open_close_behavior": "Created by agent upon P2P connection establishment; closed on WebRTC teardown",
+      "fallback_mechanism": "Signaling WebSocket fallback via message_type: 'inject_data' (channel='input') or group_control_event",
+      "reference_source": "web-app/src/composables/useWebRTC.js:752-760"
+    },
+    {
+      "label": "clipboard-channel",
+      "creator_side": "Agent",
+      "negotiation_method": "pc.ondatachannel (agent initiates)",
+      "ordered": true,
+      "binary_type": "arraybuffer",
+      "message_direction": "Bi-directional (Agent <-> Browser)",
+      "framing": "JSON formatted string encoded as UTF-8 ArrayBuffer",
+      "message_fields": {
+        "type": "string (verbatim 'clipboard')",
+        "text": "string (clipboard text content)",
+        "source": "string ('device' | 'web')",
+        "origin_client_id": "string or null (prevents clipboard synchronization loops)"
+      },
+      "open_close_behavior": "Created by agent; dispatches onmessage to clipboardCallback; closed on teardown",
+      "fallback_mechanism": "Signaling WebSocket fallback via message_type: 'inject_data' (channel='clipboard')",
+      "reference_source": "web-app/src/composables/useWebRTC.js:761-786"
+    },
+    {
+      "label": "camera-channel",
+      "creator_side": "Agent",
+      "negotiation_method": "pc.ondatachannel (agent initiates)",
+      "ordered": true,
+      "binary_type": "arraybuffer",
+      "message_direction": "Bi-directional (Agent sends control commands; Browser sends camera video feed frames)",
+      "framing": "JSON control messages for handshake; binary raw video frames for streaming",
+      "message_fields": {
+        "action": "string ('start' | 'stop')",
+        "resolution": "object: {width, height} (optional)",
+        "fps": "number (optional)"
+      },
+      "open_close_behavior": "Created by agent when device camera HAL injection is available; stops stream on close",
+      "fallback_mechanism": "None (camera virtualization requires high-bandwidth P2P DataChannel)",
+      "reference_source": "web-app/src/composables/useWebRTC.js:787-815"
+    },
+    {
+      "label": "file-channel",
+      "creator_side": "Browser",
+      "negotiation_method": "pc.createDataChannel('file-channel', { ordered: true })",
+      "ordered": true,
+      "binary_type": "arraybuffer",
+      "message_direction": "Bi-directional (Browser sends upload chunks; Agent confirms/sends file data)",
+      "framing": "Binary chunk framing: [header_length (4B)] + [JSON metadata] + [raw binary chunk payload]",
+      "message_fields": {
+        "filename": "string",
+        "filesize": "number",
+        "offset": "number",
+        "chunk_size": "number",
+        "checksum": "string (optional)"
+      },
+      "open_close_behavior": "Pre-created by browser during PeerConnection setup prior to SDP offer processing",
+      "fallback_mechanism": "HTTP REST fallback via multipart/form-data POST /upload",
+      "reference_source": "web-app/src/composables/useWebRTC.js:579"
+    },
+    {
+      "label": "ai-command-channel",
+      "creator_side": "Browser",
+      "negotiation_method": "pc.createDataChannel('ai-command-channel', { ordered: true })",
+      "ordered": true,
+      "binary_type": "arraybuffer",
+      "message_direction": "Bi-directional (Browser sends request; Agent returns response)",
+      "framing": "JSON string encoded as UTF-8 ArrayBuffer",
+      "message_fields": {
+        "request_id": "string (unique random request identifier for async matching)",
+        "command": "string (shell command text or AI action)",
+        "timeout_ms": "number (optional, default 15000ms)",
+        "output": "string (in response)",
+        "exit_code": "number (in response)"
+      },
+      "open_close_behavior": "Created dynamically on-demand by browser when command execution is requested",
+      "fallback_mechanism": "Signaling WebSocket fallback via message_type: 'command' with identical request_id",
+      "reference_source": "web-app/src/composables/useWebRTC.js:294-335"
+    },
+    {
+      "label": "adb-channel",
+      "creator_side": "Browser",
+      "negotiation_method": "pc.createDataChannel('adb-channel', { ordered: true })",
+      "ordered": true,
+      "binary_type": "arraybuffer",
+      "message_direction": "Bi-directional",
+      "framing": "Raw ADB transport protocol packets (CNXN, OPEN, OKAY, CLSE, WRTE)",
+      "message_fields": {
+        "command": "uint32",
+        "arg0": "uint32",
+        "arg1": "uint32",
+        "data_length": "uint32",
+        "data_crc32": "uint32",
+        "magic": "uint32",
+        "payload": "bytes"
+      },
+      "open_close_behavior": "Created by browser when user opens WebADB terminal console in WebUI",
+      "fallback_mechanism": "WebSocket stream tunnel fallback or local USB ADB",
+      "reference_source": "web-app/src/composables/useWebRTC.js:1237"
+    }
+  ]
+}

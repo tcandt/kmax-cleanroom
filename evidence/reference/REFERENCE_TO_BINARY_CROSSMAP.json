@@ -1,0 +1,387 @@
+{
+  "metadata": {
+    "title": "Reference to Binary Multi-Evidence Crossmap",
+    "description": "Cross-verification of public reference intelligence against binary static and dynamic evidence",
+    "multi_evidence_rule": "Every CONFIRMED mapping requires >=2 distinct evidence classes",
+    "total_items": 24,
+    "confirmed_items": 24
+  },
+  "mappings": [
+    {
+      "reference_item": "/connect_client",
+      "category": "TRANSPORT_ROUTE",
+      "reference_source": "web-app/src/composables/useWebRTC.js:78, web-app/src/stores/devices.js:669",
+      "binary_target": "webrtc-signaling (Linux & Windows)",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/connect_client', closure_va: 0x848500)",
+        "Disassembly: Upgrades HTTP to WebSocket, extracts token/share_token query params",
+        "Pclntab Symbol: main.main.func1"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE",
+        "DYNAMIC_BINARY_ORACLE_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/register_agent",
+      "category": "TRANSPORT_ROUTE",
+      "reference_source": "cloudphone-official:docs/agent-deploy.md, docs/DEVELOPMENT.md",
+      "binary_target": "webrtc-signaling (Linux & Windows)",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/register_agent', closure_va: 0x848540)",
+        "Disassembly: Validates agent id, registers into global in-memory agent map",
+        "Pclntab Symbol: main.main.func3"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "message_type: forward",
+      "category": "WEBSOCKET_MESSAGE",
+      "reference_source": "web-app/src/composables/useWebRTC.js:140",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "Binary String: 'forward' present in signaling .rodata",
+        "Disassembly: Dispatcher in main.main.func1 unwraps target_device_id and forwards payload"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "message_type: command",
+      "category": "WEBSOCKET_MESSAGE",
+      "reference_source": "web-app/src/composables/useWebRTC.js:271",
+      "binary_target": "webrtc-signaling & cloudphone-agent",
+      "binary_evidence": [
+        "Binary String: 'command' and 'request_id' present in signaling & agent .rodata",
+        "Disassembly: Signaling routes command packet to agent via registration socket"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "message_type: inject_data",
+      "category": "WEBSOCKET_MESSAGE",
+      "reference_source": "web-app/src/composables/useWebRTC.js:254, web-app/src/stores/devices.js:610",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "Binary String: 'inject_data' present in signaling .rodata",
+        "Disassembly: Broadcasts / unicasts input events to target device agent session"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "payload: request-offer",
+      "category": "SIGNALING_PAYLOAD",
+      "reference_source": "web-app/src/composables/useWebRTC.js:134",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Binary String: 'request-offer' present in cloudphone-agent .rodata",
+        "Disassembly: Triggers Agent Pion WebRTC stack to create PeerConnection and SDP offer"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "payload: offer / answer",
+      "category": "SIGNALING_PAYLOAD",
+      "reference_source": "web-app/src/composables/useWebRTC.js:175, 197",
+      "binary_target": "cloudphone-agent & webrtc-signaling",
+      "binary_evidence": [
+        "Binary String: 'offer', 'answer' present in Pion WebRTC packages in agent",
+        "Pclntab Symbols: github.com/pion/webrtc/v3.(*PeerConnection).CreateOffer / CreateAnswer"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "payload: ice-candidate",
+      "category": "SIGNALING_PAYLOAD",
+      "reference_source": "web-app/src/composables/useWebRTC.js:215",
+      "binary_target": "cloudphone-agent & webrtc-signaling",
+      "binary_evidence": [
+        "Binary String: 'ice-candidate' present in agent .rodata",
+        "Pclntab Symbols: github.com/pion/webrtc/v3.(*PeerConnection).AddICECandidate"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "channel: input-channel",
+      "category": "DATACHANNEL",
+      "reference_source": "web-app/src/composables/useWebRTC.js:752",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'input-channel' located in cloudphone-agent .rodata",
+        "Disassembly: Agent creates DataChannel 'input-channel' via Pion and hooks to UDS control socket @uds_sys_c_"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "channel: clipboard-channel",
+      "category": "DATACHANNEL",
+      "reference_source": "web-app/src/composables/useWebRTC.js:761",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'clipboard-channel' verified in agent binary strings",
+        "Disassembly: Hooks to Android clipboard service via Java reflection / UDS"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "channel: camera-channel",
+      "category": "DATACHANNEL",
+      "reference_source": "web-app/src/composables/useWebRTC.js:787",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'camera-channel' verified in agent binary strings",
+        "Disassembly: Coordinates with -camera-addr and -camera-size for HAL frame injection"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "channel: file-channel",
+      "category": "DATACHANNEL",
+      "reference_source": "web-app/src/composables/useWebRTC.js:579",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'file-channel' verified in agent binary strings",
+        "Disassembly: Listens on DataChannel 'file-channel', writes incoming binary chunks to /sdcard/Download/"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "channel: ai-command-channel",
+      "category": "DATACHANNEL",
+      "reference_source": "web-app/src/composables/useWebRTC.js:304",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'ai-command-channel' verified in agent binary strings",
+        "Disassembly: Listens for JSON command requests and dispatches to /system/bin/sh"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/login",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/stores/auth.js:45",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/login', main.ltOjwqsMl5q8 / main.u4r2NulQUnF)",
+        "Dynamic Oracle: 18/18 differential cases verified in Phase 2C.3 (HTTP-01 to HTTP-05)",
+        "Disassembly: Extracts JSON credentials, hashes with salt, issues 64-char token"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE",
+        "DYNAMIC_BINARY_ORACLE_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/logout",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/stores/auth.js:80",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/logout', main.bjWkHiittd / main.blPINsMc3)",
+        "Dynamic Oracle: 18/18 differential cases verified in Phase 2C.3 (HTTP-06, HTTP-07)",
+        "Disassembly: Revokes token in memory session map, returns status: success"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE",
+        "DYNAMIC_BINARY_ORACLE_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/auth-status",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/stores/auth.js:15",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/auth-status', main.bwvBd1LWVr / main.waSrU4iH)",
+        "Dynamic Oracle: 18/18 differential cases verified in Phase 2C.3 (HTTP-08, HTTP-09)",
+        "Disassembly: Checks global auth bypass flag (-no-auth), returns JSON {noAuth: false}"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE",
+        "DYNAMIC_BINARY_ORACLE_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/me",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/stores/auth.js:65",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/me', main.gJ0OHScnGnWZ / main.k0Ckv2FQUr)",
+        "Dynamic Oracle: 18/18 differential cases verified in Phase 2C.3 (HTTP-10 to HTTP-15)",
+        "Disassembly: Authenticates Bearer / query token, returns 10-field UserProfile JSON"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE",
+        "DYNAMIC_BINARY_ORACLE_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/tags",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/stores/tags.js:25",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/tags', main.main.func2)",
+        "Persistence Parity: Phase 2C.1 verified device_tags.json store & defaults",
+        "Disassembly: CRUD operations on device category tags"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE",
+        "DYNAMIC_BINARY_ORACLE_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/admin/users",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/views/UserAdminPage.vue:150",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/admin/users', closure_va: 0x8483e0)",
+        "Persistence Parity: Phase 2C.1 TC-DIFF-06 verified update_note on users.json",
+        "Disassembly: Enforces admin role check, queries users.json"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE",
+        "DYNAMIC_BINARY_ORACLE_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/share/create",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/views/ShareAdminPage.vue:85",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/share/create', closure_va: 0x8484a0)",
+        "Persistence Parity: Phase 2C.1 TC-DIFF-08 verified shares.json atomic lifecycle",
+        "Disassembly: Issues 18-field ShareToken persisted to shares.json"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "/api/ice_servers",
+      "category": "HTTP_REST_ROUTE",
+      "reference_source": "web-app/src/views/AdvancedPage.vue:120",
+      "binary_target": "webrtc-signaling",
+      "binary_evidence": [
+        "ROUTE_HANDLER_MAP: HandleFunc('/api/ice_servers', closure_va: 0x848420)",
+        "Disassembly: Reads/writes coturn and STUN/TURN server URLs"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "CLI Flag: -external-addr",
+      "category": "AGENT_CLI_FLAG",
+      "reference_source": "cloudphone-official:docs/agent-deploy.md:103",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'external-addr' in cloudphone-agent .rodata",
+        "Disassembly: Configures Pion WebRTC SettingEngine.SetNAT1To1IPs"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "CLI Flag: -webrtc-port",
+      "category": "AGENT_CLI_FLAG",
+      "reference_source": "cloudphone-official:docs/agent-deploy.md:103",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'webrtc-port' in cloudphone-agent .rodata",
+        "Disassembly: Configures Pion SettingEngine.SetEphemeralUDPPortRange"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    },
+    {
+      "reference_item": "CLI Flag: -jar",
+      "category": "AGENT_CLI_FLAG",
+      "reference_source": "cloudphone-official:docs/agent-deploy.md:103",
+      "binary_target": "cloudphone-agent",
+      "binary_evidence": [
+        "Exact Binary String: 'jar' in cloudphone-agent .rodata",
+        "Disassembly: Sets CLASSPATH=/data/local/tmp/libsys_core.so and executes app_process"
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE_INTELLIGENCE",
+        "STATIC_BINARY_EVIDENCE"
+      ],
+      "status": "CONFIRMED"
+    }
+  ]
+}

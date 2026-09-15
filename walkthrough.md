@@ -173,24 +173,51 @@ Audit Summary:
 
 ---
 
-## 4. Phase 2C.3 Exit Gate Checklist
+## 5. Phase 2R: Reference Intelligence Extraction & Cross-Mapping
 
-- [x] Query-token fallback dynamically confirmed via 10-case precedence matrix.
-- [x] Header/query precedence dynamically confirmed (`HEADER_FIRST_WITH_STRICT_EVALUATION`).
-- [x] Method contracts recovered (login requires POST; logout/auth-status/me accept all verbs).
-- [x] Request JSON behavior recovered (standard json.Decoder, tolerated extra fields, exact 400 messages).
-- [x] Response schemas recovered (exact JSON keys, trailing newlines, Content-Type headers).
-- [x] Status codes recovered (200, 400, 401, 403, 405).
-- [x] CORS/OPTIONS behavior recovered (CORS headers, 200 on OPTIONS preflight).
-- [x] HTTP function slices mapped without provenance double-claim.
-- [x] Four reconstructed auth routes compile and pass Go unit tests.
-- [x] HTTP differential suite passes 18/18 tests (8 structural + 10 bit-exact matches).
-- [x] Persistence differential suite passes 8/8 tests.
-- [x] Auth core differential suite passes 12/12 tests.
-- [x] Provenance auditor passes 59/59 functions.
-- [x] Master verifier passes with OVERALL AUDIT VERDICT: PASS.
-- [x] Zero WebSocket or WebRTC code implemented.
-- [x] Zero forbidden sources accessed.
+**Status**: COMPLETE, AUDITED, AND FULLY VERIFIED (Report 11: `reports/11_REFERENCE_INTELLIGENCE_CROSSMAP.md`)
 
-**EXECUTION HALTED AT PHASE 2C.3 AUTH-HTTP EXIT GATE.**  
-Awaiting user review before proceeding to subsequent REST families (admin/device/config).
+### A. Provenance Policy & Cleanroom Baseline Freeze
+- Frozen cleanroom commit baseline at `906b9aff14d25a8743bcef1ce223acd3ece32e47` (`CLEANROOM_AUTH_HTTP_BASELINE`) in [BASELINE.json](file:///d:/KMAX-CLEANROOM/evidence/reference/BASELINE.json).
+- Pinned reference repository commit SHAs:
+  - `hqw700/cloudphone-official`: `ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39`
+  - `tcandt/scrcpyoverwebrtc`: `65567d777bccb11d2a6d93b6acc735478e880b5b`
+- Strict 2-lane boundary: Zero reference implementation code is copied into `reconstructed_source/`. All reference items are classified as `PUBLIC_REFERENCE_INTELLIGENCE` or `SOURCE_REFERENCE_CANDIDATE`.
+- Full line-by-line attribution of 12 reference files in [REFERENCE_SOURCES.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_SOURCES.json).
+
+### B. Reference Protocol & DataChannel Inventories
+- Indexed 37 HTTP endpoints, 14 WebSocket `message_type` values, and 6 SDP/ICE forward payload types in [REFERENCE_PROTOCOL_INDEX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_PROTOCOL_INDEX.json) and [REFERENCE_PROTOCOL_INDEX.md](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_PROTOCOL_INDEX.md).
+- Cataloged all 6 WebRTC DataChannels in [DATACHANNEL_REFERENCE_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/DATACHANNEL_REFERENCE_MATRIX.json):
+  - `input-channel` (Agent creates, binary control protocol, touch/key injection)
+  - `clipboard-channel` (Agent creates, JSON clipboard synchronization)
+  - `camera-channel` (Agent creates, virtual camera control & frame injection)
+  - `file-channel` (Browser creates, binary chunk file transfer)
+  - `ai-command-channel` (Browser creates, JSON shell command request/response)
+  - `adb-channel` (Browser creates, raw ADB tunnel)
+- Modeled complete deterministic 8-transition client signaling state machine in [CLIENT_SIGNALING_STATE_MACHINE.json](file:///d:/KMAX-CLEANROOM/evidence/reference/CLIENT_SIGNALING_STATE_MACHINE.json).
+
+### C. Demo Mode Separation & Agent CLI Contract
+- Analyzed `web-app/.env.demo` (`VITE_DEMO_MODE=true`) and `web-app/src/mock/demoEngine.js` in [DEMO_MODE_ANALYSIS.md](file:///d:/KMAX-CLEANROOM/evidence/reference/DEMO_MODE_ANALYSIS.md). Proved demo mode completely bypasses WebSocket and WebRTC (`useWebRTC.js:69`). Established that demo artifacts must never be used as a backend protocol oracle.
+- Cross-verified 10 agent CLI flags in [AGENT_CLI_REFERENCE_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/reference/AGENT_CLI_REFERENCE_MATRIX.json), confirming all 6 documented flags (`-id`, `-signaling`, `-jar`, `-external-addr`, `-webrtc-port`, `-root`) and 4 discovered flags (`-camera-addr`, `-camera-size`, `-camera-facing`, `-ice-servers`) directly in `cloudphone-agent-amd64` `.rodata`.
+- Cross-mapped 24 reference items to binary static evidence in [REFERENCE_TO_BINARY_CROSSMAP.json](file:///d:/KMAX-CLEANROOM/evidence/reference/REFERENCE_TO_BINARY_CROSSMAP.json), each verified with $\ge 2$ independent evidence classes.
+
+---
+
+## 6. Phase 2R Exit Gate Checklist
+
+- [x] Cleanroom baseline frozen in `evidence/reference/BASELINE.json` (commit `906b9aff...`).
+- [x] Reference repository SHAs pinned (`cloudphone-official:ceb66b2`, `scrcpyoverwebrtc:65567d7`).
+- [x] Zero reference implementation code copied into `reconstructed_source/`.
+- [x] Protocol inventory generated (`REFERENCE_PROTOCOL_INDEX.json` and `.md`).
+- [x] WebRTC DataChannel reference matrix generated (`DATACHANNEL_REFERENCE_MATRIX.json`).
+- [x] Client signaling state machine generated (`CLIENT_SIGNALING_STATE_MACHINE.json`).
+- [x] Demo mode mock path separated from real protocol path (`DEMO_MODE_ANALYSIS.md`).
+- [x] Agent CLI candidate flags cross-checked and verified against binary (`AGENT_CLI_REFERENCE_MATRIX.json`).
+- [x] Reference-to-binary crossmap generated with $\ge 2$ evidence classes per confirmed mapping (`REFERENCE_TO_BINARY_CROSSMAP.json`).
+- [x] Multi-dimensional coverage metrics documented in `reports/11_REFERENCE_INTELLIGENCE_CROSSMAP.md`.
+- [x] All previous cleanroom test suites (`persistence`, `auth`, `http`, Go unit tests, provenance auditor) remain unchanged and PASS.
+- [x] Master verifier `tools/verify_phase2.py` passes all 24 invariant checks.
+
+**PHASE 2R COMPLETE.**  
+Awaiting user review before proceeding to Phase 2C.3B (Devices/Registry REST family).
+

@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "title": "Public Reference Intelligence Sources Inventory",
+    "description": "Snapshot of external reference documentation and public frontend sources used to inform reverse-engineering hypotheses without copying code",
+    "retrieval_timestamp": "2026-09-15T23:30:00+07:00",
+    "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE"
+  },
+  "sources": [
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/introduction.md",
+      "lines": "1-120",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Architecture Overview", "Browser WebUI", "webrtc-signaling", "cloudphone-agent", "P2P WebRTC"]
+    },
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/agent-deploy.md",
+      "lines": "1-180",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Agent CLI Flags", "libsys_core.so", "UDS Sockets", "Redroid Container Deployment", "-external-addr", "-webrtc-port", "-root"]
+    },
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/quickstart.md",
+      "lines": "1-150",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Signaling Launch Contracts", "Port 8443", "HTTPS/WSS", "COTURN Configuration"]
+    },
+    {
+      "repository": "hqw700/cloudphone-official",
+      "commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+      "path": "docs/web-development.md",
+      "lines": "1-210",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Frontend Structure", "Vue 3 / Vite", "useWebRTC composable", "DeviceConsole.vue", "DeviceList.vue"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/composables/useWebRTC.js",
+      "lines": "1-1270",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Client Signaling Protocol", "/connect_client WebSocket", "SDP Offer/Answer Munging", "Trickle ICE", "DataChannels", "Command Protocol", "P2P Fallback"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/composables/useWebSocketStream.js",
+      "lines": "1-807",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["TCP Fallback Streaming", "H.264 Raw NALU Streaming", "WebCodecs VideoDecoder", "WASM Fallback", "Preview Control"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/stores/devices.js",
+      "lines": "1-1048",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Global Client WebSocket", "Real-Time Push Updates", "Group Control Protocol", "Inject Data", "Device State Store"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/stores/auth.js",
+      "lines": "1-180",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Auth Store", "Bearer Token Storage", "/api/login", "/api/logout", "/api/me", "/api/auth-status"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/stores/tags.js",
+      "lines": "1-220",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Tags Store", "/api/tags API", "Tag Assignment", "Tag Colors"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/views/DeviceClient.vue",
+      "lines": "1-3200",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["WebRTC Rendering Canvas", "Coordinate Mapping", "Touch Events", "Keymap Integration"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/src/mock/demoEngine.js",
+      "lines": "1-329",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Mock Demo Engine", "Synthetic Device Matrix", "Client-Side Mock Responses", "VITE_DEMO_MODE Activation"]
+    },
+    {
+      "repository": "tcandt/scrcpyoverwebrtc",
+      "commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+      "path": "web-app/.env.demo",
+      "lines": "1-3",
+      "reference_class": "PUBLIC_REFERENCE_INTELLIGENCE",
+      "topics": ["Demo Mode Environment Flag", "VITE_DEMO_MODE=true"]
+    }
+  ]
+}

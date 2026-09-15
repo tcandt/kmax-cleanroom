@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "title": "Agent CLI Reference & Binary Cross-Check Matrix",
+    "description": "Cross-verification of CLI flags between public documentation (cloudphone-official:agent-deploy.md) and static binary symbols in cloudphone-agent",
+    "evidence_classes": ["PUBLIC_REFERENCE_INTELLIGENCE", "STATIC_BINARY_CONFIRMED"]
+  },
+  "flags": [
+    {
+      "flag": "-id",
+      "argument_type": "string",
+      "documentation_role": "Unique device identifier assigned to the cloudphone instance (e.g. vm-01)",
+      "documentation_source": "cloudphone-official:docs/agent-deploy.md:65,103",
+      "binary_string_present": true,
+      "binary_context": "Found in cloudphone-agent .rodata alongside CP_AGENT_ID environment fallback",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-signaling",
+      "argument_type": "string",
+      "documentation_role": "WebSocket signaling server endpoint (e.g. wss://SERVER:8443)",
+      "documentation_source": "cloudphone-official:docs/agent-deploy.md:65,103",
+      "binary_string_present": true,
+      "binary_context": "Found in cloudphone-agent .rodata; initiates connection to /register_agent?id=...",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-jar",
+      "argument_type": "string",
+      "documentation_role": "Path to the Android DEX/JAR helper library (libsys_core.so / classes.jar)",
+      "documentation_source": "cloudphone-official:docs/agent-deploy.md:103",
+      "binary_string_present": true,
+      "binary_context": "Found in cloudphone-agent .rodata; passed to app_process CLASSPATH invocation",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-external-addr",
+      "argument_type": "string",
+      "documentation_role": "Publicly accessible IPv4/IPv6 address for WebRTC NAT traversal when containerized",
+      "documentation_source": "cloudphone-official:docs/agent-deploy.md:103",
+      "binary_string_present": true,
+      "binary_context": "Exact string 'external-addr' confirmed in .rodata at offset adjacent to 'camera-facing'",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-webrtc-port",
+      "argument_type": "int",
+      "documentation_role": "Dedicated UDP port allocated for WebRTC RTP media stream (e.g. 50001)",
+      "documentation_source": "cloudphone-official:docs/agent-deploy.md:103",
+      "binary_string_present": true,
+      "binary_context": "Exact string 'webrtc-port' confirmed in .rodata adjacent to 'ice-servers'",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-root",
+      "argument_type": "boolean",
+      "documentation_role": "Enables superuser/root execution mode on rooted devices without active PC ADB connection",
+      "documentation_source": "cloudphone-official:docs/agent-deploy.md:118,124",
+      "binary_string_present": true,
+      "binary_context": "Found in cloudphone-agent .rodata alongside CP_AGENT_ROOT environment variable",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-camera-addr",
+      "argument_type": "string",
+      "documentation_role": "Camera injection streaming socket address (discovered via binary inspection)",
+      "documentation_source": "Binary .rodata discovery (not in public docs)",
+      "binary_string_present": true,
+      "binary_context": "Exact string 'camera-addr' located adjacent to 'webrtc-port' and 'camera-size'",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-camera-size",
+      "argument_type": "string",
+      "documentation_role": "Configures camera virtual display frame resolution (e.g. 1920x1080)",
+      "documentation_source": "Binary .rodata discovery (not in public docs)",
+      "binary_string_present": true,
+      "binary_context": "Exact string 'camera-size' located in .rodata adjacent to 'camera-addr'",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-camera-facing",
+      "argument_type": "string",
+      "documentation_role": "Selects front or back camera sensor simulation for virtual injection",
+      "documentation_source": "Binary .rodata discovery (not in public docs)",
+      "binary_string_present": true,
+      "binary_context": "Exact string 'camera-facing' located in .rodata adjacent to 'external-addr'",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag": "-ice-servers",
+      "argument_type": "string",
+      "documentation_role": "Overrides default STUN/TURN server URLs passed from signaling server",
+      "documentation_source": "Binary .rodata discovery (not in public docs)",
+      "binary_string_present": true,
+      "binary_context": "Exact string 'ice-servers' located in .rodata adjacent to 'webrtc-port'",
+      "classification": "STATIC_BINARY_CONFIRMED",
+      "confidence": "HIGH"
+    }
+  ]
+}

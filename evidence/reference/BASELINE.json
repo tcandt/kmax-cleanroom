@@ -1,0 +1,24 @@
+{
+  "milestone": "CLEANROOM_AUTH_HTTP_BASELINE",
+  "cleanroom_commit": "906b9aff14d25a8743bcef1ce223acd3ece32e47",
+  "retrieval_timestamp": "2026-09-15T23:30:00+07:00",
+  "original_artifact_sha256_values": {
+    "webrtc-signaling_linux_amd64": "35905d46be8296a23a31cbb22f84097f4a569766cae9d300cc9ff11a766fa091",
+    "webrtc-signaling_windows_amd64": "45ea885a440cb65825cf4bf92a5435e0766e4a66a1506bf950c45d3c8c7ae007",
+    "cloudphone-agent_linux_amd64": "63f82fc464c017ef655bb7090b8f2d5e3ef87ca86b9ea20904008cf311545fc4"
+  },
+  "reference_repository_commit_shas": {
+    "hqw700/cloudphone-official": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+    "tcandt/scrcpyoverwebrtc": "65567d777bccb11d2a6d93b6acc735478e880b5b"
+  },
+  "provenance_policy": {
+    "lane_a": "CLEANROOM_BINARY_EVIDENCE (binary disassembly, pclntab symbols, dynamic oracles, pure clean-room reconstruction)",
+    "lane_b": "PUBLIC_REFERENCE_INTELLIGENCE (upstream docs, public frontend, protocol candidates, test matrices)",
+    "rules": [
+      "No public implementation code from Lane B may be copied or pasted into reconstructed_source/",
+      "Lane B reference evidence provides candidate routes, messages, fields, channel labels, and state transitions",
+      "All backend implementation claims must be confirmed by original distributed binary static evidence and/or dynamic binary oracle evidence",
+      "Historical clean-room evidence and provenance records remain unaltered"
+    ]
+  }
+}
