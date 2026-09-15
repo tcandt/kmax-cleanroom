@@ -228,10 +228,10 @@ def verify_all():
 
     # 8. Reconstructed Source Provenance Integrity
     from tools.verify_reconstructed_provenance import audit_reconstructed_provenance
-    prov_pass, prov_total, prov_counts = audit_reconstructed_provenance()
+    prov_pass, prov_total, prov_counts, m_hdr, m_fld = audit_reconstructed_provenance()
     record_check("Reconstructed Source Provenance",
                  prov_pass,
-                 f"{prov_total} functions audited (Binary: {prov_counts['RECONSTRUCTED_FROM_BINARY']}, Adapters: {prov_counts['GENERATED_ADAPTER']})")
+                 f"{prov_total} functions audited (Binary: {prov_counts['RECONSTRUCTED_FROM_BINARY']}, Adapters: {prov_counts['GENERATED_ADAPTER']}, Missing: {m_hdr} headers, {m_fld} fields)")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)
@@ -258,7 +258,7 @@ def verify_all():
 
     with open(reports_dir / "02C_PHASE2_REPRODUCIBILITY.md", "w", encoding="utf-8") as f:
         f.write("# Forensic Report 02C: Phase 2 Reproducibility & Tooling Pipeline\n\n")
-        f.write("**Status**: 100% REPRODUCIBLE IN-REPO TOOLING\n\n")
+        f.write("**Status**: STATIC_FORENSIC_REPRODUCIBLE\n\n")
         f.write("## 1. Committed Reproducibility Tooling Suite\n\n")
         f.write("All forensic tools have been committed into the repository under `tools/`:\n")
         f.write("- `tools/forensics/pclntab_parser.py`: Portable, version-aware Go pclntab parser with invariant checking.\n")

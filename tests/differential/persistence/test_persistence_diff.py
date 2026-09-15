@@ -6,6 +6,7 @@ import shutil
 import hashlib
 import subprocess
 import re
+import requests
 from pathlib import Path
 
 # Portable repo root resolution
@@ -42,7 +43,7 @@ def run_recon_process(target_dir: Path, action: str = "init"):
         subprocess.run(["go", "build", "-o", str(EXE_RECON), "./cmd/storage-tool"],
                        cwd=str(EXE_RECON.parent), check=True)
     cmd = [str(EXE_RECON), f"-data={target_dir}", f"-action={action}"]
-    res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     return res.stdout
 
 def run_diff_suite():
@@ -89,13 +90,17 @@ def run_diff_suite():
     expected_eager = {"device_tags.json", "users.json", "downloads", "snapshots"}
     eager_match = (orig_items == expected_eager) and (recon_items == expected_eager)
 
+    orig_types = {p.name: ("dir" if p.is_dir() else "file") for p in orig_dir.iterdir()}
+    recon_types = {p.name: ("dir" if p.is_dir() else "file") for p in recon_dir.iterdir()}
+    types_match = orig_types == recon_types
+
     record_diff(
-        "TC-DIFF-01", "First-Run Directory Structure", "BIT_EXACT_MATCH",
-        parity and shares_absent and eager_match,
-        orig_ev=f"Files/dirs created: {sorted(orig_items)} (shares.json absent)",
-        recon_ev=f"Files/dirs created: {sorted(recon_items)} (shares.json absent)",
-        comparison="Both eagerly create exactly {users.json, device_tags.json, downloads/, snapshots/} and lazily defer shares.json",
-        detail=f"Items: {orig_items} (shares.json correctly absent in both)"
+        "TC-DIFF-01", "First-Run Directory Structure", "STRUCTURAL_EXACT_MATCH",
+        parity and shares_absent and eager_match and types_match,
+        orig_ev=f"Files/dirs created: {orig_types} (shares.json absent)",
+        recon_ev=f"Files/dirs created: {recon_types} (shares.json absent)",
+        comparison="Both eagerly create exactly {users.json (file), device_tags.json (file), downloads/ (dir), snapshots/ (dir)} and lazily defer shares.json",
+        detail=f"Structure: {orig_types} (shares.json correctly absent in both)"
     )
 
     # ----------------------------------------------------
@@ -149,6 +154,10 @@ def run_diff_suite():
     # ----------------------------------------------------
     # TC-DIFF-04: device_tags.json Schema & Defaults
     # ----------------------------------------------------
+    b_orig = (orig_dir / "device_tags.json").read_bytes()
+    b_recon = (recon_dir / "device_tags.json").read_bytes()
+    bytes_identical = (b_orig == b_recon)
+
     with open(orig_dir / "device_tags.json", "r", encoding="utf-8") as f:
         dt_orig = json.load(f)
     with open(recon_dir / "device_tags.json", "r", encoding="utf-8") as f:
@@ -157,11 +166,11 @@ def run_diff_suite():
     dt_match = dt_orig == dt_recon == {"tags": [], "deviceTags": {}}
     record_diff(
         "TC-DIFF-04", "device_tags.json Schema & Defaults", "BIT_EXACT_MATCH",
-        dt_match,
-        orig_ev=f"device_tags.json content: {dt_orig}",
-        recon_ev=f"device_tags.json content: {dt_recon}",
-        comparison="Bit-for-bit identical JSON payload on fresh first run",
-        detail=f"Content match: {dt_orig}"
+        bytes_identical and dt_match,
+        orig_ev=f"Raw bytes ({len(b_orig)}B): {repr(b_orig)}",
+        recon_ev=f"Raw bytes ({len(b_recon)}B): {repr(b_recon)}",
+        comparison="Raw read_bytes() is 100% byte-for-byte identical across original and reconstructed first-run payloads",
+        detail=f"Byte-exact match verified ({len(b_orig)} bytes): {dt_orig}"
     )
 
     # ----------------------------------------------------
@@ -186,33 +195,41 @@ def run_diff_suite():
 
     orig_has_admin = "admin" in u_orig_recov and u_orig_recov["admin"]["role"] == "admin"
     recon_has_admin = "admin" in u_recon_recov and u_recon_recov["admin"]["role"] == "admin"
-    orig_log_check = "[Auth] Failed to parse users file" in orig_corrupt_log and "[Auth] Reset users.json" in orig_corrupt_log
+    orig_log_check = ("[Auth] Failed to parse users file" in orig_corrupt_log and
+                      "[Auth] Reset users.json with default account admin/admin123" in orig_corrupt_log)
+    recon_log_check = ("[Auth] Failed to parse users file" in recon_corrupt_log and
+                       "[Auth] Reset users.json with default account admin/admin123" in recon_corrupt_log)
     hash_orig_recov = hashlib.sha256(("admin123" + u_orig_recov["admin"]["salt"]).encode()).hexdigest() == u_orig_recov["admin"]["password"]
     hash_recon_recov = hashlib.sha256(("admin123" + u_recon_recov["admin"]["salt"]).encode()).hexdigest() == u_recon_recov["admin"]["password"]
 
-    recov_passed = orig_has_admin and recon_has_admin and orig_log_check and hash_orig_recov and hash_recon_recov
+    recov_passed = (orig_has_admin and recon_has_admin and
+                    orig_log_check and recon_log_check and
+                    hash_orig_recov and hash_recon_recov)
     record_diff(
         "TC-DIFF-05", "Malformed JSON Recovery Semantics", "SEMANTIC_MATCH",
         recov_passed,
-        orig_ev="Original logged '[Auth] Failed to parse users file' and reset users.json with admin/admin123",
-        recon_ev="Reconstructed logged '[Auth] Failed to parse users file' and reset users.json with admin/admin123",
+        orig_ev="Original: logged '[Auth] Failed to parse users file' and reset users.json with admin/admin123",
+        recon_ev="Reconstructed: logged '[Auth] Failed to parse users file' and reset users.json with admin/admin123",
         comparison="Both runtimes detect corrupted users.json, catch unmarshal error, log verbatim diagnostic, and rewrite fresh default admin account",
-        detail="Both original and reconstructed detect corrupt JSON, log reset, and rewrite default admin account"
+        detail="Both original and reconstructed detect corrupt JSON, emit verbatim log diagnostics, and rewrite default admin account"
     )
 
     # ----------------------------------------------------
-    # TC-DIFF-06: True Side-by-Side Unknown Field Tolerance
+    # TC-DIFF-06: True Side-by-Side Unknown Field Tolerance & Complete Save Lifecycle
     # ----------------------------------------------------
     orig_unknown = DIFF_TMP / "orig_unknown"
     recon_unknown = DIFF_TMP / "recon_unknown"
     orig_unknown.mkdir(parents=True, exist_ok=True)
     recon_unknown.mkdir(parents=True, exist_ok=True)
 
+    salt_unk = "salt1234567890123456789012345678"
+    pwd_unk = hashlib.sha256(("admin123" + salt_unk).encode()).hexdigest()
+
     unknown_payload = {
         "admin": {
             "username": "admin",
-            "password": hashlib.sha256(b"admin123salt123456789012345678901234").hexdigest(),
-            "salt": "salt1234567890123456789012345678",
+            "password": pwd_unk,
+            "salt": salt_unk,
             "role": "admin",
             "assigned_devices": ["*"],
             "note": "original note",
@@ -228,8 +245,13 @@ def run_diff_suite():
     (orig_unknown / "users.json").write_text(json.dumps(unknown_payload, indent=2), encoding="utf-8")
     (recon_unknown / "users.json").write_text(json.dumps(unknown_payload, indent=2), encoding="utf-8")
 
-    # Step 1: Run read-only load on both
-    run_orig_process(orig_unknown, port=29503)
+    # STEP 1: Run read-only load on both
+    cmd_orig = [
+        str(EXE_ORIG), "-tls=false", "-port=29503", f"-data={orig_unknown}", f"-assets={ASSETS}", "-debug"
+    ]
+    proc_orig = subprocess.Popen(cmd_orig, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    time.sleep(1.8)
+
     run_recon_process(recon_unknown, action="init")
 
     with open(orig_unknown / "users.json", "r", encoding="utf-8") as f:
@@ -237,28 +259,74 @@ def run_diff_suite():
     with open(recon_unknown / "users.json", "r", encoding="utf-8") as f:
         u_recon_unk = json.load(f)
 
-    orig_loaded_ok = "admin" in u_orig_unk and "unknown_top_field" in u_orig_unk["admin"]
-    recon_loaded_ok = "admin" in u_recon_unk and "unknown_top_field" in u_recon_unk["admin"]
+    orig_loaded_ok = ("admin" in u_orig_unk and
+                      "unknown_top_field" in u_orig_unk["admin"] and
+                      "custom_metadata" in u_orig_unk["admin"] and
+                      u_orig_unk["admin"]["role"] == "admin")
+    recon_loaded_ok = ("admin" in u_recon_unk and
+                       "unknown_top_field" in u_recon_unk["admin"] and
+                       "custom_metadata" in u_recon_unk["admin"] and
+                       u_recon_unk["admin"]["role"] == "admin")
 
-    # Step 2: Trigger save mutation on reconstructed storage
+    # STEP 2: Trigger real persistence mutation in the ORIGINAL binary via proven /api/admin/users/update_note
+    orig_mutation_success = False
+    try:
+        r_login = requests.post("http://127.0.0.1:29503/api/login",
+                                json={"username": "admin", "password": "admin123"},
+                                timeout=3)
+        if r_login.status_code == 200:
+            tok = r_login.json().get("token")
+            headers = {"Authorization": f"Bearer {tok}"}
+            r_update = requests.post("http://127.0.0.1:29503/api/admin/users/update_note",
+                                     json={"username": "admin", "note": "Updated note by differential test"},
+                                     headers=headers, timeout=3)
+            if r_update.status_code == 200 and r_update.json().get("status") == "success":
+                orig_mutation_success = True
+    except Exception as e:
+        print(f"[-] TC-DIFF-06 mutation error: {e}")
+    finally:
+        proc_orig.terminate()
+        try:
+            proc_orig.wait(timeout=2)
+        except:
+            proc_orig.kill()
+
+    # STEP 3: Trigger equivalent save-user mutation on reconstructed storage
     run_recon_process(recon_unknown, action="save-user")
+
+    # STEP 4: Inspect BOTH resulting users.json files
+    with open(orig_unknown / "users.json", "r", encoding="utf-8") as f:
+        u_orig_after_save = json.load(f)
     with open(recon_unknown / "users.json", "r", encoding="utf-8") as f:
         u_recon_after_save = json.load(f)
 
-    # In Go struct persistence, unmodeled fields are dropped upon marshaling struct, while all known fields are preserved
-    recon_dropped_unknown = "unknown_top_field" not in u_recon_after_save["admin"]
-    recon_preserved_known = (u_recon_after_save["admin"]["role"] == "admin" and
-                             u_recon_after_save["admin"]["assigned_devices"] == ["*"] and
-                             u_recon_after_save["admin"]["note"] == "Updated by differential test")
+    original_unknown_removed = ("unknown_top_field" not in u_orig_after_save["admin"] and
+                                "custom_metadata" not in u_orig_after_save["admin"])
+    reconstructed_unknown_removed = ("unknown_top_field" not in u_recon_after_save["admin"] and
+                                     "custom_metadata" not in u_recon_after_save["admin"])
 
-    unk_passed = orig_loaded_ok and recon_loaded_ok and recon_dropped_unknown and recon_preserved_known
+    original_known_fields_preserved = (u_orig_after_save["admin"]["role"] == "admin" and
+                                       u_orig_after_save["admin"]["assigned_devices"] == ["*"] and
+                                       len(u_orig_after_save["admin"]) == 11)
+    reconstructed_known_fields_preserved = (u_recon_after_save["admin"]["role"] == "admin" and
+                                           u_recon_after_save["admin"]["assigned_devices"] == ["*"] and
+                                           len(u_recon_after_save["admin"]) == 11)
+
+    original_mutation_applied = u_orig_after_save["admin"].get("note") == "Updated note by differential test"
+    reconstructed_mutation_applied = u_recon_after_save["admin"].get("note") == "Updated note by differential test"
+
+    unk_passed = (orig_loaded_ok and recon_loaded_ok and orig_mutation_success and
+                  original_unknown_removed and reconstructed_unknown_removed and
+                  original_known_fields_preserved and reconstructed_known_fields_preserved and
+                  original_mutation_applied and reconstructed_mutation_applied)
+
     record_diff(
-        "TC-DIFF-06", "Unknown Field Tolerance & Lifecycle", "SEMANTIC_MATCH",
+        "TC-DIFF-06", "Unknown Field Lifecycle Parity", "SEMANTIC_MATCH",
         unk_passed,
-        orig_ev="Original loaded users.json with unknown fields without error; preserved on disk during read-only load",
-        recon_ev="Reconstructed loaded users.json with unknown fields; preserved on disk until save; dropped unknown upon save while preserving all known fields",
-        comparison="Both runtimes accept unmodeled fields on unmarshal; unmodeled fields are naturally omitted on subsequent Go struct serialization",
-        detail="Both runtimes tolerate unmodeled JSON fields; fields dropped on save while preserving all known fields"
+        orig_ev="Original: unknown fields tolerated on load; dropped on /api/admin/users/update_note save; 11 known fields preserved; note updated",
+        recon_ev="Reconstructed: unknown fields tolerated on load; dropped on save-user; 11 known fields preserved; note updated",
+        comparison="Both runtimes accept unmodeled fields on read-only load; both drop unmodeled fields upon struct save while preserving all known fields and mutations",
+        detail="Full lifecycle verified on BOTH runtimes: load tolerance + save drops unknown + known fields preserved + mutation applied"
     )
 
     # ----------------------------------------------------
@@ -363,7 +431,7 @@ def run_diff_suite():
     report_path.parent.mkdir(parents=True, exist_ok=True)
     with open(report_path, "w", encoding="utf-8") as f:
         f.write("# Forensic Report 06: Phase 2C.1 Persistence Differential Verification\n\n")
-        f.write("**Status**: DIFFERENTIAL VERIFICATION PASS (ALL TESTS TRUE ORIGINAL-VS-RECONSTRUCTED)\n\n")
+        f.write("**Status**: DIFFERENTIAL VERIFICATION PASS (6 RUNTIME TESTS + 2 STATIC/DYNAMIC KERNEL PARITY TESTS)\n\n")
         f.write("## 1. Differential Test Results Matrix\n\n")
         f.write("| Test ID | Test Name | Result Class | Status | Original Evidence | Reconstructed Evidence | Parity Comparison |\n")
         f.write("|---|---|---|---|---|---|---|\n")
@@ -372,9 +440,10 @@ def run_diff_suite():
             f.write(f"| `{r['test_id']}` | {r['name']} | `{r['result_class']}` | {st} | {r['orig_evidence']} | {r['recon_evidence']} | {r['comparison']} |\n")
 
         f.write("\n## 2. Classification Key\n\n")
-        f.write("- `BIT_EXACT_MATCH`: 100% byte-for-byte identical content on deterministic outputs (e.g. `device_tags.json`).\n")
+        f.write("- `BIT_EXACT_MATCH`: 100% byte-for-byte identical content verified via raw `read_bytes()` comparison (e.g. `device_tags.json`).\n")
+        f.write("- `STRUCTURAL_EXACT_MATCH`: Exact directory tree entries, file/directory types, and key structures matched.\n")
         f.write("- `NORMALIZED_EXACT_MATCH`: Exact schema, keys, types, and values after normalizing non-deterministic random fields (e.g. 16-byte random salt and SHA256 password hash).\n")
-        f.write("- `SEMANTIC_MATCH`: Identical runtime behavior observed between original binary and reconstructed code under identical failure/edge conditions (e.g. malformed JSON reset, unknown field tolerance).\n")
+        f.write("- `SEMANTIC_MATCH`: Identical runtime behavior observed side-by-side between original binary and reconstructed code under identical operations and edge cases (e.g. malformed JSON reset with diagnostic logging, full unknown field lifecycle with persistence mutation).\n")
         f.write("- `STATIC_AND_DYNAMIC_PARITY`: Original static disassembly proof (x86_64 callsite arguments) verified against real Linux/WSL runtime stat(2) mode bits and atomic filesystem operations.\n")
         f.write("- `KNOWN_DIFFERENCE`: Explicitly documented intentional clean-room differences (none in Phase 2C.1).\n")
         f.write("- `UNKNOWN`: Unresolved or unmodeled behaviors (none in Phase 2C.1).\n\n")

@@ -26,6 +26,71 @@ VALID_CLASSIFICATIONS = {
     "GENERATED_BUILD_FUNCTION"
 }
 
+def check_provenance_fields(classification, comment_block):
+    """
+    Checks that the comment block contains all required fields for its classification:
+    - RECONSTRUCTED_FROM_BINARY: Binary Symbol, VA, Evidence, Confidence
+    - RECONSTRUCTED_FROM_BEHAVIOR: Evidence, Confidence
+    - DIRECT_TYPE_RECOVERY: Descriptor VA (or equivalent), Evidence, Confidence
+    - GENERATED_ADAPTER: Original Function Mapping: NONE, (Source Behavior or Purpose)
+    - GENERATED_TEST_INTERFACE: Original Function Mapping: NONE, Purpose
+    - GENERATED_BUILD_FUNCTION: Original Function Mapping: NONE, Purpose
+    """
+    block_text = "\n".join(comment_block)
+    missing = []
+
+    def has_field(field_prefix):
+        for line in comment_block:
+            # Strip // and whitespace
+            clean = line.lstrip("/").strip()
+            if clean.lower().startswith(field_prefix.lower()):
+                parts = clean.split(":", 1)
+                if len(parts) > 1 and parts[1].strip():
+                    return True
+        return False
+
+    if classification == "RECONSTRUCTED_FROM_BINARY":
+        if not has_field("Binary Symbol"):
+            missing.append("Binary Symbol")
+        if not has_field("VA"):
+            missing.append("VA")
+        if not has_field("Evidence"):
+            missing.append("Evidence")
+        if not has_field("Confidence"):
+            missing.append("Confidence")
+
+    elif classification == "RECONSTRUCTED_FROM_BEHAVIOR":
+        if not has_field("Evidence"):
+            missing.append("Evidence")
+        if not has_field("Confidence"):
+            missing.append("Confidence")
+
+    elif classification == "DIRECT_TYPE_RECOVERY":
+        has_va = has_field("Descriptor VA") or has_field("Binary Type Descriptor VA") or has_field("VA")
+        if not has_va:
+            missing.append("Descriptor VA")
+        if not has_field("Evidence"):
+            missing.append("Evidence")
+        if not has_field("Confidence"):
+            missing.append("Confidence")
+
+    elif classification == "GENERATED_ADAPTER":
+        has_none_map = any("original function mapping" in l.lower() and "none" in l.lower() for l in comment_block)
+        if not has_none_map:
+            missing.append("Original Function Mapping: NONE")
+        has_behavior = has_field("Source Behavior") or has_field("Purpose")
+        if not has_behavior:
+            missing.append("Source Behavior or Purpose")
+
+    elif classification in ("GENERATED_TEST_INTERFACE", "GENERATED_BUILD_FUNCTION"):
+        has_none_map = any("original function mapping" in l.lower() and "none" in l.lower() for l in comment_block)
+        if not has_none_map:
+            missing.append("Original Function Mapping: NONE")
+        if not has_field("Purpose"):
+            missing.append("Purpose")
+
+    return missing
+
 def audit_reconstructed_provenance():
     print("==================================================")
     print("AUDITING RECONSTRUCTED SOURCE FUNCTION PROVENANCE")
@@ -33,7 +98,8 @@ def audit_reconstructed_provenance():
 
     total_functions = 0
     classification_counts = defaultdict(int)
-    missing_provenance = []
+    missing_headers = []
+    missing_fields = []
     audited_functions = []
 
     func_decl_re = re.compile(r'^\s*func\s+(?:\((?:[^)]+)\)\s+)?([A-Za-z0-9_]+)\s*\(')
@@ -83,14 +149,24 @@ def audit_reconstructed_provenance():
 
                         if has_provenance and classification:
                             classification_counts[classification] += 1
-                            audited_functions.append({
-                                "file": str(rel_path),
-                                "line": i + 1,
-                                "function": func_name,
-                                "classification": classification
-                            })
+                            field_errs = check_provenance_fields(classification, comment_block)
+                            if field_errs:
+                                missing_fields.append({
+                                    "file": str(rel_path),
+                                    "line": i + 1,
+                                    "function": func_name,
+                                    "classification": classification,
+                                    "missing": field_errs
+                                })
+                            else:
+                                audited_functions.append({
+                                    "file": str(rel_path),
+                                    "line": i + 1,
+                                    "function": func_name,
+                                    "classification": classification
+                                })
                         else:
-                            missing_provenance.append({
+                            missing_headers.append({
                                 "file": str(rel_path),
                                 "line": i + 1,
                                 "function": func_name,
@@ -103,17 +179,31 @@ def audit_reconstructed_provenance():
     for c in sorted(VALID_CLASSIFICATIONS):
         print(f"  - {c:30} : {classification_counts[c]}")
 
-    if missing_provenance:
-        print(f"\n[FAIL] Found {len(missing_provenance)} functions with missing or invalid CLEANROOM-PROVENANCE blocks:")
-        for mp in missing_provenance:
-            print(f"  - {mp['file']}:{mp['line']} in func '{mp['function']}' (header={mp['has_header']}, class={mp['found_class']})")
-        return False, total_functions, classification_counts
+    print(f"\nAudit Summary:")
+    print(f"  - Missing Headers: {len(missing_headers)}")
+    print(f"  - Missing Required Metadata Fields: {len(missing_fields)}")
 
-    print(f"\n[PASS] All {total_functions} functions have valid, explicit CLEANROOM-PROVENANCE blocks.")
-    return True, total_functions, classification_counts
+    failed = False
+    if missing_headers:
+        failed = True
+        print(f"\n[FAIL] Found {len(missing_headers)} functions with missing or invalid CLEANROOM-PROVENANCE headers:")
+        for mp in missing_headers:
+            print(f"  - {mp['file']}:{mp['line']} in func '{mp['function']}' (header={mp['has_header']}, class={mp['found_class']})")
+
+    if missing_fields:
+        failed = True
+        print(f"\n[FAIL] Found {len(missing_fields)} functions missing required provenance metadata fields:")
+        for mf in missing_fields:
+            print(f"  - {mf['file']}:{mf['line']} in func '{mf['function']}' [{mf['classification']}]: missing {mf['missing']}")
+
+    if failed:
+        return False, total_functions, classification_counts, len(missing_headers), len(missing_fields)
+
+    print(f"\n[PASS] All {total_functions} functions have valid CLEANROOM-PROVENANCE headers and 100% required metadata fields present.")
+    return True, total_functions, classification_counts, 0, 0
 
 if __name__ == "__main__":
-    passed, total, counts = audit_reconstructed_provenance()
+    passed, total, counts, m_hdr, m_fld = audit_reconstructed_provenance()
     if not passed:
         sys.exit(1)
     sys.exit(0)

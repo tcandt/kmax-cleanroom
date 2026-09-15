@@ -68,7 +68,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Admin user not found\n")
 			os.Exit(1)
 		}
-		u.Note = "Updated by differential test"
+		u.Note = "Updated note by differential test"
 		if err := sm.UsersStore.SetUser(u); err != nil {
 			fmt.Fprintf(os.Stderr, "SetUser error: %v\n", err)
 			os.Exit(1)
