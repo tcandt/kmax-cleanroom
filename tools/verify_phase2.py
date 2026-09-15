@@ -109,20 +109,81 @@ def verify_all():
                  agent_total == agent_sum and agent_total == 15398,
                  f"Total: {agent_total} == {agent_counts['CONFIRMED_ROLE']} (Conf) + {agent_counts['INFERRED_ROLE']} (Inf) + {agent_counts['UNKNOWN']} (Unk)")
 
-    # 5. Provenance Separation & No Dependency Over-classification
-    generic_suffixes = (".String", ".MarshalText", ".MarshalJSON", ".ReadFrom", ".AcceptTCPWithConn", ".DialContext")
+    # 5. Shared Generic Method Exclusion & Provenance Separation
+    from tools.forensics.regenerate_role_mappings import GENERIC_METHOD_SUFFIXES
+
+    APPLICATION_ROLES = {
+        "REMOTE_INPUT_CONTROL_INJECTOR", "VIDEO_STREAM_INGESTION_AND_PACKETIZER",
+        "AUDIO_STREAM_INGESTION_AND_PACKETIZER", "AGENT_WEBRTC_PEERCONNECTION_MANAGER",
+        "SCRCPY_DAEMON_AND_IPC_CONTROLLER", "AGENT_DAEMON_ENTRYPOINT",
+        "APPLICATION_ENTRYPOINT_AND_ROUTER", "ADMIN_USER_MANAGEMENT",
+        "DEVICE_SHARING_SUBMODULE", "DEVICE_TAGGING_AND_ORGANIZATION",
+        "DEVICE_REGISTRY_AND_MANAGEMENT", "FILE_TRANSMISSION_AND_TASK_MANAGER",
+        "SERVER_CONFIGURATION_DISPATCHER", "LICENSE_AND_ENTITLEMENT_MANAGER",
+        "AUTH_LOGIN_HANDLER", "AUTH_LOGOUT_AND_TOKEN_REVOCATION",
+        "USER_REGISTRATION_HANDLER", "USER_PROFILE_HANDLER", "AI_CONFIG_HANDLER",
+        "AUTH_STATUS_HANDLER", "SHORTCUT_SETTINGS_HANDLER"
+    }
+
     leaked_roles = []
-    for r in agent_roles:
+    for r in agent_roles + sig_roles:
         sym = r["binary_symbol"]
         role = r["semantic_role"]
-        if any(sym.endswith(suf) for suf in generic_suffixes) and role in [
-            "REMOTE_INPUT_CONTROL_INJECTOR", "VIDEO_STREAM_INGESTION_AND_PACKETIZER", "AGENT_WEBRTC_PEERCONNECTION_MANAGER"
-        ]:
-            leaked_roles.append((sym, role))
+        prov = r["package_provenance"]
+        if any(sym.endswith(suf) for suf in GENERIC_METHOD_SUFFIXES):
+            if role in APPLICATION_ROLES or (prov == "PROJECT" and role != "UNKNOWN"):
+                leaked_roles.append((sym, role, prov))
 
     record_check("Zero Dependency Role Over-Classification",
                  len(leaked_roles) == 0,
-                 f"Leaked generic methods: {len(leaked_roles)}")
+                 f"Checked {len(GENERIC_METHOD_SUFFIXES)} generic suffixes; leaked into application roles: {len(leaked_roles)}")
+
+    # 5b. Multi-Evidence Category Invariant for Confirmed Project Roles (>= 2 distinct categories A-F)
+    invalid_evidence_roles = []
+    for target_name, rlist in [("Signaling", sig_roles), ("Agent", agent_roles)]:
+        for r in rlist:
+            if r["package_provenance"] == "PROJECT" and r["classification"] == "CONFIRMED_ROLE":
+                ev_classes = r.get("evidence_classes", [])
+                categories = set()
+                for ev in ev_classes:
+                    if len(ev) >= 2 and ev[1] == ":":
+                        categories.add(ev[0].upper())
+                    elif any(k in ev.lower() for k in ["xref", "string", "reference"]):
+                        categories.add("A")
+                    elif any(k in ev.lower() for k in ["route", "registration", "mux"]):
+                        categories.add("B")
+                    elif any(k in ev.lower() for k in ["constant", "protocol", "packet"]):
+                        categories.add("C")
+                    elif any(k in ev.lower() for k in ["caller", "callee"]):
+                        categories.add("D")
+                    elif any(k in ev.lower() for k in ["dynamic", "oracle"]):
+                        categories.add("E")
+                    elif any(k in ev.lower() for k in ["type", "interface"]):
+                        categories.add("F")
+
+                if len(categories) < 2:
+                    invalid_evidence_roles.append((target_name, r["binary_symbol"], r["semantic_role"], list(categories)))
+
+    record_check("Confirmed Project Role Multi-Evidence Rule",
+                 len(invalid_evidence_roles) == 0,
+                 f"All confirmed project roles have >=2 distinct categories (Violations: {len(invalid_evidence_roles)})")
+
+    # 5c. Route Handler Discovery Invariant
+    route_map_file = ROOT / "evidence" / "go_signaling" / "ROUTE_HANDLER_MAP.json"
+    route_check_passed = False
+    route_detail = "File missing"
+    if route_map_file.exists():
+        with open(route_map_file, "r", encoding="utf-8") as f:
+            route_data = json.load(f)
+        sum_info = route_data.get("summary", {})
+        disc_total = sum_info.get("total_discovered", 0)
+        unres = sum_info.get("unresolved_count", 999)
+        route_check_passed = disc_total >= 40 and unres == 0
+        route_detail = f"Discovered {disc_total} routes, {unres} unresolved"
+
+    record_check("Route Handler Discovery Invariant",
+                 route_check_passed,
+                 route_detail)
 
     # 6. Oracle Result Invariants
     oracle_path = ROOT / "raw_extraction" / "go_signaling" / "clean_oracle_results.json"
@@ -137,12 +198,33 @@ def verify_all():
                  turn_cls == "STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED" and turn_404,
                  f"Classification: {turn_cls}; All verbs return 404: {turn_404}")
 
-    # 7. Reconstructed Source Boundary
+    # 7. Reconstructed Source Scope Boundary (Phase 2C.1: Types & Persistence Only)
     recon_src = ROOT / "reconstructed_source"
     go_files = list(recon_src.rglob("*.go"))
-    record_check("Zero Premature Reconstructed Go Source",
-                 len(go_files) == 0,
-                 f"Found {len(go_files)} .go files in reconstructed_source (Target: 0)")
+    allowed_prefixes = ("webrtc-signaling/pkg/types/", "webrtc-signaling/pkg/storage/", "webrtc-signaling/cmd/storage-tool/")
+    disallowed_files = []
+    forbidden_symbols_found = []
+
+    # Check for premature networking, webrtc stack, auth handlers
+    FORBIDDEN_IMPORTS_AND_SYMBOLS = [
+        '"github.com/pion/webrtc', '"net/http"', "ServeHTTP(", "ListenAndServe(",
+        "NewPeerConnection(", "ValidateToken(", "CheckLicense("
+    ]
+
+    for gf in go_files:
+        rel = gf.relative_to(recon_src).as_posix()
+        if not any(rel.startswith(ap) for ap in allowed_prefixes):
+            disallowed_files.append(rel)
+        with open(gf, "r", encoding="utf-8") as f:
+            content = f.read()
+            for kw in FORBIDDEN_IMPORTS_AND_SYMBOLS:
+                if kw in content:
+                    forbidden_symbols_found.append((rel, kw))
+
+    scope_passed = len(disallowed_files) == 0 and len(forbidden_symbols_found) == 0
+    record_check("Phase 2C.1 Source Scope Boundary",
+                 scope_passed,
+                 f"{len(go_files)} .go files strictly in {allowed_prefixes}; forbidden logic leaks: {len(forbidden_symbols_found)}")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

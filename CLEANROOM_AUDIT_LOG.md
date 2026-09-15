@@ -219,9 +219,29 @@ User audit identified two forensic integrity blockers preventing Phase 2 exit:
    - Automated audit verdict: `PASS`.
    - Generated `reports/02B_ROLE_MAPPING_VALIDATION.md` and `reports/02C_PHASE2_REPRODUCIBILITY.md`.
 6. **Strict Clean-Room Boundary**:
-   - `reconstructed_source/` remains 100% untouched.
+   - `reconstructed_source/` remains 100% untouched prior to Phase 2C.1 approval.
    - Execution stopped at Phase 2 Final Exit Gate.
 
-
-
-
+### [2026-09-15 13:15] Phase 2C.1: Core Data Types & Persistence Reconstruction Completed
+- **Status**: COMPLETE & VERIFIED.
+- **Scope Enforced**: Core persistence data types and storage lifecycle ONLY. Zero authentication verification, zero session token issuance, zero REST routes, zero WebSocket hubs, zero WebRTC stack, zero license enforcement.
+- **Pre-Flight Remediations Completed**:
+  1. **Discovery-Driven Route Extraction**: `tools/forensics/extract_route_handlers.py` created with Capstone x86_64 dataflow analysis. Discovered 43 total registrations (41 `HandleFunc`, 2 `Handle`), resolved 43/43 patterns and 41/43 function boundaries with 0 unresolved. Stored in `evidence/go_signaling/ROUTE_HANDLER_MAP.json` and `.md`. Dynamically loaded by `regenerate_role_mappings.py`.
+  2. **Forensic Dependency Pinning**: `requirements-forensics.txt` added pinning `capstone==5.0.7` and `requests>=2.31.0`.
+  3. **Multi-Evidence Role Rule Verification**: `tools/verify_phase2.py` updated to strictly verify that every `PROJECT` + `CONFIRMED_ROLE` entry has >= 2 distinct evidence categories (A–F) and zero generic method leaks. Passed with 0 violations.
+  4. **Type Field Evidence Gate**: `tools/forensics/extract_type_field_evidence.py` generated `TYPE_FIELD_EVIDENCE.json` and `.md` directly from `.rodata` struct descriptors for `User` (`0x80a0c0`, 13 fields), `DeviceTagsConfig` (`0x7d6f80`, 2 fields), and `ShareToken` (`0x80f700`, 18 fields).
+  5. **First-Run Persistence Oracle**: `tools/oracle/first_run_persistence_oracle.py` confirmed eager boot creation of `users.json`, `device_tags.json`, `downloads/`, `snapshots/`, and lazy creation of `shares.json`.
+  6. **POSIX File Mode Static Verification**: `0600` for users/shares and `0644` for tags/devices statically confirmed via disassembly VAs (`0x737666`, `0x737f15`, `0x739cd9`, `0x738cb4`). Classified as `STATIC_CONFIRMED`.
+  7. **Reproducibility Harness**: `tools/reproduce_phase2.py` verified end-to-end evidence reproduction with canonical SHA256 hashes matching committed files (`STATIC_FORENSIC_REPRODUCIBLE (PASS)`).
+- **Source Reconstructed**:
+  - `reconstructed_source/webrtc-signaling/go.mod` (`GENERATED_BUILD_FILE`)
+  - `reconstructed_source/webrtc-signaling/pkg/types/`: `user.go`, `device_tags.go`, `share.go` (`GENERATED_BUILD_STRUCTURE`)
+  - `reconstructed_source/webrtc-signaling/pkg/storage/`: `storage.go`, `users_store.go`, `tags_store.go`, `shares_store.go`, `storage_test.go` (`GENERATED_BUILD_STRUCTURE`)
+  - `reconstructed_source/webrtc-signaling/cmd/storage-tool/main.go` (`GENERATED_BUILD_FILE`)
+  - Full `CLEANROOM-PROVENANCE` headers attached to every file and struct.
+- **Validation**:
+  - `go test -v ./...`: 6 unit tests pass (0.022s).
+  - `tests/differential/persistence/test_persistence_diff.py`: 8/8 differential tests pass against original binary (`EXACT_MATCH` on schemas/defaults/hashing, `SEMANTIC_MATCH` on recovery/tolerance, `STATIC_CONFIRMED` on permissions and atomic rename).
+  - Report written: `reports/06_PHASE2C1_PERSISTENCE.md`.
+  - Gate check: `tools/verify_phase2.py` passes all 12 checks.
+- **Phase 2C.1 Exit Gate**: PASSED. Execution stopped. Phase 2C.2 on hold pending user review.

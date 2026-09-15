@@ -165443,11 +165443,13 @@
     "size_bytes": 1536,
     "is_garbled": false,
     "package_provenance": "PROJECT",
-    "semantic_role": "APPLICATION_UTILITY_HELPER",
-    "classification": "INFERRED_ROLE",
-    "confidence_score": 0.6,
+    "semantic_role": "SNAPSHOT_HANDLER",
+    "classification": "CONFIRMED_ROLE",
+    "confidence_score": 0.98,
     "evidence_classes": [
-      "Single circumstantial string xref"
+      "B: Route registration pointer from main.main closure table for '/snapshots/'",
+      "A: Instruction xrefs contain matching domain parameters",
+      "E: Clean dynamic oracle confirmed route '/snapshots/' is responsive"
     ],
     "instruction_xrefs": [
       "Access-Control-Allow-Origin",

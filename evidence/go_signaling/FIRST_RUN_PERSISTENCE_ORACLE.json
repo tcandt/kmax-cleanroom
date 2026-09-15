@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "binary": "webrtc-signaling.exe",
+    "os": "nt",
+    "port": 29449,
+    "timestamp": "2026-09-15T06:08:25Z"
+  },
+  "lifecycle": {
+    "before_startup": {},
+    "after_startup": {
+      "device_tags.json": {
+        "type": "file",
+        "size_bytes": 36,
+        "sha256": "91b176bdcc5fcacaf0e46f002f8d4c9b05d34bfde84bedfa235953ea988ca5a5",
+        "has_json": true,
+        "json_preview": {
+          "tags": [],
+          "deviceTags": {}
+        }
+      },
+      "downloads": {
+        "type": "directory",
+        "size_bytes": 0,
+        "sha256": null,
+        "has_json": false,
+        "json_preview": null
+      },
+      "snapshots": {
+        "type": "directory",
+        "size_bytes": 0,
+        "sha256": null,
+        "has_json": false,
+        "json_preview": null
+      },
+      "users.json": {
+        "type": "file",
+        "size_bytes": 411,
+        "sha256": "0c8925fbcf8ecc5d212adae890ffa3748436cf59f4867412e70c0016d35d143b",
+        "has_json": true,
+        "json_preview": {
+          "admin": {
+            "username": "admin",
+            "password": "9019bbbc66de3a533d6354596cc2933e8ac271d8a2218ddbd5d6f5e71dfb97e5",
+            "salt": "6037a1c5ac8761c7cf27c2b5e63d0115",
+            "role": "admin",
+            "assigned_devices": [
+              "*"
+            ],
+            "note": "",
+            "forbid_bitrate": false,
+            "forbid_fps": false,
+            "forbid_resolution": false,
+            "forbid_audio": false,
+            "expires_at": "0001-01-01T00:00:00Z"
+          }
+        }
+      }
+    },
+    "after_clean_shutdown": {
+      "device_tags.json": {
+        "type": "file",
+        "size_bytes": 36,
+        "sha256": "91b176bdcc5fcacaf0e46f002f8d4c9b05d34bfde84bedfa235953ea988ca5a5",
+        "has_json": true,
+        "json_preview": {
+          "tags": [],
+          "deviceTags": {}
+        }
+      },
+      "downloads": {
+        "type": "directory",
+        "size_bytes": 0,
+        "sha256": null,
+        "has_json": false,
+        "json_preview": null
+      },
+      "snapshots": {
+        "type": "directory",
+        "size_bytes": 0,
+        "sha256": null,
+        "has_json": false,
+        "json_preview": null
+      },
+      "users.json": {
+        "type": "file",
+        "size_bytes": 411,
+        "sha256": "0c8925fbcf8ecc5d212adae890ffa3748436cf59f4867412e70c0016d35d143b",
+        "has_json": true,
+        "json_preview": {
+          "admin": {
+            "username": "admin",
+            "password": "9019bbbc66de3a533d6354596cc2933e8ac271d8a2218ddbd5d6f5e71dfb97e5",
+            "salt": "6037a1c5ac8761c7cf27c2b5e63d0115",
+            "role": "admin",
+            "assigned_devices": [
+              "*"
+            ],
+            "note": "",
+            "forbid_bitrate": false,
+            "forbid_fps": false,
+            "forbid_resolution": false,
+            "forbid_audio": false,
+            "expires_at": "0001-01-01T00:00:00Z"
+          }
+        }
+      }
+    }
+  },
+  "observed_invariants": {
+    "users_json_created_eagerly": true,
+    "device_tags_json_created_eagerly": true,
+    "shares_json_created_eagerly": false,
+    "downloads_dir_created_eagerly": true,
+    "snapshots_dir_created_eagerly": true
+  }
+}

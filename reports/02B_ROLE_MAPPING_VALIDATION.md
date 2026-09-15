@@ -6,7 +6,7 @@
 
 | Binary Target | Total Functions | CONFIRMED_ROLE | INFERRED_ROLE | UNKNOWN | Sum Formula | Result |
 |---|---|---|---|---|---|---|
-| `webrtc-signaling` (Linux AMD64) | 7571 | 1967 | 38 | 5566 | `1967 + 38 + 5566 == 7571` | **PASS** |
+| `webrtc-signaling` (Linux AMD64) | 7571 | 1968 | 37 | 5566 | `1968 + 37 + 5566 == 7571` | **PASS** |
 | `cloudphone-agent` (Android ARM64) | 15398 | 2582 | 135 | 12681 | `2582 + 135 + 12681 == 15398` | **PASS** |
 
 ## 2. Elimination of Semantic Over-Classification

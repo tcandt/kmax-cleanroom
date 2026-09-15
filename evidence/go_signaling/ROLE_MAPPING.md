@@ -8,10 +8,10 @@
 
 ### Verified Summary Counts (Arithmetic Invariant Checked)
 - **Total Functions Evaluated**: 7571
-- **CONFIRMED_ROLE**: 1967
-- **INFERRED_ROLE**: 38
+- **CONFIRMED_ROLE**: 1968
+- **INFERRED_ROLE**: 37
 - **UNKNOWN**: 5566
-- **Sum Verification**: `1967 + 38 + 5566 == 7571` (PASS)
+- **Sum Verification**: `1968 + 37 + 5566 == 7571` (PASS)
 
 ### Package Provenance Distribution
 - **GO_RUNTIME**: 1490
@@ -68,5 +68,6 @@
 | `0x76ba00` | `main.gevbuZQhJ` | `PROJECT` | `DEVICE_TAGGING_AND_ORGANIZATION` | 0.95 | A: References 'device_tags.json' persistence; C: References deviceTags schema key |
 | `0x76d200` | `main.main.func2` | `PROJECT` | `DEVICE_TAGGING_AND_ORGANIZATION` | 0.98 | B: Route registration pointer from main.main closure table for '/api/tags'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/tags' is responsive |
 | `0x76d4c0` | `main.main.func3` | `PROJECT` | `SHORTCUT_SETTINGS_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/shortcuts'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/shortcuts' is responsive |
+| `0x76da00` | `main.main.func5` | `PROJECT` | `SNAPSHOT_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/snapshots/'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/snapshots/' is responsive |
 
-*Total Confirmed Project Roles: 45. Complete mapping in ROLE_MAPPING.json*
+*Total Confirmed Project Roles: 46. Complete mapping in ROLE_MAPPING.json*

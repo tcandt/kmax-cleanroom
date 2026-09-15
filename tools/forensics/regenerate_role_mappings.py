@@ -23,49 +23,22 @@ GENERIC_METHOD_SUFFIXES = (
     ".Peek", ".Seek", ".Flush", ".Add", ".Done", ".Lock", ".Unlock", ".RLock", ".RUnlock"
 )
 
-# Known route registrations extracted directly from main.main disassembly in webrtc-signaling
-SIGNALING_ROUTE_HANDLERS = {
-    "0x76d200": ("/api/tags", "DEVICE_TAGGING_AND_ORGANIZATION"),
-    "0x76d4c0": ("/api/shortcuts", "SHORTCUT_SETTINGS_HANDLER"),
-    "0x73ec40": ("/api/auth-status", "AUTH_STATUS_HANDLER"),
-    "0x74b6c0": ("/api/activate", "LICENSE_AND_ENTITLEMENT_MANAGER"),
-    "0x74c220": ("/api/license_status", "LICENSE_AND_ENTITLEMENT_MANAGER"),
-    "0x74bf60": ("/debug/license", "LICENSE_AND_ENTITLEMENT_MANAGER"),
-    "0x73dd00": ("/api/login", "AUTH_LOGIN_HANDLER"),
-    "0x73e7c0": ("/api/register", "USER_REGISTRATION_HANDLER"),
-    "0x73f100": ("/api/me", "USER_PROFILE_HANDLER"),
-    "0x73ffc0": ("/api/user/ai-config", "AI_CONFIG_HANDLER"),
-    "0x7409a0": ("/api/logout", "AUTH_LOGOUT_AND_TOKEN_REVOCATION"),
-    "0x741ec0": ("/api/admin/users", "ADMIN_USER_MANAGEMENT"),
-    "0x740f40": ("/api/admin/users/rename", "ADMIN_USER_MANAGEMENT"),
-    "0x7432a0": ("/api/admin/assign", "ADMIN_DEVICE_ASSIGNMENT"),
-    "0x744140": ("/api/admin/users/create", "ADMIN_USER_MANAGEMENT"),
-    "0x745ba0": ("/api/admin/users/delete", "ADMIN_USER_MANAGEMENT"),
-    "0x7464e0": ("/api/admin/users/update_note", "ADMIN_USER_MANAGEMENT"),
-    "0x744c20": ("/api/admin/users/update", "ADMIN_USER_MANAGEMENT"),
-    "0x746e80": ("/api/admin/users/reset_password", "ADMIN_USER_MANAGEMENT"),
-    "0x747880": ("/api/admin/users/kick", "ADMIN_USER_MANAGEMENT"),
-    "0x75c240": ("/api/share/create", "DEVICE_SHARING_SUBMODULE"),
-    "0x75d9a0": ("/api/share/list", "DEVICE_SHARING_SUBMODULE"),
-    "0x75e5a0": ("/api/share/revoke", "DEVICE_SHARING_SUBMODULE"),
-    "0x75ee20": ("/api/share/extend", "DEVICE_SHARING_SUBMODULE"),
-    "0x75fb20": ("/api/share/update", "DEVICE_SHARING_SUBMODULE"),
-    "0x760480": ("/api/share/info", "DEVICE_SHARING_SUBMODULE"),
-    "0x761a20": ("/api/share/redeem_card", "DEVICE_SHARING_SUBMODULE"),
-    "0x7632a0": ("/api/server/addresses", "SERVER_CONFIGURATION_DISPATCHER"),
-    "0x74e4a0": ("/register_device", "DEVICE_REGISTRATION_HANDLER"),
-    "0x754b40": ("/register_agent", "WEBSOCKET_AGENT_REGISTRATION_HUB"),
-    "0x7507c0": ("/connect_client", "WEBSOCKET_CLIENT_BRIDGE_HUB"),
-    "0x74cf80": ("/devices", "DEVICE_REGISTRY_AND_MANAGEMENT"),
-    "0x74da60": ("/api/devices/", "DEVICE_REGISTRY_AND_MANAGEMENT"),
-    "0x758c80": ("/upload", "FILE_TRANSMISSION_AND_TASK_MANAGER"),
-    "0x75a2c0": ("/api/files", "FILE_TRANSMISSION_AND_TASK_MANAGER"),
-    "0x75afa0": ("/api/tasks", "FILE_TRANSMISSION_AND_TASK_MANAGER"),
-    "0x763ec0": ("/api/tasks/details", "FILE_TRANSMISSION_AND_TASK_MANAGER"),
-    "0x768980": ("/api/default_settings", "SERVER_CONFIGURATION_DISPATCHER"),
-    "0x768500": ("/api/ice_servers", "ICE_SERVERS_CONFIGURATION"),
-    "0x769840": ("/api/version", "VERSION_INFO_DISPATCHER")
-}
+def load_signaling_route_handlers():
+    route_map_path = EV_SIG / "ROUTE_HANDLER_MAP.json"
+    if not route_map_path.exists():
+        # Fallback to extractor if file missing
+        from tools.forensics.extract_route_handlers import extract_routes
+        extract_routes()
+    with open(route_map_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    handlers = {}
+    for r in data.get("routes", []):
+        h_va = r.get("handler_va")
+        if h_va and r.get("handler_resolved"):
+            handlers[h_va] = (r["pattern"], r["semantic_role"])
+    return handlers
+
+SIGNALING_ROUTE_HANDLERS = load_signaling_route_handlers()
 
 def determine_provenance(sym: str) -> str:
     if sym.startswith(("runtime.", "internal/abi", "internal/cpu", "type..")):
