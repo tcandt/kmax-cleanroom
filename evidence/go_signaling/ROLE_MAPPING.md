@@ -1,51 +1,72 @@
 # Semantic Role Mapping: WebRTC Signaling Server
 
 ## Forensic Integrity Principles
-- **Zero Stdlib Misattribution**: Standard library and Go runtime functions are classified under runtime/stdlib categories and never assigned application roles.
-- **Evidence Provenance**: Every application role is tied directly to instruction xrefs, route registration disassembly, or string tokens.
-- **Garbled Symbols Preserved**: All obfuscated symbols are preserved verbatim.
+- **Strict Package Provenance Separation**: Provenance (`STDLIB`, `GO_RUNTIME`, `THIRD_PARTY`, `PROJECT`, `UNKNOWN_PACKAGE`) is kept independent from `semantic_role`.
+- **Zero Dependency Role Leakage**: Generic library methods (`String`, `MarshalText`, `ReadFrom`, `AcceptTCPWithConn`, etc.) are never misclassified as application controllers.
+- **Multi-Class Evidence Requirement**: `CONFIRMED_ROLE` for application functions strictly requires >= 2 independent evidence classes.
+- **Preserved Obfuscated Symbols**: All garbled symbols are preserved verbatim.
 
-### Classification Summary
+### Verified Summary Counts (Arithmetic Invariant Checked)
 - **Total Functions Evaluated**: 7571
-- **CONFIRMED_ROLE**: 1982
-- **INFERRED_ROLE**: 0
-- **UNKNOWN**: 11178
+- **CONFIRMED_ROLE**: 1967
+- **INFERRED_ROLE**: 38
+- **UNKNOWN**: 5566
+- **Sum Verification**: `1967 + 38 + 5566 == 7571` (PASS)
 
-| VA | Symbol Name | Role | Classification | Confidence | Evidence |
+### Package Provenance Distribution
+- **GO_RUNTIME**: 1490
+- **PROJECT**: 299
+- **STDLIB**: 432
+- **UNKNOWN_PACKAGE**: 5350
+
+### Confirmed Application & Project Roles (>= 2 Independent Evidence Classes)
+
+| VA | Symbol Name | Provenance | Semantic Role | Conf | Evidence Classes |
 |---|---|---|---|---|---|
-| `0x589820` | `xLZFT3Ek4bwX.(*kdYa7i).Set` | `DEVICE_TAGGING_AND_ORGANIZATION` | `CONFIRMED_ROLE` | 0.90 | Direct reference to /api/tags and device_tags.json |
-| `0x6ac6e0` | `Y0caeZ_zze.ombt6RC6kde` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x735400` | `main.J_5lH4w6CU` | `LICENSE_AND_ENTITLEMENT_MANAGER` | `CONFIRMED_ROLE` | 0.95 | Direct reference to license activation and machine_id verification |
-| `0x736ae0` | `main.aOfaLG` | `ADMIN_USER_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to admin user management and users.json persistence |
-| `0x737880` | `main.w3H7BXxDC` | `DEVICE_TAGGING_AND_ORGANIZATION` | `CONFIRMED_ROLE` | 0.90 | Direct reference to /api/tags and device_tags.json |
-| `0x73a580` | `main.cFpPBbFet.func1` | `AUTH_LOGOUT_AND_TOKEN_REVOCATION` | `CONFIRMED_ROLE` | 0.98 | Direct reference to /api/logout and token revocation |
-| `0x73dd00` | `main.ltOjwqsMl5q8` | `AUTH_LOGIN_HANDLER` | `CONFIRMED_ROLE` | 0.98 | Direct reference to /api/login and credential verification |
-| `0x73e7c0` | `main.ajyljXiIN8` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x73ec40` | `main.bwvBd1LWVr` | `AUTH_STATUS_HANDLER` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/auth-status |
-| `0x73ffc0` | `main.jc6UOob61gVD` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x7409a0` | `main.bjWkHiittd` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x740f40` | `main.sGuPXW2D` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x7432a0` | `main.as5uExtX` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x744140` | `main.zrTQTiT` | `AUTH_LOGIN_HANDLER` | `CONFIRMED_ROLE` | 0.98 | Direct reference to /api/login and credential verification |
-| `0x744c20` | `main.m3nYlgst` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x745ba0` | `main._Wcin_o` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x7464e0` | `main.daDbGP` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x746e80` | `main.rmHttgOpxTKh` | `AUTH_LOGIN_HANDLER` | `CONFIRMED_ROLE` | 0.98 | Direct reference to /api/login and credential verification |
-| `0x747880` | `main.eIddSiN_g` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x74b4e0` | `main.hPaJPN` | `LICENSE_AND_ENTITLEMENT_MANAGER` | `CONFIRMED_ROLE` | 0.95 | Direct reference to license activation and machine_id verification |
-| `0x74b6c0` | `main.jcraNgV8Jg` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x74da60` | `main.rXQMyuE` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x74e4a0` | `main.rQffYkwYhw` | `ADMIN_USER_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to admin user management and users.json persistence |
-| `0x758c80` | `main.swqKgLrjAZT9` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x75afa0` | `main.koVbnsD4T0d` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x75c240` | `main.cYYycnP3` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x75e5a0` | `main.nFuQn_o` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x75ee20` | `main.d1oM4aHeERk4` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x75fb20` | `main.nMFGdqfO` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x760480` | `main.busbgD` | `AUTH_LOGIN_HANDLER` | `CONFIRMED_ROLE` | 0.98 | Direct reference to /api/login and credential verification |
-| `0x761a20` | `main.iSjKlH94xCO` | `AUTH_LOGIN_HANDLER` | `CONFIRMED_ROLE` | 0.98 | Direct reference to /api/login and credential verification |
-| `0x769d40` | `main.bFT5Enmzua` | `DEVICE_TAGGING_AND_ORGANIZATION` | `CONFIRMED_ROLE` | 0.90 | Direct reference to /api/tags and device_tags.json |
-| `0x76a4c0` | `main.k7fAFNISQp_m` | `DEVICE_REGISTRY_AND_MANAGEMENT` | `CONFIRMED_ROLE` | 0.95 | Direct reference to /api/devices and device state management |
-| `0x76ba00` | `main.gevbuZQhJ` | `DEVICE_TAGGING_AND_ORGANIZATION` | `CONFIRMED_ROLE` | 0.90 | Direct reference to /api/tags and device_tags.json |
+| `0x736ae0` | `main.aOfaLG` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.95 | A: References 'users.json' persistence; C: References user admin credentials |
+| `0x737880` | `main.w3H7BXxDC` | `PROJECT` | `DEVICE_TAGGING_AND_ORGANIZATION` | 0.95 | A: References 'device_tags.json' persistence; C: References deviceTags schema key |
+| `0x73be00` | `main.kWD78W` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.95 | A: References 'shares.json' persistence; C: References sharing protocol parameters |
+| `0x73dd00` | `main.ltOjwqsMl5q8` | `PROJECT` | `AUTH_LOGIN_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/login'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/login' is responsive |
+| `0x73e7c0` | `main.ajyljXiIN8` | `PROJECT` | `USER_REGISTRATION_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/register'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/register' is responsive |
+| `0x73ec40` | `main.bwvBd1LWVr` | `PROJECT` | `AUTH_STATUS_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/auth-status'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/auth-status' is responsive |
+| `0x73f100` | `main.gJ0OHScnGnWZ` | `PROJECT` | `USER_PROFILE_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/me'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/me' is responsive |
+| `0x73ffc0` | `main.jc6UOob61gVD` | `PROJECT` | `AI_CONFIG_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/user/ai-config'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/user/ai-config' is responsive |
+| `0x7409a0` | `main.bjWkHiittd` | `PROJECT` | `AUTH_LOGOUT_AND_TOKEN_REVOCATION` | 0.98 | B: Route registration pointer from main.main closure table for '/api/logout'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/logout' is responsive |
+| `0x740f40` | `main.sGuPXW2D` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/rename'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/rename' is responsive |
+| `0x741ec0` | `main.eiuBQux8` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users' is responsive |
+| `0x7432a0` | `main.as5uExtX` | `PROJECT` | `ADMIN_DEVICE_ASSIGNMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/assign'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/assign' is responsive |
+| `0x744140` | `main.zrTQTiT` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/create'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/create' is responsive |
+| `0x744c20` | `main.m3nYlgst` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/update'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/update' is responsive |
+| `0x745ba0` | `main._Wcin_o` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/delete'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/delete' is responsive |
+| `0x7464e0` | `main.daDbGP` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/update_note'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/update_note' is responsive |
+| `0x746e80` | `main.rmHttgOpxTKh` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/reset_password'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/reset_password' is responsive |
+| `0x747880` | `main.eIddSiN_g` | `PROJECT` | `ADMIN_USER_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/admin/users/kick'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/admin/users/kick' is responsive |
+| `0x74b6c0` | `main.jcraNgV8Jg` | `PROJECT` | `LICENSE_AND_ENTITLEMENT_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/activate'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/activate' is responsive |
+| `0x74bf60` | `main.yyDyfaokeO` | `PROJECT` | `LICENSE_AND_ENTITLEMENT_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/debug/license'; E: Clean dynamic oracle confirmed route '/debug/license' is responsive |
+| `0x74c220` | `main.xdGI1n` | `PROJECT` | `LICENSE_AND_ENTITLEMENT_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/license_status'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/license_status' is responsive |
+| `0x74cf80` | `main.i2EgUTaLmQs` | `PROJECT` | `DEVICE_REGISTRY_AND_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/devices'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/devices' is responsive |
+| `0x74da60` | `main.rXQMyuE` | `PROJECT` | `DEVICE_REGISTRY_AND_MANAGEMENT` | 0.98 | B: Route registration pointer from main.main closure table for '/api/devices/'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/devices/' is responsive |
+| `0x74e4a0` | `main.rQffYkwYhw` | `PROJECT` | `DEVICE_REGISTRATION_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/register_device'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/register_device' is responsive |
+| `0x7507c0` | `main.id8ybRmw69lm` | `PROJECT` | `WEBSOCKET_CLIENT_BRIDGE_HUB` | 0.98 | B: Route registration pointer from main.main closure table for '/connect_client'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/connect_client' is responsive |
+| `0x754b40` | `main.jdUaLc5NMO5` | `PROJECT` | `WEBSOCKET_AGENT_REGISTRATION_HUB` | 0.98 | B: Route registration pointer from main.main closure table for '/register_agent'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/register_agent' is responsive |
+| `0x758c80` | `main.swqKgLrjAZT9` | `PROJECT` | `FILE_TRANSMISSION_AND_TASK_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/upload'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/upload' is responsive |
+| `0x75a2c0` | `main.qa3RvDW` | `PROJECT` | `FILE_TRANSMISSION_AND_TASK_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/files'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/files' is responsive |
+| `0x75afa0` | `main.koVbnsD4T0d` | `PROJECT` | `FILE_TRANSMISSION_AND_TASK_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/tasks'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/tasks' is responsive |
+| `0x75c240` | `main.cYYycnP3` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.98 | B: Route registration pointer from main.main closure table for '/api/share/create'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/share/create' is responsive |
+| `0x75d9a0` | `main._0VLCRLL` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.98 | B: Route registration pointer from main.main closure table for '/api/share/list'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/share/list' is responsive |
+| `0x75e5a0` | `main.nFuQn_o` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.98 | B: Route registration pointer from main.main closure table for '/api/share/revoke'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/share/revoke' is responsive |
+| `0x75ee20` | `main.d1oM4aHeERk4` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.98 | B: Route registration pointer from main.main closure table for '/api/share/extend'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/share/extend' is responsive |
+| `0x75fb20` | `main.nMFGdqfO` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.98 | B: Route registration pointer from main.main closure table for '/api/share/update'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/share/update' is responsive |
+| `0x760480` | `main.busbgD` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.98 | B: Route registration pointer from main.main closure table for '/api/share/info'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/share/info' is responsive |
+| `0x761a20` | `main.iSjKlH94xCO` | `PROJECT` | `DEVICE_SHARING_SUBMODULE` | 0.98 | B: Route registration pointer from main.main closure table for '/api/share/redeem_card'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/share/redeem_card' is responsive |
+| `0x7632a0` | `main.vz0hZo0q1IzM` | `PROJECT` | `SERVER_CONFIGURATION_DISPATCHER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/server/addresses'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/server/addresses' is responsive |
+| `0x763ec0` | `main.bhMId7t5J` | `PROJECT` | `FILE_TRANSMISSION_AND_TASK_MANAGER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/tasks/details'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/tasks/details' is responsive |
+| `0x7647a0` | `main.main` | `PROJECT` | `APPLICATION_ENTRYPOINT_AND_ROUTER` | 1.00 | A: Disassembly contains 42 route registration strings; B: Entry point registers HTTP multiplexer; D: Calls net/http.ListenAndServe listener; E: Dynamic oracle verified server responds on configured port |
+| `0x768500` | `main.vREP2EE2` | `PROJECT` | `ICE_SERVERS_CONFIGURATION` | 0.98 | B: Route registration pointer from main.main closure table for '/api/ice_servers'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/ice_servers' is responsive |
+| `0x768980` | `main.j0yBBXR1Hjl` | `PROJECT` | `SERVER_CONFIGURATION_DISPATCHER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/default_settings'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/default_settings' is responsive |
+| `0x769840` | `main.ys0CAJV5f5k` | `PROJECT` | `VERSION_INFO_DISPATCHER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/version'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/version' is responsive |
+| `0x76ba00` | `main.gevbuZQhJ` | `PROJECT` | `DEVICE_TAGGING_AND_ORGANIZATION` | 0.95 | A: References 'device_tags.json' persistence; C: References deviceTags schema key |
+| `0x76d200` | `main.main.func2` | `PROJECT` | `DEVICE_TAGGING_AND_ORGANIZATION` | 0.98 | B: Route registration pointer from main.main closure table for '/api/tags'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/tags' is responsive |
+| `0x76d4c0` | `main.main.func3` | `PROJECT` | `SHORTCUT_SETTINGS_HANDLER` | 0.98 | B: Route registration pointer from main.main closure table for '/api/shortcuts'; A: Instruction xrefs contain matching domain parameters; E: Clean dynamic oracle confirmed route '/api/shortcuts' is responsive |
 
-*Total Project Identified Roles: 34. Complete mapping in ROLE_MAPPING.json*
+*Total Confirmed Project Roles: 45. Complete mapping in ROLE_MAPPING.json*

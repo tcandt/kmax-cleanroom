@@ -1,0 +1,32 @@
+{
+  "admin": {
+    "username": "admin",
+    "password": "9e86884ba84d3213674a0de2740b233457fde4e6b93e5aa2dad4c1ea56537021",
+    "salt": "1efc46997adb9e4bf1811f060136749e",
+    "role": "admin",
+    "assigned_devices": [
+      "*"
+    ],
+    "note": "Baseline Administrator",
+    "forbid_bitrate": false,
+    "forbid_fps": false,
+    "forbid_resolution": false,
+    "forbid_audio": false,
+    "expires_at": "0001-01-01T00:00:00Z"
+  },
+  "user1": {
+    "username": "user1",
+    "password": "1b08ec8e0f6667cf90bba1aebe8b7b752945d8b76ce814dffea4132ffc9ad0ab",
+    "salt": "1efc46997adb9e4bf1811f060136749e",
+    "role": "user",
+    "assigned_devices": [
+      "device_test_01"
+    ],
+    "note": "Baseline Normal User",
+    "forbid_bitrate": false,
+    "forbid_fps": false,
+    "forbid_resolution": false,
+    "forbid_audio": false,
+    "expires_at": "0001-01-01T00:00:00Z"
+  }
+}

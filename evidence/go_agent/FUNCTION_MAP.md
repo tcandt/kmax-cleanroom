@@ -1,311 +1,310 @@
 # Function Map: CloudPhone Agent Daemon
 
 - **Total Functions Recovered**: 15398
-- **Confirmed Roles**: 2587
-- **Inferred Roles**: 0
-- **Unknown Roles**: 25622
+- **Total Functions with Direct Call Edges**: 12737
+- **Total Functions with String Xrefs**: 366
 
-| Index | VA | Size | Symbol Name | Role | Confidence |
-|---|---|---|---|---|---|
-| 0 | `0x11000` | 464 | `internal/abi.(*RegArgs).Dump` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 1 | `0x111d0` | 144 | `internal/abi.(*RegArgs).IntRegArgAddr` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 2 | `0x11260` | 144 | `internal/abi.(*IntArgRegBitmap).Set` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 3 | `0x112f0` | 112 | `internal/abi.(*IntArgRegBitmap).Get` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 4 | `0x11360` | 16 | `internal/abi.NoEscape` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 5 | `0x11370` | 16 | `internal/abi.(*SwissMapType).NeedKeyUpdate` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 6 | `0x11380` | 16 | `internal/abi.(*SwissMapType).HashMightPanic` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 7 | `0x11390` | 16 | `internal/abi.(*SwissMapType).IndirectKey` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 8 | `0x113a0` | 16 | `internal/abi.(*SwissMapType).IndirectElem` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 9 | `0x113b0` | 144 | `internal/abi.Kind.String` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 10 | `0x11440` | 16 | `internal/abi.TypeOf` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 11 | `0x11450` | 16 | `internal/abi.(*Type).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 12 | `0x11460` | 16 | `internal/abi.(*Type).HasName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 13 | `0x11470` | 16 | `internal/abi.(*Type).Pointers` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 14 | `0x11480` | 16 | `internal/abi.(*Type).IfaceIndir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 15 | `0x11490` | 16 | `internal/abi.(*Type).IsDirectIface` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 16 | `0x114a0` | 192 | `internal/abi.(*Type).GcSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 17 | `0x11560` | 48 | `internal/abi.(*UncommonType).Methods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 18 | `0x11590` | 48 | `internal/abi.(*UncommonType).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 19 | `0x115c0` | 48 | `internal/abi.(*Type).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 20 | `0x115f0` | 16 | `internal/abi.(*Type).Common` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 21 | `0x11600` | 48 | `internal/abi.(*Type).ChanDir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 22 | `0x11630` | 128 | `internal/abi.(*Type).Uncommon` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 23 | `0x116b0` | 112 | `internal/abi.(*Type).Elem` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 24 | `0x11720` | 32 | `internal/abi.(*Type).StructType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 25 | `0x11740` | 32 | `internal/abi.(*Type).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 26 | `0x11760` | 32 | `internal/abi.(*Type).ArrayType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 27 | `0x11780` | 32 | `internal/abi.(*Type).FuncType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 28 | `0x117a0` | 32 | `internal/abi.(*Type).InterfaceType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 29 | `0x117c0` | 16 | `internal/abi.(*Type).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 30 | `0x117d0` | 16 | `internal/abi.(*Type).Align` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 31 | `0x117e0` | 16 | `internal/abi.(*Type).FieldAlign` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 32 | `0x117f0` | 192 | `internal/abi.(*Type).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 33 | `0x118b0` | 96 | `internal/abi.(*Type).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 34 | `0x11910` | 16 | `internal/abi.(*InterfaceType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 35 | `0x11920` | 48 | `internal/abi.(*Type).Key` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 36 | `0x11950` | 144 | `internal/abi.(*FuncType).In` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 37 | `0x119e0` | 16 | `internal/abi.(*FuncType).NumIn` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 38 | `0x119f0` | 16 | `internal/abi.(*FuncType).NumOut` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 39 | `0x11a00` | 208 | `internal/abi.(*FuncType).Out` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 40 | `0x11ad0` | 80 | `internal/abi.(*FuncType).InSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 41 | `0x11b20` | 192 | `internal/abi.(*FuncType).OutSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 42 | `0x11be0` | 16 | `internal/abi.(*FuncType).IsVariadic` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 43 | `0x11bf0` | 32 | `internal/abi.(*StructField).Embedded` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 44 | `0x11c10` | 16 | `internal/abi.Name.DataChecked` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 45 | `0x11c20` | 16 | `internal/abi.Name.Data` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 46 | `0x11c30` | 16 | `internal/abi.Name.IsExported` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 47 | `0x11c40` | 16 | `internal/abi.Name.HasTag` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 48 | `0x11c50` | 16 | `internal/abi.Name.IsEmbedded` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 49 | `0x11c60` | 144 | `internal/abi.Name.ReadVarint` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 50 | `0x11cf0` | 192 | `internal/abi.Name.IsBlank` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 51 | `0x11db0` | 208 | `internal/abi.Name.Name` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 52 | `0x11e80` | 288 | `internal/abi.Name.Tag` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 53 | `0x11fa0` | 992 | `internal/abi.NewName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 54 | `0x12380` | 64 | `internal/abi.init.0` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 55 | `0x123c0` | 192 | `internal/abi.(*Kind).String` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 56 | `0x12480` | 128 | `internal/abi.(*Name).Data` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 57 | `0x12500` | 128 | `internal/abi.(*Name).DataChecked` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 58 | `0x12580` | 128 | `internal/abi.(*Name).HasTag` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 59 | `0x12600` | 112 | `internal/abi.(*Name).IsBlank` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 60 | `0x12670` | 128 | `internal/abi.(*Name).IsEmbedded` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 61 | `0x126f0` | 128 | `internal/abi.(*Name).IsExported` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 62 | `0x12770` | 112 | `internal/abi.(*Name).Name` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 63 | `0x127e0` | 192 | `internal/abi.(*Name).ReadVarint` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 64 | `0x128a0` | 112 | `internal/abi.(*Name).Tag` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 65 | `0x12910` | 16 | `internal/abi.(*StructType).Align` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 66 | `0x12920` | 32 | `internal/abi.(*StructType).ArrayType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 67 | `0x12940` | 48 | `internal/abi.(*StructType).ChanDir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 68 | `0x12970` | 16 | `internal/abi.(*StructType).Common` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 69 | `0x12980` | 112 | `internal/abi.(*StructType).Elem` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 70 | `0x129f0` | 16 | `internal/abi.(*StructType).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 71 | `0x12a00` | 16 | `internal/abi.(*StructType).FieldAlign` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 72 | `0x12a10` | 32 | `internal/abi.(*StructType).FuncType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 73 | `0x12a30` | 224 | `internal/abi.(*StructType).GcSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 74 | `0x12b10` | 16 | `internal/abi.(*StructType).HasName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 75 | `0x12b20` | 16 | `internal/abi.(*StructType).IfaceIndir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 76 | `0x12b30` | 32 | `internal/abi.(*StructType).InterfaceType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 77 | `0x12b50` | 16 | `internal/abi.(*StructType).IsDirectIface` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 78 | `0x12b60` | 48 | `internal/abi.(*StructType).Key` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 79 | `0x12b90` | 16 | `internal/abi.(*StructType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 80 | `0x12ba0` | 48 | `internal/abi.(*StructType).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 81 | `0x12bd0` | 32 | `internal/abi.(*StructType).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 82 | `0x12bf0` | 16 | `internal/abi.(*StructType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 83 | `0x12c00` | 16 | `internal/abi.(*StructType).Pointers` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 84 | `0x12c10` | 16 | `internal/abi.(*StructType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 85 | `0x12c20` | 32 | `internal/abi.(*StructType).StructType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 86 | `0x12c40` | 128 | `internal/abi.(*StructType).Uncommon` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 87 | `0x12cc0` | 16 | `internal/abi.(*SwissMapType).Align` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 88 | `0x12cd0` | 32 | `internal/abi.(*SwissMapType).ArrayType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 89 | `0x12cf0` | 48 | `internal/abi.(*SwissMapType).ChanDir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 90 | `0x12d20` | 16 | `internal/abi.(*SwissMapType).Common` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 91 | `0x12d30` | 16 | `internal/abi.(*SwissMapType).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 92 | `0x12d40` | 16 | `internal/abi.(*SwissMapType).FieldAlign` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 93 | `0x12d50` | 32 | `internal/abi.(*SwissMapType).FuncType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 94 | `0x12d70` | 224 | `internal/abi.(*SwissMapType).GcSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 95 | `0x12e50` | 16 | `internal/abi.(*SwissMapType).HasName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 96 | `0x12e60` | 16 | `internal/abi.(*SwissMapType).IfaceIndir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 97 | `0x12e70` | 32 | `internal/abi.(*SwissMapType).InterfaceType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 98 | `0x12e90` | 16 | `internal/abi.(*SwissMapType).IsDirectIface` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 99 | `0x12ea0` | 16 | `internal/abi.(*SwissMapType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 100 | `0x12eb0` | 48 | `internal/abi.(*SwissMapType).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 101 | `0x12ee0` | 32 | `internal/abi.(*SwissMapType).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 102 | `0x12f00` | 16 | `internal/abi.(*SwissMapType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 103 | `0x12f10` | 16 | `internal/abi.(*SwissMapType).Pointers` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 104 | `0x12f20` | 16 | `internal/abi.(*SwissMapType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 105 | `0x12f30` | 32 | `internal/abi.(*SwissMapType).StructType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 106 | `0x12f50` | 128 | `internal/abi.(*SwissMapType).Uncommon` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 107 | `0x12fd0` | 16 | `internal/abi.(*ArrayType).Align` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 108 | `0x12fe0` | 32 | `internal/abi.(*ArrayType).ArrayType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 109 | `0x13000` | 48 | `internal/abi.(*ArrayType).ChanDir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 110 | `0x13030` | 16 | `internal/abi.(*ArrayType).Common` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 111 | `0x13040` | 16 | `internal/abi.(*ArrayType).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 112 | `0x13050` | 16 | `internal/abi.(*ArrayType).FieldAlign` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 113 | `0x13060` | 32 | `internal/abi.(*ArrayType).FuncType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 114 | `0x13080` | 224 | `internal/abi.(*ArrayType).GcSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 115 | `0x13160` | 16 | `internal/abi.(*ArrayType).HasName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 116 | `0x13170` | 16 | `internal/abi.(*ArrayType).IfaceIndir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 117 | `0x13180` | 32 | `internal/abi.(*ArrayType).InterfaceType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 118 | `0x131a0` | 16 | `internal/abi.(*ArrayType).IsDirectIface` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 119 | `0x131b0` | 48 | `internal/abi.(*ArrayType).Key` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 120 | `0x131e0` | 16 | `internal/abi.(*ArrayType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 121 | `0x131f0` | 32 | `internal/abi.(*ArrayType).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 122 | `0x13210` | 16 | `internal/abi.(*ArrayType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 123 | `0x13220` | 16 | `internal/abi.(*ArrayType).Pointers` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 124 | `0x13230` | 16 | `internal/abi.(*ArrayType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 125 | `0x13240` | 32 | `internal/abi.(*ArrayType).StructType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 126 | `0x13260` | 128 | `internal/abi.(*ArrayType).Uncommon` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 127 | `0x132e0` | 16 | `internal/abi.(*FuncType).Align` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 128 | `0x132f0` | 32 | `internal/abi.(*FuncType).ArrayType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 129 | `0x13310` | 48 | `internal/abi.(*FuncType).ChanDir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 130 | `0x13340` | 16 | `internal/abi.(*FuncType).Common` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 131 | `0x13350` | 112 | `internal/abi.(*FuncType).Elem` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 132 | `0x133c0` | 16 | `internal/abi.(*FuncType).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 133 | `0x133d0` | 16 | `internal/abi.(*FuncType).FieldAlign` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 134 | `0x133e0` | 32 | `internal/abi.(*FuncType).FuncType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 135 | `0x13400` | 224 | `internal/abi.(*FuncType).GcSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 136 | `0x134e0` | 16 | `internal/abi.(*FuncType).HasName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 137 | `0x134f0` | 16 | `internal/abi.(*FuncType).IfaceIndir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 138 | `0x13500` | 32 | `internal/abi.(*FuncType).InterfaceType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 139 | `0x13520` | 16 | `internal/abi.(*FuncType).IsDirectIface` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 140 | `0x13530` | 48 | `internal/abi.(*FuncType).Key` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 141 | `0x13560` | 16 | `internal/abi.(*FuncType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 142 | `0x13570` | 48 | `internal/abi.(*FuncType).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 143 | `0x135a0` | 32 | `internal/abi.(*FuncType).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 144 | `0x135c0` | 16 | `internal/abi.(*FuncType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 145 | `0x135d0` | 16 | `internal/abi.(*FuncType).Pointers` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 146 | `0x135e0` | 16 | `internal/abi.(*FuncType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 147 | `0x135f0` | 32 | `internal/abi.(*FuncType).StructType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 148 | `0x13610` | 128 | `internal/abi.(*FuncType).Uncommon` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 149 | `0x13690` | 16 | `internal/abi.(*InterfaceType).Align` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 150 | `0x136a0` | 32 | `internal/abi.(*InterfaceType).ArrayType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 151 | `0x136c0` | 48 | `internal/abi.(*InterfaceType).ChanDir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 152 | `0x136f0` | 16 | `internal/abi.(*InterfaceType).Common` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 153 | `0x13700` | 112 | `internal/abi.(*InterfaceType).Elem` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 154 | `0x13770` | 16 | `internal/abi.(*InterfaceType).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 155 | `0x13780` | 16 | `internal/abi.(*InterfaceType).FieldAlign` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 156 | `0x13790` | 32 | `internal/abi.(*InterfaceType).FuncType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 157 | `0x137b0` | 224 | `internal/abi.(*InterfaceType).GcSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 158 | `0x13890` | 16 | `internal/abi.(*InterfaceType).HasName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 159 | `0x138a0` | 16 | `internal/abi.(*InterfaceType).IfaceIndir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 160 | `0x138b0` | 32 | `internal/abi.(*InterfaceType).InterfaceType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 161 | `0x138d0` | 16 | `internal/abi.(*InterfaceType).IsDirectIface` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 162 | `0x138e0` | 48 | `internal/abi.(*InterfaceType).Key` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 163 | `0x13910` | 16 | `internal/abi.(*InterfaceType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 164 | `0x13920` | 48 | `internal/abi.(*InterfaceType).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 165 | `0x13950` | 32 | `internal/abi.(*InterfaceType).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 166 | `0x13970` | 16 | `internal/abi.(*InterfaceType).Pointers` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 167 | `0x13980` | 16 | `internal/abi.(*InterfaceType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 168 | `0x13990` | 32 | `internal/abi.(*InterfaceType).StructType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 169 | `0x139b0` | 128 | `internal/abi.(*InterfaceType).Uncommon` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 170 | `0x13a30` | 16 | `internal/abi.(*PtrType).Align` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 171 | `0x13a40` | 32 | `internal/abi.(*PtrType).ArrayType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 172 | `0x13a60` | 48 | `internal/abi.(*PtrType).ChanDir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 173 | `0x13a90` | 16 | `internal/abi.(*PtrType).Common` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 174 | `0x13aa0` | 16 | `internal/abi.(*PtrType).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 175 | `0x13ab0` | 16 | `internal/abi.(*PtrType).FieldAlign` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 176 | `0x13ac0` | 32 | `internal/abi.(*PtrType).FuncType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 177 | `0x13ae0` | 224 | `internal/abi.(*PtrType).GcSlice` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 178 | `0x13bc0` | 16 | `internal/abi.(*PtrType).HasName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 179 | `0x13bd0` | 16 | `internal/abi.(*PtrType).IfaceIndir` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 180 | `0x13be0` | 32 | `internal/abi.(*PtrType).InterfaceType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 181 | `0x13c00` | 16 | `internal/abi.(*PtrType).IsDirectIface` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 182 | `0x13c10` | 48 | `internal/abi.(*PtrType).Key` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 183 | `0x13c40` | 16 | `internal/abi.(*PtrType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 184 | `0x13c50` | 48 | `internal/abi.(*PtrType).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 185 | `0x13c80` | 32 | `internal/abi.(*PtrType).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 186 | `0x13ca0` | 16 | `internal/abi.(*PtrType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 187 | `0x13cb0` | 16 | `internal/abi.(*PtrType).Pointers` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 188 | `0x13cc0` | 16 | `internal/abi.(*PtrType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 189 | `0x13cd0` | 32 | `internal/abi.(*PtrType).StructType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 190 | `0x13cf0` | 128 | `internal/abi.(*PtrType).Uncommon` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 191 | `0x13d70` | 80 | `type:.eq.internal/abi.UncommonType` | `UNKNOWN` | 0.20 |
-| 192 | `0x13dc0` | 64 | `type:.eq.internal/abi.RegArgs` | `UNKNOWN` | 0.20 |
-| 193 | `0x13e00` | 80 | `type:.eq.internal/abi.ITab` | `UNKNOWN` | 0.20 |
-| 194 | `0x13e50` | 80 | `internal/cpu.Initialize` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 195 | `0x13ea0` | 1216 | `internal/cpu.processOptions` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 196 | `0x14360` | 352 | `internal/cpu.doinit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 197 | `0x144c0` | 496 | `internal/cpu.hwcapInit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 198 | `0x146b0` | 16 | `internal/cpu.getMIDR` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 199 | `0x146c0` | 160 | `type:.eq.internal/cpu.option` | `UNKNOWN` | 0.20 |
-| 200 | `0x14760` | 704 | `type:.eq.[10]internal/cpu.option` | `UNKNOWN` | 0.20 |
-| 201 | `0x14a20` | 32 | `internal/runtime/sys.init` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 202 | `0x14a40` | 32 | `internal/runtime/sys.EnableDIT` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 203 | `0x14a60` | 16 | `type:.eq.internal/runtime/sys.NotInHeap` | `UNKNOWN` | 0.20 |
-| 204 | `0x14a70` | 16 | `internal/runtime/atomic.(*Int32).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 205 | `0x14a80` | 16 | `internal/runtime/atomic.(*Int32).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 206 | `0x14a90` | 80 | `internal/runtime/atomic.(*Int32).CompareAndSwap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 207 | `0x14ae0` | 48 | `internal/runtime/atomic.(*Int32).Swap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 208 | `0x14b10` | 64 | `internal/runtime/atomic.(*Int32).Add` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 209 | `0x14b50` | 16 | `internal/runtime/atomic.(*Int64).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 210 | `0x14b60` | 16 | `internal/runtime/atomic.(*Int64).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 211 | `0x14b70` | 80 | `internal/runtime/atomic.(*Int64).CompareAndSwap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 212 | `0x14bc0` | 48 | `internal/runtime/atomic.(*Int64).Swap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 213 | `0x14bf0` | 64 | `internal/runtime/atomic.(*Int64).Add` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 214 | `0x14c30` | 16 | `internal/runtime/atomic.(*Uint8).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 215 | `0x14c40` | 16 | `internal/runtime/atomic.(*Uint8).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 216 | `0x14c50` | 48 | `internal/runtime/atomic.(*Uint8).And` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 217 | `0x14c80` | 48 | `internal/runtime/atomic.(*Uint8).Or` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 218 | `0x14cb0` | 32 | `internal/runtime/atomic.(*Bool).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 219 | `0x14cd0` | 16 | `internal/runtime/atomic.(*Bool).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 220 | `0x14ce0` | 16 | `internal/runtime/atomic.(*Uint32).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 221 | `0x14cf0` | 16 | `internal/runtime/atomic.(*Uint32).LoadAcquire` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 222 | `0x14d00` | 16 | `internal/runtime/atomic.(*Uint32).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 223 | `0x14d10` | 16 | `internal/runtime/atomic.(*Uint32).StoreRelease` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 224 | `0x14d20` | 80 | `internal/runtime/atomic.(*Uint32).CompareAndSwap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 225 | `0x14d70` | 80 | `internal/runtime/atomic.(*Uint32).CompareAndSwapRelease` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 226 | `0x14dc0` | 48 | `internal/runtime/atomic.(*Uint32).Swap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 227 | `0x14df0` | 48 | `internal/runtime/atomic.(*Uint32).And` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 228 | `0x14e20` | 48 | `internal/runtime/atomic.(*Uint32).Or` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 229 | `0x14e50` | 64 | `internal/runtime/atomic.(*Uint32).Add` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 230 | `0x14e90` | 16 | `internal/runtime/atomic.(*Uint64).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 231 | `0x14ea0` | 16 | `internal/runtime/atomic.(*Uint64).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 232 | `0x14eb0` | 80 | `internal/runtime/atomic.(*Uint64).CompareAndSwap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 233 | `0x14f00` | 48 | `internal/runtime/atomic.(*Uint64).Swap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 234 | `0x14f30` | 64 | `internal/runtime/atomic.(*Uint64).Add` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 235 | `0x14f70` | 16 | `internal/runtime/atomic.(*Uintptr).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 236 | `0x14f80` | 16 | `internal/runtime/atomic.(*Uintptr).LoadAcquire` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 237 | `0x14f90` | 16 | `internal/runtime/atomic.(*Uintptr).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 238 | `0x14fa0` | 16 | `internal/runtime/atomic.(*Uintptr).StoreRelease` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 239 | `0x14fb0` | 80 | `internal/runtime/atomic.(*Uintptr).CompareAndSwap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 240 | `0x15000` | 48 | `internal/runtime/atomic.(*Uintptr).Swap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 241 | `0x15030` | 64 | `internal/runtime/atomic.(*Uintptr).Add` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 242 | `0x15070` | 16 | `internal/runtime/atomic.(*UnsafePointer).Load` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 243 | `0x15080` | 16 | `internal/runtime/atomic.(*UnsafePointer).StoreNoWB` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 244 | `0x15090` | 64 | `internal/runtime/atomic.(*UnsafePointer).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 245 | `0x150d0` | 80 | `internal/runtime/atomic.(*UnsafePointer).CompareAndSwapNoWB` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 246 | `0x15120` | 80 | `internal/runtime/atomic.(*UnsafePointer).CompareAndSwap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 247 | `0x15170` | 16 | `internal/runtime/atomic.(*noCopy).Lock` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 248 | `0x15180` | 16 | `internal/runtime/atomic.(*noCopy).Unlock` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 249 | `0x15190` | 16 | `internal/runtime/atomic.(*Uint64).LoadAcquire` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 250 | `0x151a0` | 16 | `internal/runtime/atomic.(*Uint64).StoreRelease` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 251 | `0x151b0` | 32 | `type:.eq.internal/runtime/atomic.Int64` | `UNKNOWN` | 0.20 |
-| 252 | `0x151d0` | 32 | `type:.eq.internal/runtime/atomic.Uint64` | `UNKNOWN` | 0.20 |
-| 253 | `0x151f0` | 16 | `internal/bytealg.init.0` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 254 | `0x15200` | 304 | `cmpbody` | `UNKNOWN` | 0.20 |
-| 255 | `0x15330` | 16 | `internal/bytealg.Compare` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 256 | `0x15340` | 16 | `runtime.cmpstring` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 257 | `0x15350` | 16 | `internal/bytealg.Count` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 258 | `0x15360` | 192 | `internal/bytealg.CountString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 259 | `0x15420` | 32 | `runtime.memequal_varlen` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 260 | `0x15440` | 320 | `runtime.memequal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 261 | `0x15580` | 16 | `internal/bytealg.Index` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 262 | `0x15590` | 528 | `internal/bytealg.IndexString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 263 | `0x157a0` | 16 | `internal/bytealg.IndexByte` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 264 | `0x157b0` | 224 | `internal/bytealg.IndexByteString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 265 | `0x15890` | 272 | `internal/runtime/strconv.Atoi64` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 266 | `0x159a0` | 144 | `internal/runtime/syscall.EpollWait` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 267 | `0x15a30` | 112 | `internal/runtime/syscall.Open` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 268 | `0x15aa0` | 128 | `internal/runtime/syscall.Read` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 269 | `0x15b20` | 128 | `internal/runtime/syscall.Pread` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 270 | `0x15ba0` | 80 | `internal/runtime/syscall.Syscall6` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 271 | `0x15bf0` | 192 | `internal/runtime/cgroup.CPU.Close` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 272 | `0x15cb0` | 832 | `internal/runtime/cgroup.OpenCPU` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 273 | `0x15ff0` | 288 | `internal/runtime/cgroup.ReadCPULimit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 274 | `0x16110` | 208 | `internal/runtime/cgroup.readV1Number` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 275 | `0x161e0` | 208 | `internal/runtime/cgroup.parseV1Number` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 276 | `0x162b0` | 208 | `internal/runtime/cgroup.readV2Limit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 277 | `0x16380` | 512 | `internal/runtime/cgroup.parseV2Limit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 278 | `0x16580` | 432 | `internal/runtime/cgroup.FindCPU` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 279 | `0x16730` | 400 | `internal/runtime/cgroup.FindCPURelativePath` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 280 | `0x168c0` | 896 | `internal/runtime/cgroup.parseCPURelativePath` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 281 | `0x16c40` | 320 | `internal/runtime/cgroup.containsCPU` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 282 | `0x16d80` | 576 | `internal/runtime/cgroup.FindCPUMountPoint` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 283 | `0x16fc0` | 1456 | `internal/runtime/cgroup.parseCPUMount` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 284 | `0x17570` | 400 | `internal/runtime/cgroup.unescapePath` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 285 | `0x17700` | 16 | `internal/runtime/cgroup.stringError.Error` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 286 | `0x17710` | 576 | `internal/runtime/cgroup.(*lineReader).next` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 287 | `0x17950` | 112 | `internal/runtime/cgroup.(*stringError).Error` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 288 | `0x179c0` | 448 | `internal/runtime/maps.cloneGroup` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 289 | `0x17b80` | 624 | `internal/runtime/maps.NewMap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 290 | `0x17df0` | 656 | `internal/runtime/maps.(*Map).installTableSplit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 291 | `0x18080` | 16 | `internal/runtime/maps.(*Map).Used` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 292 | `0x18090` | 80 | `internal/runtime/maps.(*Map).Get` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 293 | `0x180e0` | 272 | `internal/runtime/maps.(*Map).getWithKey` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 294 | `0x181f0` | 272 | `internal/runtime/maps.(*Map).getWithoutKey` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 295 | `0x18300` | 336 | `internal/runtime/maps.(*Map).getWithKeySmall` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 296 | `0x18450` | 112 | `internal/runtime/maps.(*Map).Put` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 297 | `0x184c0` | 432 | `internal/runtime/maps.(*Map).PutSlot` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 298 | `0x18670` | 720 | `internal/runtime/maps.(*Map).putSlotSmall` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 299 | `0x18940` | 128 | `internal/runtime/maps.(*Map).growToSmall` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
+| Index | VA | Size | Symbol Name |
+|---|---|---|---|
+| 0 | `0x11000` | 464 | `internal/abi.(*RegArgs).Dump` |
+| 1 | `0x111d0` | 144 | `internal/abi.(*RegArgs).IntRegArgAddr` |
+| 2 | `0x11260` | 144 | `internal/abi.(*IntArgRegBitmap).Set` |
+| 3 | `0x112f0` | 112 | `internal/abi.(*IntArgRegBitmap).Get` |
+| 4 | `0x11360` | 16 | `internal/abi.NoEscape` |
+| 5 | `0x11370` | 16 | `internal/abi.(*SwissMapType).NeedKeyUpdate` |
+| 6 | `0x11380` | 16 | `internal/abi.(*SwissMapType).HashMightPanic` |
+| 7 | `0x11390` | 16 | `internal/abi.(*SwissMapType).IndirectKey` |
+| 8 | `0x113a0` | 16 | `internal/abi.(*SwissMapType).IndirectElem` |
+| 9 | `0x113b0` | 144 | `internal/abi.Kind.String` |
+| 10 | `0x11440` | 16 | `internal/abi.TypeOf` |
+| 11 | `0x11450` | 16 | `internal/abi.(*Type).Kind` |
+| 12 | `0x11460` | 16 | `internal/abi.(*Type).HasName` |
+| 13 | `0x11470` | 16 | `internal/abi.(*Type).Pointers` |
+| 14 | `0x11480` | 16 | `internal/abi.(*Type).IfaceIndir` |
+| 15 | `0x11490` | 16 | `internal/abi.(*Type).IsDirectIface` |
+| 16 | `0x114a0` | 192 | `internal/abi.(*Type).GcSlice` |
+| 17 | `0x11560` | 48 | `internal/abi.(*UncommonType).Methods` |
+| 18 | `0x11590` | 48 | `internal/abi.(*UncommonType).ExportedMethods` |
+| 19 | `0x115c0` | 48 | `internal/abi.(*Type).Len` |
+| 20 | `0x115f0` | 16 | `internal/abi.(*Type).Common` |
+| 21 | `0x11600` | 48 | `internal/abi.(*Type).ChanDir` |
+| 22 | `0x11630` | 128 | `internal/abi.(*Type).Uncommon` |
+| 23 | `0x116b0` | 112 | `internal/abi.(*Type).Elem` |
+| 24 | `0x11720` | 32 | `internal/abi.(*Type).StructType` |
+| 25 | `0x11740` | 32 | `internal/abi.(*Type).MapType` |
+| 26 | `0x11760` | 32 | `internal/abi.(*Type).ArrayType` |
+| 27 | `0x11780` | 32 | `internal/abi.(*Type).FuncType` |
+| 28 | `0x117a0` | 32 | `internal/abi.(*Type).InterfaceType` |
+| 29 | `0x117c0` | 16 | `internal/abi.(*Type).Size` |
+| 30 | `0x117d0` | 16 | `internal/abi.(*Type).Align` |
+| 31 | `0x117e0` | 16 | `internal/abi.(*Type).FieldAlign` |
+| 32 | `0x117f0` | 192 | `internal/abi.(*Type).ExportedMethods` |
+| 33 | `0x118b0` | 96 | `internal/abi.(*Type).NumMethod` |
+| 34 | `0x11910` | 16 | `internal/abi.(*InterfaceType).NumMethod` |
+| 35 | `0x11920` | 48 | `internal/abi.(*Type).Key` |
+| 36 | `0x11950` | 144 | `internal/abi.(*FuncType).In` |
+| 37 | `0x119e0` | 16 | `internal/abi.(*FuncType).NumIn` |
+| 38 | `0x119f0` | 16 | `internal/abi.(*FuncType).NumOut` |
+| 39 | `0x11a00` | 208 | `internal/abi.(*FuncType).Out` |
+| 40 | `0x11ad0` | 80 | `internal/abi.(*FuncType).InSlice` |
+| 41 | `0x11b20` | 192 | `internal/abi.(*FuncType).OutSlice` |
+| 42 | `0x11be0` | 16 | `internal/abi.(*FuncType).IsVariadic` |
+| 43 | `0x11bf0` | 32 | `internal/abi.(*StructField).Embedded` |
+| 44 | `0x11c10` | 16 | `internal/abi.Name.DataChecked` |
+| 45 | `0x11c20` | 16 | `internal/abi.Name.Data` |
+| 46 | `0x11c30` | 16 | `internal/abi.Name.IsExported` |
+| 47 | `0x11c40` | 16 | `internal/abi.Name.HasTag` |
+| 48 | `0x11c50` | 16 | `internal/abi.Name.IsEmbedded` |
+| 49 | `0x11c60` | 144 | `internal/abi.Name.ReadVarint` |
+| 50 | `0x11cf0` | 192 | `internal/abi.Name.IsBlank` |
+| 51 | `0x11db0` | 208 | `internal/abi.Name.Name` |
+| 52 | `0x11e80` | 288 | `internal/abi.Name.Tag` |
+| 53 | `0x11fa0` | 992 | `internal/abi.NewName` |
+| 54 | `0x12380` | 64 | `internal/abi.init.0` |
+| 55 | `0x123c0` | 192 | `internal/abi.(*Kind).String` |
+| 56 | `0x12480` | 128 | `internal/abi.(*Name).Data` |
+| 57 | `0x12500` | 128 | `internal/abi.(*Name).DataChecked` |
+| 58 | `0x12580` | 128 | `internal/abi.(*Name).HasTag` |
+| 59 | `0x12600` | 112 | `internal/abi.(*Name).IsBlank` |
+| 60 | `0x12670` | 128 | `internal/abi.(*Name).IsEmbedded` |
+| 61 | `0x126f0` | 128 | `internal/abi.(*Name).IsExported` |
+| 62 | `0x12770` | 112 | `internal/abi.(*Name).Name` |
+| 63 | `0x127e0` | 192 | `internal/abi.(*Name).ReadVarint` |
+| 64 | `0x128a0` | 112 | `internal/abi.(*Name).Tag` |
+| 65 | `0x12910` | 16 | `internal/abi.(*StructType).Align` |
+| 66 | `0x12920` | 32 | `internal/abi.(*StructType).ArrayType` |
+| 67 | `0x12940` | 48 | `internal/abi.(*StructType).ChanDir` |
+| 68 | `0x12970` | 16 | `internal/abi.(*StructType).Common` |
+| 69 | `0x12980` | 112 | `internal/abi.(*StructType).Elem` |
+| 70 | `0x129f0` | 16 | `internal/abi.(*StructType).ExportedMethods` |
+| 71 | `0x12a00` | 16 | `internal/abi.(*StructType).FieldAlign` |
+| 72 | `0x12a10` | 32 | `internal/abi.(*StructType).FuncType` |
+| 73 | `0x12a30` | 224 | `internal/abi.(*StructType).GcSlice` |
+| 74 | `0x12b10` | 16 | `internal/abi.(*StructType).HasName` |
+| 75 | `0x12b20` | 16 | `internal/abi.(*StructType).IfaceIndir` |
+| 76 | `0x12b30` | 32 | `internal/abi.(*StructType).InterfaceType` |
+| 77 | `0x12b50` | 16 | `internal/abi.(*StructType).IsDirectIface` |
+| 78 | `0x12b60` | 48 | `internal/abi.(*StructType).Key` |
+| 79 | `0x12b90` | 16 | `internal/abi.(*StructType).Kind` |
+| 80 | `0x12ba0` | 48 | `internal/abi.(*StructType).Len` |
+| 81 | `0x12bd0` | 32 | `internal/abi.(*StructType).MapType` |
+| 82 | `0x12bf0` | 16 | `internal/abi.(*StructType).NumMethod` |
+| 83 | `0x12c00` | 16 | `internal/abi.(*StructType).Pointers` |
+| 84 | `0x12c10` | 16 | `internal/abi.(*StructType).Size` |
+| 85 | `0x12c20` | 32 | `internal/abi.(*StructType).StructType` |
+| 86 | `0x12c40` | 128 | `internal/abi.(*StructType).Uncommon` |
+| 87 | `0x12cc0` | 16 | `internal/abi.(*SwissMapType).Align` |
+| 88 | `0x12cd0` | 32 | `internal/abi.(*SwissMapType).ArrayType` |
+| 89 | `0x12cf0` | 48 | `internal/abi.(*SwissMapType).ChanDir` |
+| 90 | `0x12d20` | 16 | `internal/abi.(*SwissMapType).Common` |
+| 91 | `0x12d30` | 16 | `internal/abi.(*SwissMapType).ExportedMethods` |
+| 92 | `0x12d40` | 16 | `internal/abi.(*SwissMapType).FieldAlign` |
+| 93 | `0x12d50` | 32 | `internal/abi.(*SwissMapType).FuncType` |
+| 94 | `0x12d70` | 224 | `internal/abi.(*SwissMapType).GcSlice` |
+| 95 | `0x12e50` | 16 | `internal/abi.(*SwissMapType).HasName` |
+| 96 | `0x12e60` | 16 | `internal/abi.(*SwissMapType).IfaceIndir` |
+| 97 | `0x12e70` | 32 | `internal/abi.(*SwissMapType).InterfaceType` |
+| 98 | `0x12e90` | 16 | `internal/abi.(*SwissMapType).IsDirectIface` |
+| 99 | `0x12ea0` | 16 | `internal/abi.(*SwissMapType).Kind` |
+| 100 | `0x12eb0` | 48 | `internal/abi.(*SwissMapType).Len` |
+| 101 | `0x12ee0` | 32 | `internal/abi.(*SwissMapType).MapType` |
+| 102 | `0x12f00` | 16 | `internal/abi.(*SwissMapType).NumMethod` |
+| 103 | `0x12f10` | 16 | `internal/abi.(*SwissMapType).Pointers` |
+| 104 | `0x12f20` | 16 | `internal/abi.(*SwissMapType).Size` |
+| 105 | `0x12f30` | 32 | `internal/abi.(*SwissMapType).StructType` |
+| 106 | `0x12f50` | 128 | `internal/abi.(*SwissMapType).Uncommon` |
+| 107 | `0x12fd0` | 16 | `internal/abi.(*ArrayType).Align` |
+| 108 | `0x12fe0` | 32 | `internal/abi.(*ArrayType).ArrayType` |
+| 109 | `0x13000` | 48 | `internal/abi.(*ArrayType).ChanDir` |
+| 110 | `0x13030` | 16 | `internal/abi.(*ArrayType).Common` |
+| 111 | `0x13040` | 16 | `internal/abi.(*ArrayType).ExportedMethods` |
+| 112 | `0x13050` | 16 | `internal/abi.(*ArrayType).FieldAlign` |
+| 113 | `0x13060` | 32 | `internal/abi.(*ArrayType).FuncType` |
+| 114 | `0x13080` | 224 | `internal/abi.(*ArrayType).GcSlice` |
+| 115 | `0x13160` | 16 | `internal/abi.(*ArrayType).HasName` |
+| 116 | `0x13170` | 16 | `internal/abi.(*ArrayType).IfaceIndir` |
+| 117 | `0x13180` | 32 | `internal/abi.(*ArrayType).InterfaceType` |
+| 118 | `0x131a0` | 16 | `internal/abi.(*ArrayType).IsDirectIface` |
+| 119 | `0x131b0` | 48 | `internal/abi.(*ArrayType).Key` |
+| 120 | `0x131e0` | 16 | `internal/abi.(*ArrayType).Kind` |
+| 121 | `0x131f0` | 32 | `internal/abi.(*ArrayType).MapType` |
+| 122 | `0x13210` | 16 | `internal/abi.(*ArrayType).NumMethod` |
+| 123 | `0x13220` | 16 | `internal/abi.(*ArrayType).Pointers` |
+| 124 | `0x13230` | 16 | `internal/abi.(*ArrayType).Size` |
+| 125 | `0x13240` | 32 | `internal/abi.(*ArrayType).StructType` |
+| 126 | `0x13260` | 128 | `internal/abi.(*ArrayType).Uncommon` |
+| 127 | `0x132e0` | 16 | `internal/abi.(*FuncType).Align` |
+| 128 | `0x132f0` | 32 | `internal/abi.(*FuncType).ArrayType` |
+| 129 | `0x13310` | 48 | `internal/abi.(*FuncType).ChanDir` |
+| 130 | `0x13340` | 16 | `internal/abi.(*FuncType).Common` |
+| 131 | `0x13350` | 112 | `internal/abi.(*FuncType).Elem` |
+| 132 | `0x133c0` | 16 | `internal/abi.(*FuncType).ExportedMethods` |
+| 133 | `0x133d0` | 16 | `internal/abi.(*FuncType).FieldAlign` |
+| 134 | `0x133e0` | 32 | `internal/abi.(*FuncType).FuncType` |
+| 135 | `0x13400` | 224 | `internal/abi.(*FuncType).GcSlice` |
+| 136 | `0x134e0` | 16 | `internal/abi.(*FuncType).HasName` |
+| 137 | `0x134f0` | 16 | `internal/abi.(*FuncType).IfaceIndir` |
+| 138 | `0x13500` | 32 | `internal/abi.(*FuncType).InterfaceType` |
+| 139 | `0x13520` | 16 | `internal/abi.(*FuncType).IsDirectIface` |
+| 140 | `0x13530` | 48 | `internal/abi.(*FuncType).Key` |
+| 141 | `0x13560` | 16 | `internal/abi.(*FuncType).Kind` |
+| 142 | `0x13570` | 48 | `internal/abi.(*FuncType).Len` |
+| 143 | `0x135a0` | 32 | `internal/abi.(*FuncType).MapType` |
+| 144 | `0x135c0` | 16 | `internal/abi.(*FuncType).NumMethod` |
+| 145 | `0x135d0` | 16 | `internal/abi.(*FuncType).Pointers` |
+| 146 | `0x135e0` | 16 | `internal/abi.(*FuncType).Size` |
+| 147 | `0x135f0` | 32 | `internal/abi.(*FuncType).StructType` |
+| 148 | `0x13610` | 128 | `internal/abi.(*FuncType).Uncommon` |
+| 149 | `0x13690` | 16 | `internal/abi.(*InterfaceType).Align` |
+| 150 | `0x136a0` | 32 | `internal/abi.(*InterfaceType).ArrayType` |
+| 151 | `0x136c0` | 48 | `internal/abi.(*InterfaceType).ChanDir` |
+| 152 | `0x136f0` | 16 | `internal/abi.(*InterfaceType).Common` |
+| 153 | `0x13700` | 112 | `internal/abi.(*InterfaceType).Elem` |
+| 154 | `0x13770` | 16 | `internal/abi.(*InterfaceType).ExportedMethods` |
+| 155 | `0x13780` | 16 | `internal/abi.(*InterfaceType).FieldAlign` |
+| 156 | `0x13790` | 32 | `internal/abi.(*InterfaceType).FuncType` |
+| 157 | `0x137b0` | 224 | `internal/abi.(*InterfaceType).GcSlice` |
+| 158 | `0x13890` | 16 | `internal/abi.(*InterfaceType).HasName` |
+| 159 | `0x138a0` | 16 | `internal/abi.(*InterfaceType).IfaceIndir` |
+| 160 | `0x138b0` | 32 | `internal/abi.(*InterfaceType).InterfaceType` |
+| 161 | `0x138d0` | 16 | `internal/abi.(*InterfaceType).IsDirectIface` |
+| 162 | `0x138e0` | 48 | `internal/abi.(*InterfaceType).Key` |
+| 163 | `0x13910` | 16 | `internal/abi.(*InterfaceType).Kind` |
+| 164 | `0x13920` | 48 | `internal/abi.(*InterfaceType).Len` |
+| 165 | `0x13950` | 32 | `internal/abi.(*InterfaceType).MapType` |
+| 166 | `0x13970` | 16 | `internal/abi.(*InterfaceType).Pointers` |
+| 167 | `0x13980` | 16 | `internal/abi.(*InterfaceType).Size` |
+| 168 | `0x13990` | 32 | `internal/abi.(*InterfaceType).StructType` |
+| 169 | `0x139b0` | 128 | `internal/abi.(*InterfaceType).Uncommon` |
+| 170 | `0x13a30` | 16 | `internal/abi.(*PtrType).Align` |
+| 171 | `0x13a40` | 32 | `internal/abi.(*PtrType).ArrayType` |
+| 172 | `0x13a60` | 48 | `internal/abi.(*PtrType).ChanDir` |
+| 173 | `0x13a90` | 16 | `internal/abi.(*PtrType).Common` |
+| 174 | `0x13aa0` | 16 | `internal/abi.(*PtrType).ExportedMethods` |
+| 175 | `0x13ab0` | 16 | `internal/abi.(*PtrType).FieldAlign` |
+| 176 | `0x13ac0` | 32 | `internal/abi.(*PtrType).FuncType` |
+| 177 | `0x13ae0` | 224 | `internal/abi.(*PtrType).GcSlice` |
+| 178 | `0x13bc0` | 16 | `internal/abi.(*PtrType).HasName` |
+| 179 | `0x13bd0` | 16 | `internal/abi.(*PtrType).IfaceIndir` |
+| 180 | `0x13be0` | 32 | `internal/abi.(*PtrType).InterfaceType` |
+| 181 | `0x13c00` | 16 | `internal/abi.(*PtrType).IsDirectIface` |
+| 182 | `0x13c10` | 48 | `internal/abi.(*PtrType).Key` |
+| 183 | `0x13c40` | 16 | `internal/abi.(*PtrType).Kind` |
+| 184 | `0x13c50` | 48 | `internal/abi.(*PtrType).Len` |
+| 185 | `0x13c80` | 32 | `internal/abi.(*PtrType).MapType` |
+| 186 | `0x13ca0` | 16 | `internal/abi.(*PtrType).NumMethod` |
+| 187 | `0x13cb0` | 16 | `internal/abi.(*PtrType).Pointers` |
+| 188 | `0x13cc0` | 16 | `internal/abi.(*PtrType).Size` |
+| 189 | `0x13cd0` | 32 | `internal/abi.(*PtrType).StructType` |
+| 190 | `0x13cf0` | 128 | `internal/abi.(*PtrType).Uncommon` |
+| 191 | `0x13d70` | 80 | `type:.eq.internal/abi.UncommonType` |
+| 192 | `0x13dc0` | 64 | `type:.eq.internal/abi.RegArgs` |
+| 193 | `0x13e00` | 80 | `type:.eq.internal/abi.ITab` |
+| 194 | `0x13e50` | 80 | `internal/cpu.Initialize` |
+| 195 | `0x13ea0` | 1216 | `internal/cpu.processOptions` |
+| 196 | `0x14360` | 352 | `internal/cpu.doinit` |
+| 197 | `0x144c0` | 496 | `internal/cpu.hwcapInit` |
+| 198 | `0x146b0` | 16 | `internal/cpu.getMIDR` |
+| 199 | `0x146c0` | 160 | `type:.eq.internal/cpu.option` |
+| 200 | `0x14760` | 704 | `type:.eq.[10]internal/cpu.option` |
+| 201 | `0x14a20` | 32 | `internal/runtime/sys.init` |
+| 202 | `0x14a40` | 32 | `internal/runtime/sys.EnableDIT` |
+| 203 | `0x14a60` | 16 | `type:.eq.internal/runtime/sys.NotInHeap` |
+| 204 | `0x14a70` | 16 | `internal/runtime/atomic.(*Int32).Load` |
+| 205 | `0x14a80` | 16 | `internal/runtime/atomic.(*Int32).Store` |
+| 206 | `0x14a90` | 80 | `internal/runtime/atomic.(*Int32).CompareAndSwap` |
+| 207 | `0x14ae0` | 48 | `internal/runtime/atomic.(*Int32).Swap` |
+| 208 | `0x14b10` | 64 | `internal/runtime/atomic.(*Int32).Add` |
+| 209 | `0x14b50` | 16 | `internal/runtime/atomic.(*Int64).Load` |
+| 210 | `0x14b60` | 16 | `internal/runtime/atomic.(*Int64).Store` |
+| 211 | `0x14b70` | 80 | `internal/runtime/atomic.(*Int64).CompareAndSwap` |
+| 212 | `0x14bc0` | 48 | `internal/runtime/atomic.(*Int64).Swap` |
+| 213 | `0x14bf0` | 64 | `internal/runtime/atomic.(*Int64).Add` |
+| 214 | `0x14c30` | 16 | `internal/runtime/atomic.(*Uint8).Load` |
+| 215 | `0x14c40` | 16 | `internal/runtime/atomic.(*Uint8).Store` |
+| 216 | `0x14c50` | 48 | `internal/runtime/atomic.(*Uint8).And` |
+| 217 | `0x14c80` | 48 | `internal/runtime/atomic.(*Uint8).Or` |
+| 218 | `0x14cb0` | 32 | `internal/runtime/atomic.(*Bool).Load` |
+| 219 | `0x14cd0` | 16 | `internal/runtime/atomic.(*Bool).Store` |
+| 220 | `0x14ce0` | 16 | `internal/runtime/atomic.(*Uint32).Load` |
+| 221 | `0x14cf0` | 16 | `internal/runtime/atomic.(*Uint32).LoadAcquire` |
+| 222 | `0x14d00` | 16 | `internal/runtime/atomic.(*Uint32).Store` |
+| 223 | `0x14d10` | 16 | `internal/runtime/atomic.(*Uint32).StoreRelease` |
+| 224 | `0x14d20` | 80 | `internal/runtime/atomic.(*Uint32).CompareAndSwap` |
+| 225 | `0x14d70` | 80 | `internal/runtime/atomic.(*Uint32).CompareAndSwapRelease` |
+| 226 | `0x14dc0` | 48 | `internal/runtime/atomic.(*Uint32).Swap` |
+| 227 | `0x14df0` | 48 | `internal/runtime/atomic.(*Uint32).And` |
+| 228 | `0x14e20` | 48 | `internal/runtime/atomic.(*Uint32).Or` |
+| 229 | `0x14e50` | 64 | `internal/runtime/atomic.(*Uint32).Add` |
+| 230 | `0x14e90` | 16 | `internal/runtime/atomic.(*Uint64).Load` |
+| 231 | `0x14ea0` | 16 | `internal/runtime/atomic.(*Uint64).Store` |
+| 232 | `0x14eb0` | 80 | `internal/runtime/atomic.(*Uint64).CompareAndSwap` |
+| 233 | `0x14f00` | 48 | `internal/runtime/atomic.(*Uint64).Swap` |
+| 234 | `0x14f30` | 64 | `internal/runtime/atomic.(*Uint64).Add` |
+| 235 | `0x14f70` | 16 | `internal/runtime/atomic.(*Uintptr).Load` |
+| 236 | `0x14f80` | 16 | `internal/runtime/atomic.(*Uintptr).LoadAcquire` |
+| 237 | `0x14f90` | 16 | `internal/runtime/atomic.(*Uintptr).Store` |
+| 238 | `0x14fa0` | 16 | `internal/runtime/atomic.(*Uintptr).StoreRelease` |
+| 239 | `0x14fb0` | 80 | `internal/runtime/atomic.(*Uintptr).CompareAndSwap` |
+| 240 | `0x15000` | 48 | `internal/runtime/atomic.(*Uintptr).Swap` |
+| 241 | `0x15030` | 64 | `internal/runtime/atomic.(*Uintptr).Add` |
+| 242 | `0x15070` | 16 | `internal/runtime/atomic.(*UnsafePointer).Load` |
+| 243 | `0x15080` | 16 | `internal/runtime/atomic.(*UnsafePointer).StoreNoWB` |
+| 244 | `0x15090` | 64 | `internal/runtime/atomic.(*UnsafePointer).Store` |
+| 245 | `0x150d0` | 80 | `internal/runtime/atomic.(*UnsafePointer).CompareAndSwapNoWB` |
+| 246 | `0x15120` | 80 | `internal/runtime/atomic.(*UnsafePointer).CompareAndSwap` |
+| 247 | `0x15170` | 16 | `internal/runtime/atomic.(*noCopy).Lock` |
+| 248 | `0x15180` | 16 | `internal/runtime/atomic.(*noCopy).Unlock` |
+| 249 | `0x15190` | 16 | `internal/runtime/atomic.(*Uint64).LoadAcquire` |
+| 250 | `0x151a0` | 16 | `internal/runtime/atomic.(*Uint64).StoreRelease` |
+| 251 | `0x151b0` | 32 | `type:.eq.internal/runtime/atomic.Int64` |
+| 252 | `0x151d0` | 32 | `type:.eq.internal/runtime/atomic.Uint64` |
+| 253 | `0x151f0` | 16 | `internal/bytealg.init.0` |
+| 254 | `0x15200` | 304 | `cmpbody` |
+| 255 | `0x15330` | 16 | `internal/bytealg.Compare` |
+| 256 | `0x15340` | 16 | `runtime.cmpstring` |
+| 257 | `0x15350` | 16 | `internal/bytealg.Count` |
+| 258 | `0x15360` | 192 | `internal/bytealg.CountString` |
+| 259 | `0x15420` | 32 | `runtime.memequal_varlen` |
+| 260 | `0x15440` | 320 | `runtime.memequal` |
+| 261 | `0x15580` | 16 | `internal/bytealg.Index` |
+| 262 | `0x15590` | 528 | `internal/bytealg.IndexString` |
+| 263 | `0x157a0` | 16 | `internal/bytealg.IndexByte` |
+| 264 | `0x157b0` | 224 | `internal/bytealg.IndexByteString` |
+| 265 | `0x15890` | 272 | `internal/runtime/strconv.Atoi64` |
+| 266 | `0x159a0` | 144 | `internal/runtime/syscall.EpollWait` |
+| 267 | `0x15a30` | 112 | `internal/runtime/syscall.Open` |
+| 268 | `0x15aa0` | 128 | `internal/runtime/syscall.Read` |
+| 269 | `0x15b20` | 128 | `internal/runtime/syscall.Pread` |
+| 270 | `0x15ba0` | 80 | `internal/runtime/syscall.Syscall6` |
+| 271 | `0x15bf0` | 192 | `internal/runtime/cgroup.CPU.Close` |
+| 272 | `0x15cb0` | 832 | `internal/runtime/cgroup.OpenCPU` |
+| 273 | `0x15ff0` | 288 | `internal/runtime/cgroup.ReadCPULimit` |
+| 274 | `0x16110` | 208 | `internal/runtime/cgroup.readV1Number` |
+| 275 | `0x161e0` | 208 | `internal/runtime/cgroup.parseV1Number` |
+| 276 | `0x162b0` | 208 | `internal/runtime/cgroup.readV2Limit` |
+| 277 | `0x16380` | 512 | `internal/runtime/cgroup.parseV2Limit` |
+| 278 | `0x16580` | 432 | `internal/runtime/cgroup.FindCPU` |
+| 279 | `0x16730` | 400 | `internal/runtime/cgroup.FindCPURelativePath` |
+| 280 | `0x168c0` | 896 | `internal/runtime/cgroup.parseCPURelativePath` |
+| 281 | `0x16c40` | 320 | `internal/runtime/cgroup.containsCPU` |
+| 282 | `0x16d80` | 576 | `internal/runtime/cgroup.FindCPUMountPoint` |
+| 283 | `0x16fc0` | 1456 | `internal/runtime/cgroup.parseCPUMount` |
+| 284 | `0x17570` | 400 | `internal/runtime/cgroup.unescapePath` |
+| 285 | `0x17700` | 16 | `internal/runtime/cgroup.stringError.Error` |
+| 286 | `0x17710` | 576 | `internal/runtime/cgroup.(*lineReader).next` |
+| 287 | `0x17950` | 112 | `internal/runtime/cgroup.(*stringError).Error` |
+| 288 | `0x179c0` | 448 | `internal/runtime/maps.cloneGroup` |
+| 289 | `0x17b80` | 624 | `internal/runtime/maps.NewMap` |
+| 290 | `0x17df0` | 656 | `internal/runtime/maps.(*Map).installTableSplit` |
+| 291 | `0x18080` | 16 | `internal/runtime/maps.(*Map).Used` |
+| 292 | `0x18090` | 80 | `internal/runtime/maps.(*Map).Get` |
+| 293 | `0x180e0` | 272 | `internal/runtime/maps.(*Map).getWithKey` |
+| 294 | `0x181f0` | 272 | `internal/runtime/maps.(*Map).getWithoutKey` |
+| 295 | `0x18300` | 336 | `internal/runtime/maps.(*Map).getWithKeySmall` |
+| 296 | `0x18450` | 112 | `internal/runtime/maps.(*Map).Put` |
+| 297 | `0x184c0` | 432 | `internal/runtime/maps.(*Map).PutSlot` |
+| 298 | `0x18670` | 720 | `internal/runtime/maps.(*Map).putSlotSmall` |
+| 299 | `0x18940` | 128 | `internal/runtime/maps.(*Map).growToSmall` |
 
 *... and 15098 additional functions documented in FUNCTION_MAP.json*

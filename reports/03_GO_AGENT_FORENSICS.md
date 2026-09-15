@@ -1,7 +1,7 @@
 # Forensic Report 03: CloudPhone Agent Binary Forensics (Phase 1B / Phase 2 Remediation)
 
 ## 1. Scope & Execution Parameters
-- **Primary Binary Analyzed**: `cloudphone-v0.3.6 (1)/android/cloudphone-agent` (ELF 64-bit AArch64, size 13,828,244 bytes, SHA256: `f3dc523f3fc5be91...`)
+- **Primary Binary Analyzed**: `cloudphone-v0.3.6 (1)/android/cloudphone-agent` (ELF 64-bit AArch64, size 13,828,244 bytes, SHA256: `9cc32ea3cffe29db...`)
 - **Corroborating Target**: `cloudphone-agent-magisk-v0.3.6 (1)/binaries/cloudphone-agent-armeabi-v7a` (ELF 32-bit ARM, size 14,155,924 bytes, SHA256: `7ea2249e9c3e5eb5...`)
 - **Target OS & Role**: Android Linux device daemon. Orchestrates Scrcpy server, captures hardware screen/audio, and connects to WebRTC signaling.
 - **Parser Remediation (Blocker A)**: Validated via `tests/test_pclntab_parser.py` (documented in `reports/02A_PCLNTAB_PARSER_VALIDATION.md`). Structurally parses `functab -> _func -> nameOff` traversal with 100.00% valid symbol names.

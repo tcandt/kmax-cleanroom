@@ -186,5 +186,42 @@ User audit identified two forensic integrity blockers preventing Phase 2 exit:
    - `reconstructed_source/` remains completely untouched.
    - Execution stopped at Phase 2 Re-Exit Gate awaiting user sign-off.
 
+---
+
+## [Phase 2B.6] - 2026-09-15 - Final Forensic Consistency & Reproducibility Gate
+
+### 1. Issues Addressed
+1. **Arithmetic Invariant Violation in ROLE_MAPPING**: Generator previously double-counted UNKNOWN entries due to simultaneous increment of both role and classification counters.
+2. **Semantic Over-Classification**: Generic dependency methods (`String`, `MarshalText`, `ReadFrom`, `AcceptTCPWithConn`, `DialContext`) on third-party libraries were mistakenly assigned project application roles (`REMOTE_INPUT_CONTROL_INJECTOR`, etc.).
+3. **Machine-Specific Paths & Tooling Reproducibility**: Hardcoded `D:\KMAX-CLEANROOM` and reliance on ephemeral scratch scripts.
+
+### 2. Forensic Remediations Applied
+1. **Mathematical Invariant Assertion**:
+   - Re-derived counts directly from final JSON entries.
+   - Asserted `TOTAL == CONFIRMED_ROLE + INFERRED_ROLE + UNKNOWN`.
+   - Signaling: `7571 == 1967 + 38 + 5566` (PASS).
+   - Agent: `15398 == 2582 + 135 + 12681` (PASS).
+2. **Package Provenance vs Semantic Role Separation**:
+   - Every function now has explicit `package_provenance` (`GO_RUNTIME`, `STDLIB`, `THIRD_PARTY`, `PROJECT`, `UNKNOWN_PACKAGE`) and independent `semantic_role`.
+   - Generic dependency methods explicitly disqualified from project application roles (0 generic methods leaked).
+   - `CONFIRMED_ROLE` for application functions strictly enforced to require >= 2 independent evidence classes (e.g. route closure pointer + instruction xref + dynamic observation).
+3. **Pclntab Parser Invariant Hardening**:
+   - `tests/test_pclntab_parser.py` extended with assertions for monotonic ascending `entryoff`, non-overlapping function ranges, valid sentinel entry, `ptrSize in (4, 8)`, and valid `nameOff` table bounds.
+   - Machine-specific paths replaced with portable `get_repo_root()` via `Path(__file__)` and `KMAX_CLEANROOM_ROOT`.
+4. **Committed In-Repo Tooling Suite**:
+   - `tools/forensics/pclntab_parser.py`
+   - `tools/forensics/regenerate_function_maps.py`
+   - `tools/forensics/regenerate_role_mappings.py`
+   - `tools/oracle/clean_oracle_prober.py` & `tools/oracle/fixtures/`
+   - `tools/verify_phase2.py`
+5. **Unified Verification Entrypoint**:
+   - `tools/verify_phase2.py` validates SHA256 hashes, pclntab invariants, function counts, callgraph integrity, role mapping arithmetic, zero dependency leakage, `/api/turn` 404 status, and empty `reconstructed_source/`.
+   - Automated audit verdict: `PASS`.
+   - Generated `reports/02B_ROLE_MAPPING_VALIDATION.md` and `reports/02C_PHASE2_REPRODUCIBILITY.md`.
+6. **Strict Clean-Room Boundary**:
+   - `reconstructed_source/` remains 100% untouched.
+   - Execution stopped at Phase 2 Final Exit Gate.
+
+
 
 

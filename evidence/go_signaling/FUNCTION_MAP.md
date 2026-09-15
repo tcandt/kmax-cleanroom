@@ -1,311 +1,310 @@
 # Function Map: WebRTC Signaling Server
 
 - **Total Functions Recovered**: 7571
-- **Confirmed Roles**: 1982
-- **Inferred Roles**: 0
-- **Unknown Roles**: 11178
+- **Total Functions with Direct Call Edges**: 6557
+- **Total Functions with String Xrefs**: 1152
 
-| Index | VA | Size | Symbol Name | Role | Confidence |
-|---|---|---|---|---|---|
-| 0 | `0x401000` | 32 | `internal/abi.NoEscape` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 1 | `0x401020` | 96 | `internal/abi.Kind.String` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 2 | `0x401080` | 32 | `internal/abi.TypeOf` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 3 | `0x4010a0` | 32 | `internal/abi.(*Type).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 4 | `0x4010c0` | 32 | `internal/abi.(*Type).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 5 | `0x4010e0` | 32 | `internal/abi.(*Type).MapType` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 6 | `0x401100` | 32 | `internal/abi.(*Type).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 7 | `0x401120` | 160 | `internal/abi.(*Type).ExportedMethods` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 8 | `0x4011c0` | 96 | `internal/abi.(*Type).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 9 | `0x401220` | 128 | `internal/abi.Name.IsBlank` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 10 | `0x4012a0` | 192 | `internal/abi.Name.Name` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 11 | `0x401360` | 256 | `internal/abi.Name.Tag` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 12 | `0x401460` | 1152 | `internal/abi.NewName` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 13 | `0x4018e0` | 32 | `internal/abi.init.0` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 14 | `0x401900` | 128 | `internal/abi.(*Kind).String` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 15 | `0x401980` | 64 | `internal/abi.(*FuncType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 16 | `0x4019c0` | 64 | `internal/abi.(*FuncType).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 17 | `0x401a00` | 32 | `internal/abi.(*FuncType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 18 | `0x401a20` | 32 | `internal/abi.(*FuncType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 19 | `0x401a40` | 64 | `internal/abi.(*PtrType).Kind` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 20 | `0x401a80` | 64 | `internal/abi.(*PtrType).Len` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 21 | `0x401ac0` | 32 | `internal/abi.(*PtrType).NumMethod` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 22 | `0x401ae0` | 32 | `internal/abi.(*PtrType).Size` | `RUNTIME_INTERNAL_ABI` | 1.00 |
-| 23 | `0x401b00` | 64 | `type:.eq.internal/abi.UncommonType` | `UNKNOWN` | 0.20 |
-| 24 | `0x401b40` | 64 | `type:.eq.internal/abi.RegArgs` | `UNKNOWN` | 0.20 |
-| 25 | `0x401b80` | 64 | `type:.eq.internal/abi.ITab` | `UNKNOWN` | 0.20 |
-| 26 | `0x401bc0` | 96 | `internal/cpu.Initialize` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 27 | `0x401c20` | 1344 | `internal/cpu.processOptions` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 28 | `0x402160` | 2208 | `internal/cpu.doinit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 29 | `0x402a00` | 32 | `internal/cpu.cpuid` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 30 | `0x402a20` | 32 | `internal/cpu.xgetbv` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 31 | `0x402a40` | 32 | `internal/cpu.getGOAMD64level` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 32 | `0x402a60` | 128 | `type:.eq.internal/cpu.option` | `UNKNOWN` | 0.20 |
-| 33 | `0x402ae0` | 704 | `type:.eq.[7]internal/cpu.option` | `UNKNOWN` | 0.20 |
-| 34 | `0x402da0` | 128 | `internal/runtime/sys.OnesCount64` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 35 | `0x402e20` | 32 | `type:.eq.internal/runtime/sys.NotInHeap` | `UNKNOWN` | 0.20 |
-| 36 | `0x402e40` | 32 | `internal/runtime/atomic.(*Int32).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 37 | `0x402e60` | 32 | `internal/runtime/atomic.(*Uint64).Store` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 38 | `0x402e80` | 32 | `internal/runtime/atomic.(*noCopy).Lock` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 39 | `0x402ea0` | 32 | `internal/runtime/atomic.(*noCopy).Unlock` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 40 | `0x402ec0` | 32 | `type:.eq.internal/runtime/atomic.Int64` | `UNKNOWN` | 0.20 |
-| 41 | `0x402ee0` | 32 | `type:.eq.internal/runtime/atomic.Uint64` | `UNKNOWN` | 0.20 |
-| 42 | `0x402f00` | 64 | `internal/bytealg.countGeneric` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 43 | `0x402f40` | 64 | `internal/bytealg.countGenericString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 44 | `0x402f80` | 64 | `internal/bytealg.init.0` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 45 | `0x402fc0` | 576 | `cmpbody` | `UNKNOWN` | 0.20 |
-| 46 | `0x403200` | 32 | `internal/bytealg.Compare` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 47 | `0x403220` | 32 | `runtime.cmpstring` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 48 | `0x403240` | 480 | `countbody` | `UNKNOWN` | 0.20 |
-| 49 | `0x403420` | 64 | `internal/bytealg.Count` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 50 | `0x403460` | 64 | `internal/bytealg.CountString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 51 | `0x4034a0` | 352 | `memeqbody` | `UNKNOWN` | 0.20 |
-| 52 | `0x403600` | 32 | `runtime.memequal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 53 | `0x403620` | 32 | `runtime.memequal_varlen` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 54 | `0x403640` | 800 | `indexbody` | `UNKNOWN` | 0.20 |
-| 55 | `0x403960` | 64 | `internal/bytealg.Index` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 56 | `0x4039a0` | 64 | `internal/bytealg.IndexString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 57 | `0x4039e0` | 320 | `indexbytebody` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 58 | `0x403b20` | 32 | `internal/bytealg.IndexByte` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 59 | `0x403b40` | 32 | `internal/bytealg.IndexByteString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 60 | `0x403b60` | 64 | `internal/bytealg.countGeneric` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 61 | `0x403ba0` | 64 | `internal/bytealg.countGenericString` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 62 | `0x403be0` | 224 | `internal/runtime/strconv.Atoi64` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 63 | `0x403cc0` | 160 | `internal/runtime/syscall.EpollWait` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 64 | `0x403d60` | 96 | `internal/runtime/syscall.Open` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 65 | `0x403dc0` | 128 | `internal/runtime/syscall.Read` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 66 | `0x403e40` | 160 | `internal/runtime/syscall.Pread` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 67 | `0x403ee0` | 64 | `internal/runtime/syscall.Syscall6` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 68 | `0x403f20` | 192 | `internal/runtime/cgroup.CPU.Close` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 69 | `0x403fe0` | 928 | `internal/runtime/cgroup.OpenCPU` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 70 | `0x404380` | 288 | `internal/runtime/cgroup.ReadCPULimit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 71 | `0x4044a0` | 192 | `internal/runtime/cgroup.readV1Number` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 72 | `0x404560` | 224 | `internal/runtime/cgroup.parseV1Number` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 73 | `0x404640` | 192 | `internal/runtime/cgroup.readV2Limit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 74 | `0x404700` | 672 | `internal/runtime/cgroup.parseV2Limit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 75 | `0x4049a0` | 512 | `internal/runtime/cgroup.FindCPU` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 76 | `0x404ba0` | 480 | `internal/runtime/cgroup.FindCPURelativePath` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 77 | `0x404d80` | 1216 | `internal/runtime/cgroup.parseCPURelativePath` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 78 | `0x405240` | 320 | `internal/runtime/cgroup.containsCPU` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 79 | `0x405380` | 704 | `internal/runtime/cgroup.FindCPUMountPoint` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 80 | `0x405640` | 1920 | `internal/runtime/cgroup.parseCPUMount` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 81 | `0x405dc0` | 384 | `internal/runtime/cgroup.unescapePath` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 82 | `0x405f40` | 32 | `internal/runtime/cgroup.stringError.Error` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 83 | `0x405f60` | 704 | `internal/runtime/cgroup.(*lineReader).next` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 84 | `0x406220` | 64 | `internal/runtime/cgroup.(*stringError).Error` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 85 | `0x406260` | 480 | `internal/runtime/maps.cloneGroup` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 86 | `0x406440` | 640 | `internal/runtime/maps.NewMap` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 87 | `0x4066c0` | 640 | `internal/runtime/maps.(*Map).installTableSplit` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 88 | `0x406940` | 288 | `internal/runtime/maps.(*Map).getWithKey` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 89 | `0x406a60` | 320 | `internal/runtime/maps.(*Map).getWithKeySmall` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 90 | `0x406ba0` | 704 | `internal/runtime/maps.(*Map).putSlotSmall` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 91 | `0x406e60` | 128 | `internal/runtime/maps.(*Map).growToSmall` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 92 | `0x406ee0` | 416 | `internal/runtime/maps.(*Map).growToTable` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 93 | `0x407080` | 416 | `internal/runtime/maps.(*Map).Delete` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 94 | `0x407220` | 480 | `internal/runtime/maps.(*Map).deleteSmall` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 95 | `0x407400` | 704 | `internal/runtime/maps.(*Map).Clone` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 96 | `0x4076c0` | 512 | `internal/runtime/maps.mapKeyError2` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 97 | `0x4078c0` | 96 | `internal/runtime/maps.unhashableTypeError.Error` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 98 | `0x407920` | 352 | `internal/runtime/maps.(*Map).putSlotSmallFast32` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 99 | `0x407a80` | 352 | `internal/runtime/maps.(*Map).putSlotSmallFast64` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 100 | `0x407be0` | 384 | `internal/runtime/maps.(*Map).putSlotSmallFastPtr` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 101 | `0x407d60` | 544 | `internal/runtime/maps.(*Map).getWithoutKeySmallFastStr` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 102 | `0x407f80` | 544 | `internal/runtime/maps.(*Map).putSlotSmallFastStr` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 103 | `0x4081a0` | 256 | `internal/runtime/maps.newTable` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 104 | `0x4082a0` | 288 | `internal/runtime/maps.(*table).reset` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 105 | `0x4083c0` | 480 | `internal/runtime/maps.(*table).getWithKey` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 106 | `0x4085a0` | 480 | `internal/runtime/maps.(*table).uncheckedPutSlot` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 107 | `0x408780` | 736 | `internal/runtime/maps.(*table).Delete` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 108 | `0x408a60` | 928 | `internal/runtime/maps.(*table).pruneTombstones` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 109 | `0x408e00` | 320 | `internal/runtime/maps.(*Iter).Init` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 110 | `0x408f40` | 256 | `internal/runtime/maps.(*Iter).grownKeyElem` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 111 | `0x409040` | 1664 | `internal/runtime/maps.(*Iter).Next` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 112 | `0x4096c0` | 96 | `internal/runtime/maps.(*table).rehash` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 113 | `0x409720` | 544 | `internal/runtime/maps.(*table).split` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 114 | `0x409940` | 480 | `internal/runtime/maps.(*table).grow` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 115 | `0x409b20` | 320 | `internal/runtime/maps.(*table).clone` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 116 | `0x409c60` | 512 | `runtime.mapaccess1_fast32` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 117 | `0x409e60` | 544 | `runtime.mapaccess2_fast32` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 118 | `0x40a080` | 928 | `runtime.mapassign_fast32` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 119 | `0x40a420` | 96 | `runtime.mapdelete_fast32` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 120 | `0x40a480` | 512 | `runtime.mapaccess1_fast64` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 121 | `0x40a680` | 544 | `runtime.mapaccess2_fast64` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 122 | `0x40a8a0` | 960 | `runtime.mapassign_fast64` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 123 | `0x40ac60` | 896 | `runtime.mapassign_fast64ptr` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 124 | `0x40afe0` | 128 | `runtime.mapdelete_fast64` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 125 | `0x40b060` | 672 | `runtime.mapaccess1_faststr` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 126 | `0x40b300` | 672 | `runtime.mapaccess2_faststr` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 127 | `0x40b5a0` | 1408 | `runtime.mapassign_faststr` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 128 | `0x40bb20` | 128 | `runtime.mapdelete_faststr` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 129 | `0x40bba0` | 704 | `runtime.mapaccess1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 130 | `0x40be60` | 704 | `runtime.mapaccess2` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 131 | `0x40c120` | 1408 | `runtime.mapassign` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 132 | `0x40c6a0` | 128 | `internal/runtime/maps.(*unhashableTypeError).Error` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 133 | `0x40c720` | 96 | `type:.eq.internal/runtime/maps.Map` | `UNKNOWN` | 0.20 |
-| 134 | `0x40c780` | 96 | `type:.eq.internal/runtime/maps.table` | `UNKNOWN` | 0.20 |
-| 135 | `0x40c7e0` | 224 | `type:.eq.internal/godebugs.Info` | `UNKNOWN` | 0.20 |
-| 136 | `0x40c8c0` | 1600 | `internal/stringslite.Index` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 137 | `0x40cf00` | 224 | `internal/stringslite.Cut` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 138 | `0x40cfe0` | 608 | `internal/bytealg.IndexRabinKarp[go.shape.string]` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 139 | `0x40d240` | 416 | `internal/runtime/exithook.Run` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 140 | `0x40d3e0` | 64 | `internal/runtime/exithook.Run.deferwrap2` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 141 | `0x40d420` | 64 | `internal/runtime/exithook.Run.deferwrap1` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 142 | `0x40d460` | 96 | `internal/runtime/exithook.Run.func1` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 143 | `0x40d4c0` | 160 | `internal/chacha8rand.(*State).Init` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 144 | `0x40d560` | 224 | `internal/chacha8rand.(*State).Refill` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 145 | `0x40d640` | 256 | `internal/chacha8rand.(*State).Reseed` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 146 | `0x40d740` | 32 | `internal/chacha8rand.(*errUnmarshalChaCha8).Error` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 147 | `0x40d760` | 320 | `internal/chacha8rand.Unmarshal` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 148 | `0x40d8a0` | 1472 | `internal/chacha8rand.block` | `STANDARD_LIBRARY_COMPONENT` | 1.00 |
-| 149 | `0x40de60` | 64 | `type:.eq.internal/chacha8rand.State` | `UNKNOWN` | 0.20 |
-| 150 | `0x40dea0` | 384 | `runtime.init` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 151 | `0x40e020` | 64 | `runtime.init.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 152 | `0x40e060` | 64 | `runtime.memhash8` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 153 | `0x40e0a0` | 64 | `runtime.memhash16` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 154 | `0x40e0e0` | 64 | `runtime.memhash128` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 155 | `0x40e120` | 32 | `runtime.memhash_varlen` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 156 | `0x40e140` | 64 | `runtime.strhashFallback` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 157 | `0x40e180` | 192 | `runtime.f32hash` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 158 | `0x40e240` | 192 | `runtime.f64hash` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 159 | `0x40e300` | 96 | `runtime.c64hash` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 160 | `0x40e360` | 96 | `runtime.c128hash` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 161 | `0x40e3c0` | 256 | `runtime.interhash` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 162 | `0x40e4c0` | 32 | `runtime.memequal0` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 163 | `0x40e4e0` | 32 | `runtime.memequal8` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 164 | `0x40e500` | 32 | `runtime.memequal16` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 165 | `0x40e520` | 32 | `runtime.memequal32` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 166 | `0x40e540` | 32 | `runtime.memequal64` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 167 | `0x40e560` | 32 | `runtime.memequal128` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 168 | `0x40e580` | 32 | `runtime.f32equal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 169 | `0x40e5a0` | 32 | `runtime.f64equal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 170 | `0x40e5c0` | 64 | `runtime.c64equal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 171 | `0x40e600` | 64 | `runtime.c128equal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 172 | `0x40e640` | 96 | `runtime.strequal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 173 | `0x40e6a0` | 96 | `runtime.interequal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 174 | `0x40e700` | 96 | `runtime.nilinterequal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 175 | `0x40e760` | 192 | `runtime.efaceeq` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 176 | `0x40e820` | 192 | `runtime.ifaceeq` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 177 | `0x40e8e0` | 160 | `runtime.alginit` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 178 | `0x40e980` | 96 | `runtime.init.0` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 179 | `0x40e9e0` | 384 | `runtime.(*mspan).setUserArenaChunkToFault` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 180 | `0x40eb60` | 96 | `runtime.(*mspan).setUserArenaChunkToFault.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 181 | `0x40ebc0` | 96 | `runtime.inUserArenaChunk` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 182 | `0x40ec20` | 224 | `runtime.mmap` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 183 | `0x40ed00` | 128 | `runtime.mmap.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 184 | `0x40ed80` | 160 | `runtime.munmap` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 185 | `0x40ee20` | 64 | `runtime.munmap.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 186 | `0x40ee60` | 320 | `runtime.sigaction` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 187 | `0x40efa0` | 96 | `runtime.sigaction.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 188 | `0x40f000` | 256 | `runtime.callbackUpdateSystemStack` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 189 | `0x40f100` | 224 | `runtime.defaultGOMAXPROCSInit` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 190 | `0x40f1e0` | 96 | `runtime.defaultGOMAXPROCS` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 191 | `0x40f240` | 224 | `runtime.adjustCgroupGOMAXPROCS` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 192 | `0x40f320` | 544 | `runtime.makechan` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 193 | `0x40f540` | 32 | `runtime.chansend1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 194 | `0x40f560` | 1504 | `runtime.chansend` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 195 | `0x40fb40` | 64 | `runtime.chansend.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 196 | `0x40fb80` | 448 | `runtime.send` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 197 | `0x40fd40` | 64 | `runtime.send.goready.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 198 | `0x40fd80` | 192 | `runtime.timerchandrain` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 199 | `0x40fe40` | 128 | `runtime.sendDirect` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 200 | `0x40fec0` | 128 | `runtime.recvDirect` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 201 | `0x40ff40` | 1120 | `runtime.closechan` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 202 | `0x4103a0` | 64 | `runtime.closechan.goready.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 203 | `0x4103e0` | 128 | `runtime.empty` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 204 | `0x410460` | 32 | `runtime.chanrecv1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 205 | `0x410480` | 32 | `runtime.chanrecv2` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 206 | `0x4104a0` | 1696 | `runtime.chanrecv` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 207 | `0x410b40` | 64 | `runtime.chanrecv.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 208 | `0x410b80` | 576 | `runtime.recv` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 209 | `0x410dc0` | 64 | `runtime.recv.goready.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 210 | `0x410e00` | 96 | `runtime.chanparkcommit` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 211 | `0x410e60` | 64 | `runtime.selectnbsend` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 212 | `0x410ea0` | 64 | `runtime.selectnbrecv` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 213 | `0x410ee0` | 128 | `runtime.chanlen` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 214 | `0x410f60` | 96 | `runtime.init.1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 215 | `0x410fc0` | 384 | `runtime.SetCPUProfileRate` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 216 | `0x411140` | 352 | `runtime.(*cpuProfile).add` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 217 | `0x4112a0` | 256 | `runtime.(*cpuProfile).addNonGo` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 218 | `0x4113a0` | 544 | `runtime.(*cpuProfile).addExtra` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 219 | `0x4115c0` | 224 | `runtime.GOMAXPROCS` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 220 | `0x4116a0` | 96 | `runtime.debugPinnerV1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 221 | `0x411700` | 192 | `runtime.debugCallCheck` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 222 | `0x4117c0` | 800 | `runtime.debugCallCheck.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 223 | `0x411ae0` | 224 | `runtime.debugCallWrap` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 224 | `0x411bc0` | 288 | `runtime.debugCallWrap.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 225 | `0x411ce0` | 128 | `runtime.debugCallWrap1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 226 | `0x411d60` | 192 | `runtime.debugCallWrap2` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 227 | `0x411e20` | 96 | `runtime.debugCallWrap2.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 228 | `0x411e80` | 320 | `runtime.gogetenv` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 229 | `0x411fc0` | 544 | `runtime.setenv_c` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 230 | `0x4121e0` | 928 | `runtime.(*TypeAssertionError).Error` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 231 | `0x412580` | 96 | `runtime.errorString.Error` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 232 | `0x4125e0` | 96 | `runtime.errorAddressString.Error` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 233 | `0x412640` | 32 | `runtime.plainError.Error` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 234 | `0x412660` | 2016 | `runtime.boundsError.Error` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 235 | `0x412e40` | 1056 | `runtime.printpanicval` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 236 | `0x413260` | 1824 | `runtime.printanycustomtype` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 237 | `0x413980` | 288 | `runtime.printindented` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 238 | `0x413aa0` | 992 | `runtime.panicwrap` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 239 | `0x413e80` | 480 | `runtime.Caller` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 240 | `0x414060` | 480 | `runtime.checkfds` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 241 | `0x414240` | 160 | `runtime.floor` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 242 | `0x4142e0` | 256 | `runtime.modf` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 243 | `0x4143e0` | 448 | `runtime.memhashFallback` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 244 | `0x4145a0` | 64 | `runtime.memhash32Fallback` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 245 | `0x4145e0` | 64 | `runtime.memhash64Fallback` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 246 | `0x414620` | 128 | `runtime.(*timeHistogram).record` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 247 | `0x4146a0` | 480 | `runtime.(*timeHistogram).write` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 248 | `0x414880` | 256 | `runtime.timeHistogramMetricsBuckets` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 249 | `0x414980` | 96 | `runtime.(*itabTableType).find` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 250 | `0x4149e0` | 384 | `runtime.itabAdd` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 251 | `0x414b60` | 96 | `runtime.(*itabTableType).add` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 252 | `0x414bc0` | 1024 | `runtime.itabInit` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 253 | `0x414fc0` | 224 | `runtime.itabsinit` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 254 | `0x4150a0` | 192 | `runtime.panicdottypeE` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 255 | `0x415160` | 192 | `runtime.panicdottypeI` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 256 | `0x415220` | 128 | `runtime.panicnildottype` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 257 | `0x4152a0` | 128 | `runtime.convT` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 258 | `0x415320` | 128 | `runtime.convTnoptr` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 259 | `0x4153a0` | 128 | `runtime.convT16` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 260 | `0x415420` | 96 | `runtime.convT32` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 261 | `0x415480` | 416 | `runtime.typeAssert` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 262 | `0x415620` | 544 | `runtime.buildTypeAssertCache` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 263 | `0x415840` | 480 | `runtime.interfaceSwitch` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 264 | `0x415a20` | 576 | `runtime.buildInterfaceSwitchCache` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 265 | `0x415c60` | 64 | `runtime.unreachableMethod` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 266 | `0x415ca0` | 128 | `runtime.(*lfstack).push` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 267 | `0x415d20` | 128 | `runtime.lfnodeValidate` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 268 | `0x415da0` | 160 | `runtime.notewakeup` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 269 | `0x415e40` | 256 | `runtime.notesleep` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 270 | `0x415f40` | 448 | `runtime.notetsleep_internal` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 271 | `0x416100` | 128 | `runtime.notetsleep` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 272 | `0x416180` | 160 | `runtime.notetsleepg` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 273 | `0x416220` | 128 | `runtime.semasleep` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 274 | `0x4162a0` | 224 | `runtime.lockVerifyMSize` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 275 | `0x416380` | 64 | `runtime.lock` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 276 | `0x4163c0` | 1056 | `runtime.lock2` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 277 | `0x4167e0` | 64 | `runtime.unlock` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 278 | `0x416820` | 480 | `runtime.unlock2` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 279 | `0x416a00` | 736 | `runtime.unlock2Wake` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 280 | `0x416ce0` | 96 | `runtime.lockRank.String` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 281 | `0x416d40` | 960 | `runtime.mallocinit` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 282 | `0x417100` | 1888 | `runtime.(*mheap).sysAlloc` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 283 | `0x417860` | 256 | `runtime.sysReserveAligned` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 284 | `0x417960` | 192 | `runtime.(*mheap).enableMetadataHugePages` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 285 | `0x417a20` | 512 | `runtime.(*mcache).nextFree` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 286 | `0x417c20` | 736 | `runtime.mallocgcTiny` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 287 | `0x417f00` | 800 | `runtime.mallocgcSmallNoscan` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 288 | `0x418220` | 832 | `runtime.mallocgcSmallScanNoHeader` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 289 | `0x418560` | 864 | `runtime.mallocgcSmallScanHeader` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 290 | `0x4188c0` | 640 | `runtime.mallocgcLarge` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 291 | `0x418b40` | 192 | `runtime.preMallocgcDebug` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 292 | `0x418c00` | 320 | `runtime.postMallocgcDebug` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 293 | `0x418d40` | 96 | `runtime.deductAssistCredit` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 294 | `0x418da0` | 160 | `runtime.memclrNoHeapPointersChunked` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 295 | `0x418e40` | 64 | `runtime.newobject` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 296 | `0x418e80` | 224 | `runtime.profilealloc` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 297 | `0x418f60` | 288 | `runtime.fastexprand` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 298 | `0x419080` | 96 | `runtime.persistentalloc` | `RUNTIME_CORE_ENGINE` | 1.00 |
-| 299 | `0x4190e0` | 64 | `runtime.persistentalloc.func1` | `RUNTIME_CORE_ENGINE` | 1.00 |
+| Index | VA | Size | Symbol Name |
+|---|---|---|---|
+| 0 | `0x401000` | 32 | `internal/abi.NoEscape` |
+| 1 | `0x401020` | 96 | `internal/abi.Kind.String` |
+| 2 | `0x401080` | 32 | `internal/abi.TypeOf` |
+| 3 | `0x4010a0` | 32 | `internal/abi.(*Type).Kind` |
+| 4 | `0x4010c0` | 32 | `internal/abi.(*Type).Len` |
+| 5 | `0x4010e0` | 32 | `internal/abi.(*Type).MapType` |
+| 6 | `0x401100` | 32 | `internal/abi.(*Type).Size` |
+| 7 | `0x401120` | 160 | `internal/abi.(*Type).ExportedMethods` |
+| 8 | `0x4011c0` | 96 | `internal/abi.(*Type).NumMethod` |
+| 9 | `0x401220` | 128 | `internal/abi.Name.IsBlank` |
+| 10 | `0x4012a0` | 192 | `internal/abi.Name.Name` |
+| 11 | `0x401360` | 256 | `internal/abi.Name.Tag` |
+| 12 | `0x401460` | 1152 | `internal/abi.NewName` |
+| 13 | `0x4018e0` | 32 | `internal/abi.init.0` |
+| 14 | `0x401900` | 128 | `internal/abi.(*Kind).String` |
+| 15 | `0x401980` | 64 | `internal/abi.(*FuncType).Kind` |
+| 16 | `0x4019c0` | 64 | `internal/abi.(*FuncType).Len` |
+| 17 | `0x401a00` | 32 | `internal/abi.(*FuncType).NumMethod` |
+| 18 | `0x401a20` | 32 | `internal/abi.(*FuncType).Size` |
+| 19 | `0x401a40` | 64 | `internal/abi.(*PtrType).Kind` |
+| 20 | `0x401a80` | 64 | `internal/abi.(*PtrType).Len` |
+| 21 | `0x401ac0` | 32 | `internal/abi.(*PtrType).NumMethod` |
+| 22 | `0x401ae0` | 32 | `internal/abi.(*PtrType).Size` |
+| 23 | `0x401b00` | 64 | `type:.eq.internal/abi.UncommonType` |
+| 24 | `0x401b40` | 64 | `type:.eq.internal/abi.RegArgs` |
+| 25 | `0x401b80` | 64 | `type:.eq.internal/abi.ITab` |
+| 26 | `0x401bc0` | 96 | `internal/cpu.Initialize` |
+| 27 | `0x401c20` | 1344 | `internal/cpu.processOptions` |
+| 28 | `0x402160` | 2208 | `internal/cpu.doinit` |
+| 29 | `0x402a00` | 32 | `internal/cpu.cpuid` |
+| 30 | `0x402a20` | 32 | `internal/cpu.xgetbv` |
+| 31 | `0x402a40` | 32 | `internal/cpu.getGOAMD64level` |
+| 32 | `0x402a60` | 128 | `type:.eq.internal/cpu.option` |
+| 33 | `0x402ae0` | 704 | `type:.eq.[7]internal/cpu.option` |
+| 34 | `0x402da0` | 128 | `internal/runtime/sys.OnesCount64` |
+| 35 | `0x402e20` | 32 | `type:.eq.internal/runtime/sys.NotInHeap` |
+| 36 | `0x402e40` | 32 | `internal/runtime/atomic.(*Int32).Store` |
+| 37 | `0x402e60` | 32 | `internal/runtime/atomic.(*Uint64).Store` |
+| 38 | `0x402e80` | 32 | `internal/runtime/atomic.(*noCopy).Lock` |
+| 39 | `0x402ea0` | 32 | `internal/runtime/atomic.(*noCopy).Unlock` |
+| 40 | `0x402ec0` | 32 | `type:.eq.internal/runtime/atomic.Int64` |
+| 41 | `0x402ee0` | 32 | `type:.eq.internal/runtime/atomic.Uint64` |
+| 42 | `0x402f00` | 64 | `internal/bytealg.countGeneric` |
+| 43 | `0x402f40` | 64 | `internal/bytealg.countGenericString` |
+| 44 | `0x402f80` | 64 | `internal/bytealg.init.0` |
+| 45 | `0x402fc0` | 576 | `cmpbody` |
+| 46 | `0x403200` | 32 | `internal/bytealg.Compare` |
+| 47 | `0x403220` | 32 | `runtime.cmpstring` |
+| 48 | `0x403240` | 480 | `countbody` |
+| 49 | `0x403420` | 64 | `internal/bytealg.Count` |
+| 50 | `0x403460` | 64 | `internal/bytealg.CountString` |
+| 51 | `0x4034a0` | 352 | `memeqbody` |
+| 52 | `0x403600` | 32 | `runtime.memequal` |
+| 53 | `0x403620` | 32 | `runtime.memequal_varlen` |
+| 54 | `0x403640` | 800 | `indexbody` |
+| 55 | `0x403960` | 64 | `internal/bytealg.Index` |
+| 56 | `0x4039a0` | 64 | `internal/bytealg.IndexString` |
+| 57 | `0x4039e0` | 320 | `indexbytebody` |
+| 58 | `0x403b20` | 32 | `internal/bytealg.IndexByte` |
+| 59 | `0x403b40` | 32 | `internal/bytealg.IndexByteString` |
+| 60 | `0x403b60` | 64 | `internal/bytealg.countGeneric` |
+| 61 | `0x403ba0` | 64 | `internal/bytealg.countGenericString` |
+| 62 | `0x403be0` | 224 | `internal/runtime/strconv.Atoi64` |
+| 63 | `0x403cc0` | 160 | `internal/runtime/syscall.EpollWait` |
+| 64 | `0x403d60` | 96 | `internal/runtime/syscall.Open` |
+| 65 | `0x403dc0` | 128 | `internal/runtime/syscall.Read` |
+| 66 | `0x403e40` | 160 | `internal/runtime/syscall.Pread` |
+| 67 | `0x403ee0` | 64 | `internal/runtime/syscall.Syscall6` |
+| 68 | `0x403f20` | 192 | `internal/runtime/cgroup.CPU.Close` |
+| 69 | `0x403fe0` | 928 | `internal/runtime/cgroup.OpenCPU` |
+| 70 | `0x404380` | 288 | `internal/runtime/cgroup.ReadCPULimit` |
+| 71 | `0x4044a0` | 192 | `internal/runtime/cgroup.readV1Number` |
+| 72 | `0x404560` | 224 | `internal/runtime/cgroup.parseV1Number` |
+| 73 | `0x404640` | 192 | `internal/runtime/cgroup.readV2Limit` |
+| 74 | `0x404700` | 672 | `internal/runtime/cgroup.parseV2Limit` |
+| 75 | `0x4049a0` | 512 | `internal/runtime/cgroup.FindCPU` |
+| 76 | `0x404ba0` | 480 | `internal/runtime/cgroup.FindCPURelativePath` |
+| 77 | `0x404d80` | 1216 | `internal/runtime/cgroup.parseCPURelativePath` |
+| 78 | `0x405240` | 320 | `internal/runtime/cgroup.containsCPU` |
+| 79 | `0x405380` | 704 | `internal/runtime/cgroup.FindCPUMountPoint` |
+| 80 | `0x405640` | 1920 | `internal/runtime/cgroup.parseCPUMount` |
+| 81 | `0x405dc0` | 384 | `internal/runtime/cgroup.unescapePath` |
+| 82 | `0x405f40` | 32 | `internal/runtime/cgroup.stringError.Error` |
+| 83 | `0x405f60` | 704 | `internal/runtime/cgroup.(*lineReader).next` |
+| 84 | `0x406220` | 64 | `internal/runtime/cgroup.(*stringError).Error` |
+| 85 | `0x406260` | 480 | `internal/runtime/maps.cloneGroup` |
+| 86 | `0x406440` | 640 | `internal/runtime/maps.NewMap` |
+| 87 | `0x4066c0` | 640 | `internal/runtime/maps.(*Map).installTableSplit` |
+| 88 | `0x406940` | 288 | `internal/runtime/maps.(*Map).getWithKey` |
+| 89 | `0x406a60` | 320 | `internal/runtime/maps.(*Map).getWithKeySmall` |
+| 90 | `0x406ba0` | 704 | `internal/runtime/maps.(*Map).putSlotSmall` |
+| 91 | `0x406e60` | 128 | `internal/runtime/maps.(*Map).growToSmall` |
+| 92 | `0x406ee0` | 416 | `internal/runtime/maps.(*Map).growToTable` |
+| 93 | `0x407080` | 416 | `internal/runtime/maps.(*Map).Delete` |
+| 94 | `0x407220` | 480 | `internal/runtime/maps.(*Map).deleteSmall` |
+| 95 | `0x407400` | 704 | `internal/runtime/maps.(*Map).Clone` |
+| 96 | `0x4076c0` | 512 | `internal/runtime/maps.mapKeyError2` |
+| 97 | `0x4078c0` | 96 | `internal/runtime/maps.unhashableTypeError.Error` |
+| 98 | `0x407920` | 352 | `internal/runtime/maps.(*Map).putSlotSmallFast32` |
+| 99 | `0x407a80` | 352 | `internal/runtime/maps.(*Map).putSlotSmallFast64` |
+| 100 | `0x407be0` | 384 | `internal/runtime/maps.(*Map).putSlotSmallFastPtr` |
+| 101 | `0x407d60` | 544 | `internal/runtime/maps.(*Map).getWithoutKeySmallFastStr` |
+| 102 | `0x407f80` | 544 | `internal/runtime/maps.(*Map).putSlotSmallFastStr` |
+| 103 | `0x4081a0` | 256 | `internal/runtime/maps.newTable` |
+| 104 | `0x4082a0` | 288 | `internal/runtime/maps.(*table).reset` |
+| 105 | `0x4083c0` | 480 | `internal/runtime/maps.(*table).getWithKey` |
+| 106 | `0x4085a0` | 480 | `internal/runtime/maps.(*table).uncheckedPutSlot` |
+| 107 | `0x408780` | 736 | `internal/runtime/maps.(*table).Delete` |
+| 108 | `0x408a60` | 928 | `internal/runtime/maps.(*table).pruneTombstones` |
+| 109 | `0x408e00` | 320 | `internal/runtime/maps.(*Iter).Init` |
+| 110 | `0x408f40` | 256 | `internal/runtime/maps.(*Iter).grownKeyElem` |
+| 111 | `0x409040` | 1664 | `internal/runtime/maps.(*Iter).Next` |
+| 112 | `0x4096c0` | 96 | `internal/runtime/maps.(*table).rehash` |
+| 113 | `0x409720` | 544 | `internal/runtime/maps.(*table).split` |
+| 114 | `0x409940` | 480 | `internal/runtime/maps.(*table).grow` |
+| 115 | `0x409b20` | 320 | `internal/runtime/maps.(*table).clone` |
+| 116 | `0x409c60` | 512 | `runtime.mapaccess1_fast32` |
+| 117 | `0x409e60` | 544 | `runtime.mapaccess2_fast32` |
+| 118 | `0x40a080` | 928 | `runtime.mapassign_fast32` |
+| 119 | `0x40a420` | 96 | `runtime.mapdelete_fast32` |
+| 120 | `0x40a480` | 512 | `runtime.mapaccess1_fast64` |
+| 121 | `0x40a680` | 544 | `runtime.mapaccess2_fast64` |
+| 122 | `0x40a8a0` | 960 | `runtime.mapassign_fast64` |
+| 123 | `0x40ac60` | 896 | `runtime.mapassign_fast64ptr` |
+| 124 | `0x40afe0` | 128 | `runtime.mapdelete_fast64` |
+| 125 | `0x40b060` | 672 | `runtime.mapaccess1_faststr` |
+| 126 | `0x40b300` | 672 | `runtime.mapaccess2_faststr` |
+| 127 | `0x40b5a0` | 1408 | `runtime.mapassign_faststr` |
+| 128 | `0x40bb20` | 128 | `runtime.mapdelete_faststr` |
+| 129 | `0x40bba0` | 704 | `runtime.mapaccess1` |
+| 130 | `0x40be60` | 704 | `runtime.mapaccess2` |
+| 131 | `0x40c120` | 1408 | `runtime.mapassign` |
+| 132 | `0x40c6a0` | 128 | `internal/runtime/maps.(*unhashableTypeError).Error` |
+| 133 | `0x40c720` | 96 | `type:.eq.internal/runtime/maps.Map` |
+| 134 | `0x40c780` | 96 | `type:.eq.internal/runtime/maps.table` |
+| 135 | `0x40c7e0` | 224 | `type:.eq.internal/godebugs.Info` |
+| 136 | `0x40c8c0` | 1600 | `internal/stringslite.Index` |
+| 137 | `0x40cf00` | 224 | `internal/stringslite.Cut` |
+| 138 | `0x40cfe0` | 608 | `internal/bytealg.IndexRabinKarp[go.shape.string]` |
+| 139 | `0x40d240` | 416 | `internal/runtime/exithook.Run` |
+| 140 | `0x40d3e0` | 64 | `internal/runtime/exithook.Run.deferwrap2` |
+| 141 | `0x40d420` | 64 | `internal/runtime/exithook.Run.deferwrap1` |
+| 142 | `0x40d460` | 96 | `internal/runtime/exithook.Run.func1` |
+| 143 | `0x40d4c0` | 160 | `internal/chacha8rand.(*State).Init` |
+| 144 | `0x40d560` | 224 | `internal/chacha8rand.(*State).Refill` |
+| 145 | `0x40d640` | 256 | `internal/chacha8rand.(*State).Reseed` |
+| 146 | `0x40d740` | 32 | `internal/chacha8rand.(*errUnmarshalChaCha8).Error` |
+| 147 | `0x40d760` | 320 | `internal/chacha8rand.Unmarshal` |
+| 148 | `0x40d8a0` | 1472 | `internal/chacha8rand.block` |
+| 149 | `0x40de60` | 64 | `type:.eq.internal/chacha8rand.State` |
+| 150 | `0x40dea0` | 384 | `runtime.init` |
+| 151 | `0x40e020` | 64 | `runtime.init.func1` |
+| 152 | `0x40e060` | 64 | `runtime.memhash8` |
+| 153 | `0x40e0a0` | 64 | `runtime.memhash16` |
+| 154 | `0x40e0e0` | 64 | `runtime.memhash128` |
+| 155 | `0x40e120` | 32 | `runtime.memhash_varlen` |
+| 156 | `0x40e140` | 64 | `runtime.strhashFallback` |
+| 157 | `0x40e180` | 192 | `runtime.f32hash` |
+| 158 | `0x40e240` | 192 | `runtime.f64hash` |
+| 159 | `0x40e300` | 96 | `runtime.c64hash` |
+| 160 | `0x40e360` | 96 | `runtime.c128hash` |
+| 161 | `0x40e3c0` | 256 | `runtime.interhash` |
+| 162 | `0x40e4c0` | 32 | `runtime.memequal0` |
+| 163 | `0x40e4e0` | 32 | `runtime.memequal8` |
+| 164 | `0x40e500` | 32 | `runtime.memequal16` |
+| 165 | `0x40e520` | 32 | `runtime.memequal32` |
+| 166 | `0x40e540` | 32 | `runtime.memequal64` |
+| 167 | `0x40e560` | 32 | `runtime.memequal128` |
+| 168 | `0x40e580` | 32 | `runtime.f32equal` |
+| 169 | `0x40e5a0` | 32 | `runtime.f64equal` |
+| 170 | `0x40e5c0` | 64 | `runtime.c64equal` |
+| 171 | `0x40e600` | 64 | `runtime.c128equal` |
+| 172 | `0x40e640` | 96 | `runtime.strequal` |
+| 173 | `0x40e6a0` | 96 | `runtime.interequal` |
+| 174 | `0x40e700` | 96 | `runtime.nilinterequal` |
+| 175 | `0x40e760` | 192 | `runtime.efaceeq` |
+| 176 | `0x40e820` | 192 | `runtime.ifaceeq` |
+| 177 | `0x40e8e0` | 160 | `runtime.alginit` |
+| 178 | `0x40e980` | 96 | `runtime.init.0` |
+| 179 | `0x40e9e0` | 384 | `runtime.(*mspan).setUserArenaChunkToFault` |
+| 180 | `0x40eb60` | 96 | `runtime.(*mspan).setUserArenaChunkToFault.func1` |
+| 181 | `0x40ebc0` | 96 | `runtime.inUserArenaChunk` |
+| 182 | `0x40ec20` | 224 | `runtime.mmap` |
+| 183 | `0x40ed00` | 128 | `runtime.mmap.func1` |
+| 184 | `0x40ed80` | 160 | `runtime.munmap` |
+| 185 | `0x40ee20` | 64 | `runtime.munmap.func1` |
+| 186 | `0x40ee60` | 320 | `runtime.sigaction` |
+| 187 | `0x40efa0` | 96 | `runtime.sigaction.func1` |
+| 188 | `0x40f000` | 256 | `runtime.callbackUpdateSystemStack` |
+| 189 | `0x40f100` | 224 | `runtime.defaultGOMAXPROCSInit` |
+| 190 | `0x40f1e0` | 96 | `runtime.defaultGOMAXPROCS` |
+| 191 | `0x40f240` | 224 | `runtime.adjustCgroupGOMAXPROCS` |
+| 192 | `0x40f320` | 544 | `runtime.makechan` |
+| 193 | `0x40f540` | 32 | `runtime.chansend1` |
+| 194 | `0x40f560` | 1504 | `runtime.chansend` |
+| 195 | `0x40fb40` | 64 | `runtime.chansend.func1` |
+| 196 | `0x40fb80` | 448 | `runtime.send` |
+| 197 | `0x40fd40` | 64 | `runtime.send.goready.func1` |
+| 198 | `0x40fd80` | 192 | `runtime.timerchandrain` |
+| 199 | `0x40fe40` | 128 | `runtime.sendDirect` |
+| 200 | `0x40fec0` | 128 | `runtime.recvDirect` |
+| 201 | `0x40ff40` | 1120 | `runtime.closechan` |
+| 202 | `0x4103a0` | 64 | `runtime.closechan.goready.func1` |
+| 203 | `0x4103e0` | 128 | `runtime.empty` |
+| 204 | `0x410460` | 32 | `runtime.chanrecv1` |
+| 205 | `0x410480` | 32 | `runtime.chanrecv2` |
+| 206 | `0x4104a0` | 1696 | `runtime.chanrecv` |
+| 207 | `0x410b40` | 64 | `runtime.chanrecv.func1` |
+| 208 | `0x410b80` | 576 | `runtime.recv` |
+| 209 | `0x410dc0` | 64 | `runtime.recv.goready.func1` |
+| 210 | `0x410e00` | 96 | `runtime.chanparkcommit` |
+| 211 | `0x410e60` | 64 | `runtime.selectnbsend` |
+| 212 | `0x410ea0` | 64 | `runtime.selectnbrecv` |
+| 213 | `0x410ee0` | 128 | `runtime.chanlen` |
+| 214 | `0x410f60` | 96 | `runtime.init.1` |
+| 215 | `0x410fc0` | 384 | `runtime.SetCPUProfileRate` |
+| 216 | `0x411140` | 352 | `runtime.(*cpuProfile).add` |
+| 217 | `0x4112a0` | 256 | `runtime.(*cpuProfile).addNonGo` |
+| 218 | `0x4113a0` | 544 | `runtime.(*cpuProfile).addExtra` |
+| 219 | `0x4115c0` | 224 | `runtime.GOMAXPROCS` |
+| 220 | `0x4116a0` | 96 | `runtime.debugPinnerV1` |
+| 221 | `0x411700` | 192 | `runtime.debugCallCheck` |
+| 222 | `0x4117c0` | 800 | `runtime.debugCallCheck.func1` |
+| 223 | `0x411ae0` | 224 | `runtime.debugCallWrap` |
+| 224 | `0x411bc0` | 288 | `runtime.debugCallWrap.func1` |
+| 225 | `0x411ce0` | 128 | `runtime.debugCallWrap1` |
+| 226 | `0x411d60` | 192 | `runtime.debugCallWrap2` |
+| 227 | `0x411e20` | 96 | `runtime.debugCallWrap2.func1` |
+| 228 | `0x411e80` | 320 | `runtime.gogetenv` |
+| 229 | `0x411fc0` | 544 | `runtime.setenv_c` |
+| 230 | `0x4121e0` | 928 | `runtime.(*TypeAssertionError).Error` |
+| 231 | `0x412580` | 96 | `runtime.errorString.Error` |
+| 232 | `0x4125e0` | 96 | `runtime.errorAddressString.Error` |
+| 233 | `0x412640` | 32 | `runtime.plainError.Error` |
+| 234 | `0x412660` | 2016 | `runtime.boundsError.Error` |
+| 235 | `0x412e40` | 1056 | `runtime.printpanicval` |
+| 236 | `0x413260` | 1824 | `runtime.printanycustomtype` |
+| 237 | `0x413980` | 288 | `runtime.printindented` |
+| 238 | `0x413aa0` | 992 | `runtime.panicwrap` |
+| 239 | `0x413e80` | 480 | `runtime.Caller` |
+| 240 | `0x414060` | 480 | `runtime.checkfds` |
+| 241 | `0x414240` | 160 | `runtime.floor` |
+| 242 | `0x4142e0` | 256 | `runtime.modf` |
+| 243 | `0x4143e0` | 448 | `runtime.memhashFallback` |
+| 244 | `0x4145a0` | 64 | `runtime.memhash32Fallback` |
+| 245 | `0x4145e0` | 64 | `runtime.memhash64Fallback` |
+| 246 | `0x414620` | 128 | `runtime.(*timeHistogram).record` |
+| 247 | `0x4146a0` | 480 | `runtime.(*timeHistogram).write` |
+| 248 | `0x414880` | 256 | `runtime.timeHistogramMetricsBuckets` |
+| 249 | `0x414980` | 96 | `runtime.(*itabTableType).find` |
+| 250 | `0x4149e0` | 384 | `runtime.itabAdd` |
+| 251 | `0x414b60` | 96 | `runtime.(*itabTableType).add` |
+| 252 | `0x414bc0` | 1024 | `runtime.itabInit` |
+| 253 | `0x414fc0` | 224 | `runtime.itabsinit` |
+| 254 | `0x4150a0` | 192 | `runtime.panicdottypeE` |
+| 255 | `0x415160` | 192 | `runtime.panicdottypeI` |
+| 256 | `0x415220` | 128 | `runtime.panicnildottype` |
+| 257 | `0x4152a0` | 128 | `runtime.convT` |
+| 258 | `0x415320` | 128 | `runtime.convTnoptr` |
+| 259 | `0x4153a0` | 128 | `runtime.convT16` |
+| 260 | `0x415420` | 96 | `runtime.convT32` |
+| 261 | `0x415480` | 416 | `runtime.typeAssert` |
+| 262 | `0x415620` | 544 | `runtime.buildTypeAssertCache` |
+| 263 | `0x415840` | 480 | `runtime.interfaceSwitch` |
+| 264 | `0x415a20` | 576 | `runtime.buildInterfaceSwitchCache` |
+| 265 | `0x415c60` | 64 | `runtime.unreachableMethod` |
+| 266 | `0x415ca0` | 128 | `runtime.(*lfstack).push` |
+| 267 | `0x415d20` | 128 | `runtime.lfnodeValidate` |
+| 268 | `0x415da0` | 160 | `runtime.notewakeup` |
+| 269 | `0x415e40` | 256 | `runtime.notesleep` |
+| 270 | `0x415f40` | 448 | `runtime.notetsleep_internal` |
+| 271 | `0x416100` | 128 | `runtime.notetsleep` |
+| 272 | `0x416180` | 160 | `runtime.notetsleepg` |
+| 273 | `0x416220` | 128 | `runtime.semasleep` |
+| 274 | `0x4162a0` | 224 | `runtime.lockVerifyMSize` |
+| 275 | `0x416380` | 64 | `runtime.lock` |
+| 276 | `0x4163c0` | 1056 | `runtime.lock2` |
+| 277 | `0x4167e0` | 64 | `runtime.unlock` |
+| 278 | `0x416820` | 480 | `runtime.unlock2` |
+| 279 | `0x416a00` | 736 | `runtime.unlock2Wake` |
+| 280 | `0x416ce0` | 96 | `runtime.lockRank.String` |
+| 281 | `0x416d40` | 960 | `runtime.mallocinit` |
+| 282 | `0x417100` | 1888 | `runtime.(*mheap).sysAlloc` |
+| 283 | `0x417860` | 256 | `runtime.sysReserveAligned` |
+| 284 | `0x417960` | 192 | `runtime.(*mheap).enableMetadataHugePages` |
+| 285 | `0x417a20` | 512 | `runtime.(*mcache).nextFree` |
+| 286 | `0x417c20` | 736 | `runtime.mallocgcTiny` |
+| 287 | `0x417f00` | 800 | `runtime.mallocgcSmallNoscan` |
+| 288 | `0x418220` | 832 | `runtime.mallocgcSmallScanNoHeader` |
+| 289 | `0x418560` | 864 | `runtime.mallocgcSmallScanHeader` |
+| 290 | `0x4188c0` | 640 | `runtime.mallocgcLarge` |
+| 291 | `0x418b40` | 192 | `runtime.preMallocgcDebug` |
+| 292 | `0x418c00` | 320 | `runtime.postMallocgcDebug` |
+| 293 | `0x418d40` | 96 | `runtime.deductAssistCredit` |
+| 294 | `0x418da0` | 160 | `runtime.memclrNoHeapPointersChunked` |
+| 295 | `0x418e40` | 64 | `runtime.newobject` |
+| 296 | `0x418e80` | 224 | `runtime.profilealloc` |
+| 297 | `0x418f60` | 288 | `runtime.fastexprand` |
+| 298 | `0x419080` | 96 | `runtime.persistentalloc` |
+| 299 | `0x4190e0` | 64 | `runtime.persistentalloc.func1` |
 
 *... and 7271 additional functions documented in FUNCTION_MAP.json*

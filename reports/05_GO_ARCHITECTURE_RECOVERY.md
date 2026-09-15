@@ -43,23 +43,20 @@ Through static `.rodata` string analysis, runtime type descriptor recovery, and 
 - **Signaling Client Goroutine**: Maintains persistent WebSocket connection to `webrtc-signaling` (`/register_agent`), listens for incoming WebRTC offer requests, and responds with SDP answers.
 - **Dynamic Bitrate Governor**: Monitors WebRTC packet loss / RTT; issues Type 19 (`SET_BITRATE`) control packets to helper in real-time (`[Agent] Dynamically adjusted scrcpy-server video bitrate to %d bps`).
 
-## 4. Phase 2 Re-Exit Gate Verification Checklist
+## 4. Phase 2 Final Exit Gate Verification Checklist (Phase 2B.6 Passed)
 
-- [x] **pclntab parser validated**: 100% structurally valid traversal (`tests/test_pclntab_parser.py`).
-- [x] **Zero malformed function-name artifacts**: Corrupted fragments (`048`, `ld`, `etg`, `anicSliceAcapU`) completely eliminated.
-- [x] **Signaling FUNCTION_MAP regenerated**: 7,571 functions with exact boundaries and VAs.
-- [x] **Agent FUNCTION_MAP regenerated**: 15,398 functions with exact boundaries and VAs.
-- [x] **Both CALLGRAPH files regenerated/validated**: 6,557 direct CALL edges for signaling; 12,737 caller nodes with direct BL edges for agent.
-- [x] **Both ROLE_MAPPING files regenerated**: Stdlib functions strictly assigned runtime/stdlib roles; project roles derived strictly from verified instruction xrefs.
-- [x] **Authenticated oracle uses independent fresh sessions**: Fresh login per endpoint.
-- [x] **State-changing endpoint probes isolated**: Fixture restored before mutating probes.
-- [x] **Candidate strings separated from registered routes**: 42 registered routes in `main.main` distinguished from candidate strings.
-- [x] **`/api/turn` discrepancy resolved**: Reclassified as `STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED` (returns 404 for all methods).
-- [x] **Route methods independently verified**: Tested against GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD.
-- [x] **Auth matrix independently verified**: Tested against NO_AUTH, INVALID_TOKEN, VALID_USER_TOKEN, VALID_ADMIN_TOKEN.
-- [x] **Reports regenerated**: Reports 02, 03, 04, and 05 updated.
-- [x] **Unsupported certainty claims removed**: Over-stated phrases eliminated; strict evidence taxonomy applied.
+- [x] **Role counts sum exactly to total**:
+  - Signaling: `1967 (Confirmed) + 38 (Inferred) + 5566 (Unknown) == 7571`
+  - Agent: `2582 (Confirmed) + 135 (Inferred) + 12681 (Unknown) == 15398`
+- [x] **No third-party dependency misclassified as application role**: Generic library methods (`String`, `MarshalText`, `ReadFrom`, `AcceptTCPWithConn`, `DialContext`) completely excluded from project roles.
+- [x] **Confirmed roles satisfy >= 2 evidence-class rule**: Every confirmed project role is backed by at least 2 independent evidence classes (e.g. route registration closure + instruction xref + dynamic oracle confirmation).
+- [x] **Pclntab structural invariants pass**: `tests/test_pclntab_parser.py` validates monotonicity, non-overlapping ranges, sentinel entry, and valid name bounds.
+- [x] **Tests are path-portable**: Uses `get_repo_root()` via `Path(__file__)` and `KMAX_CLEANROOM_ROOT` without hardcoded machine paths.
+- [x] **All forensic generators committed**: `tools/forensics/pclntab_parser.py`, `tools/forensics/regenerate_function_maps.py`, `tools/forensics/regenerate_role_mappings.py`.
+- [x] **Clean oracle prober committed**: `tools/oracle/clean_oracle_prober.py` and `tools/oracle/fixtures/`.
+- [x] **Clean checkout can reproduce derived evidence**: Can run `python tools/verify_phase2.py` in any clean clone.
+- [x] **Single verification entrypoint passes**: `tools/verify_phase2.py` outputs `OVERALL AUDIT VERDICT: PASS`.
 - [x] **`reconstructed_source/` remains untouched**: Zero production Go source code written.
 
 > [!IMPORTANT]
-> Execution is halted at the Phase 2 Re-Exit Gate. No Go source reconstruction will commence until user review and explicit approval.
+> Execution is strictly halted at the Phase 2 Final Exit Gate. No Go source reconstruction will commence until user review and explicit approval.

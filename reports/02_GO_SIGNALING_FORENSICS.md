@@ -1,8 +1,8 @@
 # Forensic Report 02: WebRTC Signaling Server Reverse Engineering (Phase 1B / Phase 2 Remediation)
 
 ## 1. Scope & Execution Parameters
-- **Primary Binary Analyzed**: `cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling` (ELF 64-bit x86-64, size 8,417,428 bytes, SHA256: `b18d203df8fb2bf7...`)
-- **Corroborating Target**: `cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe` (PE32+ x86-64, size 8,676,352 bytes, SHA256: `45b95baefd824d55...`)
+- **Primary Binary Analyzed**: `cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling` (ELF 64-bit x86-64, size 8,417,428 bytes, SHA256: `6865f05fe59838b7...`)
+- **Corroborating Target**: `cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe` (PE32+ x86-64, size 8,676,352 bytes, SHA256: `374a9d7898a92e9f...`)
 - **Obfuscation Technology**: Built with `garble` (Go symbol & package obfuscator). Identifier names scrambled to pseudo-random strings; `pclntab` intact (`0x2d42f0` bytes); string table plaintext in `.rodata`.
 - **Parser Remediation (Blocker A)**: Successfully resolved via `tests/test_pclntab_parser.py` (documented in `reports/02A_PCLNTAB_PARSER_VALIDATION.md`). Structurally parses `functab -> _func -> nameOff` traversal with 100.00% valid symbol names.
 
