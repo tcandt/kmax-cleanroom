@@ -1,0 +1,217 @@
+{
+  "login_matrix": {
+    "VALID_ADMIN": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "body_raw": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"f14f45da5f5b23cd6984474257c9620316ceca8e91929e70f250f40d8906d4d0\",\"username\":\"admin\"}\n",
+      "is_json": true,
+      "json_data": {
+        "assigned_devices": [
+          "*"
+        ],
+        "role": "admin",
+        "token": "f14f45da5f5b23cd6984474257c9620316ceca8e91929e70f250f40d8906d4d0",
+        "username": "admin"
+      }
+    },
+    "VALID_REGULAR_USER": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "body_raw": "{\"assigned_devices\":[\"dev1\"],\"role\":\"user\",\"token\":\"631bc5bef154fc4f145f28e80b4b93b8146688a49006bd4a8a88c697c8a0a691\",\"username\":\"testuser\"}\n",
+      "is_json": true,
+      "json_data": {
+        "assigned_devices": [
+          "dev1"
+        ],
+        "role": "user",
+        "token": "631bc5bef154fc4f145f28e80b4b93b8146688a49006bd4a8a88c697c8a0a691",
+        "username": "testuser"
+      }
+    },
+    "INVALID_PASSWORD": {
+      "status_code": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_raw": "Invalid username or password\n",
+      "is_json": false,
+      "json_data": null
+    },
+    "UNKNOWN_USER": {
+      "status_code": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_raw": "Invalid username or password\n",
+      "is_json": false,
+      "json_data": null
+    },
+    "EMPTY_USERNAME": {
+      "status_code": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_raw": "Username and password are required\n",
+      "is_json": false,
+      "json_data": null
+    },
+    "EMPTY_PASSWORD": {
+      "status_code": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_raw": "Username and password are required\n",
+      "is_json": false,
+      "json_data": null
+    },
+    "MISSING_USERNAME": {
+      "status_code": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_raw": "Username and password are required\n",
+      "is_json": false,
+      "json_data": null
+    },
+    "MISSING_PASSWORD": {
+      "status_code": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_raw": "Username and password are required\n",
+      "is_json": false,
+      "json_data": null
+    },
+    "PAST_EXPIRES_AT": {
+      "status_code": 403,
+      "content_type": "text/plain; charset=utf-8",
+      "body_raw": "\u8d26\u53f7\u5df2\u5230\u671f\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u5ef6\u65f6\n",
+      "is_json": false,
+      "json_data": null
+    },
+    "FUTURE_EXPIRES_AT": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "body_raw": "{\"assigned_devices\":[],\"role\":\"user\",\"token\":\"b0b62b91c061d7a860c2750feba7d7fa512b8fa602115082fe3624b3cafbbb19\",\"username\":\"future_user\"}\n",
+      "is_json": true,
+      "json_data": {
+        "assigned_devices": [],
+        "role": "user",
+        "token": "b0b62b91c061d7a860c2750feba7d7fa512b8fa602115082fe3624b3cafbbb19",
+        "username": "future_user"
+      }
+    },
+    "MALFORMED_JSON": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    },
+    "WRONG_CONTENT_TYPE": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    }
+  },
+  "token_analysis": {
+    "samples": [
+      "b5346f22f77063af80092bb40074d9cee7fb5ce4cc74db70d348afc93e3aeb10",
+      "465e7bc2a8c4ee164cd2c4e5f16b966d07ac9cb344b7712a68d0063081400a72",
+      "77b6683ce643ef07ac7106019a99c9eea50e02f6ce363e73faee332567cd1dba",
+      "67cc006f916eb181a6f5c2809c1ed1020c702c0ab06b9d4b0a433ff76343eaf4",
+      "39aeb6d14828ceff4a39344f4eeabd4de7cfa6e11580db54dfe19cf6db1410c9",
+      "a3bb5616c9a64d140a3aa84143897f53327639ce34968bba2b9a9a68f91c9e45",
+      "5a110f635fe0e7673d289b22f2bdc8ae001e991755569cf065e6c8d310ac1a62",
+      "eed32ffcda687cc1d55eedda0a9668621423bd68b5d865e3122137ce66da7961",
+      "03f6a3ae3373f20e8f87e0036748fa9033cb55a82a411db8c594d8cca337bbf2",
+      "d2af73d39478b7d9e3732ddeb776638123869c2ae9dab755f8cdd877e097c569"
+    ],
+    "lengths": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ],
+    "all_len_64": true,
+    "is_hex": true,
+    "is_unique": true
+  },
+  "session_state_machine": {
+    "auth_status_status": 200,
+    "auth_status_body": {
+      "noAuth": false
+    },
+    "me_valid_status": 200,
+    "me_valid_body": {
+      "ai_config": null,
+      "assigned_devices": [
+        "*"
+      ],
+      "expires_at": "0001-01-01T00:00:00Z",
+      "forbid_audio": false,
+      "forbid_bitrate": false,
+      "forbid_fps": false,
+      "forbid_resolution": false,
+      "role": "admin",
+      "settings": null,
+      "username": "admin"
+    },
+    "me_query_status": 200,
+    "me_query_body": {
+      "ai_config": null,
+      "assigned_devices": [
+        "*"
+      ],
+      "expires_at": "0001-01-01T00:00:00Z",
+      "forbid_audio": false,
+      "forbid_bitrate": false,
+      "forbid_fps": false,
+      "forbid_resolution": false,
+      "role": "admin",
+      "settings": null,
+      "username": "admin"
+    },
+    "me_invalid_status": 401,
+    "me_invalid_body": "Unauthorized\n",
+    "me_noauth_status": 401,
+    "me_noauth_body": "Unauthorized\n",
+    "logout_status": 200,
+    "logout_body": {
+      "status": "success"
+    },
+    "me_after_logout_status": 401,
+    "me_after_logout_body": "Unauthorized\n"
+  },
+  "concurrent_sessions": {
+    "tokenA_valid_initially": true,
+    "tokenB_valid_initially": true,
+    "tokenA_invalid_after_logoutA": true,
+    "tokenB_still_valid_after_logoutA": true
+  },
+  "restart_behavior": {
+    "valid_before_restart": true,
+    "valid_after_restart": false,
+    "persistence_classification": "SESSION_MEMORY_ONLY",
+    "data_directory_files": [
+      "device_tags.json",
+      "downloads",
+      "snapshots",
+      "users.json"
+    ]
+  },
+  "role_semantics": {
+    "login_admin_response_keys": [
+      "assigned_devices",
+      "role",
+      "token",
+      "username"
+    ],
+    "login_admin_role": "admin",
+    "login_user_role": "user",
+    "me_admin_keys": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "me_admin_role": "admin",
+    "me_user_role": "user"
+  }
+}

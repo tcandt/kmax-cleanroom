@@ -1,0 +1,107 @@
+{
+  "metadata": {
+    "binary": "webrtc-signaling",
+    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+    "classification": "DIRECT_TYPE_RECOVERY"
+  },
+  "map_descriptor": {
+    "va": "0x7c01c0",
+    "file_offset": "0x3c01c0",
+    "kind": 53,
+    "kind_name": "map",
+    "key_type_va": "0x79e2c0",
+    "key_type_name": "string",
+    "elem_type_va": "0x7d6ee0",
+    "elem_type_name": "struct",
+    "bucket_type_va": "0x7cb920",
+    "storage_semantics": "VALUE_IN_MAP"
+  },
+  "session_struct_descriptor": {
+    "va": "0x7d6ee0",
+    "file_offset": "0x3d6ee0",
+    "size_bytes": 40,
+    "ptrdata_bytes": 40,
+    "kind": 25,
+    "kind_name": "struct",
+    "field_count": 2,
+    "fields_array_va": "0x7d6f40",
+    "fields": [
+      {
+        "index": 0,
+        "garbled_name": "HDz5Nf",
+        "semantic_name": "Username",
+        "byte_offset": 0,
+        "type_va": "0x79e2c0",
+        "type_size_bytes": 16,
+        "type_kind": 24,
+        "go_type": "string",
+        "instruction_accesses": [
+          {
+            "function": "main.vT6rYK_v",
+            "va": "0x739379",
+            "op": "write (username.ptr at +0)"
+          },
+          {
+            "function": "main.vT6rYK_v",
+            "va": "0x739383",
+            "op": "write (username.len at +8)"
+          },
+          {
+            "function": "main.lYKp_Iuf",
+            "va": "0x73b235",
+            "op": "read (username.ptr at +0)"
+          },
+          {
+            "function": "main.lYKp_Iuf",
+            "va": "0x73b240",
+            "op": "read (username.len at +8)"
+          },
+          {
+            "function": "main.cFpPBbFet.func1",
+            "va": "0x73ab06",
+            "op": "read & compare username"
+          }
+        ],
+        "confidence": "HIGH"
+      },
+      {
+        "index": 1,
+        "garbled_name": "GkWDh_Jc_q",
+        "semantic_name": "ExpiresAt",
+        "byte_offset": 16,
+        "type_va": "0x816e80",
+        "type_size_bytes": 24,
+        "type_kind": 25,
+        "go_type": "time.Time",
+        "instruction_accesses": [
+          {
+            "function": "main.vT6rYK_v",
+            "va": "0x739388",
+            "op": "write (wall at +16)"
+          },
+          {
+            "function": "main.vT6rYK_v",
+            "va": "0x73938d",
+            "op": "write (ext at +24)"
+          },
+          {
+            "function": "main.vT6rYK_v",
+            "va": "0x739392",
+            "op": "write (loc at +32)"
+          },
+          {
+            "function": "main.lYKp_Iuf",
+            "va": "0x73b2ba",
+            "op": "read (wall, ext, loc) for time.Time.After call"
+          },
+          {
+            "function": "main.lYKp_Iuf",
+            "va": "0x73b2c9",
+            "op": "call fZqVo7pKK.AipSo2.After"
+          }
+        ],
+        "confidence": "HIGH"
+      }
+    ]
+  }
+}

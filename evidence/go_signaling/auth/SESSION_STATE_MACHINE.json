@@ -1,0 +1,74 @@
+{
+  "states": [
+    {
+      "id": "NO_SESSION",
+      "description": "Client provides no token or empty Authorization header",
+      "observable_http_status": 401,
+      "observable_body": "Unauthorized\n"
+    },
+    {
+      "id": "AUTHENTICATED",
+      "description": "Token exists in memory sessionMap, now < session.ExpiresAt, user exists in UsersStore, and now < user.ExpiresAt",
+      "observable_http_status": 200,
+      "observable_body": "User profile JSON"
+    },
+    {
+      "id": "EXPIRED",
+      "description": "Session TTL has elapsed (now >= session.ExpiresAt). Lazily deleted on lookup",
+      "observable_http_status": 401,
+      "observable_body": "Unauthorized\n"
+    },
+    {
+      "id": "ACCOUNT_EXPIRED",
+      "description": "User account has expired (now >= user.ExpiresAt). Login rejected with 403; active sessions rejected with 401 and swept periodically",
+      "observable_http_status_login": 403,
+      "observable_body_login": "\u8d26\u53f7\u5df2\u5230\u671f\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u5ef6\u65f6\n",
+      "observable_http_status_me": 401,
+      "observable_body_me": "Unauthorized\n"
+    },
+    {
+      "id": "REVOKED",
+      "description": "Token explicitly deleted via POST /api/logout",
+      "observable_http_status": 401,
+      "observable_body": "Unauthorized\n"
+    },
+    {
+      "id": "INVALID",
+      "description": "Token does not exist in memory map (random token, malformed token, or post-restart token)",
+      "observable_http_status": 401,
+      "observable_body": "Unauthorized\n"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "NO_SESSION",
+      "to": "AUTHENTICATED",
+      "trigger": "POST /api/login with valid credentials",
+      "side_effects": "Creates 64-char hex token, session.ExpiresAt = now + 24h, sessionMap[token] = session"
+    },
+    {
+      "from": "AUTHENTICATED",
+      "to": "REVOKED",
+      "trigger": "POST /api/logout with Bearer token or ?token=",
+      "side_effects": "Deletes token from sessionMap under sync.Mutex lock, returns 200 {\"status\": \"success\"}"
+    },
+    {
+      "from": "AUTHENTICATED",
+      "to": "EXPIRED",
+      "trigger": "now >= session.ExpiresAt evaluated during token lookup (main.lYKp_Iuf)",
+      "side_effects": "Lazily deletes token from sessionMap under sync.Mutex lock, returns 401 Unauthorized"
+    },
+    {
+      "from": "AUTHENTICATED",
+      "to": "ACCOUNT_EXPIRED",
+      "trigger": "now >= user.ExpiresAt evaluated during token lookup or by 1-min sweeper",
+      "side_effects": "Lookup fails with 401; sweeper revokes all user tokens and kicks connections"
+    },
+    {
+      "from": "AUTHENTICATED",
+      "to": "INVALID",
+      "trigger": "Process restart cleanly or abruptly",
+      "side_effects": "Memory sessionMap reinitializes empty, previously issued token no longer resolves"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "classification": "STRUCTURE_CONFIRMED",
+  "generator_function": {
+    "binary_symbol": "main.d2SHxnu",
+    "va": "0x739240",
+    "file_offset": "0x339240",
+    "size_bytes": 224,
+    "crypto_source": "crypto/rand.Read",
+    "random_byte_count": 32,
+    "random_input_bits": 256,
+    "encoding": "hex_lower",
+    "encoding_table_va": "0x827245",
+    "encoding_alphabet": "0123456789abcdef"
+  },
+  "token_properties": {
+    "format": "OPAQUE_RANDOM_HEX",
+    "fixed_length": 64,
+    "character_alphabet": "0123456789abcdef",
+    "is_jwt": false,
+    "jwt_dot_count": 0,
+    "is_uuid": false,
+    "embeds_username": false,
+    "embeds_role": false,
+    "embeds_timestamp": false,
+    "all_unique": false,
+    "total_samples_analyzed": 10
+  },
+  "dynamic_samples": [
+    "e508e27e1660426785788c058e1b62553915140f784d7285c71d0d22e3150579",
+    "d079ce7d43ca522297b2b350225d7bff66cff691677d1a021a3b8ff4e1f4848e",
+    "06428df0cf75d7f37cadb6b9c2113b8f4180cbbab8270391ea4e14a6a52d1d38",
+    "e508e27e1660426785788c058e1b62553915140f784d7285c71d0d22e3150579",
+    "fdedd4b4d1d65c38f1edc4fa02ec31c17c8677578f61aae6ab3b990ded089c55",
+    "b5346f22f77063af80092bb40074d9cee7fb5ce4cc74db70d348afc93e3aeb10",
+    "465e7bc2a8c4ee164cd2c4e5f16b966d07ac9cb344b7712a68d0063081400a72",
+    "77b6683ce643ef07ac7106019a99c9eea50e02f6ce363e73faee332567cd1dba",
+    "67cc006f916eb181a6f5c2809c1ed1020c702c0ab06b9d4b0a433ff76343eaf4",
+    "39aeb6d14828ceff4a39344f4eeabd4de7cfa6e11580db54dfe19cf6db1410c9"
+  ]
+}

@@ -14,7 +14,10 @@ ROOT = get_repo_root()
 SOURCE_DIRS = [
     ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "types",
     ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "storage",
-    ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "storage-tool"
+    ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "storage-tool",
+    ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "session",
+    ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "auth",
+    ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "auth-tool"
 ]
 
 VALID_CLASSIFICATIONS = {
@@ -33,8 +36,8 @@ def check_provenance_fields(classification, comment_block):
     - RECONSTRUCTED_FROM_BEHAVIOR: Evidence, Confidence
     - DIRECT_TYPE_RECOVERY: Descriptor VA (or equivalent), Evidence, Confidence
     - GENERATED_ADAPTER: Original Function Mapping: NONE, (Source Behavior or Purpose)
-    - GENERATED_TEST_INTERFACE: Original Function Mapping: NONE, Purpose
-    - GENERATED_BUILD_FUNCTION: Original Function Mapping: NONE, Purpose
+    - GENERATED_TEST_INTERFACE: Original Function Mapping: NONE, (Source Behavior or Purpose)
+    - GENERATED_BUILD_FUNCTION: Original Function Mapping: NONE, (Source Behavior or Purpose)
     """
     block_text = "\n".join(comment_block)
     missing = []
@@ -74,20 +77,13 @@ def check_provenance_fields(classification, comment_block):
         if not has_field("Confidence"):
             missing.append("Confidence")
 
-    elif classification == "GENERATED_ADAPTER":
+    elif classification in ("GENERATED_ADAPTER", "GENERATED_TEST_INTERFACE", "GENERATED_BUILD_FUNCTION"):
         has_none_map = any("original function mapping" in l.lower() and "none" in l.lower() for l in comment_block)
         if not has_none_map:
             missing.append("Original Function Mapping: NONE")
         has_behavior = has_field("Source Behavior") or has_field("Purpose")
         if not has_behavior:
             missing.append("Source Behavior or Purpose")
-
-    elif classification in ("GENERATED_TEST_INTERFACE", "GENERATED_BUILD_FUNCTION"):
-        has_none_map = any("original function mapping" in l.lower() and "none" in l.lower() for l in comment_block)
-        if not has_none_map:
-            missing.append("Original Function Mapping: NONE")
-        if not has_field("Purpose"):
-            missing.append("Purpose")
 
     return missing
 

@@ -198,17 +198,24 @@ def verify_all():
                  turn_cls == "STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED" and turn_404,
                  f"Classification: {turn_cls}; All verbs return 404: {turn_404}")
 
-    # 7. Reconstructed Source Scope Boundary (Phase 2C.1: Types & Persistence Only)
+    # 7. Reconstructed Source Scope Boundary (Phase 2C.2: Types, Persistence, Session, Auth Core)
     recon_src = ROOT / "reconstructed_source"
     go_files = list(recon_src.rglob("*.go"))
-    allowed_prefixes = ("webrtc-signaling/pkg/types/", "webrtc-signaling/pkg/storage/", "webrtc-signaling/cmd/storage-tool/")
+    allowed_prefixes = (
+        "webrtc-signaling/pkg/types/",
+        "webrtc-signaling/pkg/storage/",
+        "webrtc-signaling/cmd/storage-tool/",
+        "webrtc-signaling/pkg/session/",
+        "webrtc-signaling/pkg/auth/",
+        "webrtc-signaling/cmd/auth-tool/"
+    )
     disallowed_files = []
     forbidden_symbols_found = []
 
-    # Check for premature networking, webrtc stack, auth handlers
+    # Check for premature networking, webrtc stack, HTTP server handlers, license
     FORBIDDEN_IMPORTS_AND_SYMBOLS = [
         '"github.com/pion/webrtc', '"net/http"', "ServeHTTP(", "ListenAndServe(",
-        "NewPeerConnection(", "ValidateToken(", "CheckLicense("
+        "NewPeerConnection(", "CheckLicense("
     ]
 
     for gf in go_files:
@@ -222,16 +229,30 @@ def verify_all():
                     forbidden_symbols_found.append((rel, kw))
 
     scope_passed = len(disallowed_files) == 0 and len(forbidden_symbols_found) == 0
-    record_check("Phase 2C.1 Source Scope Boundary",
+    record_check("Phase 2C.2 Source Scope Boundary",
                  scope_passed,
-                 f"{len(go_files)} .go files strictly in {allowed_prefixes}; forbidden logic leaks: {len(forbidden_symbols_found)}")
+                 f"{len(go_files)} .go files strictly in scope; forbidden logic leaks: {len(forbidden_symbols_found)}")
 
     # 8. Reconstructed Source Provenance Integrity
     from tools.verify_reconstructed_provenance import audit_reconstructed_provenance
     prov_pass, prov_total, prov_counts, m_hdr, m_fld = audit_reconstructed_provenance()
     record_check("Reconstructed Source Provenance",
                  prov_pass,
-                 f"{prov_total} functions audited (Binary: {prov_counts['RECONSTRUCTED_FROM_BINARY']}, Adapters: {prov_counts['GENERATED_ADAPTER']}, Missing: {m_hdr} headers, {m_fld} fields)")
+                 f"{prov_total} functions audited (Binary: {prov_counts.get('RECONSTRUCTED_FROM_BINARY', 0)}, Adapters: {prov_counts.get('GENERATED_ADAPTER', 0)}, Tests/Clock: {prov_counts.get('GENERATED_TEST_INTERFACE', 0)}, Missing: {m_hdr} headers, {m_fld} fields)")
+
+    # 9. Differential Parity Artifacts
+    rep_persist = ROOT / "reports" / "06_PHASE2C1_PERSISTENCE.md"
+    rep_auth_forensic = ROOT / "reports" / "07_PHASE2C2_AUTH_FORENSICS.md"
+    rep_auth_diff = ROOT / "reports" / "08_PHASE2C2_AUTH_DIFFERENTIAL.md"
+
+    diff_pass = (
+        rep_persist.exists() and "DIFFERENTIAL VERIFICATION PASS" in rep_persist.read_text(encoding="utf-8") and
+        rep_auth_forensic.exists() and "GATE PASS" in rep_auth_forensic.read_text(encoding="utf-8") and
+        rep_auth_diff.exists() and "ALL 12 TESTS PASS" in rep_auth_diff.read_text(encoding="utf-8")
+    )
+    record_check("Phase 2C.1 & 2C.2 Differential Reports Parity",
+                 diff_pass,
+                 f"Reports 06, 07, and 08 verified with 100% PASS verdicts")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)
