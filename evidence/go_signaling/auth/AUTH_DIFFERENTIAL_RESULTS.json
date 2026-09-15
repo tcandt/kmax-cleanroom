@@ -1,0 +1,317 @@
+[
+  {
+    "test_id": "TC-AUTH-01",
+    "test_name": "Valid Password & Login Response Schema",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "status_code": 200,
+      "schema": {
+        "raw_keys": [
+          "assigned_devices",
+          "role",
+          "token",
+          "username"
+        ],
+        "business_keys": [
+          "assigned_devices",
+          "role",
+          "token",
+          "username"
+        ],
+        "username": "admin",
+        "role": "admin",
+        "assigned_devices": [
+          "*"
+        ],
+        "types": {
+          "username": "string",
+          "role": "string",
+          "assigned_devices": "array",
+          "token": "hex_64_lowercase"
+        }
+      }
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "ok": true,
+      "schema": {
+        "raw_keys": [
+          "assigned_devices",
+          "ok",
+          "role",
+          "token",
+          "username"
+        ],
+        "business_keys": [
+          "assigned_devices",
+          "role",
+          "token",
+          "username"
+        ],
+        "username": "admin",
+        "role": "admin",
+        "assigned_devices": [
+          "*"
+        ],
+        "types": {
+          "username": "string",
+          "role": "string",
+          "assigned_devices": "array",
+          "token": "hex_64_lowercase"
+        }
+      }
+    },
+    "comparison_result": "Both emit 200 OK with identical structural schema (assigned_devices, role, token, username) and token property hex_64_lowercase",
+    "detail": "Observed raw keys match business keys exactly: ['assigned_devices', 'role', 'token', 'username']"
+  },
+  {
+    "test_id": "TC-AUTH-02",
+    "test_name": "Invalid Password Rejection",
+    "classification": "SEMANTIC_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "status_code": 401,
+      "body": "Invalid username or password"
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "ok": false,
+      "error": "Invalid username or password"
+    },
+    "comparison_result": "Both reject invalid credentials with exact diagnostic string",
+    "detail": "Oracle returned 401 Unauthorized"
+  },
+  {
+    "test_id": "TC-AUTH-03",
+    "test_name": "Unknown Username Rejection",
+    "classification": "SEMANTIC_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "status_code": 401,
+      "body": "Invalid username or password"
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "ok": false,
+      "error": "Invalid username or password"
+    },
+    "comparison_result": "Both reject unknown username with identical diagnostic error",
+    "detail": "Oracle returned 401 Unauthorized"
+  },
+  {
+    "test_id": "TC-AUTH-04",
+    "test_name": "User Account with Past ExpiresAt Rejection",
+    "classification": "SEMANTIC_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "status_code": 403,
+      "body": "\u8d26\u53f7\u5df2\u5230\u671f\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u5ef6\u65f6"
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "ok": false,
+      "error": "\u8d26\u53f7\u5df2\u5230\u671f\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u5ef6\u65f6"
+    },
+    "comparison_result": "Both reject expired account with exact Chinese diagnostic string",
+    "detail": "Oracle returned 403 Forbidden"
+  },
+  {
+    "test_id": "TC-AUTH-05",
+    "test_name": "User Account with Future ExpiresAt Success",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "status_code": 200,
+      "schema": {
+        "raw_keys": [
+          "assigned_devices",
+          "role",
+          "token",
+          "username"
+        ],
+        "business_keys": [
+          "assigned_devices",
+          "role",
+          "token",
+          "username"
+        ],
+        "username": "future_user",
+        "role": "user",
+        "assigned_devices": [],
+        "types": {
+          "username": "string",
+          "role": "string",
+          "assigned_devices": "array",
+          "token": "hex_64_lowercase"
+        }
+      }
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "ok": true,
+      "schema": {
+        "raw_keys": [
+          "assigned_devices",
+          "ok",
+          "role",
+          "token",
+          "username"
+        ],
+        "business_keys": [
+          "assigned_devices",
+          "role",
+          "token",
+          "username"
+        ],
+        "username": "future_user",
+        "role": "user",
+        "assigned_devices": [],
+        "types": {
+          "username": "string",
+          "role": "string",
+          "assigned_devices": "array",
+          "token": "hex_64_lowercase"
+        }
+      }
+    },
+    "comparison_result": "Both allow login for accounts with valid future expiration with identical normalized schema",
+    "detail": "Normalized structural comparison verified schema equality for future expiration"
+  },
+  {
+    "test_id": "TC-AUTH-06",
+    "test_name": "Token Structural & Entropy Properties",
+    "classification": "PROPERTY_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "token_len": 64,
+      "is_hex_64": true,
+      "jwt_dots": 0
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "token_len": 64,
+      "is_hex_64": true,
+      "jwt_dots": 0
+    },
+    "comparison_result": "Both generate 64-char lowercase hex tokens from 32 bytes entropy with zero JWT dots",
+    "detail": "Property comparison confirms non-JWT opaque random token format"
+  },
+  {
+    "test_id": "TC-AUTH-07",
+    "test_name": "Valid Session Lookup & Token Validation",
+    "classification": "SEMANTIC_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "status_code": 200,
+      "username": "admin"
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "ok": true,
+      "user": "admin"
+    },
+    "comparison_result": "Both validate active session token and resolve to correct account",
+    "detail": "Original /api/me matches reconstructed ValidateToken"
+  },
+  {
+    "test_id": "TC-AUTH-08",
+    "test_name": "Negative Token Matrix & Invalid Token Rejection",
+    "classification": "SEMANTIC_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "negative_cases_tested": 8,
+      "all_rejected_401": true
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "negative_cases_tested": 8,
+      "all_rejected_unauthorized": true
+    },
+    "comparison_result": "Full negative token matrix verified: invalid, short, empty, missing, scheme mismatch, and casing",
+    "detail": "Detailed evidence persisted to AUTH_NEGATIVE_TOKEN_MATRIX.json"
+  },
+  {
+    "test_id": "TC-AUTH-09",
+    "test_name": "Logout & Token Revocation",
+    "classification": "SEMANTIC_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "logout_status": 200,
+      "verify_after_status": 401
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "logout_ok": true,
+      "verify_after_ok": false
+    },
+    "comparison_result": "Both successfully revoke session token on logout, rejecting subsequent requests",
+    "detail": "Session invalidation lifecycle confirmed"
+  },
+  {
+    "test_id": "TC-AUTH-10",
+    "test_name": "Multiple Concurrent Sessions on Same Account",
+    "classification": "SEMANTIC_MATCH",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_HTTP_RESPONSE",
+    "original_observation": {
+      "concurrent_tokens": 2,
+      "independent_revocation": true
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_CLI_RESPONSE",
+    "reconstructed_observation": {
+      "concurrent_tokens": 2,
+      "independent_revocation": true
+    },
+    "comparison_result": "Both support simultaneous independent sessions per user account",
+    "detail": "Revoking token 1 left token 2 completely intact on both runtimes"
+  },
+  {
+    "test_id": "TC-AUTH-11",
+    "test_name": "Process Restart Memory-Only Invalidation",
+    "classification": "STATIC_AND_DYNAMIC_PARITY",
+    "passed": true,
+    "original_evidence_type": "DYNAMIC_ORACLE_PROCESS_RESTART",
+    "original_observation": {
+      "pre_restart_status": 200,
+      "post_restart_status": 401
+    },
+    "reconstructed_evidence_type": "DYNAMIC_RECONSTRUCTED_PROCESS_RESTART",
+    "reconstructed_observation": {
+      "pre_restart_ok": true,
+      "post_restart_ok": false
+    },
+    "comparison_result": "Both discard all sessions upon process restart (SESSION_MEMORY_ONLY)",
+    "detail": "Memory-only invariant verified: zero disk persistence for session tokens"
+  },
+  {
+    "test_id": "TC-AUTH-12",
+    "test_name": "Session TTL Expiration (24h) via Mock Clock",
+    "classification": "STATIC_AND_RECON_RUNTIME_PARITY",
+    "passed": true,
+    "original_evidence_type": "STATIC_BINARY_EVIDENCE",
+    "original_observation": {
+      "constant_ns": "0x4e94914f0000 (24h)",
+      "va_linux": "0x739365",
+      "va_windows": "0x140342535"
+    },
+    "reconstructed_evidence_type": "DYNAMIC_MOCK_CLOCK_RUNTIME_EVIDENCE",
+    "reconstructed_observation": {
+      "0h_valid": true,
+      "23h_valid": true,
+      "25h_expired": true,
+      "error": "Unauthorized"
+    },
+    "comparison_result": "Reconstructed deterministic mock clock confirms 24h TTL lazy eviction",
+    "detail": "Static binary constant paired with unit/harness mock clock runtime parity"
+  }
+]

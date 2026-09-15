@@ -29,6 +29,7 @@ All 16 forensic requirements were resolved with concrete binary and dynamic orac
 | `SESSION_KICK_HANDLER` | `main.jlRPqj8Kko_8` (`0x743c40`) | `main.ijEGVZRAZQb` (`0x140350b00`) | 1184B vs 1184B | Routes, Strings, Disasm |
 
 
+
 2. **Session Struct Type Recovery**:
    - Binary type descriptor at `.rodata:0x7d6ee0`, exact size 40 bytes:
      - Field 0 (`HDz5Nf`): `string` (16 bytes, offset 0) -> `Username`

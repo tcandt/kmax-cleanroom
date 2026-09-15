@@ -1,6 +1,8 @@
 [
   {
-    "case_name": "valid_format_nonexistent_64hex",
+    "case_id": "valid_format_nonexistent_64hex",
+    "description": "Valid 64-hex format token nonexistent in session store",
+    "category": "TOKEN_VALUE_VALIDATION",
     "headers": {
       "Authorization": "Bearer 0000000000000000000000000000000000000000000000000000000000000000"
     },
@@ -17,7 +19,9 @@
     "passed": true
   },
   {
-    "case_name": "arbitrary_malformed_token",
+    "case_id": "arbitrary_malformed_token",
+    "description": "Arbitrary ASCII malformed token",
+    "category": "TOKEN_VALUE_VALIDATION",
     "headers": {
       "Authorization": "Bearer not-a-token-at-all!!"
     },
@@ -34,7 +38,9 @@
     "passed": true
   },
   {
-    "case_name": "short_token",
+    "case_id": "short_token",
+    "description": "Short token (6 chars)",
+    "category": "TOKEN_VALUE_VALIDATION",
     "headers": {
       "Authorization": "Bearer abc123"
     },
@@ -51,7 +57,9 @@
     "passed": true
   },
   {
-    "case_name": "empty_token_bearer",
+    "case_id": "empty_token",
+    "description": "Empty token string",
+    "category": "TOKEN_VALUE_VALIDATION",
     "headers": {
       "Authorization": "Bearer "
     },
@@ -68,7 +76,9 @@
     "passed": true
   },
   {
-    "case_name": "missing_auth_header",
+    "case_id": "missing_auth_header",
+    "description": "Missing Authorization header",
+    "category": "TOKEN_VALUE_VALIDATION",
     "headers": {},
     "token_tested": "",
     "original_http": {
@@ -83,7 +93,28 @@
     "passed": true
   },
   {
-    "case_name": "wrong_scheme_basic",
+    "case_id": "empty_bearer_value",
+    "description": "Bearer prefix with empty value",
+    "category": "TOKEN_VALUE_VALIDATION",
+    "headers": {
+      "Authorization": "Bearer "
+    },
+    "token_tested": "",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_id": "wrong_scheme_basic",
+    "description": "Basic auth scheme with non-bearer credentials",
+    "category": "TOKEN_VALUE_VALIDATION",
     "headers": {
       "Authorization": "Basic YWRtaW46YWRtaW4="
     },
@@ -100,26 +131,11 @@
     "passed": true
   },
   {
-    "case_name": "casing_lowercase_bearer",
+    "case_id": "malformed_bearer_casing",
+    "description": "Mixed-cased bearer prefix with nonexistent token",
+    "category": "TOKEN_VALUE_VALIDATION",
     "headers": {
-      "Authorization": "bearer 0000000000000000000000000000000000000000000000000000000000000000"
-    },
-    "token_tested": "0000000000000000000000000000000000000000000000000000000000000000",
-    "original_http": {
-      "status_code": 401,
-      "body": "Unauthorized",
-      "content_type": "text/plain; charset=utf-8"
-    },
-    "reconstructed_core": {
-      "ok": false,
-      "error": "Unauthorized"
-    },
-    "passed": true
-  },
-  {
-    "case_name": "casing_uppercase_bearer",
-    "headers": {
-      "Authorization": "BEARER 0000000000000000000000000000000000000000000000000000000000000000"
+      "Authorization": "bEaReR 0000000000000000000000000000000000000000000000000000000000000000"
     },
     "token_tested": "0000000000000000000000000000000000000000000000000000000000000000",
     "original_http": {

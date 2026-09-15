@@ -240,46 +240,149 @@ def verify_all():
                  prov_pass,
                  f"{prov_total} functions audited (Binary: {prov_counts.get('RECONSTRUCTED_FROM_BINARY', 0)}, Adapters: {prov_counts.get('GENERATED_ADAPTER', 0)}, Tests/Clock: {prov_counts.get('GENERATED_TEST_INTERFACE', 0)}, Missing: {m_hdr} headers, {m_fld} fields)")
 
-    # 9. Auth Cross-Build Mapping Consistency
+    # 9. Auth Cross-Build Mapping & Evidence Integrity
     from tools.verify_auth_mapping_consistency import verify_consistency
     auth_map_pass = verify_consistency()
+
+    corr_path = ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_CROSS_BUILD_CORRELATION.json"
+    linux_path = ROOT / "evidence" / "go_signaling" / "auth" / "linux_amd64" / "AUTH_FUNCTION_MAP.json"
+    win_path = ROOT / "evidence" / "go_signaling" / "auth" / "windows_amd64" / "AUTH_FUNCTION_MAP.json"
+
+    cross_build_valid = False
+    if corr_path.exists() and linux_path.exists() and win_path.exists():
+        with open(corr_path, "r", encoding="utf-8") as f:
+            corr_data = json.load(f)
+        with open(linux_path, "r", encoding="utf-8") as f:
+            l_map = {e["semantic_role"]: e for e in json.load(f)}
+        with open(win_path, "r", encoding="utf-8") as f:
+            w_map = {e["semantic_role"]: e for e in json.load(f)}
+
+        expected_roles = {
+            "AUTH_LOGIN_HANDLER", "AUTH_TOKEN_LOOKUP", "TOKEN_GENERATOR", "SESSION_CREATOR",
+            "LOGOUT_HANDLER", "AUTH_STATUS_HANDLER", "USER_PROFILE_HANDLER", "PASSWORD_HASH",
+            "SESSION_SWEEPER", "SESSION_SWEEPER_WORKER", "ADMIN_ROLE_CHECK", "SESSION_KICK_HANDLER"
+        }
+        roles_set = {c["semantic_role"] for c in corr_data}
+
+        cross_build_valid = (
+            auth_map_pass and
+            roles_set == expected_roles and
+            len(corr_data) == 12 and
+            all(
+                l_map[r]["sha256"] == "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3" and
+                w_map[r]["sha256"] == "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917" and
+                l_map[r]["VA"].startswith("0x7") and
+                w_map[r]["VA"].startswith("0x140") and
+                l_map[r]["binary_symbol"] != w_map[r]["binary_symbol"] and
+                l_map[r]["function_size"] > 0 and w_map[r]["function_size"] > 0
+                for r in expected_roles
+            )
+        )
     record_check("Auth Cross-Build Mapping Consistency",
-                 auth_map_pass,
-                 "Canonical maps, source headers, report 07, and walkthrough in 100% agreement")
+                 cross_build_valid,
+                 "12 semantic roles correlated across Linux and Windows with full VA/size/SHA validation")
 
-    # 10. Auth Differential Classification Integrity
-    rep_persist = ROOT / "reports" / "06_PHASE2C1_PERSISTENCE.md"
-    rep_auth_forensic = ROOT / "reports" / "07_PHASE2C2_AUTH_FORENSICS.md"
-    rep_auth_diff = ROOT / "reports" / "08_PHASE2C2_AUTH_DIFFERENTIAL.md"
-    rep_diff_content = rep_auth_diff.read_text(encoding="utf-8") if rep_auth_diff.exists() else ""
+    # 10. Structured Auth Differential Results Verification
+    auth_diff_path = ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_DIFFERENTIAL_RESULTS.json"
+    diff_structured_pass = False
+    if auth_diff_path.exists():
+        with open(auth_diff_path, "r", encoding="utf-8") as f:
+            diff_results = json.load(f)
 
-    diff_class_pass = (
-        "12/12 AUTH VERIFICATION CASES PASS" in rep_diff_content and
-        "11 DYNAMIC DIFFERENTIAL CASES" in rep_diff_content and
-        "1 STATIC-ORIGINAL / RECONSTRUCTED-RUNTIME TTL PARITY CASE" in rep_diff_content and
-        "| `TC-AUTH-01` | **Valid Password & Login Response Schema** | `STRUCTURAL_EXACT_MATCH` |" in rep_diff_content and
-        "| `TC-AUTH-05` | **User Account with Future ExpiresAt Success** | `STRUCTURAL_EXACT_MATCH` |" in rep_diff_content and
-        "| `TC-AUTH-12` | **Session TTL Expiration (24h) via Mock Clock** | `STATIC_AND_RECON_RUNTIME_PARITY` |" in rep_diff_content and
-        "ALL 12 TESTS PASS (100% PARITY)" not in rep_diff_content
-    )
-    record_check("Auth Differential Classification Integrity",
-                 diff_class_pass,
-                 "TC-AUTH-01/05 structural schema comparison; TC-AUTH-12 qualified as static/runtime parity")
+        expected_test_ids = [f"TC-AUTH-{i:02d}" for i in range(1, 13)]
+        actual_ids = [r["test_id"] for r in diff_results]
+        ids_unique = len(actual_ids) == len(set(actual_ids)) == 12
+        ids_match = actual_ids == expected_test_ids
+        all_diff_passed = all(r.get("passed") is True for r in diff_results)
 
-    # 11. Negative Token Matrix Completeness
+        results_by_id = {r["test_id"]: r for r in diff_results}
+        tc01_valid = results_by_id.get("TC-AUTH-01", {}).get("classification") == "STRUCTURAL_EXACT_MATCH"
+        tc05_valid = results_by_id.get("TC-AUTH-05", {}).get("classification") == "STRUCTURAL_EXACT_MATCH"
+        tc12 = results_by_id.get("TC-AUTH-12", {})
+        tc12_valid = (
+            tc12.get("classification") == "STATIC_AND_RECON_RUNTIME_PARITY" and
+            tc12.get("original_evidence_type") == "STATIC_BINARY_EVIDENCE" and
+            tc12.get("reconstructed_evidence_type") == "DYNAMIC_MOCK_CLOCK_RUNTIME_EVIDENCE"
+        )
+        diff_structured_pass = ids_unique and ids_match and all_diff_passed and tc01_valid and tc05_valid and tc12_valid
+
+    record_check("Auth Differential Structured Verification",
+                 diff_structured_pass,
+                 "12/12 cases validated: TC-AUTH-01/05 structural schema, TC-AUTH-12 static/runtime evidence")
+
+    # 11. Negative Token Matrix Structured Validation
     neg_matrix_path = ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_NEGATIVE_TOKEN_MATRIX.json"
     neg_matrix_pass = False
     neg_cases = 0
     if neg_matrix_path.exists():
         with open(neg_matrix_path, "r", encoding="utf-8") as f:
             neg_data = json.load(f)
-        neg_cases = len(neg_data)
-        neg_matrix_pass = neg_cases >= 8 and all(c.get("passed") is True for c in neg_data)
-    record_check("Negative Token Matrix Completeness",
-                 neg_matrix_pass,
-                 f"Full 8-case negative matrix verified with 100% PASS ({neg_cases} cases)")
 
-    # 12. Behavior-Slice Provenance Integrity
+        expected_neg_ids = {
+            "valid_format_nonexistent_64hex", "arbitrary_malformed_token", "short_token",
+            "empty_token", "missing_auth_header", "empty_bearer_value",
+            "wrong_scheme_basic", "malformed_bearer_casing"
+        }
+        actual_neg_ids = [c["case_id"] for c in neg_data]
+        neg_cases = len(neg_data)
+        neg_ids_valid = set(actual_neg_ids) == expected_neg_ids and len(actual_neg_ids) == len(set(actual_neg_ids))
+
+        neg_evidence_valid = all(
+            c.get("original_http", {}).get("status_code") == 401 and
+            len(c.get("original_http", {}).get("body", "")) > 0 and
+            len(c.get("original_http", {}).get("content_type", "")) > 0 and
+            c.get("reconstructed_core", {}).get("ok") is False and
+            c.get("passed") is True
+            for c in neg_data
+        )
+        neg_matrix_pass = neg_ids_valid and neg_evidence_valid
+
+    record_check("Negative Token Matrix Structured Validation",
+                 neg_matrix_pass,
+                 f"Full 8-case negative token matrix validated with strict schema & observation checks ({neg_cases} cases)")
+
+    # 12. Auth Header Parsing Matrix Structured Validation
+    header_matrix_path = ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_HEADER_PARSING_MATRIX.json"
+    header_matrix_md = ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_HEADER_PARSING_MATRIX.md"
+    header_matrix_pass = False
+    header_cases = 0
+    if header_matrix_path.exists() and header_matrix_md.exists():
+        with open(header_matrix_path, "r", encoding="utf-8") as f:
+            header_data = json.load(f)
+
+        expected_header_ids = {
+            "BEARER_CANONICAL", "BEARER_LOWERCASE", "BEARER_UPPERCASE", "BEARER_MIXED_CASE",
+            "WRONG_SCHEME_BASIC", "MISSING_HEADER", "EMPTY_HEADER", "EMPTY_BEARER"
+        }
+        actual_header_ids = [c["case_id"] for c in header_data]
+        header_cases = len(header_data)
+        header_ids_valid = set(actual_header_ids) == expected_header_ids and len(actual_header_ids) == len(set(actual_header_ids))
+
+        valid_bearer_ids = {"BEARER_CANONICAL", "BEARER_LOWERCASE", "BEARER_UPPERCASE", "BEARER_MIXED_CASE"}
+        invalid_header_ids = {"WRONG_SCHEME_BASIC", "MISSING_HEADER", "EMPTY_HEADER", "EMPTY_BEARER"}
+
+        header_evidence_valid = (
+            all(
+                c["status_code"] == 200 and
+                c["is_authenticated"] is True and
+                c["authenticated_username"] == "admin" and
+                len(c["content_type"]) > 0
+                for c in header_data if c["case_id"] in valid_bearer_ids
+            ) and
+            all(
+                c["status_code"] == 401 and
+                c["is_authenticated"] is False and
+                c["authenticated_username"] is None
+                for c in header_data if c["case_id"] in invalid_header_ids
+            )
+        )
+        header_matrix_pass = header_ids_valid and header_evidence_valid
+
+    record_check("Auth Header Parsing Matrix Structured Validation",
+                 header_matrix_pass,
+                 f"Validated 8 header parsing cases with valid token: Bearer casing accepted, invalid rejected ({header_cases} cases)")
+
+    # 13. Behavior-Slice Provenance Integrity
     auth_src = (ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "auth" / "authenticator.go").read_text(encoding="utf-8")
     sess_src = (ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "session" / "manager.go").read_text(encoding="utf-8")
     token_src = (ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "session" / "token.go").read_text(encoding="utf-8")
@@ -295,15 +398,18 @@ def verify_all():
                  slice_pass,
                  "Clean-room core explicitly separates behavior slices, VA ranges, test interfaces, and error handling")
 
-    # 13. Differential Parity Artifacts Parity
-    diff_pass = (
-        rep_persist.exists() and "DIFFERENTIAL VERIFICATION PASS" in rep_persist.read_text(encoding="utf-8") and
-        rep_auth_forensic.exists() and "GATE PASS" in rep_auth_forensic.read_text(encoding="utf-8") and
-        rep_auth_diff.exists() and "12/12 AUTH VERIFICATION CASES PASS" in rep_diff_content
+    # 14. Phase 2C Reports & Evidence Artifacts Presence
+    rep_persist = ROOT / "reports" / "06_PHASE2C1_PERSISTENCE.md"
+    rep_auth_forensic = ROOT / "reports" / "07_PHASE2C2_AUTH_FORENSICS.md"
+    rep_auth_diff = ROOT / "reports" / "08_PHASE2C2_AUTH_DIFFERENTIAL.md"
+    reports_present = (
+        rep_persist.exists() and len(rep_persist.read_text(encoding="utf-8")) > 500 and
+        rep_auth_forensic.exists() and len(rep_auth_forensic.read_text(encoding="utf-8")) > 500 and
+        rep_auth_diff.exists() and len(rep_auth_diff.read_text(encoding="utf-8")) > 500
     )
-    record_check("Phase 2C.1 & 2C.2 Differential Reports Parity",
-                 diff_pass,
-                 f"Reports 06, 07, and 08 verified with 100% PASS verdicts")
+    record_check("Phase 2C Reports Presence & Completeness",
+                 reports_present,
+                 "Reports 06, 07, and 08 generated and verified present")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

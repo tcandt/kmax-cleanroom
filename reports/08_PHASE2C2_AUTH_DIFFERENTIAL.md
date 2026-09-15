@@ -1,6 +1,6 @@
 # Phase 2C.2 Differential Parity Report: Authentication & Session Management
 
-**Execution Timestamp**: `2026-09-15 12:43:24 UTC`  
+**Execution Timestamp**: `2026-09-15 13:17:38 UTC`  
 **Original Binary**: `webrtc-signaling.exe` (Windows AMD64) / `webrtc-signaling` (Linux AMD64)  
 **Reconstructed Core**: `cmd/auth-tool` (`serve-stdio` stateful test harness)  
 **Status**: **12/12 AUTH VERIFICATION CASES PASS: 11 DYNAMIC DIFFERENTIAL CASES + 1 STATIC-ORIGINAL / RECONSTRUCTED-RUNTIME TTL PARITY CASE**
@@ -21,7 +21,7 @@ The test harness operated strictly through a **long-lived stateful stdio process
 
 | Test ID | Test Name | Equivalence Classification | Status | Summary & Parity Evidence |
 |---|---|---|---|---|
-| `TC-AUTH-01` | **Valid Password & Login Response Schema** | `STRUCTURAL_EXACT_MATCH` | **PASS** | Both emit 200 OK with identical structural schema (assigned_devices, role, token, username) and token property hex_64_no_dots |
+| `TC-AUTH-01` | **Valid Password & Login Response Schema** | `STRUCTURAL_EXACT_MATCH` | **PASS** | Both emit 200 OK with identical structural schema (assigned_devices, role, token, username) and token property hex_64_lowercase |
 | `TC-AUTH-02` | **Invalid Password Rejection** | `SEMANTIC_MATCH` | **PASS** | Both reject invalid credentials with exact diagnostic string |
 | `TC-AUTH-03` | **Unknown Username Rejection** | `SEMANTIC_MATCH` | **PASS** | Both reject unknown username with identical diagnostic error |
 | `TC-AUTH-04` | **User Account with Past ExpiresAt Rejection** | `SEMANTIC_MATCH` | **PASS** | Both reject expired account with exact Chinese diagnostic string |

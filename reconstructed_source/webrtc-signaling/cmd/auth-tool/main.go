@@ -29,14 +29,23 @@ type Request struct {
 }
 
 type Response struct {
-	OK      bool        `json:"ok"`
-	Error   string      `json:"error,omitempty"`
-	Data    interface{} `json:"data,omitempty"`
-	Token   string      `json:"token,omitempty"`
-	User    string      `json:"user,omitempty"`
-	Role    string      `json:"role,omitempty"`
-	Devices []string    `json:"assigned_devices,omitempty"`
-	Count   int         `json:"count,omitempty"`
+	OK       bool        `json:"ok"`
+	Error    string      `json:"error,omitempty"`
+	Data     interface{} `json:"data,omitempty"`
+	Token    string      `json:"token,omitempty"`
+	Username string      `json:"username,omitempty"`
+	User     string      `json:"user,omitempty"`
+	Role     string      `json:"role,omitempty"`
+	Devices  []string    `json:"assigned_devices,omitempty"`
+	Count    int         `json:"count,omitempty"`
+}
+
+type LoginResponse struct {
+	OK              bool     `json:"ok"`
+	Token           string   `json:"token"`
+	Username        string   `json:"username"`
+	Role            string   `json:"role"`
+	AssignedDevices []string `json:"assigned_devices"`
 }
 
 // CLEANROOM-PROVENANCE:
@@ -98,12 +107,16 @@ func handleOp(req Request, a *auth.Authenticator, sm *session.SessionManager, mc
 			sendResp(Response{OK: false, Error: err.Error()})
 			return
 		}
-		sendResp(Response{
-			OK:      true,
-			Token:   res.Token,
-			User:    res.Username,
-			Role:    res.Role,
-			Devices: res.AssignedDevices,
+		devices := res.AssignedDevices
+		if devices == nil {
+			devices = []string{}
+		}
+		sendResp(LoginResponse{
+			OK:              true,
+			Token:           res.Token,
+			Username:        res.Username,
+			Role:            res.Role,
+			AssignedDevices: devices,
 		})
 
 	case "verify_token":
@@ -112,7 +125,7 @@ func handleOp(req Request, a *auth.Authenticator, sm *session.SessionManager, mc
 			sendResp(Response{OK: false, Error: err.Error()})
 			return
 		}
-		sendResp(Response{OK: true, User: user})
+		sendResp(Response{OK: true, User: user, Username: user})
 
 	case "logout":
 		a.Logout(req.Token)
@@ -160,7 +173,7 @@ func handleOp(req Request, a *auth.Authenticator, sm *session.SessionManager, mc
 // Original Function Mapping: NONE
 // Source Behavior: serializes Response to JSON line on standard output
 // Confidence: N/A
-func sendResp(resp Response) {
+func sendResp(resp interface{}) {
 	b, _ := json.Marshal(resp)
 	fmt.Println(string(b))
 }
