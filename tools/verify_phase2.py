@@ -226,6 +226,13 @@ def verify_all():
                  scope_passed,
                  f"{len(go_files)} .go files strictly in {allowed_prefixes}; forbidden logic leaks: {len(forbidden_symbols_found)}")
 
+    # 8. Reconstructed Source Provenance Integrity
+    from tools.verify_reconstructed_provenance import audit_reconstructed_provenance
+    prov_pass, prov_total, prov_counts = audit_reconstructed_provenance()
+    record_check("Reconstructed Source Provenance",
+                 prov_pass,
+                 f"{prov_total} functions audited (Binary: {prov_counts['RECONSTRUCTED_FROM_BINARY']}, Adapters: {prov_counts['GENERATED_ADAPTER']})")
+
     # Summary
     all_passed = all(c["passed"] for c in checks)
     print("==================================================")

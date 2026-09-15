@@ -26,4 +26,6 @@ yarn-error.log*
 __pycache__/
 *.pyc
 *.exe
+*-linux
+storage-tool*
 

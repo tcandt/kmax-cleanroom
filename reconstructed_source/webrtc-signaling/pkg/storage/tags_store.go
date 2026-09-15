@@ -29,7 +29,11 @@ type TagsStore struct {
 	config   types.DeviceTagsConfig
 }
 
-// NewTagsStore creates a new TagsStore instance pointing to the specified file path.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: constructs TagsStore around device tags file path
+// Confidence: N/A
 func NewTagsStore(filePath string) *TagsStore {
 	return &TagsStore{
 		filePath: filePath,
@@ -40,8 +44,12 @@ func NewTagsStore(filePath string) *TagsStore {
 	}
 }
 
-// LoadOrCreate loads device_tags.json or initializes it with empty tag structures.
-// Reconstructs the exact lifecycle of binary function main.w3H7BXxDC (VA 0x737880).
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.w3H7BXxDC
+// VA: 0x737880
+// Evidence: device_tags.json load lifecycle, empty list initialization, malformed recovery
+// Confidence: HIGH
 func (s *TagsStore) LoadOrCreate() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -80,8 +88,12 @@ func (s *TagsStore) LoadOrCreate() error {
 	return nil
 }
 
-// saveLocked writes the in-memory configuration to device_tags.json with 0644 permissions.
-// Reconstructs binary function main.rCajRnfJZ (VA 0x737da0).
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.rCajRnfJZ
+// VA: 0x737da0
+// Evidence: device_tags.json serialization via json.MarshalIndent, direct write with 0644 permissions
+// Confidence: HIGH
 func (s *TagsStore) saveLocked() error {
 	bytes, err := json.MarshalIndent(s.config, "", "  ")
 	if err != nil {
@@ -98,7 +110,11 @@ func (s *TagsStore) saveLocked() error {
 	return nil
 }
 
-// GetConfig returns a deep copy of the current device tags configuration under read lock.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: deep copy of device tags configuration under read lock
+// Confidence: N/A
 func (s *TagsStore) GetConfig() types.DeviceTagsConfig {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -119,7 +135,11 @@ func (s *TagsStore) GetConfig() types.DeviceTagsConfig {
 	}
 }
 
-// SetConfig updates the device tags configuration under write lock and persists to disk.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: updates device tags configuration under write lock followed by persistence
+// Confidence: N/A
 func (s *TagsStore) SetConfig(cfg types.DeviceTagsConfig) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -256,3 +256,22 @@ User audit identified two forensic integrity blockers preventing Phase 2 exit:
   5. **Reproducibility & Verification**: `tools/reproduce_phase2.py` (8/8 canonical hashes match, `STATIC_FORENSIC_REPRODUCIBLE`) and `tools/verify_phase2.py` (12/12 checks PASS). All 6 Go storage unit tests and 8/8 differential persistence tests pass.
 - **Gate**: Ready for user review. Phase 2C.2 remains strictly on hold.
 
+### [2026-09-15 14:30] Phase 2C.1R: Final Differential & Provenance Remediation Completed
+- **Status**: COMPLETE & VERIFIED.
+- **Key Remediations**:
+  1. **True Original-vs-Reconstructed TC-DIFF-05**: Side-by-side execution on identical malformed `users.json`. Both runtimes caught unmarshal syntax error, logged verbatim diagnostic (`[Auth] Failed to parse users file: ...`), and safely reset `users.json` with a valid `admin`/`admin123` account (`SEMANTIC_MATCH`).
+  2. **True Original-vs-Reconstructed TC-DIFF-06**: Side-by-side execution on identical unmodeled JSON fields. Both runtimes tolerated unknown fields during read-only load without error. On subsequent storage mutation, unknown fields were naturally dropped by Go struct marshaling while all known fields were preserved intact (`SEMANTIC_MATCH`).
+  3. **Dynamic Linux WSL Permission Parity (TC-DIFF-07)**: Statically proven Linux binary arguments (`0600` at `0x737666`/`0x739cd9`, `0644` at `0x737f15`) verified dynamically under real Linux WSL kernel using `/bin/stat -c '%a'` on both original Linux binary and reconstructed Linux binary: `users.json=600`, `device_tags.json=644`, `shares.json=600` (`STATIC_AND_DYNAMIC_PARITY`).
+  4. **Dynamic Shares Atomic Save Parity (TC-DIFF-08)**: Verified via runtime execution and Go AST source inspection (`tmpPath := s.filePath + ".tmp"` and `os.Rename(tmpPath, s.filePath)`). Confirmed `.tmp` temp file cleanup upon successful atomic rename (`STATIC_AND_DYNAMIC_PARITY`).
+  5. **Zero Constant-True Tests**: Every testcase in `test_persistence_diff.py` actively asserts dynamic process outputs, filesystem states, or stat mode bits.
+  6. **Function-Level Provenance & Auditor**: Added explicit `CLEANROOM-PROVENANCE` blocks to all 24 declared functions/methods across `pkg/storage`, `pkg/types`, and `cmd/storage-tool`. Created `tools/verify_reconstructed_provenance.py` and integrated it into `tools/verify_phase2.py` as check #13 (all 24 functions audited, 0 missing).
+  7. **Documentation Consistency**: Corrected `admin/admin` typo to `admin/admin123` in all walkthroughs and reports. Refined terminology to `BIT_EXACT_MATCH`, `NORMALIZED_EXACT_MATCH`, `SEMANTIC_MATCH`, and `STATIC_AND_DYNAMIC_PARITY`.
+- **Validation**:
+  - `go test -count=1 -v ./...`: 6 unit tests pass (0.030s).
+  - `python tests/differential/persistence/test_persistence_diff.py`: 8/8 true differential tests pass.
+  - `python tools/verify_reconstructed_provenance.py`: 24/24 functions pass.
+  - `python tools/verify_phase2.py`: 13/13 invariant checks pass.
+  - `python tools/reproduce_phase2.py`: 8/8 canonical hashes pass (`STATIC_FORENSIC_REPRODUCIBLE`).
+- **Phase 2C.1R Final Exit Gate**: PASSED. Execution stopped. Phase 2C.2 on hold pending user review.
+
+

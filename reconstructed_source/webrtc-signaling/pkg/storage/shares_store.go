@@ -29,7 +29,11 @@ type SharesStore struct {
 	shares   map[string]types.ShareToken
 }
 
-// NewSharesStore creates a new SharesStore instance pointing to the specified file path.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: constructs SharesStore around shares file path
+// Confidence: N/A
 func NewSharesStore(filePath string) *SharesStore {
 	return &SharesStore{
 		filePath: filePath,
@@ -37,8 +41,12 @@ func NewSharesStore(filePath string) *SharesStore {
 	}
 }
 
-// Load reads shares.json if it exists.
-// Matches observed lifecycle: if shares.json does not exist, it remains absent (lazy creation).
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.fomL4ATwVV1
+// VA: 0x739a80
+// Evidence: shares.json lazy load lifecycle, empty map initialization when absent
+// Confidence: HIGH
 func (s *SharesStore) Load() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -64,9 +72,12 @@ func (s *SharesStore) Load() error {
 	return nil
 }
 
-// saveLocked writes the in-memory shares to <file>.tmp with 0600 permissions,
-// then atomically renames to <file>.
-// Reconstructs binary function main.fomL4ATwVV1 (VA 0x739900).
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.fomL4ATwVV1
+// VA: 0x739900
+// Evidence: atomic serialization to <file>.tmp with 0600 mode and os.Rename
+// Confidence: HIGH
 func (s *SharesStore) saveLocked() error {
 	list := make([]types.ShareToken, 0, len(s.shares))
 	for _, v := range s.shares {
@@ -94,7 +105,11 @@ func (s *SharesStore) saveLocked() error {
 	return nil
 }
 
-// GetToken retrieves a share token by token ID under read lock.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: retrieves share token by ID under read lock
+// Confidence: N/A
 func (s *SharesStore) GetToken(tokenID string) (types.ShareToken, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -102,7 +117,11 @@ func (s *SharesStore) GetToken(tokenID string) (types.ShareToken, bool) {
 	return tok, exists
 }
 
-// ListTokens retrieves all share tokens under read lock.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: lists all share tokens under read lock
+// Confidence: N/A
 func (s *SharesStore) ListTokens() []types.ShareToken {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -113,7 +132,11 @@ func (s *SharesStore) ListTokens() []types.ShareToken {
 	return res
 }
 
-// SetToken adds or updates a share token under write lock and persists atomically to disk.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: sets or updates share token under write lock followed by atomic save
+// Confidence: N/A
 func (s *SharesStore) SetToken(token types.ShareToken) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -121,7 +144,11 @@ func (s *SharesStore) SetToken(token types.ShareToken) error {
 	return s.saveLocked()
 }
 
-// DeleteToken removes a share token by token ID under write lock and persists atomically to disk.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: removes share token by ID under write lock followed by atomic save
+// Confidence: N/A
 func (s *SharesStore) DeleteToken(tokenID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -35,7 +35,11 @@ type UsersStore struct {
 	users    map[string]types.User
 }
 
-// NewUsersStore creates a new UsersStore instance pointing to the specified file path.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: constructs UsersStore around persistence file path
+// Confidence: N/A
 func NewUsersStore(filePath string) *UsersStore {
 	return &UsersStore{
 		filePath: filePath,
@@ -43,23 +47,35 @@ func NewUsersStore(filePath string) *UsersStore {
 	}
 }
 
-// GenerateSalt creates a 16-byte cryptographically secure random hexadecimal string (32 characters).
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.b1g4g23Z
+// VA: 0x736c40
+// Evidence: 16-byte cryptographically secure random hexadecimal generation
+// Confidence: HIGH
 func GenerateSalt() string {
 	b := make([]byte, 16)
 	_, _ = rand.Read(b)
 	return hex.EncodeToString(b)
 }
 
-// HashPassword calculates SHA256(password + salt) matching original binary password derivation.
-// Note: This is a data-model derivation function required to populate persisted records.
-// Authentication/login verification logic is strictly excluded.
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.h72nXa_b
+// VA: 0x736d80
+// Evidence: sha256.Sum256(password + salt) hex-encoded derivation for stored records
+// Confidence: HIGH
 func HashPassword(password, salt string) string {
 	h := sha256.Sum256([]byte(password + salt))
 	return hex.EncodeToString(h[:])
 }
 
-// LoadOrCreate loads users.json or initializes it with the default administrator account.
-// Reconstructs the exact lifecycle of binary function main.aOfaLG (VA 0x736ae0).
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.aOfaLG
+// VA: 0x736ae0
+// Evidence: users.json load lifecycle, admin/admin123 initialization, wildcard upgrade, malformed recovery
+// Confidence: HIGH
 func (s *UsersStore) LoadOrCreate() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -137,8 +153,12 @@ func (s *UsersStore) LoadOrCreate() error {
 	return nil
 }
 
-// saveLocked writes the in-memory map to users.json with 0600 permissions.
-// Reconstructs binary function main.rAJGaVlvfajr (VA 0x737500).
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.rAJGaVlvfajr
+// VA: 0x737500
+// Evidence: users.json serialization via json.MarshalIndent, direct write with 0600 permissions
+// Confidence: HIGH
 func (s *UsersStore) saveLocked() error {
 	bytes, err := json.MarshalIndent(s.users, "", "  ")
 	if err != nil {
@@ -155,7 +175,11 @@ func (s *UsersStore) saveLocked() error {
 	return nil
 }
 
-// GetUser retrieves a copy of a user record by username under read lock.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: wraps in-memory user lookup under read lock
+// Confidence: N/A
 func (s *UsersStore) GetUser(username string) (types.User, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -163,7 +187,11 @@ func (s *UsersStore) GetUser(username string) (types.User, bool) {
 	return u, exists
 }
 
-// ListUsers retrieves all user records under read lock.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: wraps in-memory user map snapshot under read lock
+// Confidence: N/A
 func (s *UsersStore) ListUsers() map[string]types.User {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -174,7 +202,11 @@ func (s *UsersStore) ListUsers() map[string]types.User {
 	return res
 }
 
-// SetUser saves or updates a user record under write lock and persists to disk.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: in-memory user upsert under write lock followed by persistence
+// Confidence: N/A
 func (s *UsersStore) SetUser(user types.User) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -182,7 +214,11 @@ func (s *UsersStore) SetUser(user types.User) error {
 	return s.saveLocked()
 }
 
-// DeleteUser removes a user record under write lock and persists to disk.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: in-memory user deletion under write lock followed by persistence
+// Confidence: N/A
 func (s *UsersStore) DeleteUser(username string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -24,7 +24,11 @@ type StorageManager struct {
 	SharesStore *SharesStore
 }
 
-// NewStorageManager initializes storage directories and underlying stores for the given data directory.
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: constructs StorageManager coordinator around reconstructed stores
+// Confidence: N/A
 func NewStorageManager(dataDir string) (*StorageManager, error) {
 	if dataDir == "" {
 		dataDir = "./data"
@@ -56,9 +60,12 @@ func NewStorageManager(dataDir string) (*StorageManager, error) {
 	return sm, nil
 }
 
-// InitBootstrap runs initial bootstrap routines for eager persistence files.
-// Matches observed first-run lifecycle: users.json and device_tags.json are eagerly loaded/created,
-// while shares.json is lazily managed.
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BEHAVIOR
+// Binary Symbol: main.main
+// VA: 0x7647a0
+// Evidence: bootstrap sequence creating downloads/, snapshots/ and calling users/tags store loaders
+// Confidence: HIGH
 func (sm *StorageManager) InitBootstrap() error {
 	if err := sm.UsersStore.LoadOrCreate(); err != nil {
 		return fmt.Errorf("users store bootstrap failed: %w", err)
