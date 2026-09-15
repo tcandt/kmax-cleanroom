@@ -1,0 +1,4698 @@
+{
+  "/api/tags": {
+    "route": "/api/tags",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7b7c46245f83d0c9966fc0808e1ff49cbe34f2a5a2c1bbe8443631967e3751a2",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7b7c46245f83d0c9966fc0808e1ff49cbe34f2a5a2c1bbe8443631967e3751a2",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7b7c46245f83d0c9966fc0808e1ff49cbe34f2a5a2c1bbe8443631967e3751a2",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7b7c46245f83d0c9966fc0808e1ff49cbe34f2a5a2c1bbe8443631967e3751a2",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"tags\":[{\"id\":\"\",\"name\":\"\",\"color\":\"\"},{\"id\":\"\",\"name\":\"\",\"color\":\"\"}],\"deviceTags\":{}}"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"tags\":[{\"id\":\"\",\"name\":\"\",\"color\":\"\"},{\"id\":\"\",\"name\":\"\",\"color\":\"\"}],\"deviceTags\":{}}"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/shortcuts": {
+    "route": "/api/shortcuts",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[]"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[]"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/auth-status": {
+    "route": "/api/auth-status",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "ca7e8a154a9aca4340978d13a87b002ca524822efccf1ff719908874f6c72a83",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "ca7e8a154a9aca4340978d13a87b002ca524822efccf1ff719908874f6c72a83",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "ca7e8a154a9aca4340978d13a87b002ca524822efccf1ff719908874f6c72a83",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "ca7e8a154a9aca4340978d13a87b002ca524822efccf1ff719908874f6c72a83",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "ca7e8a154a9aca4340978d13a87b002ca524822efccf1ff719908874f6c72a83",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"noAuth\":false}"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"noAuth\":false}"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"noAuth\":false}"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"noAuth\":false}"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/activate": {
+    "route": "/api/activate",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ce1e24a10ae2485716505934859b82a9747d4692082a7d104da5a22f8b68d2e",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON payload"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON payload"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON payload"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON payload"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/license_status": {
+    "route": "/api/license_status",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/debug/license": {
+    "route": "/debug/license",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "21de61ecb76b09d6e56b47e68c3bc2f368df20763afd95a5ade00f26f86827af",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"licen"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/login": {
+    "route": "/api/login",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/register": {
+    "route": "/api/register",
+    "methods": {
+      "GET": {
+        "status": 403,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 403,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 403,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 403,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 403,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 403,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 403,
+        "body_preview": "{\"error\":\"Public registration is disabled. Please contact an administrator to create an account.\"}"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 403,
+        "body_preview": "{\"error\":\"Public registration is disabled. Please contact an administrator to create an account.\"}"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 403,
+        "body_preview": "{\"error\":\"Public registration is disabled. Please contact an administrator to create an account.\"}"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 403,
+        "body_preview": "{\"error\":\"Public registration is disabled. Please contact an administrator to create an account.\"}"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/me": {
+    "route": "/api/me",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "3542abc44db1e0a065e861f7d64d2e1b7040d122436c2ebeb7383148db253a15",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "3542abc44db1e0a065e861f7d64d2e1b7040d122436c2ebeb7383148db253a15",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "3542abc44db1e0a065e861f7d64d2e1b7040d122436c2ebeb7383148db253a15",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "3542abc44db1e0a065e861f7d64d2e1b7040d122436c2ebeb7383148db253a15",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "3542abc44db1e0a065e861f7d64d2e1b7040d122436c2ebeb7383148db253a15",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"ai_config\":null,\"assigned_devices\":[\"device_test_01\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":fal"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/user/ai-config": {
+    "route": "/api/user/ai-config",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users": {
+    "route": "/api/admin/users",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "78b6fdbece1fa792c0130d676cb391b565faa5ce9b425d102eb91c4062d97d19",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "78b6fdbece1fa792c0130d676cb391b565faa5ce9b425d102eb91c4062d97d19",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "78b6fdbece1fa792c0130d676cb391b565faa5ce9b425d102eb91c4062d97d19",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "78b6fdbece1fa792c0130d676cb391b565faa5ce9b425d102eb91c4062d97d19",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "78b6fdbece1fa792c0130d676cb391b565faa5ce9b425d102eb91c4062d97d19",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_0"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[{\"active_devices\":[],\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\""
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users/rename": {
+    "route": "/api/admin/users/rename",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_5"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_6"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_7"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_8"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_9"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_10"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_11"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/assign": {
+    "route": "/api/admin/assign",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_16"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_17"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_18"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_19"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_20"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_21"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_22"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users/create": {
+    "route": "/api/admin/users/create",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_27"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_28"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_29"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_30"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_31"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_32"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_33"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users/delete": {
+    "route": "/api/admin/users/delete",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_38"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_39"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_40"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_41"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_42"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_43"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_44"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users/update_note": {
+    "route": "/api/admin/users/update_note",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_49"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_50"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_51"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_52"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_53"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_54"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_55"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users/update": {
+    "route": "/api/admin/users/update",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_60"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_61"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_62"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_63"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_64"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_65"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_66"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid payload"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users/reset_password": {
+    "route": "/api/admin/users/reset_password",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_71"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_72"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_73"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_74"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_75"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_76"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_77"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/admin/users/kick": {
+    "route": "/api/admin/users/kick",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_82"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_83"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_84"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_85"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_86"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_87"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_88"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid JSON"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/share/create": {
+    "route": "/api/share/create",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_93"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_94"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_95"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_96"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_97"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_98"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 403,
+        "body_preview": "Forbidden: admin only"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Invalid payload"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/share/list": {
+    "route": "/api/share/list",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "bff0394f261c4798e7194d0d069d67b559fe6770ba4bf59984ea63725b1d2062",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "bff0394f261c4798e7194d0d069d67b559fe6770ba4bf59984ea63725b1d2062",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "bff0394f261c4798e7194d0d069d67b559fe6770ba4bf59984ea63725b1d2062",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "bff0394f261c4798e7194d0d069d67b559fe6770ba4bf59984ea63725b1d2062",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "bff0394f261c4798e7194d0d069d67b559fe6770ba4bf59984ea63725b1d2062",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_99"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden: admin only"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"code\":0,\"data\":[]}"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/share/revoke": {
+    "route": "/api/share/revoke",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_104"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_105"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_106"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_107"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_108"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_109"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden: admin only"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid payload"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/share/extend": {
+    "route": "/api/share/extend",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_110"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/share/update": {
+    "route": "/api/share/update",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_115"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_116"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_117"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_118"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c40aa69f0b306cea296dd1193c334bc0781587ed51aab579c0433698ba9e0c4b",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_119"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_120"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method Not Allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/share/info": {
+    "route": "/api/share/info",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bdd6b80a478e609e9171b301823aef3a8588832aaadbc75af7ec631a38be8668",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bdd6b80a478e609e9171b301823aef3a8588832aaadbc75af7ec631a38be8668",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bdd6b80a478e609e9171b301823aef3a8588832aaadbc75af7ec631a38be8668",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bdd6b80a478e609e9171b301823aef3a8588832aaadbc75af7ec631a38be8668",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bdd6b80a478e609e9171b301823aef3a8588832aaadbc75af7ec631a38be8668",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Token required"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Token required"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Token required"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Token required"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/share/redeem_card": {
+    "route": "/api/share/redeem_card",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid payload"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid payload"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid payload"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Invalid payload"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/server/addresses": {
+    "route": "/api/server/addresses",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7da0ae917fcb0f29ab67f61cd772f84a32956517563a8d4c26d7a6d905a407f5",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7da0ae917fcb0f29ab67f61cd772f84a32956517563a8d4c26d7a6d905a407f5",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7da0ae917fcb0f29ab67f61cd772f84a32956517563a8d4c26d7a6d905a407f5",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7da0ae917fcb0f29ab67f61cd772f84a32956517563a8d4c26d7a6d905a407f5",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "7da0ae917fcb0f29ab67f61cd772f84a32956517563a8d4c26d7a6d905a407f5",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:28448\",\"[fd7a:115c:a1e0::b34:c72d]:28448\",\"100.81.199.44:28448\",\"[2401:d800:97"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:28448\",\"[fd7a:115c:a1e0::b34:c72d]:28448\",\"100.81.199.44:28448\",\"[2401:d800:97"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/register_device": {
+    "route": "/register_device",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/register_agent": {
+    "route": "/register_agent",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 400,
+        "body_preview": "Bad Request"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/connect_client": {
+    "route": "/connect_client",
+    "methods": {
+      "GET": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "0cd6aed5d21ae37310b3c4e0facf48009005018bf4402fbcda1cb66d69b03346",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Bad Request"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Bad Request"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/devices": {
+    "route": "/devices",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[]"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[]"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/devices/": {
+    "route": "/api/devices/",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "3d25f9603bb07ce07a5debce41e4411edd79cc0cdfd236fd20c5cbb7ac082b55",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/devices": {
+    "route": "/api/devices",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "3d25f9603bb07ce07a5debce41e4411edd79cc0cdfd236fd20c5cbb7ac082b55",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 301,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/upload": {
+    "route": "/upload",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "2b5b17a6df2420c40f862c8acf100390a27a0bd0f1952ac9d2c397472cddc28c",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/files": {
+    "route": "/api/files",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "6efcd157ef29a14bed06f62e2adda55fca2210c674e6a6b0c0adebe694a23127",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[]"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[]"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/tasks": {
+    "route": "/api/tasks",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "2a21c5b3bff0299c0161470468f355e5b4afcf17a5f593ab68394ef7af319cdc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/tasks/details": {
+    "route": "/api/tasks/details",
+    "methods": {
+      "GET": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      },
+      "POST": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Missing task_id parameter"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 400,
+        "body_preview": "Missing task_id parameter"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/default_settings": {
+    "route": "/api/default_settings",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 400,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{}"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{}"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/ice_servers": {
+    "route": "/api/ice_servers",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "8393c6036d874d453bd402977cc834ebdfca2295680a40e034d033d417963d6e",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "8393c6036d874d453bd402977cc834ebdfca2295680a40e034d033d417963d6e",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "8393c6036d874d453bd402977cc834ebdfca2295680a40e034d033d417963d6e",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "8393c6036d874d453bd402977cc834ebdfca2295680a40e034d033d417963d6e",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "8393c6036d874d453bd402977cc834ebdfca2295680a40e034d033d417963d6e",
+        "schema": "json_array",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/version": {
+    "route": "/api/version",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "b7df437634ffe5e050a1d96e8cda61680f61d6296e7f441e456bceb9a5160c85",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "b7df437634ffe5e050a1d96e8cda61680f61d6296e7f441e456bceb9a5160c85",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "b7df437634ffe5e050a1d96e8cda61680f61d6296e7f441e456bceb9a5160c85",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "b7df437634ffe5e050a1d96e8cda61680f61d6296e7f441e456bceb9a5160c85",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "b7df437634ffe5e050a1d96e8cda61680f61d6296e7f441e456bceb9a5160c85",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/snapshots/": {
+    "route": "/snapshots/",
+    "methods": {
+      "GET": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 404,
+        "body_preview": "404 page not found"
+      }
+    },
+    "classification": "STATIC_REGISTERED_ROUTE",
+    "allow_header": null
+  },
+  "/": {
+    "route": "/",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  },
+  "/api/turn": {
+    "route": "/api/turn",
+    "methods": {
+      "GET": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 404,
+        "body_preview": "404 page not found"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 404,
+        "body_preview": "404 page not found"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 404,
+        "body_preview": "404 page not found"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 404,
+        "body_preview": "404 page not found"
+      }
+    },
+    "classification": "STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED",
+    "allow_header": null
+  },
+  "/api/devices/list": {
+    "route": "/api/devices/list",
+    "methods": {
+      "GET": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "a7d54043731d3c6b4939dab14ca2c9cf7196a4f587b522ae572caa3718c556fd",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 405,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 405,
+        "body_preview": "Method not allowed"
+      }
+    },
+    "classification": "DYNAMIC_REGISTERED_ROUTE",
+    "allow_header": null
+  },
+  "/api/admin/users/register_device": {
+    "route": "/api/admin/users/register_device",
+    "methods": {
+      "GET": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 404,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "POST",
+        "status": 404,
+        "body_preview": "404 page not found"
+      },
+      "INVALID_TOKEN": {
+        "method": "POST",
+        "status": 404,
+        "body_preview": "404 page not found"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "POST",
+        "status": 404,
+        "body_preview": "404 page not found"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "POST",
+        "status": 404,
+        "body_preview": "404 page not found"
+      }
+    },
+    "classification": "STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED",
+    "allow_header": null
+  },
+  "/downloads": {
+    "route": "/downloads",
+    "methods": {
+      "GET": {
+        "error": "Exceeded 30 redirects."
+      },
+      "POST": {
+        "error": "Exceeded 30 redirects."
+      },
+      "PUT": {
+        "error": "Exceeded 30 redirects."
+      },
+      "PATCH": {
+        "error": "Exceeded 30 redirects."
+      },
+      "DELETE": {
+        "error": "Exceeded 30 redirects."
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 301,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "error": "Exceeded 30 redirects."
+      },
+      "INVALID_TOKEN": {
+        "error": "Exceeded 30 redirects."
+      },
+      "VALID_USER_TOKEN": {
+        "error": "Exceeded 30 redirects."
+      },
+      "VALID_ADMIN_TOKEN": {
+        "error": "Exceeded 30 redirects."
+      }
+    },
+    "classification": "DYNAMIC_REGISTERED_ROUTE",
+    "allow_header": null
+  },
+  "/debug/pprof": {
+    "route": "/debug/pprof",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "300816947a9a2553ac4c2b906ecfcb740510c1d6dfa148d0d8cc71f1566ef851",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "300816947a9a2553ac4c2b906ecfcb740510c1d6dfa148d0d8cc71f1566ef851",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "300816947a9a2553ac4c2b906ecfcb740510c1d6dfa148d0d8cc71f1566ef851",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "300816947a9a2553ac4c2b906ecfcb740510c1d6dfa148d0d8cc71f1566ef851",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "300816947a9a2553ac4c2b906ecfcb740510c1d6dfa148d0d8cc71f1566ef851",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "300816947a9a2553ac4c2b906ecfcb740510c1d6dfa148d0d8cc71f1566ef851",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 301,
+        "content_type": "text/html; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_html",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden: pprof access requires admin privilege"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "<html>\n<head>\n<title>/debug/pprof/</title>\n<style>\n.profile-name{\n\tdisplay:inline-block;\n\twidth:6rem;\n}\n</style>\n</head>"
+      }
+    },
+    "classification": "DYNAMIC_REGISTERED_ROUTE",
+    "allow_header": null
+  },
+  "/debug/pprof/cmdline": {
+    "route": "/debug/pprof/cmdline",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bf3babc8ee594eb79834cc00ea757129fe58b2f78be2373f601f7675e250730d",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bf3babc8ee594eb79834cc00ea757129fe58b2f78be2373f601f7675e250730d",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bf3babc8ee594eb79834cc00ea757129fe58b2f78be2373f601f7675e250730d",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bf3babc8ee594eb79834cc00ea757129fe58b2f78be2373f601f7675e250730d",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bf3babc8ee594eb79834cc00ea757129fe58b2f78be2373f601f7675e250730d",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "bf3babc8ee594eb79834cc00ea757129fe58b2f78be2373f601f7675e250730d",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden: pprof access requires admin privilege"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "D:\\KMAX-CLEANROOM\\cloudphone-v0.3.6 (1)\\bin\\windows_amd64\\webrtc-signaling.exe\u0000-tls=false\u0000-port=28448\u0000-data=C:\\Users\\TIN"
+      }
+    },
+    "classification": "DYNAMIC_REGISTERED_ROUTE",
+    "allow_header": null
+  },
+  "/debug/pprof/profile": {
+    "route": "/debug/pprof/profile",
+    "methods": {
+      "GET": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      },
+      "POST": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      },
+      "PUT": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      },
+      "PATCH": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      },
+      "DELETE": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      },
+      "OPTIONS": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      },
+      "HEAD": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden: pprof access requires admin privilege"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "error": "HTTPConnectionPool(host='127.0.0.1', port=28448): Read timed out. (read timeout=2)"
+      }
+    },
+    "classification": "STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED",
+    "allow_header": null
+  },
+  "/debug/pprof/symbol": {
+    "route": "/debug/pprof/symbol",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "899c04da2bfde3c33882bb7a399a28789802aebd3c5c7ddd32ceb4e906e25498",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "899c04da2bfde3c33882bb7a399a28789802aebd3c5c7ddd32ceb4e906e25498",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "899c04da2bfde3c33882bb7a399a28789802aebd3c5c7ddd32ceb4e906e25498",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "899c04da2bfde3c33882bb7a399a28789802aebd3c5c7ddd32ceb4e906e25498",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "899c04da2bfde3c33882bb7a399a28789802aebd3c5c7ddd32ceb4e906e25498",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "899c04da2bfde3c33882bb7a399a28789802aebd3c5c7ddd32ceb4e906e25498",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "text_plain",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden: pprof access requires admin privilege"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "num_symbols: 1"
+      }
+    },
+    "classification": "DYNAMIC_REGISTERED_ROUTE",
+    "allow_header": null
+  },
+  "/debug/pprof/trace": {
+    "route": "/debug/pprof/trace",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/octet-stream",
+        "allow": null,
+        "body_hash": "c9f5690c6dfb025748d43c73d81e84e36ad3cc4d040b899070dfd6f81330fa28",
+        "schema": "binary_or_other",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/octet-stream",
+        "allow": null,
+        "body_hash": "172fd888f12c9a7a5874ee521bb741e64c813f28519db2c951be7e3065937de3",
+        "schema": "binary_or_other",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/octet-stream",
+        "allow": null,
+        "body_hash": "588cf744a0793e859c06b2593e1d982a6c3087e3da32323dd3d1b49ee1c5c38c",
+        "schema": "binary_or_other",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/octet-stream",
+        "allow": null,
+        "body_hash": "ac4c3a2ec92e8915fd3a47a046d9d739989b73f327d5841ba6753b7473454649",
+        "schema": "binary_or_other",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/octet-stream",
+        "allow": null,
+        "body_hash": "ee1325ad7de82f9653630c113d769559bb8d4c7b61576e3fda2b2cb16b6fa768",
+        "schema": "binary_or_other",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "application/octet-stream",
+        "allow": null,
+        "body_hash": "576421f2ff0710ad720cb6ec8c6f2ae08da388b6078488bac5b0c676d62892bb",
+        "schema": "binary_or_other",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/octet-stream",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 401,
+        "body_preview": "Unauthorized pprof access: missing or invalid token"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 403,
+        "body_preview": "Forbidden: pprof access requires admin privilege"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "go 1.25 trace\u0000\u0000\u0000\u0001\u0001\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0001\ufffd\u2258\ufffd\ufffd\u0005\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u00002\b\ufffd\ufffd\ufffd\u00043\u001f\ufffd\u040e\ufffd\u07fc\ufffd\u0005\ufffd\u0222\ufffd\u0006\ufffd\ufffd\ufffd\u0001\u0001\u0001\ufffd\ufffd\u0001\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0005\uf000\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u0000\nk\u0000\u0001\u000b3\n\ufffd\ufffd>\u0002\u0002\u000b>\n\ufffd\ufffd>\u0000\u0003\u000b/\n\ufffd\ufffd>\u0002\u0004\u000b;\n\ufffd\ufffd>\u0000"
+      }
+    },
+    "classification": "DYNAMIC_REGISTERED_ROUTE",
+    "allow_header": null
+  },
+  "/api/logout": {
+    "route": "/api/logout",
+    "methods": {
+      "GET": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "9a14b700bc2581383cfae352c91f00fc65439392344a2f823a9645e8546a3bde",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "POST": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "9a14b700bc2581383cfae352c91f00fc65439392344a2f823a9645e8546a3bde",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PUT": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "9a14b700bc2581383cfae352c91f00fc65439392344a2f823a9645e8546a3bde",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "PATCH": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "9a14b700bc2581383cfae352c91f00fc65439392344a2f823a9645e8546a3bde",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "DELETE": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "9a14b700bc2581383cfae352c91f00fc65439392344a2f823a9645e8546a3bde",
+        "schema": "json_object",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "OPTIONS": {
+        "status": 200,
+        "content_type": "",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "empty",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      },
+      "HEAD": {
+        "status": 200,
+        "content_type": "application/json",
+        "allow": null,
+        "body_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "schema": "malformed_json",
+        "persistent_mutation": false,
+        "fixture_id": "fx_121"
+      }
+    },
+    "auth_matrix": {
+      "NO_AUTH": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"status\":\"success\"}"
+      },
+      "INVALID_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"status\":\"success\"}"
+      },
+      "VALID_USER_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"status\":\"success\"}"
+      },
+      "VALID_ADMIN_TOKEN": {
+        "method": "GET",
+        "status": 200,
+        "body_preview": "{\"status\":\"success\"}"
+      }
+    },
+    "classification": "STATIC_AND_DYNAMIC_REGISTERED",
+    "allow_header": null
+  }
+}

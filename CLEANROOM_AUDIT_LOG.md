@@ -149,4 +149,42 @@
   - `raw_extraction/go_signaling/oracle_results.json` & `authenticated_oracle_results.json`
 - **Next Step**: Awaiting user review and sign-off on Phase 2 Exit Gate before Phase 2C.
 
+---
+
+## [Phase 2 Remediation] - 2026-09-15 - Forensic Blocker A (Pclntab Parser) & Blocker B (Dynamic Oracle) Remediation
+
+### 1. Incident & Trigger
+User audit identified two forensic integrity blockers preventing Phase 2 exit:
+1. **Blocker A (Pclntab Parser Corruption)**: Go pclntab function table entry `functab[i].funcoff` was misinterpreted as a direct function-name offset instead of a pointer to `runtime._func`, producing truncated fragments (`048`, `ld`, `etg`, `anicSliceAcapU`) and misassigning stdlib functions to application roles.
+2. **Blocker B (Oracle Session Contamination & Route Status)**: Probing `/api/logout` early revoked the active session token, causing subsequent endpoints to falsely return `401 Unauthorized`. Additionally, candidate string `/api/turn` (returning 404 across all HTTP verbs) was misclassified as a confirmed endpoint.
+
+### 2. Forensic Remediations Applied
+1. **Task A1 & A2 (Pclntab Parser Re-Architecture & Validation)**:
+   - Implemented version-aware parser resolving `functab[i] -> (entryoff, funcoff) -> _func -> nameOff -> funcnametab`.
+   - Created `tests/test_pclntab_parser.py` and `reports/02A_PCLNTAB_PARSER_VALIDATION.md`.
+   - Automated unit test passed 100%:
+     - `webrtc-signaling` (Linux AMD64): 7,571 / 7,571 valid names (100.00%), 0 corruptions, 0 out-of-range offsets.
+     - `cloudphone-agent` (Android ARM64): 15,398 / 15,398 valid names (100.00%), 0 corruptions, 0 out-of-range offsets.
+2. **Task A3 (Forensic Map Regeneration)**:
+   - Regenerated `evidence/go_signaling/FUNCTION_MAP.json`, `FUNCTION_MAP.md`, `CALLGRAPH.json`.
+   - Regenerated `evidence/go_agent/FUNCTION_MAP.json`, `FUNCTION_MAP.md`, `CALLGRAPH.json`.
+   - Regenerated `evidence/go_signaling/ROLE_MAPPING.json`, `ROLE_MAPPING.md` (zero stdlib misattributions; exact garbled symbols preserved).
+   - Regenerated `evidence/go_agent/ROLE_MAPPING.json`, `ROLE_MAPPING.md`.
+3. **Tasks B1–B4 (Clean Dynamic Oracle & Route Classification)**:
+   - Built `scratch/clean_oracle_prober.py` with deterministic baseline data fixture (`users.json`, `shares.json`, `device_tags.json`).
+   - Independent sessions per endpoint with fresh authentication tokens.
+   - Tested full method matrix: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`, `HEAD`.
+   - Tested full auth matrix: `NO_AUTH`, `INVALID_TOKEN`, `VALID_USER_TOKEN`, `VALID_ADMIN_TOKEN`.
+   - `/api/logout` tested strictly LAST in its own isolated run.
+   - Resolved `/api/turn`: returns 404 for all HTTP verbs; classified as `STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED`.
+   - Saved clean results to `raw_extraction/go_signaling/clean_oracle_results.json`.
+4. **Report Modernization & Tone Correction**:
+   - Rewrote `reports/02_GO_SIGNALING_FORENSICS.md` with disassembly of 42 routes in `main.main`.
+   - Rewrote `reports/03_GO_AGENT_FORENSICS.md` with corrected ARM64 statistics.
+   - Rewrote `reports/04_PROTOCOL_SPEC.md` and `reports/05_GO_ARCHITECTURE_RECOVERY.md` removing unsupported certainty claims and enforcing strict evidence classifications.
+5. **Strict Clean-Room Boundary**:
+   - `reconstructed_source/` remains completely untouched.
+   - Execution stopped at Phase 2 Re-Exit Gate awaiting user sign-off.
+
+
 

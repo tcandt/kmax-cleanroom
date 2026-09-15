@@ -1,73 +1,91 @@
-# Forensic Protocol Specification (Phase 2A)
-**Project**: KMAX Clean-Room Reverse Engineering & Behavior Recovery  **Classification Standard**: Evidence-Driven Protocol Contracts (Static + Dynamic Oracle)  **Status**: COMPLETED & VERIFIED  
+# Forensic Protocol Specification (Phase 2A / Phase 2 Remediation)
+
+**Project**: KMAX Clean-Room Reverse Engineering & Behavior Recovery  
+**Classification Standard**: Evidence-Driven Protocol Contracts (Static Disassembly + Clean Isolated Dynamic Oracle)  
+**Status**: AUDITED & RE-VERIFIED  
+
 ---
 
 ## 1. Scope & Forensic Methodology
 
-This document formalizes every protocol contract across the KMAX / CloudPhone distributed architecture. No protocol claim is made based solely on static strings. Every HTTP route, WebSocket state transition, DataChannel frame, and IPC socket interaction has been verified through a combination of:
-1. **Static Analysis**: `.rodata` string tables, `.gopclntab` function boundaries, instruction xrefs (LEA on x86_64, ADRP+ADD on AArch64).
-2. **Dynamic Black-Box Oracle Probing**: Controlled local execution of the original binary (`webrtc-signaling.exe`) on isolated ports, testing all HTTP verbs, empty/malformed/valid payloads, and session token state transitions.
+This document formalizes protocol contracts across the KMAX / CloudPhone distributed architecture. **Every claim is individually classified by its strongest available evidence. Not all contracts have been dynamically verified.**
+
+Evidence is derived from three rigorous sources:
+1. **Static Binary Disassembly**: `.rodata` string tables, `.gopclntab` function boundaries, and instruction-level disassembly of route registration in `main.main` (`webrtc-signaling`) and handler routines.
+2. **Clean Dynamic Black-Box Oracle Probing**: Controlled local execution of the original binary (`webrtc-signaling.exe`) on isolated ports, testing all HTTP verbs independently with fresh, unpoisoned session tokens per endpoint, deterministic data fixtures (`users.json`, `shares.json`, `device_tags.json`), and `/api/logout` isolated strictly at the end.
 3. **Bytecode Corroboration**: Direct cross-correlation with decompiled Android Helper classes (`ControlMessageReader.java`, `DesktopConnection.java`, `Streamer.java`).
 
 ### Evidence Classification Taxonomy
-- `STATIC_AND_DYNAMIC_CONFIRMED`: Route and contract confirmed by both static binary disassembly and dynamic oracle runtime probing.
-- `STATIC_CONFIRMED`: Confirmed by disassembly, xrefs, and/or bytecode (e.g. internal IPC or unreached error paths).
-- `DYNAMIC_CONFIRMED`: Observed during runtime probe execution.
-- `INFERRED`: Derived logically from tightly coupled callgraphs or data models.
-- `UNKNOWN`: Insufficient evidence to establish complete contract.
+- `STATIC_AND_DYNAMIC_REGISTERED`: Route registered in binary control flow (`main.main`) and confirmed responsive via dynamic oracle probing.
+- `STATIC_REGISTERED_ROUTE`: Route registered in binary control flow, but serves static assets or requires specific runtime attachments.
+- `DYNAMIC_REGISTERED_ROUTE`: Route responsive dynamically under a prefix handler without a dedicated `main.main` registration string.
+- `STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED`: String candidate present in `.rodata` or frontend assets, but NOT registered in routing control flow and confirmed non-responsive (404 for all HTTP methods) by the dynamic oracle.
+- `UNKNOWN_ROUTE_STATUS`: Insufficient static or dynamic evidence.
 
 ---
 
-## 2. Master HTTP & WebSocket Route Matrix (46 Endpoints)
+## 2. Master Route & Endpoint Verification Matrix
 
-| # | Route Pattern | Allowed Method(s) | Auth Required | Request Schema | Response Schema | Evidence Class |
+| # | Route Pattern | Allowed Method(s) | Auth Required | Request Schema | Response Schema | Evidence Classification |
 |---|---|---|---|---|---|---|
-| 1 | `/api/login` | `POST, OPTIONS` | No | `{username: str, password: str}` | `{token: str, username: str, role: str, assigned_devices: []}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 2 | `/api/logout` | `ANY (POST/GET/PUT/DELETE)` | Bearer Token | None | `{status: 'success'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 3 | `/api/auth-status` | `GET, POST, OPTIONS` | No | None | `{noAuth: bool}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 4 | `/api/user/ai-config` | `GET, POST, OPTIONS` | Bearer Token | `{...}` | `{...}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 5 | `/api/devices` | `DELETE, OPTIONS` | Bearer Token | `DELETE /api/devices/{id}` | `{status: 'success'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 6 | `/api/devices/list` | `DELETE, OPTIONS` | Bearer Token | Device ID path | Device record | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 7 | `/api/default_settings` | `GET, POST, OPTIONS` | Bearer Token | Config JSON | `{}` (default empty) | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 8 | `/api/server/addresses` | `GET, OPTIONS` | Bearer Token | None | `{code: 0, data: {addresses: []}}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 9 | `/api/ice_servers` | `GET, OPTIONS` | Bearer Token | None | `[{urls: ['stun:...']}]` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 10 | `/api/turn` | `GET, OPTIONS` | Bearer Token | Query params | Relay credentials | `STATIC_CONFIRMED` |
-| 11 | `/api/license_status` | `GET, OPTIONS` | No | None | `{status: 'valid', machine_id: str, days_remaining: int, ...}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 12 | `/api/activate` | `POST, OPTIONS` | No | `{key: str}` | `{status: 'activated'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 13 | `/api/share/list` | `GET, OPTIONS` | Bearer Token | None | `{code: 0, data: []}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 14 | `/api/share/info` | `GET, POST, OPTIONS` | No (?token= required) | `?token=STRING` | `{device_id: str, ...}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 15 | `/api/share/create` | `POST, OPTIONS` | Bearer Token | `{device_id: str, expire_seconds: int, ...}` | `{token: str, ...}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 16 | `/api/share/revoke` | `POST, OPTIONS` | Bearer Token | `{token: str}` | `{status: 'revoked'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 17 | `/api/share/extend` | `POST, OPTIONS` | Bearer Token | `{token: str, extend_seconds: int}` | `{expires_at: str}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 18 | `/api/share/update` | `POST, OPTIONS` | Bearer Token | `{token: str, guest_settings: {}}` | `{status: 'updated'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 19 | `/api/share/redeem_card` | `POST, OPTIONS` | No | `{card_code: str}` | `{status: 'redeemed'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 20 | `/api/admin/users` | `GET, OPTIONS` | Bearer Token (admin) | None | `[{username: str, role: str, ...}]` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 21 | `/api/admin/users/create` | `POST, OPTIONS` | Bearer Token (admin) | `{username: str, password: str, role: str}` | `{status: 'created'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 22 | `/api/admin/users/delete` | `POST, DELETE, OPTIONS` | Bearer Token (admin) | `{username: str}` | `{status: 'deleted'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 23 | `/api/admin/users/rename` | `POST, OPTIONS` | Bearer Token (admin) | `{old_username: str, new_username: str}` | `{status: 'renamed'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 24 | `/api/admin/users/update` | `POST, OPTIONS` | Bearer Token (admin) | `{username: str, assigned_devices: []}` | `{status: 'updated'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 25 | `/api/admin/users/update_note` | `POST, OPTIONS` | Bearer Token (admin) | `{username: str, note: str}` | `{status: 'updated'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 26 | `/api/admin/users/reset_password` | `POST, OPTIONS` | Bearer Token (admin) | `{username: str, new_password: str}` | `{status: 'reset'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 27 | `/api/admin/users/kick` | `POST, OPTIONS` | Bearer Token (admin) | `{username: str}` | `{status: 'kicked'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 28 | `/api/admin/users/register_device` | `POST, OPTIONS` | Bearer Token (admin) | `{username: str, device_id: str}` | `{status: 'registered'}` | `STATIC_CONFIRMED` |
-| 29 | `/api/admin/assign` | `POST, OPTIONS` | Bearer Token (admin) | `{devices: [], users: []}` | `{status: 'assigned'}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 30 | `/api/files` | `GET, OPTIONS` | Bearer Token | None | `[]` (list of files) | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 31 | `/api/me/upload` | `POST, OPTIONS` | Bearer Token | Multipart Form Data (`file`) | `{filename: str, size: int}` | `STATIC_CONFIRMED` |
-| 32 | `/api/tasks` | `POST, OPTIONS` | Bearer Token | `{task_type: str, device_id: str}` | `{task_id: str}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 33 | `/api/tasks/details` | `GET, OPTIONS` | Bearer Token | `?id=TASK_ID` | `{task_id: str, status: str}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 34 | `/api/tags` | `GET, POST, OPTIONS` | Bearer Token | `{tags: [], deviceTags: {}}` | `{tags: [], deviceTags: {}}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 35 | `/api/shortcuts` | `GET, POST, OPTIONS` | Bearer Token | `[]` | `[]` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 36 | `/api/version` | `GET, OPTIONS` | No | None | `{version: str, git_commit: str, build_time: str}` | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 37 | `/register_agent` | `GET (Upgrade: websocket)` | Agent handshake | `{type: 'register', device_info: {}}` | Ack & offer requests | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 38 | `/connect_client` | `GET (Upgrade: websocket)` | Bearer Token or ?token= | `{type: 'offer', sdp: str}` | SDP Answer & ICE candidates | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 39 | `/snapshots` | `GET` | Bearer Token / Session | `GET /snapshots/{file}` | Raw JPEG/PNG image bytes | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 40 | `/downloads` | `GET` | Bearer Token / Session | `GET /downloads/{file}` | Raw binary stream / file | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 41 | `/debug/pprof` | `GET` | Bearer Token | None | HTML profiler index | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 42 | `/debug/pprof/cmdline` | `GET` | Bearer Token | None | Plaintext command line | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 43 | `/debug/pprof/profile` | `GET` | Bearer Token | None | Binary CPU profile | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 44 | `/debug/pprof/symbol` | `GET` | Bearer Token | None | Symbol table resolution | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 45 | `/debug/pprof/trace` | `GET` | Bearer Token | None | Execution trace binary | `STATIC_AND_DYNAMIC_CONFIRMED` |
-| 46 | `/debug/license` | `GET` | No | None | Raw license claims JSON | `STATIC_AND_DYNAMIC_CONFIRMED` |
+| 1 | `/api/login` | `POST, OPTIONS` | None | `{username: str, password: str}` | `{token: str, username: str, role: str, assigned_devices: []}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 2 | `/api/auth-status` | `GET, POST, OPTIONS` | None | None | `{noAuth: bool}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 3 | `/api/user/ai-config` | `POST, OPTIONS` | Bearer Token | AI configuration payload | Status confirmation | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 4 | `/api/devices` | `DELETE, OPTIONS` | Bearer Token | `DELETE /api/devices/{id}` | `{status: 'success'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 5 | `/api/devices/` | `GET, POST, DELETE, OPTIONS` | Bearer Token | Path-based device routing | Device records / control | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 6 | `/api/default_settings` | `GET, POST, OPTIONS` | Bearer Token | Settings JSON | `{}` (default configuration) | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 7 | `/api/server/addresses` | `GET, OPTIONS` | Bearer Token | None | `{code: 0, data: {addresses: []}}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 8 | `/api/ice_servers` | `GET, POST, OPTIONS` | Bearer Token | None | `[{urls: ['stun:stun.l.google.com:19302']}]` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 9 | `/api/license_status` | `GET, OPTIONS` | None | None | `{status: str, machine_id: str, ...}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 10 | `/api/activate` | `POST, OPTIONS` | None | `{key: str}` | `{status: 'activated'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 11 | `/api/share/list` | `GET, OPTIONS` | Bearer Token | None | `{code: 0, data: []}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 12 | `/api/share/info` | `GET, POST, OPTIONS` | None (?token= param) | `?token=STRING` | `{device_id: str, ...}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 13 | `/api/share/create` | `POST, OPTIONS` | Bearer Token | `{device_id: str, expire_seconds: int}` | `{token: str, ...}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 14 | `/api/share/revoke` | `POST, OPTIONS` | Bearer Token | `{token: str}` | `{status: 'revoked'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 15 | `/api/share/extend` | `POST, OPTIONS` | Bearer Token | `{token: str, extend_seconds: int}` | `{expires_at: str}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 16 | `/api/share/update` | `POST, OPTIONS` | Bearer Token | `{token: str, guest_settings: {}}` | `{status: 'updated'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 17 | `/api/share/redeem_card` | `POST, OPTIONS` | None | `{card_code: str}` | `{status: 'redeemed'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 18 | `/api/admin/users` | `GET, OPTIONS` | Bearer Token (Admin) | None | `[{username: str, role: str, ...}]` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 19 | `/api/admin/users/create` | `POST, OPTIONS` | Bearer Token (Admin) | `{username: str, password: str, role: str}` | `{status: 'created'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 20 | `/api/admin/users/delete` | `POST, DELETE, OPTIONS`| Bearer Token (Admin) | `{username: str}` | `{status: 'deleted'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 21 | `/api/admin/users/rename` | `POST, OPTIONS` | Bearer Token (Admin) | `{old_username: str, new_username: str}` | `{status: 'renamed'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 22 | `/api/admin/users/update` | `POST, OPTIONS` | Bearer Token (Admin) | `{username: str, assigned_devices: []}` | `{status: 'updated'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 23 | `/api/admin/users/update_note` | `POST, OPTIONS` | Bearer Token (Admin) | `{username: str, note: str}` | `{status: 'updated'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 24 | `/api/admin/users/reset_password` | `POST, OPTIONS` | Bearer Token (Admin) | `{username: str, new_password: str}` | `{status: 'reset'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 25 | `/api/admin/users/kick` | `POST, OPTIONS` | Bearer Token (Admin) | `{username: str}` | `{status: 'kicked'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 26 | `/api/admin/assign` | `POST, OPTIONS` | Bearer Token (Admin) | `{devices: [], users: []}` | `{status: 'assigned'}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 27 | `/api/files` | `GET, OPTIONS` | Bearer Token | None | `[]` (file inventory) | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 28 | `/upload` | `POST, OPTIONS` | Bearer Token | Multipart Form Data (`file`) | File upload confirmation | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 29 | `/api/tasks` | `POST, OPTIONS` | Bearer Token | `{task_type: str, device_id: str}` | `{task_id: str}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 30 | `/api/tasks/details` | `GET, OPTIONS` | Bearer Token | `?id=TASK_ID` | `{task_id: str, status: str}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 31 | `/api/tags` | `GET, POST, OPTIONS` | Bearer Token | `{tags: [], deviceTags: {}}` | `{tags: [], deviceTags: {}}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 32 | `/api/shortcuts` | `GET, POST, OPTIONS` | Bearer Token | `[]` | `[]` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 33 | `/api/version` | `GET, OPTIONS` | None | None | `{version: str, git_commit: str, build_time: str}` | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 34 | `/register_device` | `GET, POST, OPTIONS` | Bearer Token | Device handshake parameters | Registration state | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 35 | `/register_agent` | `GET (Upgrade: ws)` | Agent Handshake | `{type: 'register', device_info: {}}` | Registration confirmation | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 36 | `/connect_client` | `GET (Upgrade: ws)` | Bearer or ?token= | `{type: 'offer', sdp: str}` | SDP Answer & ICE candidates | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 37 | `/devices` | `GET, OPTIONS` | Bearer Token | Query filters | Device summary | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 38 | `/snapshots/` | `GET` | Bearer Token / Session | `GET /snapshots/{file}` | JPEG/PNG stream | `STATIC_REGISTERED_ROUTE` |
+| 39 | `/` | `GET` | None | None | Static Web Application HTML | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 40 | `/debug/license` | `GET` | None | None | Machine ID and license state | `STATIC_AND_DYNAMIC_REGISTERED` |
+| 41 | `/api/devices/list` | `GET, OPTIONS` | Bearer Token | Device list parameters | Sub-route under `/api/devices/` | `DYNAMIC_REGISTERED_ROUTE` |
+| 42 | `/downloads` | `GET, OPTIONS` | Bearer Token | File retrieval path | File stream | `DYNAMIC_REGISTERED_ROUTE` |
+| 43 | `/debug/pprof` | `GET` | Bearer Token | None | Profiler index | `DYNAMIC_REGISTERED_ROUTE` |
+| 44 | `/debug/pprof/cmdline` | `GET` | Bearer Token | None | Command line text | `DYNAMIC_REGISTERED_ROUTE` |
+| 45 | `/debug/pprof/symbol` | `GET, POST` | Bearer Token | Symbol names | Symbol mappings | `DYNAMIC_REGISTERED_ROUTE` |
+| 46 | `/debug/pprof/trace` | `GET` | Bearer Token | Trace parameters | Trace binary stream | `DYNAMIC_REGISTERED_ROUTE` |
+| 47 | `/api/turn` | `NONE (404 all verbs)`| N/A | N/A | 404 page not found | `STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED` |
+| 48 | `/api/admin/users/register_device` | `NONE (404 all verbs)` | N/A | N/A | 404 page not found | `STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED` |
+| 49 | `/debug/pprof/profile` | `NONE (404)` | N/A | N/A | 404 page not found | `STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED` |
+| 50 | `/api/logout` | `ANY (POST/GET/PUT/DELETE)`| Session Token | None | `{status: 'success'}` (Revokes Token) | `STATIC_AND_DYNAMIC_REGISTERED` |
+
+> [!IMPORTANT]
+> **Resolution of the `/api/turn` Discrepancy**:
+> `/api/turn` was previously listed as a confirmed endpoint due to its presence as a string in `.rodata`. Disassembly of `main.main` reveals that it is **never registered** in the HTTP multiplexer. Dynamic black-box probing against the original binary across all HTTP methods (GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD) returns `404 page not found`. It is correctly reclassified as `STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED`.
+
+> [!NOTE]
+> **Dynamic Oracle Isolation & `/api/logout` Ordering**:
+> Probing `/api/logout` revokes the active session token in memory. In the remediated oracle test suite, every endpoint was evaluated in an isolated session with fresh credentials. `/api/logout` was tested strictly last, preventing token invalidation cascade across other authenticated endpoints.
 
 ---
 
@@ -90,7 +108,7 @@ This document formalizes every protocol contract across the KMAX / CloudPhone di
    }
    ```
 3. **Server Registry State Transition**: Server registers agent in memory (`[Agent] Fat Device %s registered`), caches device info, and marks device online.
-4. **Heartbeat Protocol**: Standard Gorilla ping-pong handler (`SetPingHandler` / `SetPongHandler`). Interval 30s. Missing 2 pings triggers connection teardown.
+4. **Heartbeat Protocol**: Gorilla ping-pong handler (`SetPingHandler` / `SetPongHandler`). Interval 30s. Missing 2 pings triggers connection teardown.
 5. **Client Connect Request** (Server -> Agent):
    ```json
    {
@@ -102,49 +120,28 @@ This document formalizes every protocol contract across the KMAX / CloudPhone di
 6. **SDP / ICE Relay**: Bidirectional exchange of `offer`, `answer`, and `candidate` payloads between agent and server.
 
 ### 3.2. `/connect_client` Protocol
-1. **Authentication**: Client connects with `?token=<share_token>` or HTTP header `Authorization: Bearer <session_token>`. Unauthenticated requests immediately rejected with `401 Unauthorized`.
+1. **Authentication**: Client connects with `?token=<share_token>` or HTTP header `Authorization: Bearer <session_token>`. Unauthenticated requests rejected with `401 Unauthorized`.
 2. **Device Binding**: Client requests session for `device_id`.
 3. **SDP Offer Exchange**: Client sends SDP offer; server proxies offer to corresponding agent; agent creates answer using Pion WebRTC v3.3.6 and sends answer back to client.
-4. **Tear-Down Event**: If web user clicks disconnect, server sends `[Notification] User clicked disconnect WebRTC clients from web page` and closes peer connection.
+4. **Tear-Down Event**: Server handles disconnect notification (`[Notification] User clicked disconnect WebRTC clients from web page`) and tears down peer connection.
 
 ---
 
-## 4. WebRTC DataChannels Specification
+## 4. Android IPC & Helper Protocol Contracts
 
-All WebRTC DataChannels are established by `cloudphone-agent` using Pion WebRTC v3.3.6:
+### 4.1. Local Abstract UNIX Domain Sockets
+The agent communicates with `com.android.helper.CoreService` over 4 abstract UNIX Domain Sockets:
+1. `@scrcpy`: Video elementary stream. Frame packets preceded by 12-byte header:
+   - `PTS_AND_FLAGS`: 8 bytes Big-Endian uint64 (Bit 63: Config frame flag; Bits 0-62: Presentation Timestamp in microseconds).
+   - `PACKET_LENGTH`: 4 bytes Big-Endian uint32 (Payload size in bytes).
+2. `@scrcpy_audio`: Raw PCM or Opus audio packet stream.
+3. `@scrcpy_control`: Binary input commands parsed by `ControlMessageReader.java`.
+4. `@scrcpy_touch`: Fast touch event injection channel.
 
-| Channel Label | Type | Direction | Wire Framing | Byte Order | Functional Purpose |
-|---|---|---|---|---|---|
-| `control` | Binary | Bidirectional | Scrcpy Packet (1-byte type + payload) | Big-Endian | Direct touch, keycode, mouse, and clipboard injection |
-| `group_control_event` | Text JSON | Inbound (Web -> Agent) | JSON Object (`{type, action, keycode, scroll_h, ...}`) | UTF-8 | Coordinated multi-device cluster operations |
-| `file` | Binary | Bidirectional | Chunked byte stream | Big-Endian | Background APK & media upload/download (`[FileChannel]`) |
-| `adb` | Binary/Text | Bidirectional | Raw adbd packets | Native | Transparent browser web terminal to adbd daemon bridge |
-| `shell` | Text | Bidirectional | Raw PTY characters | UTF-8 | Interactive root/shell terminal execution stream |
-| `heartbeat` | Text | Bidirectional | `HEARTBEAT-ACK` | ASCII | Latency tracking and round-trip time measurement |
-
-### 4.1. Binary Control Packet Framing (`control` Channel)
-Cross-correlated 100% against decompiled `com.android.helper.control.ControlMessageReader`:
-
-- **Type 0 (`INJECT_KEYCODE`)**: `[0x00] [action: u8] [keycode: i32] [repeat: i32] [metaState: i32]` (13 bytes total)
-- **Type 1 (`INJECT_TEXT`)**: `[0x01] [length: i32] [utf8_bytes: length bytes]`
-- **Type 2 (`INJECT_TOUCH_EVENT`)**: `[0x02] [action: u8] [pointerId: i64] [x: i32] [y: i32] [w: u16] [h: u16] [pressure: u16] [actionButton: i32] [buttons: i32]` (28 bytes total)
-- **Type 3 (`INJECT_SCROLL_EVENT`)**: `[0x03] [position: 12 bytes] [hScroll: i16] [vScroll: i16] [buttons: i32]` (20 bytes total)
-- **Type 4 (`BACK_OR_SCREEN_ON`)**: `[0x04] [action: u8]` (2 bytes total)
-- **Type 9 (`SET_CLIPBOARD`)**: `[0x09] [sequence: i64] [length: i32] [text: length bytes] [paste: bool]`
-- **Type 18 (`REQUEST_KEYFRAME`)**: `[0x12]` (1 byte empty trigger)
-- **Type 19 (`SET_BITRATE`)**: `[0x13] [bitrate_bps: i32]` (5 bytes total)
-
----
-
-## 5. Android Helper IPC Specification
-
-1. **Payload Staging**: Embedded helper extracted to `/data/local/tmp/libsys_core.so`.
-2. **Integrity Validation**: SHA-256 hash verified before execution. Tampering halts daemon with `INTEGRITY ERROR: libsys_core.so hash mismatch`.
-3. **Privilege Dropping**: Privileges dropped to UID 2000 (`shell`) to allow Android `SurfaceControl` and `InputManager` hidden API access without SELinux denial.
-4. **Process Execution**: Command: `CLASSPATH=/data/local/tmp/libsys_core.so app_process / com.android.helper.CoreService`.
-5. **Socket Architecture**: Communicates across 4 local abstract UNIX Domain Sockets:
-   - Video Stream Socket: `scrcpy` or `scrcpy_%08x`
-   - Audio Stream Socket: `scrcpy_audio`
-   - Control Socket: `scrcpy_control`
-   - Touch Socket: `scrcpy_touch`
-6. **Video Framing**: 12-byte header `[PTS_AND_FLAGS: u64 BE] [PACKET_LENGTH: u32 BE]` followed by H.264/H.265 NAL unit bytes. Bit 63 indicates config (SPS/PPS), bit 62 indicates keyframe (IDR).
+### 4.2. Binary Control Packet Specifications (`@scrcpy_control`)
+Corroborated by `ControlMessageReader.java`:
+- `Type 0: INJECT_KEYCODE`: `[0x00] [ACTION: u8] [KEYCODE: u32 BE] [REPEAT: u32 BE] [METASTATE: u32 BE]`
+- `Type 1: INJECT_TEXT`: `[0x01] [LEN: u32 BE] [UTF8_BYTES: LEN bytes]`
+- `Type 2: INJECT_TOUCH_EVENT`: `[0x02] [ACTION: u8] [POINTER_ID: u64 BE] [X: u32 BE] [Y: u32 BE] [WIDTH: u16 BE] [HEIGHT: u16 BE] [PRESSURE: u16 BE] [BUTTONS: u32 BE]`
+- `Type 3: INJECT_SCROLL_EVENT`: `[0x03] [X: u32 BE] [Y: u32 BE] [WIDTH: u16 BE] [HEIGHT: u16 BE] [HSCROLL: i32 BE] [VSCROLL: i32 BE]`
+- `Type 19: SET_BITRATE`: `[0x13] [BITRATE_BPS: u32 BE]` (Dynamic bitrate throttling)
