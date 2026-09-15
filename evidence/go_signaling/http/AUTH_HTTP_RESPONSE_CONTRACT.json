@@ -1,0 +1,237 @@
+[
+  {
+    "endpoint": "/api/login",
+    "branch_id": "LOGIN_SUCCESS",
+    "description": "Valid credentials login",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"cd7ab024b5f7b2cfae4fb6871f1e526fbe5a538cb614a08213cfc9303d443fde\",\"username\":\"admin\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "assigned_devices",
+      "role",
+      "token",
+      "username"
+    ],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/login",
+    "branch_id": "LOGIN_CREDENTIALS_MISSING",
+    "description": "Missing password in login request",
+    "status_code": 400,
+    "content_type": "text/plain; charset=utf-8",
+    "raw_body": "Username and password are required\n",
+    "has_trailing_newline": true,
+    "json_keys": [],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/login",
+    "branch_id": "LOGIN_INVALID_CREDENTIALS",
+    "description": "Incorrect password for user",
+    "status_code": 401,
+    "content_type": "text/plain; charset=utf-8",
+    "raw_body": "Invalid username or password\n",
+    "has_trailing_newline": true,
+    "json_keys": [],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/login",
+    "branch_id": "LOGIN_EXPIRED_USER",
+    "description": "User account is expired (expires_at in the past)",
+    "status_code": 403,
+    "content_type": "text/plain; charset=utf-8",
+    "raw_body": "\u8d26\u53f7\u5df2\u5230\u671f\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u5ef6\u65f6\n",
+    "has_trailing_newline": true,
+    "json_keys": [],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/login",
+    "branch_id": "LOGIN_MALFORMED_REQUEST",
+    "description": "Malformed invalid JSON payload",
+    "status_code": 400,
+    "content_type": "text/plain; charset=utf-8",
+    "raw_body": "Invalid JSON\n",
+    "has_trailing_newline": true,
+    "json_keys": [],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/logout",
+    "branch_id": "LOGOUT_VALID_TOKEN",
+    "description": "Logout with active valid session token",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"status\":\"success\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "status"
+    ],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/logout",
+    "branch_id": "LOGOUT_ALREADY_REVOKED_TOKEN",
+    "description": "Logout repeated with already-revoked token",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"status\":\"success\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "status"
+    ],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/logout",
+    "branch_id": "LOGOUT_INVALID_TOKEN",
+    "description": "Logout with nonexistent/invalid token",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"status\":\"success\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "status"
+    ],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/logout",
+    "branch_id": "LOGOUT_MISSING_TOKEN",
+    "description": "Logout without Authorization header",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"status\":\"success\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "status"
+    ],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/auth-status",
+    "branch_id": "AUTH_STATUS_UNAUTHENTICATED",
+    "description": "Auth-status query without active session",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"noAuth\":false}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "noAuth"
+    ],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/auth-status",
+    "branch_id": "AUTH_STATUS_AUTHENTICATED",
+    "description": "Auth-status query with valid session token",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"noAuth\":false}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "noAuth"
+    ],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/me",
+    "branch_id": "ME_VALID_ADMIN",
+    "description": "Protected user profile request for admin role",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"admin\",\"settings\":null,\"username\":\"admin\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "json_null_fields": [
+      "ai_config",
+      "settings"
+    ]
+  },
+  {
+    "endpoint": "/api/me",
+    "branch_id": "ME_VALID_NORMAL_USER",
+    "description": "Protected user profile request for normal user role",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"ai_config\":null,\"assigned_devices\":[\"dev1\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"user\",\"settings\":null,\"username\":\"test_user\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "json_null_fields": [
+      "ai_config",
+      "settings"
+    ]
+  },
+  {
+    "endpoint": "/api/me",
+    "branch_id": "ME_INVALID_TOKEN",
+    "description": "User profile request with invalid token",
+    "status_code": 401,
+    "content_type": "text/plain; charset=utf-8",
+    "raw_body": "Unauthorized\n",
+    "has_trailing_newline": true,
+    "json_keys": [],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/me",
+    "branch_id": "ME_MISSING_TOKEN",
+    "description": "User profile request without token",
+    "status_code": 401,
+    "content_type": "text/plain; charset=utf-8",
+    "raw_body": "Unauthorized\n",
+    "has_trailing_newline": true,
+    "json_keys": [],
+    "json_null_fields": []
+  },
+  {
+    "endpoint": "/api/me",
+    "branch_id": "ME_QUERY_TOKEN_AUTHENTICATION",
+    "description": "User profile request authenticated via ?token query param",
+    "status_code": 200,
+    "content_type": "application/json",
+    "raw_body": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"admin\",\"settings\":null,\"username\":\"admin\"}\n",
+    "has_trailing_newline": true,
+    "json_keys": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "json_null_fields": [
+      "ai_config",
+      "settings"
+    ]
+  }
+]

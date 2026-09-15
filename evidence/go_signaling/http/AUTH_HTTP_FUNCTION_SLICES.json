@@ -1,0 +1,242 @@
+[
+  {
+    "semantic_role": "AUTH_LOGIN_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.ltOjwqsMl5q8",
+      "whole_function_va": "0x73dd00",
+      "whole_function_size": 2752,
+      "whole_function_range": "0x73dd00 - 0x73e7c0"
+    },
+    "windows_amd64": {
+      "symbol": "main.u4r2NulQUnF",
+      "whole_function_va": "0x140346f00",
+      "whole_function_size": 2784,
+      "whole_function_range": "0x140346f00 - 0x1403479e0"
+    },
+    "phase2c2_claimed_slice": {
+      "scope": "CORE_AUTHENTICATION_AND_SESSION_CREATION",
+      "linux_va_range": "0x73df80 - 0x73e2d0",
+      "windows_va_range": "0x1403471c0 - 0x1403474f0",
+      "behavior": "Storage user lookup, SHA256 password hash comparison, account expiration calculation, token generation and session creation call"
+    },
+    "phase2c3_claimed_slices": [
+      {
+        "category": "HTTP_CORS_AND_PREFLIGHT",
+        "linux_va_range": "0x73dd23 - 0x73ddb5",
+        "windows_va_range": "0x140346f23 - 0x140346fb8",
+        "description": "Sets CORS headers (Access-Control-Allow-Origin: *, Methods: POST, OPTIONS, Headers: Content-Type, Authorization) and handles OPTIONS 200 OK"
+      },
+      {
+        "category": "HTTP_METHOD_CHECK",
+        "linux_va_range": "0x73ddb6 - 0x73de10",
+        "windows_va_range": "0x140346fb9 - 0x140347010",
+        "description": "Verifies r.Method == 'POST'; returns 405 StatusMethodNotAllowed ('Method not allowed') on mismatch"
+      },
+      {
+        "category": "REQUEST_DECODE",
+        "linux_va_range": "0x73de11 - 0x73df10",
+        "windows_va_range": "0x140347011 - 0x140347120",
+        "description": "Decodes JSON payload from r.Body via json.NewDecoder; returns 400 'Invalid JSON' on decode failure"
+      },
+      {
+        "category": "REQUEST_VALIDATION",
+        "linux_va_range": "0x73df11 - 0x73df7f",
+        "windows_va_range": "0x140347121 - 0x1403471bf",
+        "description": "Checks username != '' && password != ''; returns 400 'Username and password are required' if either is empty"
+      },
+      {
+        "category": "STATUS_SELECTION",
+        "linux_va_range": "0x73e2d1 - 0x73e420",
+        "windows_va_range": "0x1403474f1 - 0x140347640",
+        "description": "Selects 401 'Invalid username or password' on auth mismatch, or 403 Chinese expiration string on expired account"
+      },
+      {
+        "category": "RESPONSE_ENCODING",
+        "linux_va_range": "0x73e421 - 0x73e790",
+        "windows_va_range": "0x140347641 - 0x1403479b0",
+        "description": "Constructs login response struct (assigned_devices, role, token, username), sets Content-Type: application/json, encodes with trailing newline"
+      }
+    ],
+    "provenance_notes": "Phase 2C.3 claims exclusively HTTP request decoding, method enforcement, CORS/OPTIONS handling, HTTP error status mapping, and JSON response encoding. Zero overlapping claim with Phase 2C.2 business authentication logic."
+  },
+  {
+    "semantic_role": "AUTH_TOKEN_LOOKUP",
+    "linux_amd64": {
+      "symbol": "main.lYKp_Iuf",
+      "whole_function_va": "0x73b080",
+      "whole_function_size": 1120,
+      "whole_function_range": "0x73b080 - 0x73b4e0"
+    },
+    "windows_amd64": {
+      "symbol": "main.mLWT3o",
+      "whole_function_va": "0x140344260",
+      "whole_function_size": 1152,
+      "whole_function_range": "0x140344260 - 0x1403446e0"
+    },
+    "phase2c2_claimed_slice": {
+      "scope": "CORE_SESSION_LOOKUP_AND_TTL_EVICTION",
+      "linux_va_range": "0x73b1ca - 0x73b4a5",
+      "windows_va_range": "0x1403443b7 - 0x1403446aa",
+      "behavior": "Session map lookup runtime.mapaccess2_faststr, 24h TTL expiration check fZqVo7pKK.AipSo2.After, and lazy deletion runtime.mapdelete_faststr"
+    },
+    "phase2c3_claimed_slices": [
+      {
+        "category": "NO_AUTH_ENV_CHECK",
+        "linux_va_range": "0x73b09d - 0x73b0ec",
+        "windows_va_range": "0x14034427d - 0x1403442cc",
+        "description": "Checks NO_AUTH / no-auth environment variable; bypasses auth with role admin if enabled"
+      },
+      {
+        "category": "AUTH_TOKEN_EXTRACTION_HEADER",
+        "linux_va_range": "0x73b0ed - 0x73b185",
+        "windows_va_range": "0x1403442cd - 0x140344365",
+        "description": "Retrieves Authorization header, splits on whitespace, case-insensitively verifies bearer scheme, extracts parts[1] or falls back to full header string"
+      },
+      {
+        "category": "AUTH_TOKEN_EXTRACTION_QUERY_FALLBACK",
+        "linux_va_range": "0x73b186 - 0x73b1b6",
+        "windows_va_range": "0x140344366 - 0x1403443a0",
+        "description": "If extracted token is empty, queries r.URL.Query().Get('token') as fallback token source"
+      },
+      {
+        "category": "AUTH_CORE_CALL",
+        "linux_va_range": "0x73b1b7 - 0x73b1c9",
+        "windows_va_range": "0x1403443a1 - 0x1403443b6",
+        "description": "Delegates extracted token string to session store lookup"
+      }
+    ],
+    "provenance_notes": "Phase 2C.3 claims HTTP header extraction, case-insensitive Bearer parsing, and query-parameter fallback. Phase 2C.2 retains claim over internal session map lookup and time expiration."
+  },
+  {
+    "semantic_role": "LOGOUT_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.bjWkHiittd",
+      "whole_function_va": "0x7409a0",
+      "whole_function_size": 1440,
+      "whole_function_range": "0x7409a0 - 0x740f40"
+    },
+    "windows_amd64": {
+      "symbol": "main.blPINsMc3",
+      "whole_function_va": "0x140349bc0",
+      "whole_function_size": 1440,
+      "whole_function_range": "0x140349bc0 - 0x14034a160"
+    },
+    "phase2c2_claimed_slice": {
+      "scope": "SESSION_REVOCATION_LOGIC",
+      "linux_va_range": "0x740b20 - 0x740be0",
+      "windows_va_range": "0x140349d40 - 0x140349e00",
+      "behavior": "Locking session manager mutex and calling runtime.mapdelete_faststr for targeted token"
+    },
+    "phase2c3_claimed_slices": [
+      {
+        "category": "HTTP_CORS_AND_PREFLIGHT",
+        "linux_va_range": "0x7409c0 - 0x740a50",
+        "windows_va_range": "0x140349be0 - 0x140349c70",
+        "description": "Sets CORS headers (Access-Control-Allow-Origin: *, Methods: POST, OPTIONS, Headers: Content-Type, Authorization) and handles OPTIONS 200 OK"
+      },
+      {
+        "category": "AUTH_TOKEN_EXTRACTION",
+        "linux_va_range": "0x740a51 - 0x740b1f",
+        "windows_va_range": "0x140349c71 - 0x140349d3f",
+        "description": "Extracts session token from request via Header / Query"
+      },
+      {
+        "category": "RESPONSE_ENCODING",
+        "linux_va_range": "0x740be1 - 0x740f10",
+        "windows_va_range": "0x140349e01 - 0x14034a130",
+        "description": "Sets Content-Type: application/json, writes {'status':'success'} response with trailing newline; idempotent across valid/invalid/missing tokens"
+      }
+    ],
+    "provenance_notes": "Phase 2C.3 claims HTTP preflight, token parameter handling, and JSON response emission. Phase 2C.2 retains claim over thread-safe session map revocation."
+  },
+  {
+    "semantic_role": "AUTH_STATUS_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.bwvBd1LWVr",
+      "whole_function_va": "0x73ec40",
+      "whole_function_size": 1216,
+      "whole_function_range": "0x73ec40 - 0x73f100"
+    },
+    "windows_amd64": {
+      "symbol": "main.waSrU4iH",
+      "whole_function_va": "0x140347e60",
+      "whole_function_size": 1216,
+      "whole_function_range": "0x140347e60 - 0x140348320"
+    },
+    "phase2c2_claimed_slice": {
+      "scope": "NONE",
+      "linux_va_range": "NONE",
+      "windows_va_range": "NONE",
+      "behavior": "No business core slice in Phase 2C.2; this function is exclusively an HTTP endpoint handler"
+    },
+    "phase2c3_claimed_slices": [
+      {
+        "category": "HTTP_CORS_AND_PREFLIGHT",
+        "linux_va_range": "0x73ec60 - 0x73ecf0",
+        "windows_va_range": "0x140347e80 - 0x140347f10",
+        "description": "Sets CORS headers (Access-Control-Allow-Origin: *, Methods: GET, OPTIONS, Headers: Content-Type, Authorization) and handles OPTIONS 200 OK"
+      },
+      {
+        "category": "AUTH_CORE_CALL",
+        "linux_va_range": "0x73ecf1 - 0x73ed90",
+        "windows_va_range": "0x140347f11 - 0x140347fb0",
+        "description": "Checks whether server is running in no-auth mode or verifies token via AUTH_TOKEN_LOOKUP"
+      },
+      {
+        "category": "RESPONSE_ENCODING",
+        "linux_va_range": "0x73ed91 - 0x73f0d0",
+        "windows_va_range": "0x140347fb1 - 0x1403482f0",
+        "description": "Encodes {'noAuth': boolean} payload, sets Content-Type: application/json, and writes with trailing newline"
+      }
+    ],
+    "provenance_notes": "Phase 2C.3 fully claims this HTTP endpoint handler. Zero conflict with Phase 2C.2."
+  },
+  {
+    "semantic_role": "USER_PROFILE_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.gJ0OHScnGnWZ",
+      "whole_function_va": "0x73f100",
+      "whole_function_size": 2816,
+      "whole_function_range": "0x73f100 - 0x73fc00"
+    },
+    "windows_amd64": {
+      "symbol": "main.k0Ckv2FQUr",
+      "whole_function_va": "0x140348320",
+      "whole_function_size": 2816,
+      "whole_function_range": "0x140348320 - 0x140348e20"
+    },
+    "phase2c2_claimed_slice": {
+      "scope": "NONE",
+      "linux_va_range": "NONE",
+      "windows_va_range": "NONE",
+      "behavior": "No business core slice in Phase 2C.2; this function is exclusively an HTTP endpoint handler"
+    },
+    "phase2c3_claimed_slices": [
+      {
+        "category": "HTTP_CORS_AND_PREFLIGHT",
+        "linux_va_range": "0x73f120 - 0x73f1c0",
+        "windows_va_range": "0x140348340 - 0x1403483e0",
+        "description": "Sets CORS headers (Access-Control-Allow-Origin: *, Methods: GET, OPTIONS, Headers: Content-Type, Authorization) and handles OPTIONS 200 OK"
+      },
+      {
+        "category": "AUTH_TOKEN_EXTRACTION",
+        "linux_va_range": "0x73f1c1 - 0x73f240",
+        "windows_va_range": "0x1403483e1 - 0x140348460",
+        "description": "Calls AUTH_TOKEN_LOOKUP (main.lYKp_Iuf / main.mLWT3o) to extract and validate session"
+      },
+      {
+        "category": "STATUS_SELECTION",
+        "linux_va_range": "0x73f241 - 0x73f290",
+        "windows_va_range": "0x140348461 - 0x1403484b0",
+        "description": "If token is missing or invalid, immediately calls http.Error(w, 'Unauthorized', 401)"
+      },
+      {
+        "category": "RESPONSE_ENCODING",
+        "linux_va_range": "0x73f291 - 0x73fbd0",
+        "windows_va_range": "0x1403484b1 - 0x140348df0",
+        "description": "Retrieves User struct from storage, formats JSON with 10 fields (ai_config, assigned_devices, expires_at, forbid_audio, forbid_bitrate, forbid_fps, forbid_resolution, role, settings, username), sets Content-Type: application/json, and writes response"
+      }
+    ],
+    "provenance_notes": "Phase 2C.3 fully claims this HTTP endpoint handler. Zero conflict with Phase 2C.2."
+  }
+]

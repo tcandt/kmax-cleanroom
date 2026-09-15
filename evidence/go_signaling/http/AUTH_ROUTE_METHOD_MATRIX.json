@@ -1,0 +1,586 @@
+[
+  {
+    "route": "/api/login",
+    "method": "GET",
+    "status": 405,
+    "content_type": "text/plain; charset=utf-8",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 19,
+    "body_preview": "Method not allowed",
+    "body_schema": "PLAIN_TEXT",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/login",
+    "method": "POST",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 136,
+    "body_preview": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"1767413020",
+    "body_schema": [
+      "assigned_devices",
+      "role",
+      "token",
+      "username"
+    ],
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": true
+  },
+  {
+    "route": "/api/login",
+    "method": "PUT",
+    "status": 405,
+    "content_type": "text/plain; charset=utf-8",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 19,
+    "body_preview": "Method not allowed",
+    "body_schema": "PLAIN_TEXT",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/login",
+    "method": "PATCH",
+    "status": 405,
+    "content_type": "text/plain; charset=utf-8",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 19,
+    "body_preview": "Method not allowed",
+    "body_schema": "PLAIN_TEXT",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/login",
+    "method": "DELETE",
+    "status": 405,
+    "content_type": "text/plain; charset=utf-8",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 19,
+    "body_preview": "Method not allowed",
+    "body_schema": "PLAIN_TEXT",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/login",
+    "method": "OPTIONS",
+    "status": 200,
+    "content_type": "",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/login",
+    "method": "HEAD",
+    "status": 405,
+    "content_type": "text/plain; charset=utf-8",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/logout",
+    "method": "GET",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 21,
+    "body_preview": "{\"status\":\"success\"}",
+    "body_schema": [
+      "status"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/logout",
+    "method": "POST",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 21,
+    "body_preview": "{\"status\":\"success\"}",
+    "body_schema": [
+      "status"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": true
+  },
+  {
+    "route": "/api/logout",
+    "method": "PUT",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 21,
+    "body_preview": "{\"status\":\"success\"}",
+    "body_schema": [
+      "status"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/logout",
+    "method": "PATCH",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 21,
+    "body_preview": "{\"status\":\"success\"}",
+    "body_schema": [
+      "status"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/logout",
+    "method": "DELETE",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 21,
+    "body_preview": "{\"status\":\"success\"}",
+    "body_schema": [
+      "status"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/logout",
+    "method": "OPTIONS",
+    "status": 200,
+    "content_type": "",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/logout",
+    "method": "HEAD",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/auth-status",
+    "method": "GET",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 17,
+    "body_preview": "{\"noAuth\":false}",
+    "body_schema": [
+      "noAuth"
+    ],
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/auth-status",
+    "method": "POST",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 17,
+    "body_preview": "{\"noAuth\":false}",
+    "body_schema": [
+      "noAuth"
+    ],
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/auth-status",
+    "method": "PUT",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 17,
+    "body_preview": "{\"noAuth\":false}",
+    "body_schema": [
+      "noAuth"
+    ],
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/auth-status",
+    "method": "PATCH",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 17,
+    "body_preview": "{\"noAuth\":false}",
+    "body_schema": [
+      "noAuth"
+    ],
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/auth-status",
+    "method": "DELETE",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 17,
+    "body_preview": "{\"noAuth\":false}",
+    "body_schema": [
+      "noAuth"
+    ],
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/auth-status",
+    "method": "OPTIONS",
+    "status": 200,
+    "content_type": "",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/auth-status",
+    "method": "HEAD",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": false,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/me",
+    "method": "GET",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 219,
+    "body_preview": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"000",
+    "body_schema": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/me",
+    "method": "POST",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 219,
+    "body_preview": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"000",
+    "body_schema": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/me",
+    "method": "PUT",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 219,
+    "body_preview": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"000",
+    "body_schema": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/me",
+    "method": "PATCH",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 219,
+    "body_preview": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"000",
+    "body_schema": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/me",
+    "method": "DELETE",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 219,
+    "body_preview": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"000",
+    "body_schema": [
+      "ai_config",
+      "assigned_devices",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "role",
+      "settings",
+      "username"
+    ],
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/me",
+    "method": "OPTIONS",
+    "status": 200,
+    "content_type": "",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  },
+  {
+    "route": "/api/me",
+    "method": "HEAD",
+    "status": 200,
+    "content_type": "application/json",
+    "allow_header": "",
+    "access_control_headers": {
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "body_length": 0,
+    "body_preview": "",
+    "body_schema": "EMPTY",
+    "authentication_required": true,
+    "persistent_mutation": false,
+    "session_mutation": false
+  }
+]

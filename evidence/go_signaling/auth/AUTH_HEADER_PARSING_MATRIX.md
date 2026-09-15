@@ -22,11 +22,11 @@ By probing the live original binary with a **confirmed valid token**, we determi
 
 | Case ID | Injected Headers | Status | Body Preview | Authenticated? | Forensic / Architectural Rule |
 |---|---|---|---|---|---|
-| `BEARER_CANONICAL` | `{"Authorization": "Bearer d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
-| `BEARER_LOWERCASE` | `{"Authorization": "bearer d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
-| `BEARER_UPPERCASE` | `{"Authorization": "BEARER d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
-| `BEARER_MIXED_CASE` | `{"Authorization": "bEaReR d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
-| `WRONG_SCHEME_BASIC` | `{"Authorization": "Basic d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"}` | 401 | `Unauthorized` | **NO** | Non-bearer or empty token rejected with 401 Unauthorized |
+| `BEARER_CANONICAL` | `{"Authorization": "Bearer 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
+| `BEARER_LOWERCASE` | `{"Authorization": "bearer 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
+| `BEARER_UPPERCASE` | `{"Authorization": "BEARER 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
+| `BEARER_MIXED_CASE` | `{"Authorization": "bEaReR 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"}` | 200 | `{"ai_config":null,"assigned_devices` | **YES** (`admin`) | Bearer prefix accepted case-insensitively via strings.ToLower |
+| `WRONG_SCHEME_BASIC` | `{"Authorization": "Basic 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"}` | 401 | `Unauthorized` | **NO** | Non-bearer or empty token rejected with 401 Unauthorized |
 | `MISSING_HEADER` | `*(missing)*` | 401 | `Unauthorized` | **NO** | Non-bearer or empty token rejected with 401 Unauthorized |
 | `EMPTY_HEADER` | `{"Authorization": ""}` | 401 | `Unauthorized` | **NO** | Non-bearer or empty token rejected with 401 Unauthorized |
 | `EMPTY_BEARER` | `{"Authorization": "Bearer "}` | 401 | `Unauthorized` | **NO** | Non-bearer or empty token rejected with 401 Unauthorized |

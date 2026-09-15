@@ -239,6 +239,17 @@ def run_diff_suite():
                 except Exception:
                     pass
 
+            if case_id in ("BEARER_CANONICAL", "BEARER_LOWERCASE", "BEARER_UPPERCASE", "BEARER_MIXED_CASE"):
+                token_type = "VALID_ORIGINAL_TOKEN"
+            elif case_id == "WRONG_SCHEME_BASIC":
+                token_type = "VALID_ORIGINAL_TOKEN_WITH_WRONG_SCHEME"
+            elif case_id in ("MISSING_HEADER", "EMPTY_HEADER"):
+                token_type = "NO_TOKEN"
+            elif case_id == "EMPTY_BEARER":
+                token_type = "EMPTY_TOKEN"
+            else:
+                token_type = "UNKNOWN"
+
             rule_text = (
                 "Bearer prefix accepted case-insensitively via strings.ToLower"
                 if is_auth else
@@ -248,7 +259,7 @@ def run_diff_suite():
                 "case_id": case_id,
                 "description": desc,
                 "headers": headers,
-                "token_tested_type": "VALID_ORIGINAL_TOKEN" if ("BEARER" in case_id or "BASIC" in case_id) else "EMPTY_OR_NONE",
+                "token_tested_type": token_type,
                 "status_code": res_h.status_code,
                 "body": res_h.text,
                 "content_type": res_h.headers.get("Content-Type", ""),

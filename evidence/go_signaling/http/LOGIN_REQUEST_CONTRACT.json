@@ -1,0 +1,208 @@
+[
+  {
+    "case_id": "VALID_JSON",
+    "description": "Standard valid JSON body",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 45,
+    "status_code": 200,
+    "response_body": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"a5f6e7efaa5d8395241130dabfe0007a27e4c2cbe49745b699be40081e8791d3\",\"username\":\"admin\"}\n",
+    "response_content_type": "application/json",
+    "session_created": true,
+    "classification": "LOGIN_SUCCESS"
+  },
+  {
+    "case_id": "EMPTY_BODY",
+    "description": "Empty request body with application/json",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 0,
+    "status_code": 400,
+    "response_body": "Invalid JSON\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "EMPTY_OBJECT",
+    "description": "Empty JSON object {}",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 2,
+    "status_code": 400,
+    "response_body": "Username and password are required\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "MISSING_USERNAME",
+    "description": "Missing username field",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 24,
+    "status_code": 400,
+    "response_body": "Username and password are required\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "MISSING_PASSWORD",
+    "description": "Missing password field",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 21,
+    "status_code": 400,
+    "response_body": "Username and password are required\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "USERNAME_NULL",
+    "description": "Username field is JSON null",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 42,
+    "status_code": 400,
+    "response_body": "Username and password are required\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "PASSWORD_NULL",
+    "description": "Password field is JSON null",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 39,
+    "status_code": 400,
+    "response_body": "Username and password are required\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "USERNAME_NUMERIC",
+    "description": "Username field is numeric integer",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 43,
+    "status_code": 400,
+    "response_body": "Invalid JSON\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "PASSWORD_NUMERIC",
+    "description": "Password field is numeric integer",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 40,
+    "status_code": 400,
+    "response_body": "Invalid JSON\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "EXTRA_FIELDS",
+    "description": "Valid credentials with unknown extra JSON fields",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 85,
+    "status_code": 200,
+    "response_body": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"57c887045bbaabce799e0598151c8c70dc806575771bbb28d86675539c7d3a5a\",\"username\":\"admin\"}\n",
+    "response_content_type": "application/json",
+    "session_created": true,
+    "classification": "LOGIN_SUCCESS"
+  },
+  {
+    "case_id": "DUPLICATE_JSON_KEYS",
+    "description": "Duplicate keys in JSON object",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 68,
+    "status_code": 200,
+    "response_body": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"22a840627e401685cdfae0e1f011f034c5a2fb973d8fc9dd03e156120ab6ef39\",\"username\":\"admin\"}\n",
+    "response_content_type": "application/json",
+    "session_created": true,
+    "classification": "LOGIN_SUCCESS"
+  },
+  {
+    "case_id": "MALFORMED_JSON_TRUNCATED",
+    "description": "Malformed truncated JSON",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 33,
+    "status_code": 400,
+    "response_body": "Invalid JSON\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "JSON_ARRAY",
+    "description": "JSON array instead of object",
+    "request_headers": {
+      "Content-Type": "application/json"
+    },
+    "request_body_bytes_len": 47,
+    "status_code": 400,
+    "response_body": "Invalid JSON\n",
+    "response_content_type": "text/plain; charset=utf-8",
+    "session_created": false,
+    "classification": "LOGIN_REJECTED"
+  },
+  {
+    "case_id": "TEXT_PLAIN_CONTENT_TYPE",
+    "description": "Valid JSON body with Content-Type: text/plain",
+    "request_headers": {
+      "Content-Type": "text/plain"
+    },
+    "request_body_bytes_len": 45,
+    "status_code": 200,
+    "response_body": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"463ea661f4c92b9285234e58b2e10f5597e14beb826774540a161e545c7c30ac\",\"username\":\"admin\"}\n",
+    "response_content_type": "application/json",
+    "session_created": true,
+    "classification": "LOGIN_SUCCESS"
+  },
+  {
+    "case_id": "NO_CONTENT_TYPE",
+    "description": "Valid JSON body with missing Content-Type header",
+    "request_headers": {},
+    "request_body_bytes_len": 45,
+    "status_code": 200,
+    "response_body": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"a596243550a5ddeb79520794d67900b3712cedec089d55f4dda888cc7bb467ab\",\"username\":\"admin\"}\n",
+    "response_content_type": "application/json",
+    "session_created": true,
+    "classification": "LOGIN_SUCCESS"
+  },
+  {
+    "case_id": "JSON_WITH_CHARSET",
+    "description": "Valid JSON with application/json; charset=utf-8",
+    "request_headers": {
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    "request_body_bytes_len": 45,
+    "status_code": 200,
+    "response_body": "{\"assigned_devices\":[\"*\"],\"role\":\"admin\",\"token\":\"bc952d4a73655d0a8d05f611880c5cda70472f21ccd45227b921f5c6006e5f1e\",\"username\":\"admin\"}\n",
+    "response_content_type": "application/json",
+    "session_created": true,
+    "classification": "LOGIN_SUCCESS"
+  }
+]

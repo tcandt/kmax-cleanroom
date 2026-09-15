@@ -1,6 +1,6 @@
 # Phase 2C.2 Differential Parity Report: Authentication & Session Management
 
-**Execution Timestamp**: `2026-09-15 13:17:38 UTC`  
+**Execution Timestamp**: `2026-09-15 14:29:12 UTC`  
 **Original Binary**: `webrtc-signaling.exe` (Windows AMD64) / `webrtc-signaling` (Linux AMD64)  
 **Reconstructed Core**: `cmd/auth-tool` (`serve-stdio` stateful test harness)  
 **Status**: **12/12 AUTH VERIFICATION CASES PASS: 11 DYNAMIC DIFFERENTIAL CASES + 1 STATIC-ORIGINAL / RECONSTRUCTED-RUNTIME TTL PARITY CASE**

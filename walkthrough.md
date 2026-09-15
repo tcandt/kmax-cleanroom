@@ -1,17 +1,24 @@
-# Phase 2C.2 Walkthrough: Authentication Core & Session Management Reconstruction
+# Phase 2C.3 Walkthrough: HTTP Handlers & REST API Reconstruction (Auth Slice Only)
 
-**Previous Milestone**: `aa0fb41092e68aedf3c7635de548b5f0fb81aa8b` (Phase 2C.1R2)  
-**Phase 2C.2 Milestone Commit**: `21f2d011a9e86a30ed019c2435e5f7cf104820db`  
+**Previous Milestone**: `167961f0fe034f317375a14777a835f56e36eb6d` (Phase 2C.2R2)  
+**Phase 2C.3 Milestone**: Auth HTTP Layer Forensics, Reconstructed Handlers, Differential Suite, & Structured Verifier  
 **Git Remote**: `https://github.com/tcandt/kmax-cleanroom.git` (`main` branch)  
-**Status**: COMPLETE, AUDITED, AND FULLY VERIFIED (12/12 AUTH VERIFICATION CASES PASS: 11 DYNAMIC DIFFERENTIAL + 1 STATIC-ORIGINAL/RECONSTRUCTED-RUNTIME TTL PARITY)  
+**Status**: COMPLETE, AUDITED, AND FULLY VERIFIED (18/18 HTTP DIFFERENTIAL SUITE PASS: 8 STRUCTURAL + 10 BIT-EXACT MATCHES)  
 
 ---
 
 ## 1. Summary of Completed Deliverables
 
-### A. Forensic Extraction & Gate Validation (Report 07: `reports/07_PHASE2C2_AUTH_FORENSICS.md`)
-All 16 forensic requirements were resolved with concrete binary and dynamic oracle evidence:
-1. **12 Cross-Build Architecture-Qualified Core Functions Mapped**:
+### A. Pre-Flight 0: Structured Evidence Metadata Fix
+- Fixed `token_tested_type` in `evidence/go_signaling/auth/AUTH_HEADER_PARSING_MATRIX.json` and `.md`:
+  - `BEARER_CANONICAL`, `BEARER_LOWERCASE`, `BEARER_UPPERCASE`, `BEARER_MIXED_CASE` -> `VALID_ORIGINAL_TOKEN`
+  - `WRONG_SCHEME_BASIC` -> `VALID_ORIGINAL_TOKEN_WITH_WRONG_SCHEME`
+  - `MISSING_HEADER`, `EMPTY_HEADER` -> `NO_TOKEN`
+  - `EMPTY_BEARER` -> `EMPTY_TOKEN`
+- Extended `tools/verify_phase2.py` and `tests/differential/auth/test_auth_diff.py` to enforce this classification.
+
+### B. Core Cross-Build Function Correlation (12 Roles)
+All 12 core authentication & HTTP handler roles correlated between Linux AMD64 and Windows AMD64 binaries:
 
 | Semantic Role | Linux AMD64 (`webrtc-signaling`) | Windows AMD64 (`webrtc-signaling.exe`) | Size Parity | Evidence Classes |
 |---|---|---|---|---|
@@ -28,48 +35,80 @@ All 16 forensic requirements were resolved with concrete binary and dynamic orac
 | `ADMIN_ROLE_CHECK` | `main.chIaMDTZ` (`0x73ae20`) | `main.iP8aiT` (`0x140344000`) | 320B vs 320B | Routes, Strings, Disasm |
 | `SESSION_KICK_HANDLER` | `main.jlRPqj8Kko_8` (`0x743c40`) | `main.ijEGVZRAZQb` (`0x140350b00`) | 1184B vs 1184B | Routes, Strings, Disasm |
 
+### C. 2C.3A: Token Source & Precedence Forensics
+- Probed original binary with all 10 precedence test cases in [AUTH_TOKEN_SOURCE_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/http/AUTH_TOKEN_SOURCE_MATRIX.json):
+  - Case 1: `Authorization: Bearer <VALID>`, no query -> Authenticated (source: `AUTHORIZATION_HEADER_BEARER`)
+  - Case 2: No Authorization, `?token=<VALID>` -> Authenticated (source: `URL_QUERY_TOKEN`)
+  - Case 3: `Authorization: Bearer <VALID>`, `?token=<INVALID>` -> Authenticated (source: `AUTHORIZATION_HEADER_BEARER`)
+  - Case 4: `Authorization: Bearer <INVALID>`, `?token=<VALID>` -> 401 Unauthorized (source: `AUTHORIZATION_HEADER_BEARER`, **NO query fallback!**)
+  - Case 5: `Authorization: Basic <VALID>`, `?token=<VALID>` -> 401 Unauthorized (source: `AUTHORIZATION_HEADER_RAW`)
+  - Case 6: `Authorization: malformed`, `?token=<VALID>` -> 401 Unauthorized (source: `AUTHORIZATION_HEADER_RAW`)
+  - Case 7: `Authorization: Bearer`, `?token=<VALID>` -> 401 Unauthorized (source: `AUTHORIZATION_HEADER_RAW`)
+  - Case 8: Authorization missing, `?token=<INVALID>` -> 401 Unauthorized (source: `URL_QUERY_TOKEN`)
+  - Case 9: Authorization missing, `?token=` -> 401 Unauthorized (source: `NO_TOKEN`)
+  - Case 10: `Authorization: Bearer <VALID_A>`, `?token=<VALID_B>` -> Authenticated as User A (source: `AUTHORIZATION_HEADER_BEARER`)
+- **Strict Precedence Rule Recovered**: `HEADER_FIRST_WITH_STRICT_EVALUATION`. If `Authorization` header is present and non-empty, its token is evaluated directly. Query parameter `?token=` is **ONLY** checked when `Authorization` header is completely absent or empty!
 
+### D. 2C.3B: Route Method Contract Matrix
+- Probed all 4 routes across 7 HTTP verbs (28 cases) in [AUTH_ROUTE_METHOD_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/http/AUTH_ROUTE_METHOD_MATRIX.json):
+  - `/api/login`: Strictly requires `POST` (`r.Method == "POST"`). GET, PUT, PATCH, DELETE return `405 Method Not Allowed` (`Method not allowed\n`). OPTIONS returns 200 OK. HEAD returns 405.
+  - `/api/logout`: Accepts ALL verbs (GET, POST, PUT, PATCH, DELETE all return 200 OK `{"status":"success"}\n`).
+  - `/api/auth-status`: Accepts ALL verbs (GET, POST, etc. return 200 OK `{"noAuth":false}\n`).
+  - `/api/me`: Accepts ALL verbs (GET, POST, etc. return 200 OK with `UserProfile` JSON).
 
-2. **Session Struct Type Recovery**:
-   - Binary type descriptor at `.rodata:0x7d6ee0`, exact size 40 bytes:
-     - Field 0 (`HDz5Nf`): `string` (16 bytes, offset 0) -> `Username`
-     - Field 1 (`GkWDh_Jc_q`): `time.Time` (24 bytes, offset 16) -> `ExpiresAt`
-   - Map bucket type at `.rodata:0x7c01c0`: `map[string]Session` stored in global pointer `0xa0a1b0` protected by `sync.RWMutex` `0xa0a180`.
-3. **Session Token Cryptographic Invariants**:
-   - Generated from 32 bytes of cryptographic entropy (`crypto/rand.Read`, `RANDOM_INPUT_BITS = 256`), formatted as 64 lowercase hexadecimal characters.
-   - Non-JWT opaque token format confirmed (0 dot separators, constant entropy across requests).
-4. **Memory-Only Invariant & Lifecycle Separation**:
-   - Zero disk persistence: sessions reside strictly in RAM (`SESSION_MEMORY_ONLY`).
-   - Session TTL (24 hours, `0x4e94914f0000` ns) operates via lazy eviction on token lookup.
-   - Account expiration (`User.ExpiresAt`) operates as a separate pre-condition enforced at login and lookup, swept periodically by background worker.
-5. **Multi-Session & Concurrency Semantics**:
-   - Same user account can hold multiple concurrent valid sessions simultaneously. Revoking one session via logout does not invalidate others.
-6. **Authentication Bypass Configuration**:
-   - Statically confirmed CLI flag `-no-auth` (`0xc069a0`) and environment variable `NO_AUTH=true` (`0x73b0b1`).
+### E. 2C.3C: Login Request Body Contract
+- Probed 16 request variations in [LOGIN_REQUEST_CONTRACT.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/http/LOGIN_REQUEST_CONTRACT.json):
+  - Standard Go `json.NewDecoder(r.Body).Decode(&req)`.
+  - Empty body / malformed JSON / JSON array -> `400 Bad Request` with `Invalid JSON\n`.
+  - Missing username or password / null values -> `400 Bad Request` with `Username and password are required\n`.
+  - Extra fields tolerated, duplicate keys tolerated (last wins), charset parameters tolerated.
+
+### F. 2C.3D: Response Contract
+- Recovered 16 exact response branches in [AUTH_HTTP_RESPONSE_CONTRACT.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/http/AUTH_HTTP_RESPONSE_CONTRACT.json):
+  - Every response wire output terminates with `\n`.
+  - Error messages are plain text (`text/plain; charset=utf-8`) with trailing newline.
+  - Success responses are JSON (`application/json`) with trailing newline.
+  - Logout is completely idempotent (returns 200 `{"status":"success"}\n` even on revoked/missing tokens).
+  - `/api/me` emits exactly 10 fields matching original `User` model.
+
+### G. 2C.3E: CORS / OPTIONS / HEAD Semantics
+- CORS headers emitted on all 4 endpoints:
+  - `Access-Control-Allow-Origin: *`
+  - `Access-Control-Allow-Headers: Content-Type, Authorization`
+  - `Access-Control-Allow-Methods: POST, OPTIONS` (login/logout) or `GET, OPTIONS` (auth-status/me)
+- OPTIONS preflight returns status 200 with empty body across all routes.
+- HEAD returns identical status and headers to GET/POST with empty body.
+
+### H. 2C.3F: HTTP Forensic Function Slices
+- Mapped 5 core functions in [AUTH_HTTP_FUNCTION_SLICES.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/http/AUTH_HTTP_FUNCTION_SLICES.json) separating HTTP wire logic from Phase 2C.2 business core:
+
+| Semantic Role | Linux AMD64 Symbol & VA | Phase 2C.2 Claimed Range | Phase 2C.3 Claimed HTTP Range |
+|---|---|---|---|
+| `AUTH_LOGIN_HANDLER` | `main.ltOjwqsMl5q8` (`0x73dd00` - `0x73e7c0`) | `0x73ded0` - `0x73e4a0` (auth core) | `0x73dd00`-`0x73dec0`, `0x73e4b0`-`0x73e7c0` (method, decode, response) |
+| `AUTH_TOKEN_LOOKUP` | `main.lYKp_Iuf` (`0x73b080` - `0x73b4e0`) | `0x73b280` - `0x73b480` (session lookup) | `0x73b080`-`0x73b270`, `0x73b490`-`0x73b4e0` (header split, query fallback) |
+| `LOGOUT_HANDLER` | `main.bjWkHiittd` (`0x7409a0` - `0x740f40`) | `0x740c00` - `0x740d80` (revocation core) | `0x7409a0`-`0x740bf0`, `0x740d90`-`0x740f40` (CORS, token extract, response) |
+| `AUTH_STATUS_HANDLER` | `main.bwvBd1LWVr` (`0x73ec40` - `0x73f100`) | `0x73ed80` - `0x73ee80` (status core) | `0x73ec40`-`0x73ed70`, `0x73ee90`-`0x73f100` (CORS, JSON response) |
+| `USER_PROFILE_HANDLER` | `main.gJ0OHScnGnWZ` (`0x73f100` - `0x73fc00`) | `0x73f300` - `0x73f800` (profile lookup) | `0x73f100`-`0x73f2f0`, `0x73f810`-`0x73fc00` (CORS, token extract, JSON response) |
+
+Forensic Gate report generated and verified: [reports/09_PHASE2C3_AUTH_HTTP_FORENSICS.md](file:///d:/KMAX-CLEANROOM/reports/09_PHASE2C3_AUTH_HTTP_FORENSICS.md).
 
 ---
 
 ## 2. Clean-Room Reconstructed Source (`reconstructed_source/webrtc-signaling/`)
 
-Source was constructed under clean-room protocol without copying decompiled code, implementing clear abstractions, comprehensive tests, and verbatim `CLEANROOM-PROVENANCE` headers:
+### Package `pkg/httpapi/`
+- [server.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/httpapi/server.go): `Server` and `NewServer` registering exactly the 4 auth routes on standard `net/http.ServeMux`.
+- [auth_middleware.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/httpapi/auth_middleware.go): `ExtractToken` and `Authenticate` implementing recovered case-insensitive Bearer scheme parsing and query fallback.
+- [responses.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/httpapi/responses.go): `SetCORS`, `WriteJSON`, `WriteError` with exact trailing newlines and status headers.
+- [auth_handlers.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/httpapi/auth_handlers.go): `HandleLogin`, `HandleLogout`, `HandleAuthStatus`, `HandleMe`.
+- [auth_handlers_test.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/httpapi/auth_handlers_test.go): Unit tests covering all 4 handlers, errors, precedence, and OPTIONS.
 
-### Package `pkg/session/`
-- [types.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/session/types.go): `Session` struct (40 bytes), `SessionStore` interface, TTL and cleanup ticker constants.
-- [clock.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/session/clock.go): Pluggable `Clock` abstraction (`RealClock` and deterministic `MockClock` for testing TTL expiration).
-- [token.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/session/token.go): `GenerateToken` using `crypto/rand.Read` (32 bytes entropy -> 64-char lowercase hex).
-- [manager.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/session/manager.go): `SessionManager` implementing thread-safe in-memory session operations, lazy TTL eviction, user-level invalidation, and background sweeper.
-- [session_test.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/session/session_test.go): Comprehensive unit tests covering token entropy, TTL expiry via `MockClock`, and multi-session concurrency.
-
-### Package `pkg/auth/`
-- [authenticator.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/auth/authenticator.go): `Authenticator` coordinating credential verification, `pkg/storage.HashPassword` reuse, `User.ExpiresAt` validation, token issuance, session lookup, and auth bypass.
-- [auth_test.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/auth/auth_test.go): Unit tests verifying login, credential rejection, account expiration, token validation, and bypass modes.
-
-### Test Harness `cmd/auth-tool/`
-- [main.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/cmd/auth-tool/main.go): Stateful stdio JSON test harness supporting continuous operation (`serve-stdio`) with mock clock controls, allowing deep stateful differential testing without disk shortcuts.
+### Test Runner `cmd/http-server/`
+- [main.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/cmd/http-server/main.go): Standalone HTTP server CLI runner for live side-by-side differential testing.
 
 > [!IMPORTANT]
 > **Strict Scope Boundary Maintained**:
-> Zero HTTP handlers (`/api/login`, `/api/logout`, `/api/me`, `/api/auth-status`) have been written in Phase 2C.2. HTTP handlers and network routes are strictly deferred to Phase 2C.3.
+> Only the 4 auth endpoints are implemented. WebSocket signaling (`/register_agent`, `/connect_client`), WebRTC stack (`pion`), agent protocol, device streaming, license logic, and admin CRUD endpoints remain strictly un-implemented.
 
 ---
 
@@ -78,112 +117,80 @@ Source was constructed under clean-room protocol without copying decompiled code
 ### A. Go Unit Tests
 ```text
 go test -v ./...
-=== RUN   TestAuthenticatorCredentials
---- PASS: TestAuthenticatorCredentials (0.00s)
-=== RUN   TestAuthBypassMode
---- PASS: TestAuthBypassMode (0.00s)
-PASS ok   cloudphone-signaling/pkg/auth
-=== RUN   TestTokenGenerator
---- PASS: TestTokenGenerator (0.00s)
-=== RUN   TestSessionManagerLifecycle
---- PASS: TestSessionManagerLifecycle (0.00s)
-=== RUN   TestMultipleSessionsPerUser
---- PASS: TestMultipleSessionsPerUser (0.00s)
-PASS ok   cloudphone-signaling/pkg/session
-=== RUN   TestStorageManagerBootstrap
---- PASS: TestStorageManagerBootstrap (0.00s)
-=== RUN   TestUsersStoreDefaultAdmin
---- PASS: TestUsersStoreDefaultAdmin (0.00s)
-=== RUN   TestUsersStoreMalformedRecovery
---- PASS: TestUsersStoreMalformedRecovery (0.00s)
-=== RUN   TestUsersStoreAdminWildcardUpgrade
---- PASS: TestUsersStoreAdminWildcardUpgrade (0.00s)
-=== RUN   TestTagsStoreLifecycle
---- PASS: TestTagsStoreLifecycle (0.00s)
-=== RUN   TestSharesStoreAtomicLifecycle
---- PASS: TestSharesStoreAtomicLifecycle (0.00s)
-PASS ok   cloudphone-signaling/pkg/storage
+ok   cloudphone-signaling/pkg/auth     (cached)
+ok   cloudphone-signaling/pkg/httpapi  (cached)
+ok   cloudphone-signaling/pkg/session  (cached)
+ok   cloudphone-signaling/pkg/storage  (cached)
 ```
 
-### B. Differential Authentication Suite (`tests/differential/auth/test_auth_diff.py`)
-Executed 12 auth verification test cases (11 dynamic differential + 1 static-original/reconstructed-runtime TTL parity) comparing original binary oracle against `cmd/auth-tool`:
+### B. HTTP Differential Suite (`tests/differential/http/test_auth_http_diff.py`)
+Executed 18 test cases running the original binary oracle on port 29888 against the reconstructed HTTP server on port 29889:
 
-| Test ID | Test Name | Classification | Result | Summary & Parity Evidence |
+| Test ID | Test Name | Classification | Result | Parity Summary |
 |---|---|---|---|---|
-| `TC-AUTH-01` | Valid Password & Login Response Schema | `STRUCTURAL_EXACT_MATCH` | **PASS** | Both emit 200 OK equivalent with assigned_devices, role, token, username |
-| `TC-AUTH-02` | Invalid Password Rejection | `SEMANTIC_MATCH` | **PASS** | Both reject invalid credentials with exact diagnostic string |
-| `TC-AUTH-03` | Unknown Username Rejection | `SEMANTIC_MATCH` | **PASS** | Both reject unknown username with identical diagnostic error |
-| `TC-AUTH-04` | User Account with Past ExpiresAt Rejection | `SEMANTIC_MATCH` | **PASS** | Both reject expired account with exact Chinese diagnostic string (`账号已到期，请联系管理员延时`) |
-| `TC-AUTH-05` | User Account with Future ExpiresAt Success | `STRUCTURAL_EXACT_MATCH` | **PASS** | Both allow login for accounts with valid future expiration |
-| `TC-AUTH-06` | Token Structural & Entropy Properties | `PROPERTY_MATCH` | **PASS** | Both generate 64-char lowercase hex tokens from 32 bytes entropy with zero JWT dots |
-| `TC-AUTH-07` | Valid Session Lookup & Token Validation | `SEMANTIC_MATCH` | **PASS** | Both validate active session token and resolve to correct account |
-| `TC-AUTH-08` | Negative Token Matrix & Invalid Token Rejection | `SEMANTIC_MATCH` | **PASS** | Full 8-case negative matrix: invalid, short, empty, missing, scheme mismatch, casing |
-| `TC-AUTH-09` | Logout & Token Revocation | `SEMANTIC_MATCH` | **PASS** | Both successfully revoke session token on logout, rejecting subsequent requests |
-| `TC-AUTH-10` | Multiple Concurrent Sessions on Same Account | `SEMANTIC_MATCH` | **PASS** | Both support simultaneous independent sessions per user account |
-| `TC-AUTH-11` | Process Restart Memory-Only Invalidation | `STATIC_AND_DYNAMIC_PARITY` | **PASS** | Both discard all sessions upon process restart (`SESSION_MEMORY_ONLY`) |
-| `TC-AUTH-12` | Session TTL Expiration (24h) via Mock Clock | `STATIC_AND_RECON_RUNTIME_PARITY` | **PASS** | Reconstructed deterministic mock clock confirms 24h TTL lazy eviction |
+| `HTTP-01` | Login Success Schema & Token Issuance | `STRUCTURAL_EXACT_MATCH` | **PASS** | 200 OK, application/json, 4-key JSON schema, 64 hex token |
+| `HTTP-02` | Invalid Password Rejection | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized, `Invalid username or password\n` |
+| `HTTP-03` | Missing Credentials Rejection | `BIT_EXACT_MATCH` | **PASS** | 400 Bad Request, `Username and password are required\n` |
+| `HTTP-04` | Expired Account Rejection | `BIT_EXACT_MATCH` | **PASS** | 403 Forbidden, `账号已到期，请联系管理员延时\n` |
+| `HTTP-05` | Malformed JSON Rejection | `BIT_EXACT_MATCH` | **PASS** | 400 Bad Request, `Invalid JSON\n` |
+| `HTTP-06` | Valid Token Logout & Invalidation | `BIT_EXACT_MATCH` | **PASS** | 200 OK, `{"status":"success"}\n`, immediate session invalidation |
+| `HTTP-07` | Logout Idempotency | `BIT_EXACT_MATCH` | **PASS** | 200 OK, `{"status":"success"}\n` on repeated logout |
+| `HTTP-08` | Auth-Status Unauthenticated | `BIT_EXACT_MATCH` | **PASS** | 200 OK, `{"noAuth":false}\n` |
+| `HTTP-09` | Auth-Status Authenticated | `BIT_EXACT_MATCH` | **PASS** | 200 OK, `{"noAuth":false}\n` |
+| `HTTP-10` | User Profile Valid Canonical Bearer | `STRUCTURAL_EXACT_MATCH` | **PASS** | 200 OK, identical 10-field UserProfile JSON schema |
+| `HTTP-11` | Case-Insensitive Bearer Header Parsing | `STRUCTURAL_EXACT_MATCH` | **PASS** | Identical acceptance for `bearer`, `BEARER`, `bEaReR` |
+| `HTTP-12` | Query Token Fallback (`?token=`) | `STRUCTURAL_EXACT_MATCH` | **PASS** | Falls back to query parameter when Authorization header missing |
+| `HTTP-13` | Header Strict Precedence Over Query | `STRUCTURAL_EXACT_MATCH` | **PASS** | Strict header precedence; invalid Bearer fails without query fallback |
+| `HTTP-14` | Missing Token Rejection | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized, `Unauthorized\n` |
+| `HTTP-15` | Invalid Token Rejection | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized, `Unauthorized\n` |
+| `HTTP-16` | OPTIONS Preflight Parity | `STRUCTURAL_EXACT_MATCH` | **PASS** | 200 OK, empty body, matching Access-Control-* headers on all 4 routes |
+| `HTTP-17` | HEAD Request Semantics | `STRUCTURAL_EXACT_MATCH` | **PASS** | Matching status (405 login, 200 others) with 0 body bytes |
+| `HTTP-18` | Content-Type & Body Wire Formatting | `BIT_EXACT_MATCH` | **PASS** | Trailing newline `\n` on all responses, matching Content-Type |
 
-Differential Report: [reports/08_PHASE2C2_AUTH_DIFFERENTIAL.md](file:///d:/KMAX-CLEANROOM/reports/08_PHASE2C2_AUTH_DIFFERENTIAL.md).
+Differential Report: [reports/10_PHASE2C3_AUTH_HTTP_DIFFERENTIAL.md](file:///d:/KMAX-CLEANROOM/reports/10_PHASE2C3_AUTH_HTTP_DIFFERENTIAL.md).
 
 ### C. Provenance Audit (`tools/verify_reconstructed_provenance.py`)
 ```text
-Total Declared Functions Audited: 47
+Total Declared Functions Audited: 59
 Provenance Classification Breakdown:
-  - GENERATED_ADAPTER              : 17
-  - GENERATED_BUILD_FUNCTION       : 1
+  - GENERATED_ADAPTER              : 23
+  - GENERATED_BUILD_FUNCTION       : 2
   - GENERATED_TEST_INTERFACE       : 9
   - RECONSTRUCTED_FROM_BEHAVIOR    : 1
-  - RECONSTRUCTED_FROM_BINARY      : 19
+  - RECONSTRUCTED_FROM_BINARY      : 24
 
 Audit Summary:
   - Missing Headers: 0
   - Missing Required Metadata Fields: 0
-[PASS] All 47 functions have valid CLEANROOM-PROVENANCE headers and 100% required metadata fields present.
+[PASS] All 59 functions have valid CLEANROOM-PROVENANCE headers and 100% required metadata fields present.
 ```
 
-### D. Unified Phase 2 Invariant Verification (`tools/verify_phase2.py`)
-```text
-==================================================
-PHASE 2B.6 VERIFICATION AUDIT
-==================================================
-[PASS] Original Binary Artifact Hashes               All 3 original binaries match verified SHA256
-[PASS] Signaling Pclntab Invariants                  7571 functions, monotonic=True, non_overlapping=True, sentinel=True
-[PASS] Agent Pclntab Invariants                      15398 functions, monotonic=True, non_overlapping=True, sentinel=True
-[PASS] FUNCTION_MAP Count Parity                     Signaling: 7571/7571; Agent: 15398/15398
-[PASS] CALLGRAPH Direct Edges Integrity              Signaling callers: 6557; Agent callers: 12737
-[PASS] Signaling Role Count Invariant                Total: 7571 == 1970 (Conf) + 37 (Inf) + 5564 (Unk)
-[PASS] Agent Role Count Invariant                    Total: 15398 == 2582 (Conf) + 135 (Inf) + 12681 (Unk)
-[PASS] Zero Dependency Role Over-Classification      Checked 28 generic suffixes; leaked into application roles: 0
-[PASS] Confirmed Project Role Multi-Evidence Rule    All confirmed project roles have >=2 distinct categories (Violations: 0)
-[PASS] Route Handler Discovery Invariant             Discovered 43 routes, 0 unresolved
-[PASS] /api/turn Non-Registered Invariant            Classification: STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED; All verbs return 404: True
-[PASS] Phase 2C.2 Source Scope Boundary              17 .go files strictly in scope; forbidden logic leaks: 0
-[PASS] Reconstructed Source Provenance               47 functions audited (Binary: 19, Adapters: 17, Tests/Clock: 9, Missing: 0 headers, 0 fields)
-[PASS] Phase 2C.1 & 2C.2 Differential Reports Parity Reports 06, 07, and 08 verified with 100% PASS verdicts
-==================================================
-OVERALL AUDIT VERDICT: PASS
-==================================================
-```
+### D. Master Verifier (`tools/verify_phase2.py`)
+- Check 7: Phase 2C.3 Source Scope Boundary: 23 Go files strictly in scope; forbidden logic leaks: 0.
+- Check 14: Phase 2C Reports Presence & Completeness: Reports 06, 07, 08, 09, 10 verified.
+- Checks 15-20: Validates exact JSON schemas and classifications for all structured artifacts.
+- Overall Verdict: `PASS`.
 
 ---
 
-## 4. Phase 2C.2 Exit Gate Checklist
+## 4. Phase 2C.3 Exit Gate Checklist
 
-- [x] All 16 forensic mandates resolved with binary disassembly, type descriptors, and dynamic oracle evidence.
-- [x] Forensic analysis documented in `reports/07_PHASE2C2_AUTH_FORENSICS.md` with PASS gate verdict.
-- [x] `Session` struct reconstructed to exact 40-byte binary layout (`Username` string 16B, `ExpiresAt` time.Time 24B).
-- [x] Session store confirmed memory-only (`SESSION_MEMORY_ONLY`) with zero disk persistence across process restart.
-- [x] Token generation confirmed as 32-byte cryptographic entropy hex-encoded to 64 lowercase chars (non-JWT).
-- [x] Session TTL (24h) and Account Expiry (`User.ExpiresAt`) cleanly separated in design and verified independently.
-- [x] Multi-session concurrency per account verified.
-- [x] Password verification uses `SHA256(password + salt)` deduplicated with `pkg/storage.HashPassword`.
-- [x] Clean-room source carries 100% compliant `CLEANROOM-PROVENANCE` headers (47/47 functions audited, 0 missing).
-- [x] Go unit tests pass 100% (`pkg/storage`, `pkg/session`, `pkg/auth`).
-- [x] Stateful stdio test harness implemented in `cmd/auth-tool/main.go` for authentic memory state differential testing.
-- [x] Differential suite passes 12/12 auth verification cases (11 dynamic differential + 1 static-original/reconstructed-runtime TTL parity) against original binary oracle.
-- [x] Zero regressions in Phase 2C.1 persistence differential suite (8/8 tests pass).
-- [x] Reconstructed source scope strictly bounded: 0 HTTP handlers, 0 WebRTC logic, 0 license logic.
-- [x] Unified audit `tools/verify_phase2.py` passes all 14 invariant checks.
+- [x] Query-token fallback dynamically confirmed via 10-case precedence matrix.
+- [x] Header/query precedence dynamically confirmed (`HEADER_FIRST_WITH_STRICT_EVALUATION`).
+- [x] Method contracts recovered (login requires POST; logout/auth-status/me accept all verbs).
+- [x] Request JSON behavior recovered (standard json.Decoder, tolerated extra fields, exact 400 messages).
+- [x] Response schemas recovered (exact JSON keys, trailing newlines, Content-Type headers).
+- [x] Status codes recovered (200, 400, 401, 403, 405).
+- [x] CORS/OPTIONS behavior recovered (CORS headers, 200 on OPTIONS preflight).
+- [x] HTTP function slices mapped without provenance double-claim.
+- [x] Four reconstructed auth routes compile and pass Go unit tests.
+- [x] HTTP differential suite passes 18/18 tests (8 structural + 10 bit-exact matches).
+- [x] Persistence differential suite passes 8/8 tests.
+- [x] Auth core differential suite passes 12/12 tests.
+- [x] Provenance auditor passes 59/59 functions.
+- [x] Master verifier passes with OVERALL AUDIT VERDICT: PASS.
+- [x] Zero WebSocket or WebRTC code implemented.
+- [x] Zero forbidden sources accessed.
 
-**EXECUTION HALTED AT PHASE 2C.2 EXIT GATE.**  
-Awaiting user review before proceeding to Phase 2C.3 (HTTP Handlers & REST API Routing).
+**EXECUTION HALTED AT PHASE 2C.3 AUTH-HTTP EXIT GATE.**  
+Awaiting user review before proceeding to subsequent REST families (admin/device/config).

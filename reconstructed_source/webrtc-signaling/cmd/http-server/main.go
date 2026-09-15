@@ -1,0 +1,51 @@
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_BUILD_STRUCTURE
+// Mapping Scope: PACKAGE_LEVEL
+// Binary: webrtc-signaling (Linux AMD64 SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
+// Purpose: Reconstructed HTTP server binary for Phase 2C.3 differential testing
+// Confidence: HIGH
+
+package main
+
+import (
+	"flag"
+	"fmt"
+	"log"
+	"net/http"
+	"path/filepath"
+
+	"cloudphone-signaling/pkg/auth"
+	"cloudphone-signaling/pkg/httpapi"
+	"cloudphone-signaling/pkg/session"
+	"cloudphone-signaling/pkg/storage"
+)
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_BUILD_FUNCTION
+// Mapping Scope: GENERATED_BUILD_FUNCTION
+// Original Function Mapping: NONE
+// Purpose: Main entrypoint for launching reconstructed HTTP server in differential testing
+// Source Behavior: Initializes storage, session, auth, and httpapi.Server; binds to port
+// Confidence: HIGH
+func main() {
+	port := flag.Int("port", 29991, "Port to listen on")
+	dataDir := flag.String("data", "./data", "Data directory containing users.json")
+	noAuth := flag.Bool("noAuth", false, "Disable authentication requirements")
+	flag.Parse()
+
+	usersPath := filepath.Join(*dataDir, "users.json")
+	usersStore := storage.NewUsersStore(usersPath)
+	if err := usersStore.LoadOrCreate(); err != nil {
+		log.Fatalf("Failed to initialize users store: %v", err)
+	}
+
+	sm := session.NewSessionManager(session.RealClock{})
+	authenticator := auth.NewAuthenticator(usersStore, sm, *noAuth)
+	server := httpapi.NewServer(authenticator, *noAuth)
+
+	addr := fmt.Sprintf("127.0.0.1:%d", *port)
+	log.Printf("[HTTP] Reconstructed server listening on %s", addr)
+	if err := http.ListenAndServe(addr, server); err != nil {
+		log.Fatalf("HTTP server failed: %v", err)
+	}
+}

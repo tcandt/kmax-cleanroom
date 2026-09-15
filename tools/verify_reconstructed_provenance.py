@@ -17,7 +17,9 @@ SOURCE_DIRS = [
     ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "storage-tool",
     ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "session",
     ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "auth",
-    ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "auth-tool"
+    ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "auth-tool",
+    ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "httpapi",
+    ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "http-server"
 ]
 
 VALID_CLASSIFICATIONS = {

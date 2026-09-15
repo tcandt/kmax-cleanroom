@@ -3,9 +3,9 @@
     "case_id": "BEARER_CANONICAL",
     "description": "Canonical 'Bearer <token>' format",
     "headers": {
-      "Authorization": "Bearer d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"
+      "Authorization": "Bearer 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"
     },
-    "token_tested_type": "EMPTY_OR_NONE",
+    "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
     "body": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"admin\",\"settings\":null,\"username\":\"admin\"}\n",
     "content_type": "application/json",
@@ -18,9 +18,9 @@
     "case_id": "BEARER_LOWERCASE",
     "description": "All-lowercase 'bearer <token>' format",
     "headers": {
-      "Authorization": "bearer d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"
+      "Authorization": "bearer 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"
     },
-    "token_tested_type": "EMPTY_OR_NONE",
+    "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
     "body": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"admin\",\"settings\":null,\"username\":\"admin\"}\n",
     "content_type": "application/json",
@@ -33,9 +33,9 @@
     "case_id": "BEARER_UPPERCASE",
     "description": "All-uppercase 'BEARER <token>' format",
     "headers": {
-      "Authorization": "BEARER d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"
+      "Authorization": "BEARER 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"
     },
-    "token_tested_type": "EMPTY_OR_NONE",
+    "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
     "body": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"admin\",\"settings\":null,\"username\":\"admin\"}\n",
     "content_type": "application/json",
@@ -48,9 +48,9 @@
     "case_id": "BEARER_MIXED_CASE",
     "description": "Mixed-case 'bEaReR <token>' format",
     "headers": {
-      "Authorization": "bEaReR d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"
+      "Authorization": "bEaReR 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"
     },
-    "token_tested_type": "EMPTY_OR_NONE",
+    "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
     "body": "{\"ai_config\":null,\"assigned_devices\":[\"*\"],\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"admin\",\"settings\":null,\"username\":\"admin\"}\n",
     "content_type": "application/json",
@@ -63,9 +63,9 @@
     "case_id": "WRONG_SCHEME_BASIC",
     "description": "Basic auth scheme with token value",
     "headers": {
-      "Authorization": "Basic d2cde06aa6aa15cd4210267da4fb30b8ba70363a3bb7cdfd1268600a50b6a925"
+      "Authorization": "Basic 3178d48a2b57df765b221668ffae7c4a3fc46b5f53eb31754c92375114836382"
     },
-    "token_tested_type": "VALID_ORIGINAL_TOKEN",
+    "token_tested_type": "VALID_ORIGINAL_TOKEN_WITH_WRONG_SCHEME",
     "status_code": 401,
     "body": "Unauthorized\n",
     "content_type": "text/plain; charset=utf-8",
@@ -78,7 +78,7 @@
     "case_id": "MISSING_HEADER",
     "description": "No Authorization header supplied",
     "headers": {},
-    "token_tested_type": "EMPTY_OR_NONE",
+    "token_tested_type": "NO_TOKEN",
     "status_code": 401,
     "body": "Unauthorized\n",
     "content_type": "text/plain; charset=utf-8",
@@ -93,7 +93,7 @@
     "headers": {
       "Authorization": ""
     },
-    "token_tested_type": "EMPTY_OR_NONE",
+    "token_tested_type": "NO_TOKEN",
     "status_code": 401,
     "body": "Unauthorized\n",
     "content_type": "text/plain; charset=utf-8",
@@ -108,7 +108,7 @@
     "headers": {
       "Authorization": "Bearer "
     },
-    "token_tested_type": "EMPTY_OR_NONE",
+    "token_tested_type": "EMPTY_TOKEN",
     "status_code": 401,
     "body": "Unauthorized\n",
     "content_type": "text/plain; charset=utf-8",

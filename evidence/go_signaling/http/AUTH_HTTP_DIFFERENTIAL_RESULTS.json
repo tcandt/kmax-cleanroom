@@ -1,0 +1,360 @@
+[
+  {
+    "test_id": "HTTP-01",
+    "test_name": "Login Success Schema & Token Issuance",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 200,
+      "keys": [
+        "assigned_devices",
+        "role",
+        "token",
+        "username"
+      ],
+      "role": "admin",
+      "token_len": 64
+    },
+    "reconstructed_observation": {
+      "status": 200,
+      "keys": [
+        "assigned_devices",
+        "role",
+        "token",
+        "username"
+      ],
+      "role": "admin",
+      "token_len": 64
+    },
+    "comparison_result": "Both emit 200 OK, application/json, matching 4-key JSON schema and 64-char lowercase hex token",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-02",
+    "test_name": "Invalid Password Rejection",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 401,
+      "body": "Invalid username or password\n",
+      "ct": "text/plain; charset=utf-8"
+    },
+    "reconstructed_observation": {
+      "status": 401,
+      "body": "Invalid username or password\n",
+      "ct": "text/plain; charset=utf-8"
+    },
+    "comparison_result": "Both emit 401 Unauthorized with exact byte string 'Invalid username or password\\n'",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-03",
+    "test_name": "Missing Credentials Rejection",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 400,
+      "body": "Username and password are required\n"
+    },
+    "reconstructed_observation": {
+      "status": 400,
+      "body": "Username and password are required\n"
+    },
+    "comparison_result": "Both emit 400 Bad Request with exact byte string 'Username and password are required\\n'",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-04",
+    "test_name": "Expired Account Rejection",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 403,
+      "body": "\u8d26\u53f7\u5df2\u5230\u671f\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u5ef6\u65f6\n"
+    },
+    "reconstructed_observation": {
+      "status": 403,
+      "body": "\u8d26\u53f7\u5df2\u5230\u671f\uff0c\u8bf7\u8054\u7cfb\u7ba1\u7406\u5458\u5ef6\u65f6\n"
+    },
+    "comparison_result": "Both emit 403 Forbidden with exact UTF-8 expiration notice string",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-05",
+    "test_name": "Malformed JSON Rejection",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 400,
+      "body": "Invalid JSON\n"
+    },
+    "reconstructed_observation": {
+      "status": 400,
+      "body": "Invalid JSON\n"
+    },
+    "comparison_result": "Both emit 400 Bad Request with exact byte string 'Invalid JSON\\n'",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-06",
+    "test_name": "Valid Token Logout & Invalidation",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n",
+      "subsequent_me_status": 401
+    },
+    "reconstructed_observation": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n",
+      "subsequent_me_status": 401
+    },
+    "comparison_result": "Both emit 200 OK with {'status':'success'}\\n and invalidate session immediately",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-07",
+    "test_name": "Logout Idempotency",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "reconstructed_observation": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "comparison_result": "Both emit 200 OK with {'status':'success'}\\n on repeated/revoked logout",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-08",
+    "test_name": "Auth-Status Unauthenticated",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 200,
+      "body": "{\"noAuth\":false}\n"
+    },
+    "reconstructed_observation": {
+      "status": 200,
+      "body": "{\"noAuth\":false}\n"
+    },
+    "comparison_result": "Both emit 200 OK with exact body '{\"noAuth\":false}\\n'",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-09",
+    "test_name": "Auth-Status Authenticated",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 200,
+      "body": "{\"noAuth\":false}\n"
+    },
+    "reconstructed_observation": {
+      "status": 200,
+      "body": "{\"noAuth\":false}\n"
+    },
+    "comparison_result": "Both emit 200 OK with exact body '{\"noAuth\":false}\\n'",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-10",
+    "test_name": "User Profile Valid Canonical Bearer",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 200,
+      "keys": [
+        "ai_config",
+        "assigned_devices",
+        "expires_at",
+        "forbid_audio",
+        "forbid_bitrate",
+        "forbid_fps",
+        "forbid_resolution",
+        "role",
+        "settings",
+        "username"
+      ],
+      "username": "admin"
+    },
+    "reconstructed_observation": {
+      "status": 200,
+      "keys": [
+        "ai_config",
+        "assigned_devices",
+        "expires_at",
+        "forbid_audio",
+        "forbid_bitrate",
+        "forbid_fps",
+        "forbid_resolution",
+        "role",
+        "settings",
+        "username"
+      ],
+      "username": "admin"
+    },
+    "comparison_result": "Both emit 200 OK with identical 10-field UserProfile JSON schema and field nullability",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-11",
+    "test_name": "Case-Insensitive Bearer Header Parsing",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "variants_tested": [
+        "bearer",
+        "BEARER",
+        "bEaReR"
+      ],
+      "all_200": true
+    },
+    "reconstructed_observation": {
+      "variants_tested": [
+        "bearer",
+        "BEARER",
+        "bEaReR"
+      ],
+      "all_200": true
+    },
+    "comparison_result": "Both accept bearer, BEARER, and bEaReR prefixes identically via case-insensitive scheme parsing",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-12",
+    "test_name": "Query Token Fallback (?token=)",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 200,
+      "username": "admin"
+    },
+    "reconstructed_observation": {
+      "status": 200,
+      "username": "admin"
+    },
+    "comparison_result": "Both fall back to query ?token=<token> when Authorization header is absent",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-13",
+    "test_name": "Header Strict Precedence Over Query",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "case_a_user": "admin",
+      "case_b_status": 401
+    },
+    "reconstructed_observation": {
+      "case_a_user": "admin",
+      "case_b_status": 401
+    },
+    "comparison_result": "Both prioritize Authorization header strictly; invalid Bearer fails without query fallback",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-14",
+    "test_name": "Missing Token Rejection",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 401,
+      "body": "Unauthorized\n"
+    },
+    "reconstructed_observation": {
+      "status": 401,
+      "body": "Unauthorized\n"
+    },
+    "comparison_result": "Both emit 401 Unauthorized with exact byte string 'Unauthorized\\n'",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-15",
+    "test_name": "Invalid Token Rejection",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "status": 401,
+      "body": "Unauthorized\n"
+    },
+    "reconstructed_observation": {
+      "status": 401,
+      "body": "Unauthorized\n"
+    },
+    "comparison_result": "Both emit 401 Unauthorized with exact byte string 'Unauthorized\\n'",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-16",
+    "test_name": "OPTIONS Preflight Parity",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "routes_tested": [
+        "/api/login",
+        "/api/logout",
+        "/api/auth-status",
+        "/api/me"
+      ],
+      "options_pass": true
+    },
+    "reconstructed_observation": {
+      "routes_tested": [
+        "/api/login",
+        "/api/logout",
+        "/api/auth-status",
+        "/api/me"
+      ],
+      "options_pass": true
+    },
+    "comparison_result": "Both emit 200 OK with empty body and identical Access-Control-* headers across all 4 routes",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-17",
+    "test_name": "HEAD Request Semantics",
+    "classification": "STRUCTURAL_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "routes_tested": [
+        "/api/login",
+        "/api/logout",
+        "/api/auth-status",
+        "/api/me"
+      ],
+      "head_pass": true
+    },
+    "reconstructed_observation": {
+      "routes_tested": [
+        "/api/login",
+        "/api/logout",
+        "/api/auth-status",
+        "/api/me"
+      ],
+      "head_pass": true
+    },
+    "comparison_result": "Both handle HEAD requests with zero body bytes and matching status codes (405 login, 200 others)",
+    "detail": ""
+  },
+  {
+    "test_id": "HTTP-18",
+    "test_name": "Content-Type & Body Wire Formatting",
+    "classification": "BIT_EXACT_MATCH",
+    "passed": true,
+    "original_observation": {
+      "json_newline": true,
+      "err_newline": true
+    },
+    "reconstructed_observation": {
+      "json_newline": true,
+      "err_newline": true
+    },
+    "comparison_result": "Both adhere to identical wire formatting: trailing newline \\n on all responses, correct Content-Type",
+    "detail": ""
+  }
+]

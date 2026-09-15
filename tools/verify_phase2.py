@@ -198,7 +198,7 @@ def verify_all():
                  turn_cls == "STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED" and turn_404,
                  f"Classification: {turn_cls}; All verbs return 404: {turn_404}")
 
-    # 7. Reconstructed Source Scope Boundary (Phase 2C.2: Types, Persistence, Session, Auth Core)
+    # 7. Reconstructed Source Scope Boundary (Phase 2C.3: Auth REST Handlers & Middleware)
     recon_src = ROOT / "reconstructed_source"
     go_files = list(recon_src.rglob("*.go"))
     allowed_prefixes = (
@@ -207,15 +207,17 @@ def verify_all():
         "webrtc-signaling/cmd/storage-tool/",
         "webrtc-signaling/pkg/session/",
         "webrtc-signaling/pkg/auth/",
-        "webrtc-signaling/cmd/auth-tool/"
+        "webrtc-signaling/cmd/auth-tool/",
+        "webrtc-signaling/pkg/httpapi/",
+        "webrtc-signaling/cmd/http-server/"
     )
     disallowed_files = []
     forbidden_symbols_found = []
 
-    # Check for premature networking, webrtc stack, HTTP server handlers, license
+    # Check for premature networking, webrtc stack, websocket, license, non-auth endpoints
     FORBIDDEN_IMPORTS_AND_SYMBOLS = [
-        '"github.com/pion/webrtc', '"net/http"', "ServeHTTP(", "ListenAndServe(",
-        "NewPeerConnection(", "CheckLicense("
+        '"github.com/pion/webrtc', "NewPeerConnection(", "CheckLicense(",
+        "/register_agent", "/connect_client", '"gorilla/websocket"', '"nhooyr.io/websocket"'
     ]
 
     for gf in go_files:
@@ -229,7 +231,7 @@ def verify_all():
                     forbidden_symbols_found.append((rel, kw))
 
     scope_passed = len(disallowed_files) == 0 and len(forbidden_symbols_found) == 0
-    record_check("Phase 2C.2 Source Scope Boundary",
+    record_check("Phase 2C.3 Source Scope Boundary",
                  scope_passed,
                  f"{len(go_files)} .go files strictly in scope; forbidden logic leaks: {len(forbidden_symbols_found)}")
 
@@ -361,7 +363,23 @@ def verify_all():
         valid_bearer_ids = {"BEARER_CANONICAL", "BEARER_LOWERCASE", "BEARER_UPPERCASE", "BEARER_MIXED_CASE"}
         invalid_header_ids = {"WRONG_SCHEME_BASIC", "MISSING_HEADER", "EMPTY_HEADER", "EMPTY_BEARER"}
 
+        expected_token_types = {
+            "BEARER_CANONICAL": "VALID_ORIGINAL_TOKEN",
+            "BEARER_LOWERCASE": "VALID_ORIGINAL_TOKEN",
+            "BEARER_UPPERCASE": "VALID_ORIGINAL_TOKEN",
+            "BEARER_MIXED_CASE": "VALID_ORIGINAL_TOKEN",
+            "WRONG_SCHEME_BASIC": "VALID_ORIGINAL_TOKEN_WITH_WRONG_SCHEME",
+            "MISSING_HEADER": "NO_TOKEN",
+            "EMPTY_HEADER": "NO_TOKEN",
+            "EMPTY_BEARER": "EMPTY_TOKEN"
+        }
+        token_types_valid = all(
+            c.get("token_tested_type") == expected_token_types.get(c["case_id"])
+            for c in header_data
+        )
+
         header_evidence_valid = (
+            token_types_valid and
             all(
                 c["status_code"] == 200 and
                 c["is_authenticated"] is True and
@@ -402,14 +420,197 @@ def verify_all():
     rep_persist = ROOT / "reports" / "06_PHASE2C1_PERSISTENCE.md"
     rep_auth_forensic = ROOT / "reports" / "07_PHASE2C2_AUTH_FORENSICS.md"
     rep_auth_diff = ROOT / "reports" / "08_PHASE2C2_AUTH_DIFFERENTIAL.md"
+    rep_http_forensic = ROOT / "reports" / "09_PHASE2C3_AUTH_HTTP_FORENSICS.md"
+    rep_http_diff = ROOT / "reports" / "10_PHASE2C3_AUTH_HTTP_DIFFERENTIAL.md"
     reports_present = (
         rep_persist.exists() and len(rep_persist.read_text(encoding="utf-8")) > 500 and
         rep_auth_forensic.exists() and len(rep_auth_forensic.read_text(encoding="utf-8")) > 500 and
-        rep_auth_diff.exists() and len(rep_auth_diff.read_text(encoding="utf-8")) > 500
+        rep_auth_diff.exists() and len(rep_auth_diff.read_text(encoding="utf-8")) > 500 and
+        rep_http_forensic.exists() and len(rep_http_forensic.read_text(encoding="utf-8")) > 500 and
+        rep_http_diff.exists() and len(rep_http_diff.read_text(encoding="utf-8")) > 500
     )
     record_check("Phase 2C Reports Presence & Completeness",
                  reports_present,
-                 "Reports 06, 07, and 08 generated and verified present")
+                 "Reports 06, 07, 08, 09, and 10 generated and verified present")
+
+    # 15. HTTP Token Source Matrix Structured Validation
+    token_src_path = ROOT / "evidence" / "go_signaling" / "http" / "AUTH_TOKEN_SOURCE_MATRIX.json"
+    token_src_pass = False
+    if token_src_path.exists():
+        with open(token_src_path, "r", encoding="utf-8") as f:
+            token_src_data = json.load(f)
+        expected_case_ids = [
+            "CASE_01_HEADER_BEARER_VALID_NO_QUERY",
+            "CASE_02_NO_HEADER_QUERY_VALID",
+            "CASE_03_HEADER_VALID_QUERY_INVALID",
+            "CASE_04_HEADER_INVALID_QUERY_VALID",
+            "CASE_05_HEADER_BASIC_VALID_QUERY_VALID",
+            "CASE_06_HEADER_MALFORMED_QUERY_VALID",
+            "CASE_07_HEADER_EMPTY_BEARER_QUERY_VALID",
+            "CASE_08_NO_HEADER_QUERY_INVALID",
+            "CASE_09_NO_HEADER_QUERY_EMPTY",
+            "CASE_10_HEADER_VALID_USER_A_QUERY_VALID_USER_B"
+        ]
+        actual_case_ids = [c["case_id"] for c in token_src_data]
+        cases_unique = len(actual_case_ids) == len(set(actual_case_ids)) == len(expected_case_ids)
+        cases_match = actual_case_ids == expected_case_ids
+
+        required_keys = {
+            "case_id", "authorization_header", "query_token_type", "header_token_identity",
+            "query_token_identity", "status", "content_type", "authenticated_username",
+            "selected_token_source", "classification", "evidence_type"
+        }
+        schema_valid = all(required_keys.issubset(c.keys()) for c in token_src_data)
+
+        by_case = {c["case_id"]: c for c in token_src_data}
+        c1 = by_case.get("CASE_01_HEADER_BEARER_VALID_NO_QUERY", {})
+        c2 = by_case.get("CASE_02_NO_HEADER_QUERY_VALID", {})
+        c4 = by_case.get("CASE_04_HEADER_INVALID_QUERY_VALID", {})
+        c10 = by_case.get("CASE_10_HEADER_VALID_USER_A_QUERY_VALID_USER_B", {})
+
+        precedence_valid = (
+            c1.get("status") == 200 and c1.get("selected_token_source") == "HEADER" and c1.get("authenticated_username") == "admin" and
+            c2.get("status") == 200 and c2.get("selected_token_source") == "QUERY" and c2.get("authenticated_username") == "admin" and
+            c4.get("status") == 401 and c4.get("selected_token_source") == "NONE" and
+            c10.get("status") == 200 and c10.get("selected_token_source") == "HEADER" and c10.get("authenticated_username") == "admin"
+        )
+        token_src_pass = cases_unique and cases_match and schema_valid and precedence_valid
+
+    record_check("HTTP Token Source Matrix Structured Validation",
+                 token_src_pass,
+                 "10-case precedence matrix validated: header strict precedence and query fallback confirmed")
+
+    # 16. HTTP Route Method Matrix Structured Validation
+    method_matrix_path = ROOT / "evidence" / "go_signaling" / "http" / "AUTH_ROUTE_METHOD_MATRIX.json"
+    method_matrix_pass = False
+    if method_matrix_path.exists():
+        with open(method_matrix_path, "r", encoding="utf-8") as f:
+            method_data = json.load(f)
+        expected_routes = {"/api/login", "/api/logout", "/api/auth-status", "/api/me"}
+        expected_methods = {"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"}
+        route_method_pairs = {(e["route"], e["method"]) for e in method_data}
+        all_pairs_present = len(route_method_pairs) == 28 and len(method_data) == 28 and route_method_pairs == {(r, m) for r in expected_routes for m in expected_methods}
+
+        # /api/login: POST is 200, OPTIONS is 200, others 405
+        login_verbs = {e["method"]: e["status"] for e in method_data if e["route"] == "/api/login"}
+        login_pass = login_verbs.get("POST") == 200 and login_verbs.get("OPTIONS") == 200 and all(login_verbs.get(m) == 405 for m in ["GET", "PUT", "PATCH", "DELETE", "HEAD"])
+
+        # CORS headers present on OPTIONS
+        cors_valid = all(
+            e["access_control_headers"].get("Access-Control-Allow-Origin") == "*" and
+            "Content-Type" in e["access_control_headers"].get("Access-Control-Allow-Headers", "")
+            for e in method_data if e["method"] == "OPTIONS"
+        )
+        method_matrix_pass = all_pairs_present and login_pass and cors_valid
+
+    record_check("HTTP Route Method Matrix Structured Validation",
+                 method_matrix_pass,
+                 "28-verb route method matrix validated: login POST enforcement, CORS headers, OPTIONS preflight")
+
+    # 17. Login Request Contract Structured Validation
+    login_contract_path = ROOT / "evidence" / "go_signaling" / "http" / "LOGIN_REQUEST_CONTRACT.json"
+    login_contract_pass = False
+    if login_contract_path.exists():
+        with open(login_contract_path, "r", encoding="utf-8") as f:
+            login_cases = json.load(f)
+        expected_login_ids = {
+            "VALID_JSON", "EMPTY_BODY", "EMPTY_OBJECT", "MISSING_USERNAME", "MISSING_PASSWORD",
+            "USERNAME_NULL", "PASSWORD_NULL", "USERNAME_NUMERIC", "PASSWORD_NUMERIC", "EXTRA_FIELDS",
+            "DUPLICATE_JSON_KEYS", "MALFORMED_JSON_TRUNCATED", "JSON_ARRAY", "TEXT_PLAIN_CONTENT_TYPE",
+            "NO_CONTENT_TYPE", "JSON_WITH_CHARSET"
+        }
+        actual_login_ids = {c["case_id"] for c in login_cases}
+        login_cases_match = actual_login_ids == expected_login_ids and len(login_cases) == len(expected_login_ids)
+
+        by_login_id = {c["case_id"]: c for c in login_cases}
+        valid_cases = ["VALID_JSON", "EXTRA_FIELDS", "DUPLICATE_JSON_KEYS", "TEXT_PLAIN_CONTENT_TYPE", "NO_CONTENT_TYPE", "JSON_WITH_CHARSET"]
+        error_cases = ["EMPTY_BODY", "EMPTY_OBJECT", "MISSING_USERNAME", "MISSING_PASSWORD", "USERNAME_NULL", "PASSWORD_NULL", "USERNAME_NUMERIC", "PASSWORD_NUMERIC", "MALFORMED_JSON_TRUNCATED", "JSON_ARRAY"]
+
+        valid_correct = all(by_login_id[cid]["status_code"] == 200 and by_login_id[cid]["session_created"] is True for cid in valid_cases if cid in by_login_id)
+        error_correct = all(by_login_id[cid]["status_code"] == 400 and by_login_id[cid]["session_created"] is False for cid in error_cases if cid in by_login_id)
+        login_contract_pass = login_cases_match and valid_correct and error_correct
+
+    record_check("Login Request Contract Structured Validation",
+                 login_contract_pass,
+                 "16 login request body variations validated with exact status codes and decoder semantics")
+
+    # 18. Auth HTTP Response Contract Structured Validation
+    resp_contract_path = ROOT / "evidence" / "go_signaling" / "http" / "AUTH_HTTP_RESPONSE_CONTRACT.json"
+    resp_contract_pass = False
+    if resp_contract_path.exists():
+        with open(resp_contract_path, "r", encoding="utf-8") as f:
+            resp_branches = json.load(f)
+
+        expected_branches = {
+            "LOGIN_SUCCESS", "LOGIN_CREDENTIALS_MISSING", "LOGIN_INVALID_CREDENTIALS", "LOGIN_EXPIRED_USER", "LOGIN_MALFORMED_REQUEST",
+            "LOGOUT_VALID_TOKEN", "LOGOUT_ALREADY_REVOKED_TOKEN", "LOGOUT_INVALID_TOKEN", "LOGOUT_MISSING_TOKEN",
+            "AUTH_STATUS_UNAUTHENTICATED", "AUTH_STATUS_AUTHENTICATED",
+            "ME_VALID_ADMIN", "ME_VALID_NORMAL_USER", "ME_INVALID_TOKEN", "ME_MISSING_TOKEN", "ME_QUERY_TOKEN_AUTHENTICATION"
+        }
+        actual_branches = {b["branch_id"] for b in resp_branches}
+        branches_match = actual_branches == expected_branches and len(resp_branches) == len(expected_branches)
+
+        trailing_newlines_valid = all(b.get("has_trailing_newline") is True for b in resp_branches)
+        by_branch = {b["branch_id"]: b for b in resp_branches}
+        me_admin = by_branch.get("ME_VALID_ADMIN", {})
+        expected_me_keys = [
+            "ai_config", "assigned_devices", "expires_at", "forbid_audio", "forbid_bitrate",
+            "forbid_fps", "forbid_resolution", "role", "settings", "username"
+        ]
+        me_schema_valid = me_admin.get("status_code") == 200 and me_admin.get("json_keys") == expected_me_keys
+
+        resp_contract_pass = branches_match and trailing_newlines_valid and me_schema_valid
+
+    record_check("Auth HTTP Response Contract Structured Validation",
+                 resp_contract_pass,
+                 "16 response branches validated: trailing newlines, status codes, JSON key schemas")
+
+    # 19. Auth HTTP Function Slices Structured Validation
+    slices_path = ROOT / "evidence" / "go_signaling" / "http" / "AUTH_HTTP_FUNCTION_SLICES.json"
+    slices_pass = False
+    if slices_path.exists():
+        with open(slices_path, "r", encoding="utf-8") as f:
+            slices_data = json.load(f)
+
+        expected_slice_roles = {
+            "AUTH_LOGIN_HANDLER", "AUTH_TOKEN_LOOKUP", "LOGOUT_HANDLER", "AUTH_STATUS_HANDLER", "USER_PROFILE_HANDLER"
+        }
+        actual_slice_roles = {s["semantic_role"] for s in slices_data}
+        roles_match = actual_slice_roles == expected_slice_roles and len(slices_data) == 5
+
+        # Verify Phase 2C.2 linkage and Phase 2C.3 category definitions
+        categories_valid = all(
+            "phase2c2_claimed_slice" in s and
+            "phase2c3_claimed_slices" in s and
+            len(s["phase2c3_claimed_slices"]) > 0
+            for s in slices_data
+        )
+        slices_pass = roles_match and categories_valid
+
+    record_check("Auth HTTP Function Slices Structured Validation",
+                 slices_pass,
+                 "5 HTTP handler functions mapped into non-overlapping behavior slices with Phase 2C.2 linkage")
+
+    # 20. Auth HTTP Differential Suite Structured Verification
+    http_diff_path = ROOT / "evidence" / "go_signaling" / "http" / "AUTH_HTTP_DIFFERENTIAL_RESULTS.json"
+    http_diff_pass = False
+    if http_diff_path.exists():
+        with open(http_diff_path, "r", encoding="utf-8") as f:
+            http_diff_results = json.load(f)
+
+        expected_http_ids = [f"HTTP-{i:02d}" for i in range(1, 19)]
+        actual_http_ids = [r["test_id"] for r in http_diff_results]
+        ids_unique = len(actual_http_ids) == len(set(actual_http_ids)) == len(expected_http_ids)
+        ids_match = actual_http_ids == expected_http_ids
+        all_http_passed = all(r.get("passed") is True for r in http_diff_results) and len(http_diff_results) == 18
+
+        valid_classes = {"STRUCTURAL_EXACT_MATCH", "BIT_EXACT_MATCH"}
+        classes_valid = all(r.get("classification") in valid_classes for r in http_diff_results)
+        http_diff_pass = ids_unique and ids_match and all_http_passed and classes_valid
+
+    record_check("Auth HTTP Differential Suite Structured Verification",
+                 http_diff_pass,
+                 "18/18 HTTP differential test cases verified PASS with structural/bit-exact parity")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)
