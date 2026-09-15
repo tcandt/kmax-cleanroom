@@ -1,0 +1,25 @@
+# OS & Editor artifacts
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.bak
+*~
+
+# Scratch & Temporary
+scratch/
+tmp/
+*.tmp
+
+# Transient Build & Runtime Logs
+build/*
+!build/.gitkeep
+logs/*
+!logs/.gitkeep
+!logs/README.md
+
+# Dependencies if built locally
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
