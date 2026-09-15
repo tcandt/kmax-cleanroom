@@ -240,15 +240,66 @@ def verify_all():
                  prov_pass,
                  f"{prov_total} functions audited (Binary: {prov_counts.get('RECONSTRUCTED_FROM_BINARY', 0)}, Adapters: {prov_counts.get('GENERATED_ADAPTER', 0)}, Tests/Clock: {prov_counts.get('GENERATED_TEST_INTERFACE', 0)}, Missing: {m_hdr} headers, {m_fld} fields)")
 
-    # 9. Differential Parity Artifacts
+    # 9. Auth Cross-Build Mapping Consistency
+    from tools.verify_auth_mapping_consistency import verify_consistency
+    auth_map_pass = verify_consistency()
+    record_check("Auth Cross-Build Mapping Consistency",
+                 auth_map_pass,
+                 "Canonical maps, source headers, report 07, and walkthrough in 100% agreement")
+
+    # 10. Auth Differential Classification Integrity
     rep_persist = ROOT / "reports" / "06_PHASE2C1_PERSISTENCE.md"
     rep_auth_forensic = ROOT / "reports" / "07_PHASE2C2_AUTH_FORENSICS.md"
     rep_auth_diff = ROOT / "reports" / "08_PHASE2C2_AUTH_DIFFERENTIAL.md"
+    rep_diff_content = rep_auth_diff.read_text(encoding="utf-8") if rep_auth_diff.exists() else ""
 
+    diff_class_pass = (
+        "12/12 AUTH VERIFICATION CASES PASS" in rep_diff_content and
+        "11 DYNAMIC DIFFERENTIAL CASES" in rep_diff_content and
+        "1 STATIC-ORIGINAL / RECONSTRUCTED-RUNTIME TTL PARITY CASE" in rep_diff_content and
+        "| `TC-AUTH-01` | **Valid Password & Login Response Schema** | `STRUCTURAL_EXACT_MATCH` |" in rep_diff_content and
+        "| `TC-AUTH-05` | **User Account with Future ExpiresAt Success** | `STRUCTURAL_EXACT_MATCH` |" in rep_diff_content and
+        "| `TC-AUTH-12` | **Session TTL Expiration (24h) via Mock Clock** | `STATIC_AND_RECON_RUNTIME_PARITY` |" in rep_diff_content and
+        "ALL 12 TESTS PASS (100% PARITY)" not in rep_diff_content
+    )
+    record_check("Auth Differential Classification Integrity",
+                 diff_class_pass,
+                 "TC-AUTH-01/05 structural schema comparison; TC-AUTH-12 qualified as static/runtime parity")
+
+    # 11. Negative Token Matrix Completeness
+    neg_matrix_path = ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_NEGATIVE_TOKEN_MATRIX.json"
+    neg_matrix_pass = False
+    neg_cases = 0
+    if neg_matrix_path.exists():
+        with open(neg_matrix_path, "r", encoding="utf-8") as f:
+            neg_data = json.load(f)
+        neg_cases = len(neg_data)
+        neg_matrix_pass = neg_cases >= 8 and all(c.get("passed") is True for c in neg_data)
+    record_check("Negative Token Matrix Completeness",
+                 neg_matrix_pass,
+                 f"Full 8-case negative matrix verified with 100% PASS ({neg_cases} cases)")
+
+    # 12. Behavior-Slice Provenance Integrity
+    auth_src = (ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "auth" / "authenticator.go").read_text(encoding="utf-8")
+    sess_src = (ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "session" / "manager.go").read_text(encoding="utf-8")
+    token_src = (ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "session" / "token.go").read_text(encoding="utf-8")
+    slice_pass = (
+        "Mapping Scope: BEHAVIOR_SLICE" in auth_src and
+        "Evidence VA Range: 0x73e1c0" in auth_src and
+        "Mapping Scope: BEHAVIOR_SLICE" in sess_src and
+        "Evidence VA Range: 0x739320" in sess_src and
+        "GENERATED_TEST_INTERFACE" in sess_src and
+        "TOKEN_RANDOM_FAILURE_BEHAVIOR: ORIGINAL_DISCARDS_ERROR" in token_src
+    )
+    record_check("Behavior-Slice Provenance Integrity",
+                 slice_pass,
+                 "Clean-room core explicitly separates behavior slices, VA ranges, test interfaces, and error handling")
+
+    # 13. Differential Parity Artifacts Parity
     diff_pass = (
         rep_persist.exists() and "DIFFERENTIAL VERIFICATION PASS" in rep_persist.read_text(encoding="utf-8") and
         rep_auth_forensic.exists() and "GATE PASS" in rep_auth_forensic.read_text(encoding="utf-8") and
-        rep_auth_diff.exists() and "ALL 12 TESTS PASS" in rep_auth_diff.read_text(encoding="utf-8")
+        rep_auth_diff.exists() and "12/12 AUTH VERIFICATION CASES PASS" in rep_diff_content
     )
     record_check("Phase 2C.1 & 2C.2 Differential Reports Parity",
                  diff_pass,

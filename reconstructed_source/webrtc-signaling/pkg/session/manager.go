@@ -1,5 +1,6 @@
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_BUILD_STRUCTURE
+// Mapping Scope: WHOLE_FUNCTION
 // Binary: webrtc-signaling (Linux AMD64 SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol:
 //   - main.vT6rYK_v (VA: 0x739320, size: 288 bytes) -> Session creation, 24h TTL addition, map insertion
@@ -32,6 +33,7 @@ type SessionManager struct {
 
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
 // Original Function Mapping: NONE
 // Source Behavior: constructs SessionManager with optional Clock
 // Confidence: N/A
@@ -47,9 +49,15 @@ func NewSessionManager(clock Clock) *SessionManager {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.vT6rYK_v
 // VA: 0x739320
-// Evidence: generates random 64-char token, adds 24 hours to now, stores Session in map under lock
+// File Offset: 0x339320
+// Size: 288 bytes
+// Binary Behavior: generates random 64-char token, adds 24 hours to now, stores Session in map under lock
+// Excluded Binary Behavior: caller coordination inside login handler
+// Evidence VA Range: 0x739320-0x739440
 // Confidence: HIGH
 func (m *SessionManager) CreateSession(username string) (string, error) {
 	token, err := GenerateToken()
@@ -71,9 +79,15 @@ func (m *SessionManager) CreateSession(username string) (string, error) {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.lYKp_Iuf
 // VA: 0x73b080
-// Evidence: lookup in map under RLock; if time.Now().After(session.ExpiresAt), acquires Lock and deletes token
+// File Offset: 0x33b080
+// Size: 1120 bytes
+// Binary Behavior: lookup in map under RLock; if time.Now().After(session.ExpiresAt), acquires Lock and deletes token
+// Excluded Binary Behavior: HTTP header extraction and UsersStore verification
+// Evidence VA Range: 0x73b270-0x73b330
 // Confidence: HIGH
 func (m *SessionManager) GetSession(token string) (Session, bool) {
 	m.mu.RLock()
@@ -101,9 +115,15 @@ func (m *SessionManager) GetSession(token string) (Session, bool) {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.bjWkHiittd
 // VA: 0x7409a0
-// Evidence: explicit token deletion from session map under mutex lock (runtime.mapdelete_faststr)
+// File Offset: 0x3409a0
+// Size: 1440 bytes
+// Binary Behavior: explicit token deletion from session map under mutex lock (runtime.mapdelete_faststr)
+// Excluded Binary Behavior: HTTP request parsing and response formatting
+// Evidence VA Range: 0x740cf0-0x740d50
 // Confidence: HIGH
 func (m *SessionManager) RevokeSession(token string) {
 	m.mu.Lock()
@@ -113,9 +133,15 @@ func (m *SessionManager) RevokeSession(token string) {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.cFpPBbFet.func1
 // VA: 0x73a580
-// Evidence: iterates session map, deletes all tokens where session.Username == expiredUser.Username
+// File Offset: 0x33a580
+// Size: 1600 bytes
+// Binary Behavior: iterates session map, deletes all tokens where session.Username == expiredUser.Username
+// Excluded Binary Behavior: ticker channel select loop
+// Evidence VA Range: 0x73a700-0x73a8f0
 // Confidence: HIGH
 func (m *SessionManager) RevokeUserSessions(username string) int {
 	m.mu.Lock()
@@ -133,6 +159,7 @@ func (m *SessionManager) RevokeUserSessions(username string) int {
 
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
 // Original Function Mapping: NONE
 // Source Behavior: returns active token count for user (used for testing and diagnostics)
 // Confidence: N/A
@@ -151,11 +178,27 @@ func (m *SessionManager) CountUserSessions(username string) int {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.cFpPBbFet
 // VA: 0x73a500
-// Evidence: spawns 1-minute ticker worker checking UsersStore and revoking expired user tokens
+// File Offset: 0x33a500
+// Size: 128 bytes
+// Binary Behavior: spawns 1-minute ticker worker checking UsersStore and revoking expired user tokens
+// Excluded Binary Behavior: process startup orchestration in main.main
+// Evidence VA Range: 0x73a500-0x73a580
 // Confidence: HIGH
-func (m *SessionManager) StartExpiryWorker(stopCh <-chan struct{}, usersStore *storage.UsersStore, interval time.Duration) {
+func (m *SessionManager) StartExpiryWorker(stopCh <-chan struct{}, usersStore *storage.UsersStore) {
+	m.StartExpiryWorkerWithInterval(stopCh, usersStore, DefaultSweepInterval)
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_TEST_INTERFACE
+// Mapping Scope: GENERATED_TEST_INTERFACE
+// Original Function Mapping: NONE
+// Source Behavior: helper allowing custom ticker intervals for accelerated automated tests
+// Confidence: N/A
+func (m *SessionManager) StartExpiryWorkerWithInterval(stopCh <-chan struct{}, usersStore *storage.UsersStore, interval time.Duration) {
 	if interval <= 0 {
 		interval = DefaultSweepInterval
 	}
@@ -176,9 +219,15 @@ func (m *SessionManager) StartExpiryWorker(stopCh <-chan struct{}, usersStore *s
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.cFpPBbFet.func1
 // VA: 0x73a580
-// Evidence: checks user.ExpiresAt against time.Now(), revokes tokens, logs eviction notice
+// File Offset: 0x33a580
+// Size: 1600 bytes
+// Binary Behavior: checks user.ExpiresAt against time.Now(), revokes tokens, logs eviction notice
+// Excluded Binary Behavior: goroutine loop coordination
+// Evidence VA Range: 0x73a580-0x73a900
 // Confidence: HIGH
 func (m *SessionManager) SweepExpiredUsers(usersStore *storage.UsersStore) int {
 	if usersStore == nil {

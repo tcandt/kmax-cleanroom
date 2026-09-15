@@ -1,0 +1,316 @@
+[
+  {
+    "semantic_role": "AUTH_LOGIN_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.ltOjwqsMl5q8",
+      "va": "0x73dd00",
+      "file_offset": "0x33dd00",
+      "size": 2752
+    },
+    "windows_amd64": {
+      "symbol": "main.u4r2NulQUnF",
+      "va": "0x140346f00",
+      "file_offset": "0x346500",
+      "size": 2784
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "POST /api/login",
+        "OPTIONS /api/login"
+      ],
+      "string_constants": [
+        "Username and password are required",
+        "Invalid username or password",
+        "\\u8d26\\u53f7\\u5df2\\u5230\\u671f\\uff0c\\u8bf7\\u8054\\u7cfb\\u7ba1\\u7406\\u5458\\u5ef6\\u65f6",
+        "token",
+        "username",
+        "role",
+        "assigned_devices"
+      ],
+      "functional_behavior": "Parity across size (2752 vs 2784) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "AUTH_TOKEN_LOOKUP",
+    "linux_amd64": {
+      "symbol": "main.lYKp_Iuf",
+      "va": "0x73b080",
+      "file_offset": "0x33b080",
+      "size": 1120
+    },
+    "windows_amd64": {
+      "symbol": "main.mLWT3o",
+      "va": "0x140344260",
+      "file_offset": "0x343860",
+      "size": 1152
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "Called by 31 protected route handlers across server"
+      ],
+      "string_constants": [
+        "Authorization",
+        "bearer",
+        "token",
+        "NO_AUTH",
+        "no-auth",
+        "admin"
+      ],
+      "functional_behavior": "Parity across size (1120 vs 1152) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "TOKEN_GENERATOR",
+    "linux_amd64": {
+      "symbol": "main.d2SHxnu",
+      "va": "0x739240",
+      "file_offset": "0x339240",
+      "size": 224
+    },
+    "windows_amd64": {
+      "symbol": "main.af9fyOpAy",
+      "va": "0x140342400",
+      "file_offset": "0x341a00",
+      "size": 224
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "Called by main.vT6rYK_v (0x739320)"
+      ],
+      "string_constants": [
+        "0123456789abcdef"
+      ],
+      "functional_behavior": "Parity across size (224 vs 224) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "SESSION_CREATOR",
+    "linux_amd64": {
+      "symbol": "main.vT6rYK_v",
+      "va": "0x739320",
+      "file_offset": "0x339320",
+      "size": 288
+    },
+    "windows_amd64": {
+      "symbol": "main.wdxJrUcsH",
+      "va": "0x1403424e0",
+      "file_offset": "0x341ae0",
+      "size": 288
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "Called by main.ltOjwqsMl5q8 (0x73dd00)"
+      ],
+      "string_constants": [],
+      "functional_behavior": "Parity across size (288 vs 288) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "LOGOUT_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.bjWkHiittd",
+      "va": "0x7409a0",
+      "file_offset": "0x3409a0",
+      "size": 1440
+    },
+    "windows_amd64": {
+      "symbol": "main.blPINsMc3",
+      "va": "0x140349bc0",
+      "file_offset": "0x3491c0",
+      "size": 1440
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "POST /api/logout",
+        "OPTIONS /api/logout"
+      ],
+      "string_constants": [
+        "Authorization",
+        "bearer",
+        "token",
+        "status",
+        "success"
+      ],
+      "functional_behavior": "Parity across size (1440 vs 1440) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "AUTH_STATUS_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.bwvBd1LWVr",
+      "va": "0x73ec40",
+      "file_offset": "0x33ec40",
+      "size": 1216
+    },
+    "windows_amd64": {
+      "symbol": "main.waSrU4iH",
+      "va": "0x140347e60",
+      "file_offset": "0x347460",
+      "size": 1216
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "GET /api/auth-status",
+        "OPTIONS /api/auth-status"
+      ],
+      "string_constants": [
+        "noAuth",
+        "NO_AUTH",
+        "no-auth"
+      ],
+      "functional_behavior": "Parity across size (1216 vs 1216) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "USER_PROFILE_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.gJ0OHScnGnWZ",
+      "va": "0x73f100",
+      "file_offset": "0x33f100",
+      "size": 2816
+    },
+    "windows_amd64": {
+      "symbol": "main.k0Ckv2FQUr",
+      "va": "0x140348320",
+      "file_offset": "0x347920",
+      "size": 2816
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "GET /api/me",
+        "OPTIONS /api/me"
+      ],
+      "string_constants": [
+        "Unauthorized",
+        "username",
+        "role",
+        "assigned_devices",
+        "settings",
+        "expires_at"
+      ],
+      "functional_behavior": "Parity across size (2816 vs 2816) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "PASSWORD_HASH",
+    "linux_amd64": {
+      "symbol": "main.biG96MFIwa",
+      "va": "0x739060",
+      "file_offset": "0x339060",
+      "size": 480
+    },
+    "windows_amd64": {
+      "symbol": "main.sMCA9mvX",
+      "va": "0x140342220",
+      "file_offset": "0x341820",
+      "size": 480
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "Called by main.ltOjwqsMl5q8 (login) and main.aOfaLG (admin init)"
+      ],
+      "string_constants": [
+        "0123456789abcdef"
+      ],
+      "functional_behavior": "Parity across size (480 vs 480) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "SESSION_SWEEPER",
+    "linux_amd64": {
+      "symbol": "main.cFpPBbFet",
+      "va": "0x73a500",
+      "file_offset": "0x33a500",
+      "size": 128
+    },
+    "windows_amd64": {
+      "symbol": "main.wFSLlBV",
+      "va": "0x1403436e0",
+      "file_offset": "0x342ce0",
+      "size": 128
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "Called during server initialization in main.main"
+      ],
+      "string_constants": [],
+      "functional_behavior": "Parity across size (128 vs 128) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "SESSION_SWEEPER_WORKER",
+    "linux_amd64": {
+      "symbol": "main.cFpPBbFet.func1",
+      "va": "0x73a580",
+      "file_offset": "0x33a580",
+      "size": 1600
+    },
+    "windows_amd64": {
+      "symbol": "main.wFSLlBV.func1",
+      "va": "0x140343760",
+      "file_offset": "0x342d60",
+      "size": 1600
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "Background worker goroutine"
+      ],
+      "string_constants": [
+        "[User] Account %s expired, tokens revoked and sessions kicked"
+      ],
+      "functional_behavior": "Parity across size (1600 vs 1600) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "ADMIN_ROLE_CHECK",
+    "linux_amd64": {
+      "symbol": "main.chIaMDTZ",
+      "va": "0x73ae20",
+      "file_offset": "0x33ae20",
+      "size": 320
+    },
+    "windows_amd64": {
+      "symbol": "main.iP8aiT",
+      "va": "0x140344000",
+      "file_offset": "0x343600",
+      "size": 320
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "Called by admin endpoints after token lookup"
+      ],
+      "string_constants": [
+        "Forbidden: admin only",
+        "admin"
+      ],
+      "functional_behavior": "Parity across size (320 vs 320) and callee sequence"
+    }
+  },
+  {
+    "semantic_role": "SESSION_KICK_HANDLER",
+    "linux_amd64": {
+      "symbol": "main.jlRPqj8Kko_8",
+      "va": "0x743c40",
+      "file_offset": "0x343c40",
+      "size": 1184
+    },
+    "windows_amd64": {
+      "symbol": "main.ijEGVZRAZQb",
+      "va": "0x140350b00",
+      "file_offset": "0x350100",
+      "size": 1184
+    },
+    "correlation_evidence": {
+      "route_xrefs": [
+        "POST /api/admin/users/kick",
+        "OPTIONS /api/admin/users/kick"
+      ],
+      "string_constants": [
+        "username",
+        "status",
+        "success"
+      ],
+      "functional_behavior": "Parity across size (1184 vs 1184) and callee sequence"
+    }
+  }
+]

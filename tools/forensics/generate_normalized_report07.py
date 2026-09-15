@@ -1,4 +1,19 @@
-# Phase 2C.2 Forensic Gate Report: Authentication Core & Session Management
+import json
+from pathlib import Path
+
+def generate_report07():
+    corr_path = Path("evidence/go_signaling/auth/AUTH_CROSS_BUILD_CORRELATION.json")
+    correlation = json.loads(corr_path.read_text("utf-8"))
+
+    rows = []
+    for c in correlation:
+        l = c["linux_amd64"]
+        w = c["windows_amd64"]
+        rows.append(
+            f"| `{c['semantic_role']}` | `{l['symbol']}` | `{l['va']}` ({l['size']}B) | `{w['symbol']}` | `{w['va']}` ({w['size']}B) | `{', '.join(c['correlation_evidence']['route_xrefs'])}` |"
+        )
+
+    content = f"""# Phase 2C.2 Forensic Gate Report: Authentication Core & Session Management
 
 **Milestone**: `PHASE_2C.2_AUTH_FORENSICS_GATE`  
 **Binary Targets Analyzed**:
@@ -16,18 +31,7 @@
 
 | Stable Semantic Role | Linux AMD64 Symbol | Linux VA & Size | Windows AMD64 Symbol | Windows VA & Size | Route / Entry Xrefs |
 |---|---|---|---|---|---|
-| `AUTH_LOGIN_HANDLER` | `main.ltOjwqsMl5q8` | `0x73dd00` (2752B) | `main.u4r2NulQUnF` | `0x140346f00` (2784B) | `POST /api/login, OPTIONS /api/login` |
-| `AUTH_TOKEN_LOOKUP` | `main.lYKp_Iuf` | `0x73b080` (1120B) | `main.mLWT3o` | `0x140344260` (1152B) | `Called by 31 protected route handlers across server` |
-| `TOKEN_GENERATOR` | `main.d2SHxnu` | `0x739240` (224B) | `main.af9fyOpAy` | `0x140342400` (224B) | `Called by main.vT6rYK_v (0x739320)` |
-| `SESSION_CREATOR` | `main.vT6rYK_v` | `0x739320` (288B) | `main.wdxJrUcsH` | `0x1403424e0` (288B) | `Called by main.ltOjwqsMl5q8 (0x73dd00)` |
-| `LOGOUT_HANDLER` | `main.bjWkHiittd` | `0x7409a0` (1440B) | `main.blPINsMc3` | `0x140349bc0` (1440B) | `POST /api/logout, OPTIONS /api/logout` |
-| `AUTH_STATUS_HANDLER` | `main.bwvBd1LWVr` | `0x73ec40` (1216B) | `main.waSrU4iH` | `0x140347e60` (1216B) | `GET /api/auth-status, OPTIONS /api/auth-status` |
-| `USER_PROFILE_HANDLER` | `main.gJ0OHScnGnWZ` | `0x73f100` (2816B) | `main.k0Ckv2FQUr` | `0x140348320` (2816B) | `GET /api/me, OPTIONS /api/me` |
-| `PASSWORD_HASH` | `main.biG96MFIwa` | `0x739060` (480B) | `main.sMCA9mvX` | `0x140342220` (480B) | `Called by main.ltOjwqsMl5q8 (login) and main.aOfaLG (admin init)` |
-| `SESSION_SWEEPER` | `main.cFpPBbFet` | `0x73a500` (128B) | `main.wFSLlBV` | `0x1403436e0` (128B) | `Called during server initialization in main.main` |
-| `SESSION_SWEEPER_WORKER` | `main.cFpPBbFet.func1` | `0x73a580` (1600B) | `main.wFSLlBV.func1` | `0x140343760` (1600B) | `Background worker goroutine` |
-| `ADMIN_ROLE_CHECK` | `main.chIaMDTZ` | `0x73ae20` (320B) | `main.iP8aiT` | `0x140344000` (320B) | `Called by admin endpoints after token lookup` |
-| `SESSION_KICK_HANDLER` | `main.jlRPqj8Kko_8` | `0x743c40` (1184B) | `main.ijEGVZRAZQb` | `0x140350b00` (1184B) | `POST /api/admin/users/kick, OPTIONS /api/admin/users/kick` |
+{chr(10).join(rows)}
 
 ---
 
@@ -35,7 +39,7 @@
 
 | Mandate Item | Forensic Classification | Ground Truth Technical Finding | Primary Forensic Evidence Reference |
 |---|---|---|---|
-| **1. Password Formula** | `STATIC_AND_DYNAMIC_CONFIRMED` | $\text{hex\_lower}(\text{SHA256}(\text{password} \,\|\, \text{salt}))$ | Linux: `0x739060` (`main.biG96MFIwa`); Windows: `0x140342220` (`main.sMCA9mvX`), `runtime.concatbyte2` |
+| **1. Password Formula** | `STATIC_AND_DYNAMIC_CONFIRMED` | $\\text{{hex\\_lower}}(\\text{{SHA256}}(\\text{{password}} \\,\\|\\, \\text{{salt}}))$ | Linux: `0x739060` (`main.biG96MFIwa`); Windows: `0x140342220` (`main.sMCA9mvX`), `runtime.concatbyte2` |
 | **2. Password Comparison** | `STATIC_AND_DYNAMIC_CONFIRMED` | Strict length equality check followed by `runtime.memequal` on 64 bytes. Case-sensitive lowercase hex. | Linux: `0x73e292`–`0x73e2ad` (`main.ltOjwqsMl5q8`); Windows: `0x140347390` (`main.u4r2NulQUnF`) |
 | **3. Token Random Source** | `STATIC_BINARY_EVIDENCE` | Standard library `crypto/rand.Read` reading 32 bytes (`RANDOM_INPUT_BITS = 256`). | Linux: `0x73926b` (`main.d2SHxnu`); Windows: `0x14034242b` (`main.af9fyOpAy`) |
 | **4. Token Encoding** | `STATIC_AND_DYNAMIC_CONFIRMED` | Byte-by-byte nibble mapping via lowercase hex lookup table `"0123456789abcdef"`. | Linux: `0x7392ad` (table at `0x827245`); Windows: `0x14034246d` (table at `0x1404327da`) |
@@ -46,7 +50,7 @@
 | **9. Session TTL Expiry** | `STATIC_BINARY_EVIDENCE` | Constant `0x4e94914f0000` nanoseconds = 86,400 seconds = exactly **24 hours**. | Linux: `0x739365` (`movabs rdi, 0x4e94914f0000`); Windows: `0x140342535` (`time.Time.Add`) |
 | **10. Lazy Session Expiry** | `STATIC_AND_DYNAMIC_CONFIRMED` | Checked on every token lookup. If `time.Now().After(session.ExpiresAt)`, token is immediately deleted under mutex lock. | Linux: `0x73b2c9`–`0x73b495` (`main.lYKp_Iuf`); Windows: `0x140344480`–`0x1403445e0` (`main.mLWT3o`) |
 | **11. Periodic Cleanup Sweeper** | `STATIC_BINARY_EVIDENCE` | Background goroutine spawned on 1-minute ticker (`0xdf8475800` ns). Purges all active tokens of expired user accounts (`User.ExpiresAt`). | Linux: `0x73a500` / `0x73a580` (`main.cFpPBbFet`/`func1`); Windows: `0x1403436e0` / `0x140343760` (`main.wFSLlBV`/`func1`) |
-| **12. Logout Revocation** | `STATIC_AND_DYNAMIC_CONFIRMED` | Token explicitly deleted from `sessionMap` under mutex lock. Idempotent; always returns 200 `{"status":"success"}`. | Linux: `0x7409a0` (`main.bjWkHiittd`); Windows: `0x140349bc0` (`main.blPINsMc3`) |
+| **12. Logout Revocation** | `STATIC_AND_DYNAMIC_CONFIRMED` | Token explicitly deleted from `sessionMap` under mutex lock. Idempotent; always returns 200 `{{"status":"success"}}`. | Linux: `0x7409a0` (`main.bjWkHiittd`); Windows: `0x140349bc0` (`main.blPINsMc3`) |
 | **13. Multiple Sessions** | `STATIC_AND_DYNAMIC_CONFIRMED` | Same account can hold multiple concurrent valid sessions. Revoking session A does NOT invalidate session B. | Linux: `0x7393af` (map key is token); Windows: `0x140342590`, Dynamic Oracle |
 | **14. Process Restart Behavior** | `STATIC_AND_DYNAMIC_CONFIRMED` | `SESSION_MEMORY_ONLY`. Sessions reside exclusively in heap memory; zero session files written to disk. Restart invalidates all tokens. | TC-AUTH-11 runtime verification on both original and reconstructed |
 | **15. User `ExpiresAt` Semantics**| `STATIC_AND_DYNAMIC_CONFIRMED` | Distinct from Session TTL. Account expiration rejects login with 403, rejects active session lookups with 401, and triggers sweeper eviction. | Linux: `0x73e263` (`main.ltOjwqsMl5q8`); Windows: `0x140347463` (`main.u4r2NulQUnF`) |
@@ -84,3 +88,9 @@ Static analysis of token generation in both targets:
    Core methods (`AuthenticateCredentials`, `ValidateToken`, `Logout`, `GetUserProfile`) are cleanly isolated as `BEHAVIOR_SLICE` mappings of their corresponding binary handlers, leaving HTTP layer reconstruction strictly to Phase 2C.3.
 3. **Stateful Test Interface**:
    `cmd/auth-tool/main.go` runs as `serve-stdio` to maintain an in-memory `SessionManager` instance across requests without disk persistence shortcuts.
+"""
+    Path("reports/07_PHASE2C2_AUTH_FORENSICS.md").write_text(content, encoding="utf-8")
+    print("Wrote normalized reports/07_PHASE2C2_AUTH_FORENSICS.md")
+
+if __name__ == "__main__":
+    generate_report07()

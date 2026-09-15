@@ -1,5 +1,6 @@
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_BUILD_STRUCTURE
+// Mapping Scope: WHOLE_FUNCTION
 // Binary: webrtc-signaling (Linux AMD64 SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol:
 //   - main.ltOjwqsMl5q8 (VA: 0x73dd00, size: 2752 bytes) -> Login verification, expiration check, credential evaluation
@@ -49,6 +50,7 @@ type Authenticator struct {
 
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
 // Original Function Mapping: NONE
 // Source Behavior: constructs Authenticator with usersStore and sessionMgr
 // Confidence: N/A
@@ -62,9 +64,15 @@ func NewAuthenticator(usersStore *storage.UsersStore, sessionMgr *session.Sessio
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.ltOjwqsMl5q8
 // VA: 0x73dd00
-// Evidence: trims username, verifies required fields, checks user.ExpiresAt, verifies SHA256(password+salt), issues token
+// File Offset: 0x33dd00
+// Size: 2752 bytes
+// Binary Behavior: credential validation + account expiry check + session issuance + response structure assembly
+// Excluded Binary Behavior: HTTP request method checking + JSON request decoding + HTTP status writing (deferred to Phase 2C.3)
+// Evidence VA Range: 0x73e1c0 - 0x73e6a0
 // Confidence: HIGH
 func (a *Authenticator) AuthenticateCredentials(username, password string) (*LoginResult, error) {
 	trimmedUser := strings.TrimSpace(username)
@@ -110,9 +118,15 @@ func (a *Authenticator) AuthenticateCredentials(username, password string) (*Log
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.lYKp_Iuf
 // VA: 0x73b080
-// Evidence: checks noAuth flag/env, resolves token from sessionMap with lazy eviction, checks user.ExpiresAt
+// File Offset: 0x33b080
+// Size: 1120 bytes
+// Binary Behavior: global auth bypass check + in-memory token lookup + lazy TTL check + User.ExpiresAt evaluation
+// Excluded Binary Behavior: HTTP Header / Query parameter token extraction + HTTP response error rendering (deferred to Phase 2C.3)
+// Evidence VA Range: 0x73b09d - 0x73b450
 // Confidence: HIGH
 func (a *Authenticator) ValidateToken(token string) (string, error) {
 	// Global auth bypass evaluation (VA 0x73b09d - 0x73b0cb)
@@ -145,9 +159,15 @@ func (a *Authenticator) ValidateToken(token string) (string, error) {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.bjWkHiittd
 // VA: 0x7409a0
-// Evidence: deletes token from sessionMap under mutex lock (runtime.mapdelete_faststr)
+// File Offset: 0x3409a0
+// Size: 1440 bytes
+// Binary Behavior: session token invalidation from in-memory session store under mutex lock
+// Excluded Binary Behavior: HTTP Header token extraction + HTTP 200 JSON status response formatting (deferred to Phase 2C.3)
+// Evidence VA Range: 0x740cf0 - 0x740d50
 // Confidence: HIGH
 func (a *Authenticator) Logout(token string) {
 	if token != "" {
@@ -157,9 +177,15 @@ func (a *Authenticator) Logout(token string) {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.gJ0OHScnGnWZ
 // VA: 0x73f100
-// Evidence: fetches user from store, omits password and salt, returns sanitized profile
+// File Offset: 0x33f100
+// Size: 2816 bytes
+// Binary Behavior: retrieval of user record from store and field sanitization (dropping password and salt)
+// Excluded Binary Behavior: HTTP token validation invocation + HTTP response marshaling and writing (deferred to Phase 2C.3)
+// Evidence VA Range: 0x73f550 - 0x73fa00
 // Confidence: HIGH
 func (a *Authenticator) GetUserProfile(username string) (*types.User, error) {
 	user, exists := a.usersStore.GetUser(username)

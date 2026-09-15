@@ -1,5 +1,6 @@
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_BUILD_STRUCTURE
+// Mapping Scope: WHOLE_FUNCTION
 // Binary: webrtc-signaling (Linux AMD64 SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.d2SHxnu
 // VA: 0x739240
@@ -23,9 +24,19 @@ import (
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Binary Symbol: main.d2SHxnu
 // VA: 0x739240
+// File Offset: 0x339240
+// Size: 224 bytes
+// Binary Behavior: 32 random bytes read from crypto/rand, hex encoded to 64 lowercase ASCII characters
+// Excluded Binary Behavior: Inlined error-ignore semantics (original discarded error return in disassembly at 0x739270)
 // Evidence: 32 random bytes read from crypto/rand, hex encoded to 64 lowercase ASCII characters
+// Evidence VA Range: 0x739240-0x739320
+// Error Handling Provenance:
+//   - Static Binary Disassembly: VA 0x73926b calls rand.Read; instructions at 0x739270-0x739272 overwrite return registers without testing error
+//   - TOKEN_RANDOM_FAILURE_BEHAVIOR: ORIGINAL_DISCARDS_ERROR / RECONSTRUCTED_GENERATED_ERROR_ADAPTER
 // Confidence: HIGH
 func GenerateToken() (string, error) {
 	b := make([]byte, 32)

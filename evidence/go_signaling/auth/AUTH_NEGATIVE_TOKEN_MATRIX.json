@@ -1,0 +1,136 @@
+[
+  {
+    "case_name": "valid_format_nonexistent_64hex",
+    "headers": {
+      "Authorization": "Bearer 0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "token_tested": "0000000000000000000000000000000000000000000000000000000000000000",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_name": "arbitrary_malformed_token",
+    "headers": {
+      "Authorization": "Bearer not-a-token-at-all!!"
+    },
+    "token_tested": "not-a-token-at-all!!",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_name": "short_token",
+    "headers": {
+      "Authorization": "Bearer abc123"
+    },
+    "token_tested": "abc123",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_name": "empty_token_bearer",
+    "headers": {
+      "Authorization": "Bearer "
+    },
+    "token_tested": "",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_name": "missing_auth_header",
+    "headers": {},
+    "token_tested": "",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_name": "wrong_scheme_basic",
+    "headers": {
+      "Authorization": "Basic YWRtaW46YWRtaW4="
+    },
+    "token_tested": "YWRtaW46YWRtaW4=",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_name": "casing_lowercase_bearer",
+    "headers": {
+      "Authorization": "bearer 0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "token_tested": "0000000000000000000000000000000000000000000000000000000000000000",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  },
+  {
+    "case_name": "casing_uppercase_bearer",
+    "headers": {
+      "Authorization": "BEARER 0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "token_tested": "0000000000000000000000000000000000000000000000000000000000000000",
+    "original_http": {
+      "status_code": 401,
+      "body": "Unauthorized",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "reconstructed_core": {
+      "ok": false,
+      "error": "Unauthorized"
+    },
+    "passed": true
+  }
+]

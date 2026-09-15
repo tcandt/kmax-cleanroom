@@ -1,13 +1,13 @@
 [
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.ltOjwqsMl5q8",
-    "VA": "0x73dd00",
-    "file_offset": "0x33dd00",
-    "function_size": 2752,
+    "binary_symbol": "main.u4r2NulQUnF",
+    "VA": "0x140346f00",
+    "file_offset": "0x346500",
+    "function_size": 2784,
     "semantic_role": "AUTH_LOGIN_HANDLER",
     "confidence": "HIGH",
     "evidence_classes": [
@@ -22,8 +22,8 @@
       "OPTIONS /api/login"
     ],
     "callee_patterns": [
-      "main.biG96MFIwa (0x739060 - SHA256)",
-      "main.vT6rYK_v (0x739320 - Session Creator)",
+      "main.sMCA9mvX (0x140342220 - SHA256)",
+      "main.wdxJrUcsH (0x1403424e0 - Session Creator)",
       "time.Time.After (User.ExpiresAt)"
     ],
     "string_constants": [
@@ -37,14 +37,14 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.lYKp_Iuf",
-    "VA": "0x73b080",
-    "file_offset": "0x33b080",
-    "function_size": 1120,
+    "binary_symbol": "main.mLWT3o",
+    "VA": "0x140344260",
+    "file_offset": "0x343860",
+    "function_size": 1152,
     "semantic_role": "AUTH_TOKEN_LOOKUP",
     "confidence": "HIGH",
     "evidence_classes": [
@@ -75,13 +75,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.d2SHxnu",
-    "VA": "0x739240",
-    "file_offset": "0x339240",
+    "binary_symbol": "main.af9fyOpAy",
+    "VA": "0x140342400",
+    "file_offset": "0x341a00",
     "function_size": 224,
     "semantic_role": "TOKEN_GENERATOR",
     "confidence": "HIGH",
@@ -92,12 +92,12 @@
       "CALLER_CALLEE"
     ],
     "route_xrefs": [
-      "Called by main.vT6rYK_v (0x739320)"
+      "Called by main.wdxJrUcsH (0x1403424e0)"
     ],
     "callee_patterns": [
       "crypto/rand.Read (32 bytes)",
       "runtime.makeslice (64 bytes)",
-      "hex lookup table 0x8271ab",
+      "hex lookup table",
       "runtime.slicebytetostring"
     ],
     "string_constants": [
@@ -105,13 +105,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.vT6rYK_v",
-    "VA": "0x739320",
-    "file_offset": "0x339320",
+    "binary_symbol": "main.wdxJrUcsH",
+    "VA": "0x1403424e0",
+    "file_offset": "0x341ae0",
     "function_size": 288,
     "semantic_role": "SESSION_CREATOR",
     "confidence": "HIGH",
@@ -122,10 +122,10 @@
       "CALLER_CALLEE"
     ],
     "route_xrefs": [
-      "Called by main.ltOjwqsMl5q8 (0x73dd00)"
+      "Called by main.u4r2NulQUnF (0x140346f00)"
     ],
     "callee_patterns": [
-      "main.d2SHxnu (0x739240 - token generator)",
+      "main.af9fyOpAy (0x140342400 - token generator)",
       "sync.Mutex.Lock",
       "time.Now",
       "time.Time.Add (0x4e94914f0000 ns = 24h)",
@@ -135,13 +135,13 @@
     "string_constants": []
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.bjWkHiittd",
-    "VA": "0x7409a0",
-    "file_offset": "0x3409a0",
+    "binary_symbol": "main.blPINsMc3",
+    "VA": "0x140349bc0",
+    "file_offset": "0x3491c0",
     "function_size": 1440,
     "semantic_role": "LOGOUT_HANDLER",
     "confidence": "HIGH",
@@ -172,13 +172,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.bwvBd1LWVr",
-    "VA": "0x73ec40",
-    "file_offset": "0x33ec40",
+    "binary_symbol": "main.waSrU4iH",
+    "VA": "0x140347e60",
+    "file_offset": "0x347460",
     "function_size": 1216,
     "semantic_role": "AUTH_STATUS_HANDLER",
     "confidence": "HIGH",
@@ -195,7 +195,7 @@
     ],
     "callee_patterns": [
       "Check noAuth flag / NO_AUTH env",
-      "main.lYKp_Iuf (optional token auth)",
+      "main.mLWT3o (optional token auth)",
       "json.Marshal({\"noAuth\": bool, ...})"
     ],
     "string_constants": [
@@ -205,13 +205,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.gJ0OHScnGnWZ",
-    "VA": "0x73f100",
-    "file_offset": "0x33f100",
+    "binary_symbol": "main.k0Ckv2FQUr",
+    "VA": "0x140348320",
+    "file_offset": "0x347920",
     "function_size": 2816,
     "semantic_role": "USER_PROFILE_HANDLER",
     "confidence": "HIGH",
@@ -227,7 +227,7 @@
       "OPTIONS /api/me"
     ],
     "callee_patterns": [
-      "main.lYKp_Iuf (token auth)",
+      "main.mLWT3o (token auth)",
       "sync.RWMutex.RLock (UsersStore)",
       "json.Marshal(User details)"
     ],
@@ -241,13 +241,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.biG96MFIwa",
-    "VA": "0x739060",
-    "file_offset": "0x339060",
+    "binary_symbol": "main.sMCA9mvX",
+    "VA": "0x140342220",
+    "file_offset": "0x341820",
     "function_size": 480,
     "semantic_role": "PASSWORD_HASH",
     "confidence": "HIGH",
@@ -258,12 +258,12 @@
       "CALLER_CALLEE"
     ],
     "route_xrefs": [
-      "Called by main.ltOjwqsMl5q8 (login) and main.aOfaLG (admin init)"
+      "Called by main.u4r2NulQUnF (login)"
     ],
     "callee_patterns": [
       "runtime.concatbyte2(password, salt)",
       "crypto/sha256.(*digest).Reset/Write/Sum",
-      "hex lookup table 0x8271ab",
+      "hex lookup table",
       "runtime.slicebytetostring"
     ],
     "string_constants": [
@@ -271,13 +271,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.cFpPBbFet",
-    "VA": "0x73a500",
-    "file_offset": "0x33a500",
+    "binary_symbol": "main.wFSLlBV",
+    "VA": "0x1403436e0",
+    "file_offset": "0x342ce0",
     "function_size": 128,
     "semantic_role": "SESSION_SWEEPER",
     "confidence": "HIGH",
@@ -291,18 +291,18 @@
     ],
     "callee_patterns": [
       "time.NewTicker(0xdf8475800 ns = 1 minute)",
-      "runtime.newproc(main.cFpPBbFet.func1)"
+      "runtime.newproc(main.wFSLlBV.func1)"
     ],
     "string_constants": []
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.cFpPBbFet.func1",
-    "VA": "0x73a580",
-    "file_offset": "0x33a580",
+    "binary_symbol": "main.wFSLlBV.func1",
+    "VA": "0x140343760",
+    "file_offset": "0x342d60",
     "function_size": 1600,
     "semantic_role": "SESSION_SWEEPER_WORKER",
     "confidence": "HIGH",
@@ -326,13 +326,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.chIaMDTZ",
-    "VA": "0x73ae20",
-    "file_offset": "0x33ae20",
+    "binary_symbol": "main.iP8aiT",
+    "VA": "0x140344000",
+    "file_offset": "0x343600",
     "function_size": 320,
     "semantic_role": "ADMIN_ROLE_CHECK",
     "confidence": "HIGH",
@@ -354,13 +354,13 @@
     ]
   },
   {
-    "artifact": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-    "os": "linux",
+    "artifact": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "os": "windows",
     "arch": "amd64",
-    "binary_symbol": "main.jlRPqj8Kko_8",
-    "VA": "0x743c40",
-    "file_offset": "0x343c40",
+    "binary_symbol": "main.ijEGVZRAZQb",
+    "VA": "0x140350b00",
+    "file_offset": "0x350100",
     "function_size": 1184,
     "semantic_role": "SESSION_KICK_HANDLER",
     "confidence": "HIGH",
@@ -374,7 +374,7 @@
       "OPTIONS /api/admin/users/kick"
     ],
     "callee_patterns": [
-      "main.chIaMDTZ (admin check)",
+      "main.iP8aiT (admin check)",
       "sync.Mutex.Lock",
       "runtime.mapdelete_faststr",
       "sync.Mutex.Unlock"
