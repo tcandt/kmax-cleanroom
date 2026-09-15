@@ -1,0 +1,35 @@
+{
+  "target_binary": "webrtc-signaling",
+  "go_compiler_version": "Go 1.22+ (evidence: httpmuxgo121 GODEBUG flag, net/http Enhanced Routing with path values and method matching)",
+  "obfuscator": "garble (evidence: randomized symbol prefixes, stripped buildinfo, intact pclntab)",
+  "http_framework": {
+    "name": "net/http (Standard Library Enhanced ServeMux)",
+    "evidence": "GODEBUG httpmuxgo121=1, standard 405 Method not allowed handler, r.PathValue({id})",
+    "confidence": "STATIC_AND_DYNAMIC_CONFIRMED"
+  },
+  "websocket_library": {
+    "name": "github.com/gorilla/websocket",
+    "evidence": "Verbatim error strings: 'websocket: request origin not allowed by Upgrader.CheckOrigin', 'websocket: response does not implement http.Hijacker', 'concurrent write to websocket connection'",
+    "confidence": "STATIC_CONFIRMED"
+  },
+  "serialization": {
+    "name": "encoding/json (Standard Library)",
+    "evidence": "Standard struct tag format json:\"...\", standard error string 'json: encoding error for type %q'",
+    "confidence": "STATIC_CONFIRMED"
+  },
+  "persistence": {
+    "name": "Flat-File JSON Storage in Data Directory",
+    "evidence": "Dynamic runtime creation of users.json, device_tags.json, snapshots/, downloads/ in scratch_data directory",
+    "confidence": "STATIC_AND_DYNAMIC_CONFIRMED"
+  },
+  "authentication_model": {
+    "name": "In-Memory Session Token + SHA256 Password Hash",
+    "evidence": "users.json format: SHA256(password + salt) with 16-byte random salt, 32-byte random hex session token",
+    "confidence": "STATIC_AND_DYNAMIC_CONFIRMED"
+  },
+  "entitlement_system": {
+    "name": "Node License Key Validator",
+    "evidence": "/api/license_status, /api/activate, /debug/license, claims: machine_id, days_remaining, max_devices, expires_at",
+    "confidence": "STATIC_AND_DYNAMIC_CONFIRMED"
+  }
+}

@@ -1,0 +1,1928 @@
+{
+  "_auth_context": {
+    "login_status": 200,
+    "token_len": 64,
+    "user_role": "admin",
+    "assigned_devices": [
+      "*"
+    ]
+  },
+  "/api/login": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Invalid JSON"
+    },
+    "POST_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Username and password are required"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/logout": {
+    "GET_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"status\":\"success\"}"
+    },
+    "POST_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"status\":\"success\"}"
+    },
+    "POST_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"status\":\"success\"}"
+    },
+    "PUT_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"status\":\"success\"}"
+    },
+    "PUT_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"status\":\"success\"}"
+    },
+    "DELETE_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"status\":\"success\"}"
+    },
+    "DELETE_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"status\":\"success\"}"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/auth-status": {
+    "GET_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"noAuth\":false}"
+    },
+    "POST_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"noAuth\":false}"
+    },
+    "POST_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"noAuth\":false}"
+    },
+    "PUT_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"noAuth\":false}"
+    },
+    "PUT_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"noAuth\":false}"
+    },
+    "DELETE_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"noAuth\":false}"
+    },
+    "DELETE_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"noAuth\":false}"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/user/ai-config": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/devices": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/devices/list": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/default_settings": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/server/addresses": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/ice_servers": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/turn": {
+    "GET_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "POST_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "POST_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "PUT_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "PUT_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "DELETE_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "DELETE_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "OPTIONS_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    }
+  },
+  "/api/license_status": {
+    "GET_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "POST_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "POST_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "PUT_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "PUT_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "DELETE_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "DELETE_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/activate": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Invalid JSON payload"
+    },
+    "POST_empty_json": {
+      "status": 400,
+      "content_type": "application/json",
+      "body": "{\"error\":\"授权码格式错误\"}"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/share/list": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/share/info": {
+    "GET_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Token required"
+    },
+    "POST_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Token required"
+    },
+    "POST_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Token required"
+    },
+    "PUT_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Token required"
+    },
+    "PUT_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Token required"
+    },
+    "DELETE_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Token required"
+    },
+    "DELETE_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Token required"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/share/create": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "DELETE_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "DELETE_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/share/revoke": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/share/extend": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "DELETE_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "DELETE_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/share/update": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "DELETE_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "DELETE_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method Not Allowed"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/share/redeem_card": {
+    "GET_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Invalid payload"
+    },
+    "POST_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Invalid payload"
+    },
+    "POST_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "card_code is required"
+    },
+    "PUT_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Invalid payload"
+    },
+    "PUT_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "card_code is required"
+    },
+    "DELETE_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Invalid payload"
+    },
+    "DELETE_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "card_code is required"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/create": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/delete": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/rename": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/update": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/update_note": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/reset_password": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/kick": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/admin/users/register_device": {
+    "GET_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "POST_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "POST_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "PUT_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "PUT_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "DELETE_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "DELETE_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "OPTIONS_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    }
+  },
+  "/api/admin/assign": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/files": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/me/upload": {
+    "GET_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "POST_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "POST_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "PUT_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "PUT_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "DELETE_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "DELETE_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    },
+    "OPTIONS_no_body": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "404 page not found"
+    }
+  },
+  "/api/tasks": {
+    "GET_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/tasks/details": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "POST_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "PUT_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_no_body": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "DELETE_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Method not allowed"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/tags": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/shortcuts": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/api/version": {
+    "GET_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "POST_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "POST_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "PUT_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "PUT_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "DELETE_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "DELETE_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/register_agent": {
+    "GET_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    },
+    "POST_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    },
+    "POST_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    },
+    "PUT_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    },
+    "PUT_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    },
+    "DELETE_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    },
+    "DELETE_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    },
+    "OPTIONS_no_body": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Bad Request"
+    }
+  },
+  "/connect_client": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    }
+  },
+  "/snapshots": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    },
+    "OPTIONS_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized"
+    }
+  },
+  "/downloads": {
+    "GET_no_body": {
+      "error": "Exceeded 30 redirects."
+    },
+    "POST_no_body": {
+      "error": "Exceeded 30 redirects."
+    },
+    "POST_empty_json": {
+      "error": "Exceeded 30 redirects."
+    },
+    "PUT_no_body": {
+      "error": "Exceeded 30 redirects."
+    },
+    "PUT_empty_json": {
+      "error": "Exceeded 30 redirects."
+    },
+    "DELETE_no_body": {
+      "error": "Exceeded 30 redirects."
+    },
+    "DELETE_empty_json": {
+      "error": "Exceeded 30 redirects."
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "",
+      "body": ""
+    }
+  },
+  "/debug/pprof": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "OPTIONS_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    }
+  },
+  "/debug/pprof/cmdline": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "OPTIONS_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    }
+  },
+  "/debug/pprof/profile": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "OPTIONS_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    }
+  },
+  "/debug/pprof/symbol": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "OPTIONS_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    }
+  },
+  "/debug/pprof/trace": {
+    "GET_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "POST_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "PUT_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "DELETE_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    },
+    "OPTIONS_no_body": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Unauthorized pprof access: missing or invalid token"
+    }
+  },
+  "/debug/license": {
+    "GET_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "POST_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "POST_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "PUT_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "PUT_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "DELETE_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "DELETE_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    },
+    "OPTIONS_no_body": {
+      "status": 200,
+      "content_type": "application/json",
+      "body": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}"
+    }
+  }
+}

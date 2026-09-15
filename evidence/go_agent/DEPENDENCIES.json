@@ -1,0 +1,50 @@
+{
+  "target_binary": "cloudphone-agent",
+  "architecture": "AArch64 (ARM64) & ARMv7",
+  "go_compiler_version": "Go 1.22+",
+  "obfuscator": "garble",
+  "webrtc_library": {
+    "name": "github.com/pion/webrtc/v3",
+    "version": "v3.3.6 (verbatim string in binary: 'Pion WebRTC v3.3.6')",
+    "evidence": "Pion WebRTC v3.3.6, PION_LOG_%s, PIONS_LOG_%s, PeerConnection, DataChannel, SetRemoteDescription, CreateAnswer",
+    "confidence": "STATIC_CONFIRMED"
+  },
+  "ipc_transport": {
+    "name": "Local Abstract UNIX Domain Sockets (UDS)",
+    "evidence": "Socket prefix 'scrcpy' / 'scrcpy_%08x', [Stream] Dial video UDS error: %v, DesktopConnection.java",
+    "confidence": "STATIC_AND_BYTECODE_CORROBORATED"
+  },
+  "companion_helper": {
+    "name": "com.android.helper (libsys_core.so)",
+    "execution": "app_process via shell UID 2000 drop",
+    "staging_path": "/data/local/tmp/libsys_core.so",
+    "integrity": "SHA-256 verification before launch ('INTEGRITY ERROR: libsys_core.so hash mismatch')",
+    "confidence": "STATIC_AND_BYTECODE_CORROBORATED"
+  },
+  "datachannel_protocols": [
+    {
+      "name": "control",
+      "encoding": "Binary Scrcpy Framing (ControlMessageReader.java)"
+    },
+    {
+      "name": "group_control_event",
+      "encoding": "JSON multi-device broadcast (scroll_h, scroll_v, action, keycode, facing, zoom)"
+    },
+    {
+      "name": "file",
+      "encoding": "Binary chunked file transfer ([FileChannel] DataChannel Error)"
+    },
+    {
+      "name": "adb",
+      "encoding": "Transparent adbd bridge ([ADB] OnMessage)"
+    },
+    {
+      "name": "shell",
+      "encoding": "Remote PTY stream ([Shell])"
+    },
+    {
+      "name": "heartbeat",
+      "encoding": "Keepalive latency ping-pong (HEARTBEAT-ACK)"
+    }
+  ]
+}

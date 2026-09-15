@@ -1,0 +1,64 @@
+{
+  "ControlMessage": {
+    "source": "ControlMessageReader.java & agent callgraph",
+    "types": {
+      "0": "INJECT_KEYCODE {action: u8, keycode: i32, repeat: i32, metaState: i32}",
+      "1": "INJECT_TEXT {text: utf8_string}",
+      "2": "INJECT_TOUCH_EVENT {action: u8, pointerId: i64, position: {x: i32, y: i32, w: u16, h: u16}, pressure: float16, actionButton: i32, buttons: i32}",
+      "3": "INJECT_SCROLL_EVENT {position: 12 bytes, hScroll: float, vScroll: float, buttons: i32}",
+      "4": "BACK_OR_SCREEN_ON {action: u8}",
+      "5": "EXPAND_NOTIFICATION_PANEL",
+      "6": "EXPAND_SETTINGS_PANEL",
+      "7": "COLLAPSE_PANELS",
+      "8": "GET_CLIPBOARD {copyKey: u8}",
+      "9": "SET_CLIPBOARD {sequence: i64, text: utf8_string, paste: bool}",
+      "10": "SET_DISPLAY_POWER {on: bool}",
+      "11": "ROTATE_DEVICE",
+      "12": "UHID_CREATE {id: u16, vendorId: u16, productId: u16, name: str, reportDesc: bytes}",
+      "13": "UHID_INPUT {id: u16, data: bytes}",
+      "14": "UHID_DESTROY {id: u16}",
+      "16": "START_APP {name: str}",
+      "18": "REQUEST_KEYFRAME",
+      "19": "SET_BITRATE {bitrate: i32}"
+    }
+  },
+  "DeviceMessage": {
+    "source": "DeviceMessage.java",
+    "types": {
+      "0": "CLIPBOARD {text: utf8_string}",
+      "1": "ACK_CLIPBOARD {sequence: i64}",
+      "2": "UHID_OUTPUT {id: i32, data: bytes}"
+    }
+  },
+  "GroupControlEvent": {
+    "source": "AArch64 agent binary VA 0x54a2a0 (.rodata strings)",
+    "fields": {
+      "type": "string",
+      "id": "string",
+      "name": "string",
+      "action": "int",
+      "keycode": "int",
+      "repeat": "int",
+      "meta": "int",
+      "scroll_h": "float",
+      "scroll_v": "float",
+      "facing": "string",
+      "zoom": "float"
+    }
+  },
+  "StreamVideoHeader": {
+    "size": 12,
+    "fields": {
+      "codec_id": "u32 BE",
+      "width": "u32 BE",
+      "height": "u32 BE"
+    }
+  },
+  "StreamPacketHeader": {
+    "size": 12,
+    "fields": {
+      "pts_and_flags": "u64 BE (bit 63: config, bit 62: keyframe, bits 0-61: pts_us)",
+      "packet_length": "u32 BE"
+    }
+  }
+}

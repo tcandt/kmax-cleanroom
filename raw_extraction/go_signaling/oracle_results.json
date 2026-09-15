@@ -1,0 +1,2025 @@
+{
+  "_baseline_404": {
+    "status": 200,
+    "headers": {
+      "Accept-Ranges": "bytes",
+      "Cache-Control": "no-cache, must-revalidate",
+      "Content-Length": "374",
+      "Content-Type": "text/html; charset=utf-8",
+      "Last-Modified": "Mon, 07 Sep 2026 09:58:39 GMT",
+      "Date": "Tue, 15 Sep 2026 01:23:13 GMT"
+    },
+    "body": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Cloud Phone</title>\n  <script type=\"module\" crossorigin src=\"/assets/index-DIPw8r74.js\"></script>\n  <link rel=\"stylesheet\" crossorigin href=\"/assets/index-CyCEyuNy.css\">\n</head>\n<body>\n  <div id=\"app\"></div>\n</body>\n</html>\n"
+  },
+  "/api/login": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_POST": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid JSON\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_DELETE": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Username and password are required\n"
+    },
+    "post_malformed_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid JSON\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    }
+  },
+  "/api/logout": {
+    "method_GET": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"status\":\"success\"}\n"
+    },
+    "method_POST": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"status\":\"success\"}\n"
+    },
+    "method_PUT": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"status\":\"success\"}\n"
+    },
+    "method_DELETE": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"status\":\"success\"}\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"status\":\"success\"}\n"
+    },
+    "post_malformed_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"status\":\"success\"}\n"
+    },
+    "get_invalid_bearer": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"status\":\"success\"}\n"
+    }
+  },
+  "/api/auth-status": {
+    "method_GET": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"noAuth\":false}\n"
+    },
+    "method_POST": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"noAuth\":false}\n"
+    },
+    "method_PUT": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"noAuth\":false}\n"
+    },
+    "method_DELETE": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"noAuth\":false}\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"noAuth\":false}\n"
+    },
+    "post_malformed_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"noAuth\":false}\n"
+    },
+    "get_invalid_bearer": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"noAuth\":false}\n"
+    }
+  },
+  "/api/user/ai-config": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/devices": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_POST": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "post_malformed_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    }
+  },
+  "/api/devices/list": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_POST": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "post_malformed_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    }
+  },
+  "/api/default_settings": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/server/addresses": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/ice_servers": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/turn": {
+    "method_GET": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_POST": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_PUT": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_DELETE": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_OPTIONS": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "post_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "post_malformed_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "get_invalid_bearer": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    }
+  },
+  "/api/license_status": {
+    "method_GET": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_POST": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_PUT": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_DELETE": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "post_malformed_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "get_invalid_bearer": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    }
+  },
+  "/api/activate": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_POST": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid JSON payload\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_DELETE": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 400,
+      "content_type": "application/json",
+      "body_snippet": "{\"error\":\"授权码格式错误\"}\n"
+    },
+    "post_malformed_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid JSON payload\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    }
+  },
+  "/api/share/list": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/share/info": {
+    "method_GET": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Token required\n"
+    },
+    "method_POST": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Token required\n"
+    },
+    "method_PUT": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Token required\n"
+    },
+    "method_DELETE": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Token required\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Token required\n"
+    },
+    "post_malformed_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Token required\n"
+    },
+    "get_invalid_bearer": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Token required\n"
+    }
+  },
+  "/api/share/create": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_DELETE": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    }
+  },
+  "/api/share/revoke": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/share/extend": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_DELETE": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    }
+  },
+  "/api/share/update": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_DELETE": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method Not Allowed\n"
+    }
+  },
+  "/api/share/redeem_card": {
+    "method_GET": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid payload\n"
+    },
+    "method_POST": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid payload\n"
+    },
+    "method_PUT": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid payload\n"
+    },
+    "method_DELETE": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid payload\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "card_code is required\n"
+    },
+    "post_malformed_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid payload\n"
+    },
+    "get_invalid_bearer": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Invalid payload\n"
+    }
+  },
+  "/api/admin/users": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/create": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/delete": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/rename": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/update": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/update_note": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/reset_password": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/kick": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/admin/users/register_device": {
+    "method_GET": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_POST": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_PUT": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_DELETE": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_OPTIONS": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "post_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "post_malformed_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "get_invalid_bearer": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    }
+  },
+  "/api/admin/assign": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/files": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/me/upload": {
+    "method_GET": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_POST": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_PUT": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_DELETE": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "method_OPTIONS": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "post_empty_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "post_malformed_json": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    },
+    "get_invalid_bearer": {
+      "status": 404,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "404 page not found\n"
+    }
+  },
+  "/api/tasks": {
+    "method_GET": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_DELETE": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    }
+  },
+  "/api/tasks/details": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_PUT": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_DELETE": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "post_malformed_json": {
+      "status": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Method not allowed\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/tags": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/shortcuts": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/api/version": {
+    "method_GET": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}\n"
+    },
+    "method_POST": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}\n"
+    },
+    "method_PUT": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}\n"
+    },
+    "method_DELETE": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}\n"
+    },
+    "post_malformed_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}\n"
+    },
+    "get_invalid_bearer": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}\n"
+    }
+  },
+  "/register_agent": {
+    "method_GET": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    },
+    "method_POST": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    },
+    "method_PUT": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    },
+    "method_DELETE": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    },
+    "method_OPTIONS": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    },
+    "post_empty_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    },
+    "post_malformed_json": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    },
+    "get_invalid_bearer": {
+      "status": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Bad Request\n"
+    }
+  },
+  "/connect_client": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/snapshots": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "method_OPTIONS": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized\n"
+    }
+  },
+  "/downloads": {
+    "method_GET": {
+      "error": "Exceeded 30 redirects."
+    },
+    "method_POST": {
+      "error": "Exceeded 30 redirects."
+    },
+    "method_PUT": {
+      "error": "Exceeded 30 redirects."
+    },
+    "method_DELETE": {
+      "error": "Exceeded 30 redirects."
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "",
+      "body_snippet": ""
+    },
+    "post_empty_json": {
+      "error": "Exceeded 30 redirects."
+    },
+    "post_malformed_json": {
+      "error": "Exceeded 30 redirects."
+    },
+    "get_invalid_bearer": {
+      "error": "Exceeded 30 redirects."
+    }
+  },
+  "/debug/pprof": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_OPTIONS": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    }
+  },
+  "/debug/pprof/cmdline": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_OPTIONS": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    }
+  },
+  "/debug/pprof/profile": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_OPTIONS": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    }
+  },
+  "/debug/pprof/symbol": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_OPTIONS": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    }
+  },
+  "/debug/pprof/trace": {
+    "method_GET": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_POST": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_PUT": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_DELETE": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "method_OPTIONS": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_empty_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "post_malformed_json": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    },
+    "get_invalid_bearer": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "body_snippet": "Unauthorized pprof access: missing or invalid token\n"
+    }
+  },
+  "/debug/license": {
+    "method_GET": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_POST": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_PUT": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_DELETE": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "method_OPTIONS": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "post_empty_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "post_malformed_json": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    },
+    "get_invalid_bearer": {
+      "status": 200,
+      "content_type": "application/json",
+      "body_snippet": "{\"activated\":false,\"current_devices\":0,\"customer\":\"\",\"days_remaining\":47,\"error_msg\":\"\",\"expires_at\":\"2026-11-01\",\"license_expired\":false,\"license_source\":\"built-in\",\"machine_id\":\"8AD9-A7EF-87FB-E780\",\"max_devices\":20,\"post_promo_max_devices\":10,\"promo\":true,\"status\":\"valid\"}\n"
+    }
+  },
+  "_login_deep_probes": {
+    "{}": {
+      "status": 400,
+      "headers": {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Tue, 15 Sep 2026 01:23:19 GMT",
+        "Content-Length": "35"
+      },
+      "body": "Username and password are required\n"
+    },
+    "{\"username\": \"\"}": {
+      "status": 400,
+      "headers": {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Tue, 15 Sep 2026 01:23:19 GMT",
+        "Content-Length": "35"
+      },
+      "body": "Username and password are required\n"
+    },
+    "{\"username\": \"admin\"}": {
+      "status": 400,
+      "headers": {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Tue, 15 Sep 2026 01:23:19 GMT",
+        "Content-Length": "35"
+      },
+      "body": "Username and password are required\n"
+    },
+    "{\"username\": \"admin\", \"password\": \"\"}": {
+      "status": 400,
+      "headers": {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Tue, 15 Sep 2026 01:23:19 GMT",
+        "Content-Length": "35"
+      },
+      "body": "Username and password are required\n"
+    },
+    "{\"username\": \"admin\", \"password\": \"wrongpassword\"}": {
+      "status": 401,
+      "headers": {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Tue, 15 Sep 2026 01:23:19 GMT",
+        "Content-Length": "29"
+      },
+      "body": "Invalid username or password\n"
+    },
+    "{\"username\": \"admin\", \"password\": \"admin\"}": {
+      "status": 401,
+      "headers": {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Tue, 15 Sep 2026 01:23:19 GMT",
+        "Content-Length": "29"
+      },
+      "body": "Invalid username or password\n"
+    },
+    "{\"username\": 123, \"password\": true}": {
+      "status": 400,
+      "headers": {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Tue, 15 Sep 2026 01:23:19 GMT",
+        "Content-Length": "13"
+      },
+      "body": "Invalid JSON\n"
+    }
+  }
+}

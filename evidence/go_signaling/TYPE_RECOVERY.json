@@ -1,0 +1,73 @@
+{
+  "User": {
+    "fields": {
+      "username": "string",
+      "password": "string (SHA256 hex)",
+      "salt": "string (16-byte hex)",
+      "role": "string ('admin' | 'user')",
+      "assigned_devices": "[]string",
+      "note": "string",
+      "forbid_bitrate": "bool",
+      "forbid_fps": "bool",
+      "forbid_resolution": "bool",
+      "forbid_audio": "bool",
+      "expires_at": "time.Time"
+    },
+    "source": "users.json persistence schema & /api/admin/users response"
+  },
+  "LoginRequest": {
+    "fields": {
+      "username": "string (required)",
+      "password": "string (required)"
+    },
+    "source": "POST /api/login probe verification"
+  },
+  "LoginResponse": {
+    "fields": {
+      "username": "string",
+      "role": "string",
+      "token": "string (64 hex characters)",
+      "assigned_devices": "[]string"
+    },
+    "source": "POST /api/login response verification"
+  },
+  "LicenseStatus": {
+    "fields": {
+      "activated": "bool",
+      "current_devices": "int",
+      "customer": "string",
+      "days_remaining": "int",
+      "error_msg": "string",
+      "expires_at": "string",
+      "license_expired": "bool",
+      "license_source": "string",
+      "machine_id": "string",
+      "max_devices": "int",
+      "post_promo_max_devices": "int",
+      "promo": "bool",
+      "status": "string ('valid')"
+    },
+    "source": "GET /api/license_status verified response"
+  },
+  "ShareToken": {
+    "fields": {
+      "token_id": "string",
+      "token": "string",
+      "device_id": "string",
+      "description": "string",
+      "guest_settings": "map[string]interface{}",
+      "expire_seconds": "int64",
+      "expires_at": "time.Time"
+    },
+    "source": ".rodata JSON tags & /api/share/list verified schema"
+  },
+  "ServerAddressesResponse": {
+    "fields": {
+      "code": "int (0)",
+      "data": {
+        "addresses": "[]string"
+      }
+    },
+    "source": "GET /api/server/addresses verified response"
+  }
+}
