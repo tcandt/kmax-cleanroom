@@ -4,14 +4,15 @@
     "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
     "source_repository": "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
     "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-    "description": "Granular classification of WebRTC DataChannels extracted from reference frontend. Every attribute is categorized into REFERENCE_OBSERVED, BINARY_CONFIRMED, INFERRED, or UNKNOWN."
+    "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+    "description": "Granular classification of WebRTC DataChannels dynamically extracted from pinned reference frontend source. Every attribute is categorized into REFERENCE_OBSERVED, BINARY_CONFIRMED, INFERRED, or UNKNOWN."
   },
   "channels": [
     {
       "label": "input-channel",
       "creator_side": "Agent",
       "creator_side_evidence": "REFERENCE_OBSERVED",
-      "negotiation_method": "pc.ondatachannel (agent initiates)",
+      "negotiation_method": "pc.ondatachannel (agent initiates 'input-channel')",
       "ordered": "UNKNOWN_FROM_FRONTEND",
       "ordered_evidence": "UNKNOWN",
       "binary_type": "UNKNOWN_FROM_FRONTEND",
@@ -135,13 +136,14 @@
         "evidence": "INFERRED",
         "notes": "Prior hypothesis of binary control packet framing is unobserved in reference frontend and requires agent binary verification before adoption."
       },
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:752-760, 1031-1044, 1141-1152, 1531-1570"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:752-760, 1031-1044, 1141-1152, 1531-1570",
+      "annotation_binding": "ANN-DC-01, ANN-DC-02, ANN-DC-03"
     },
     {
       "label": "clipboard-channel",
       "creator_side": "Agent",
       "creator_side_evidence": "REFERENCE_OBSERVED",
-      "negotiation_method": "pc.ondatachannel (agent initiates)",
+      "negotiation_method": "pc.ondatachannel (agent initiates 'clipboard-channel')",
       "ordered": "UNKNOWN_FROM_FRONTEND",
       "ordered_evidence": "UNKNOWN",
       "binary_type": "UNKNOWN_FROM_FRONTEND",
@@ -168,13 +170,14 @@
           "evidence": "REFERENCE_OBSERVED"
         }
       },
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761-786, 1195-1215"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761-786, 1195-1215",
+      "annotation_binding": "ANN-DC-04"
     },
     {
       "label": "camera-channel",
       "creator_side": "Agent",
       "creator_side_evidence": "REFERENCE_OBSERVED",
-      "negotiation_method": "pc.ondatachannel (agent initiates)",
+      "negotiation_method": "pc.ondatachannel (agent initiates 'camera-channel')",
       "ordered": "UNKNOWN_FROM_FRONTEND",
       "ordered_evidence": "UNKNOWN",
       "binary_type": "UNKNOWN_FROM_FRONTEND",
@@ -189,7 +192,8 @@
           "evidence": "REFERENCE_OBSERVED"
         }
       },
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787-815"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787-815",
+      "annotation_binding": "ANN-DC-05"
     },
     {
       "label": "file-channel",
@@ -214,7 +218,8 @@
           "evidence": "REFERENCE_OBSERVED"
         }
       },
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:579-581, 1366"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:579-581, 1366",
+      "annotation_binding": "ANN-DC-06"
     },
     {
       "label": "ai-command-channel",
@@ -239,7 +244,8 @@
           "evidence": "REFERENCE_OBSERVED"
         }
       },
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:304-335, 358-361"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:304-335, 358-361",
+      "annotation_binding": "ANN-DC-07"
     },
     {
       "label": "adb-channel",
@@ -260,7 +266,8 @@
           "evidence": "REFERENCE_OBSERVED"
         }
       },
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1237-1250"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1237-1250",
+      "annotation_binding": "ANN-DC-08"
     }
   ]
 }

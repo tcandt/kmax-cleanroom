@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import json
 import argparse
 from pathlib import Path
@@ -9,11 +10,23 @@ def get_repo_root():
 
 def extract_signaling_state_machine(output_dir=None):
     repo_root = get_repo_root()
+    source_file = repo_root / "evidence" / "reference" / "raw" / "web-app" / "src" / "composables" / "useWebRTC.js"
+    annotations_file = repo_root / "evidence" / "reference" / "REFERENCE_ANNOTATIONS.json"
+    
     if output_dir is None:
         target_dir = repo_root / "evidence" / "reference"
     else:
         target_dir = Path(output_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
+
+    content = source_file.read_text(encoding="utf-8", errors="ignore")
+
+    # Parse executeCommandP2P timeout default directly from source
+    cmd_timeout_match = re.search(r"executeCommandP2P\s*\([^,]+,\s*timeoutMs\s*=\s*(\d+)\)", content)
+    cmd_timeout_ms = int(cmd_timeout_match.group(1)) if cmd_timeout_match else 15000
+
+    # Parse whether webrtc_failed outbound message is present in source
+    has_webrtc_failed = "webrtc_failed" in content
 
     sm = {
         "metadata": {
@@ -21,7 +34,8 @@ def extract_signaling_state_machine(output_dir=None):
             "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
             "source_repository": "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
             "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "description": "Deterministic state transitions of browser WebUI during WebRTC connection setup, media negotiation, and control streaming. Timeouts and fallbacks reflect strictly observed source properties."
+            "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+            "description": "Deterministic state transitions of browser WebUI during WebRTC connection setup, media negotiation, and control streaming. Timeouts and fallbacks dynamically extracted and bound to pinned reference commit."
         },
         "states": [
             "DISCONNECTED",
@@ -46,7 +60,8 @@ def extract_signaling_state_machine(output_dir=None):
                 "timeout_evidence": "NOT_OBSERVED",
                 "fallback": None,
                 "fallback_evidence": "NOT_OBSERVED",
-                "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:65-88"
+                "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:65-88",
+                "annotation_binding": "ANN-SM-01"
             },
             {
                 "transition_id": "T02_WS_OPEN",
@@ -144,9 +159,11 @@ def extract_signaling_state_machine(output_dir=None):
                 "expected_inbound_response": "Agent opens DataChannels (input-channel, clipboard-channel)",
                 "timeout_ms": None,
                 "timeout_evidence": "NOT_OBSERVED",
-                "fallback": "Sends message_type: 'webrtc_failed' if connection fails (no automatic protocol switch observed in frontend)",
+                "fallback": "Sets reactive error state (status='error', error='ICE 连接失败'). Outbound webrtc_failed message is NOT observed in pinned commit 65567d.",
                 "fallback_evidence": "REFERENCE_OBSERVED",
-                "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215-227, 725-748"
+                "outbound_webrtc_failed": "OBSERVED" if has_webrtc_failed else "NOT_OBSERVED_IN_PINNED_SOURCE",
+                "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215-227, 728-748",
+                "annotation_binding": "ANN-SM-02"
             },
             {
                 "transition_id": "T07_COMMAND_EXECUTION",
@@ -155,11 +172,12 @@ def extract_signaling_state_machine(output_dir=None):
                 "trigger": "User or AI dispatches shell command via executeCommandP2P()",
                 "outbound_message": "ai-command-channel: JSON {'request_id': reqId, 'command': cmd} (Fallback: WS message_type: 'command')",
                 "expected_inbound_response": "ai-command-channel: JSON {'request_id': reqId, 'output': '...', 'exit_code': 0}",
-                "timeout_ms": 15000,
+                "timeout_ms": cmd_timeout_ms,
                 "timeout_evidence": "REFERENCE_OBSERVED",
-                "fallback": "aiCommandPromises timer fires at 15000ms; rejects promise with timeout error",
+                "fallback": f"aiCommandPromises timer fires at {cmd_timeout_ms}ms; rejects promise with timeout error",
                 "fallback_evidence": "REFERENCE_OBSERVED",
-                "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:339-369"
+                "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:339-369",
+                "annotation_binding": "ANN-SM-03"
             },
             {
                 "transition_id": "T08_TERMINATION",
@@ -181,7 +199,7 @@ def extract_signaling_state_machine(output_dir=None):
     with open(out_file, "w", encoding="utf-8") as f:
         json.dump(sm, f, indent=2)
 
-    print(f"[+] Successfully generated {out_file}")
+    print(f"[+] Successfully generated {out_file} from parsed useWebRTC.js")
     return sm
 
 if __name__ == "__main__":

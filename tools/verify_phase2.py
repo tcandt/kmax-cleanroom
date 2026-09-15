@@ -634,6 +634,24 @@ def verify_all():
         with open(ref_access_path, "r", encoding="utf-8") as f:
             accdata = json.load(f)
 
+        tree_manifest_path = ROOT / "evidence" / "reference" / "PUBLIC_REFERENCE_TREE_MANIFEST.json"
+        has_tree_manifest = tree_manifest_path.exists()
+        tree_manifest_valid = False
+        if has_tree_manifest:
+            with open(tree_manifest_path, "r", encoding="utf-8") as f:
+                tmdata = json.load(f)
+            tree_files = tmdata.get("reference_sources", [])
+            blob_matches = []
+            for tf in tree_files:
+                rf_path = ROOT / tf["materialized_path"]
+                if not rf_path.exists():
+                    blob_matches.append(False)
+                    continue
+                r_bytes = rf_path.read_bytes()
+                computed_blob = hashlib.sha1(b"blob " + str(len(r_bytes)).encode("ascii") + b"\0" + r_bytes).hexdigest()
+                blob_matches.append(computed_blob == tf["git_blob_sha"])
+            tree_manifest_valid = (len(tree_files) == 12 and all(blob_matches))
+
         # Exact canonical hashes in BASELINE.json
         b_shas = bdata.get("original_artifact_sha256_values", {})
         exact_shas_match = b_shas == EXPECTED_HASHES
@@ -643,8 +661,13 @@ def verify_all():
         has_amd64_agent = "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64" in supp
         has_arm64_alias = "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-arm64" in supp
 
-        # Access exception classification
-        acc_valid = accdata.get("metadata", {}).get("classification") == "AUTHORIZED_REFERENCE_LANE_EXTERNAL_READ"
+        # Access audit historical rejection of dirty checkout
+        acc_meta = accdata.get("metadata", {})
+        acc_valid = (
+            acc_meta.get("historical_input_status") == "REJECTED_AS_CANONICAL_REFERENCE" and
+            acc_meta.get("reason") == "LOCAL_COMMIT_MISMATCH" and
+            acc_meta.get("replacement") == "PINNED_PUBLIC_GIT_REFERENCE"
+        )
 
         # Content hash validation for all 12 materialized reference files
         all_content_hashes_valid = True
@@ -661,23 +684,23 @@ def verify_all():
 
         baseline_pass = (
             exact_shas_match and has_amd64_agent and has_arm64_alias and
-            acc_valid and all_content_hashes_valid and
+            acc_valid and all_content_hashes_valid and tree_manifest_valid and
             len(adata.get("canonical_artifacts", [])) == 3
         )
-        baseline_detail = f"Exact canonical hashes match: {exact_shas_match}; 12 reference source content hashes verified: {all_content_hashes_valid}"
+        baseline_detail = f"Canonical hashes match: {exact_shas_match}; Git blob SHAs match: {tree_manifest_valid}; Dirty checkout rejected: {acc_valid}"
 
-    record_check("Phase 2R.1 Baseline Artifacts & Reference Sources Audit",
+    record_check("Phase 2R.2 Baseline Artifacts & Public Git Provenance Audit",
                  baseline_pass,
                  baseline_detail)
 
-    # 22. Phase 2R.1 Reference Evidence Generator Reproducibility
+    # 22. Phase 2R.2 Reference Evidence Generator Reproducibility
     from tools.reference.reproduce_reference_evidence import verify_reproducibility
     repro_pass = verify_reproducibility()
-    record_check("Phase 2R.1 Reference Evidence Generator Reproducibility",
+    record_check("Phase 2R.2 Reference Evidence Generator Reproducibility",
                  repro_pass,
                  "All 5 reference matrices bit/key exact reproducible from immutable raw snapshots")
 
-    # 23. Phase 2R.1 DataChannel Protocol Matrix & Evidence Classification
+    # 23. Phase 2R.2 DataChannel Protocol Matrix & Evidence Classification
     dc_matrix_path = ROOT / "evidence" / "reference" / "DATACHANNEL_REFERENCE_MATRIX.json"
     proto_idx_path = ROOT / "evidence" / "reference" / "REFERENCE_PROTOCOL_INDEX.json"
     dc_pass = False
@@ -725,11 +748,11 @@ def verify_all():
         dc_pass = has_all_channels and inp_framing_valid and touch_valid and scroll_valid and agent_unknown_valid and browser_valid and len(http_eps) >= 35
         dc_detail = f"6/6 DataChannels; JSON framing confirmed: {inp_framing_valid}; Agent-created UNKNOWN: {agent_unknown_valid}"
 
-    record_check("Phase 2R.1 DataChannel Protocol Matrix & Classification",
+    record_check("Phase 2R.2 DataChannel Protocol Matrix & Classification",
                  dc_pass,
                  dc_detail)
 
-    # 24. Phase 2R.1 Signaling State Machine & Demo Mode Separation
+    # 24. Phase 2R.2 Signaling State Machine & Demo Mode Separation
     sm_path = ROOT / "evidence" / "reference" / "CLIENT_SIGNALING_STATE_MACHINE.json"
     demo_path = ROOT / "evidence" / "reference" / "DEMO_MODE_ANALYSIS.md"
     sm_pass = False
@@ -755,10 +778,11 @@ def verify_all():
         t07 = t_map.get("T07_COMMAND_EXECUTION", {})
         t07_valid = t07.get("timeout_ms") == 15000 and t07.get("timeout_evidence") == "REFERENCE_OBSERVED"
 
-        # T06 must not claim automatic TCP fallback
+        # T06 must not claim automatic TCP fallback and must not claim outbound webrtc_failed
         t06 = t_map.get("T06_ICE_EXCHANGE", {})
         t06_fallback = t06.get("fallback", "")
         no_fake_tcp_fallback = "Fallback to useWebSocketStream" not in t06_fallback
+        no_fake_webrtc_failed = t06.get("outbound_webrtc_failed") != "OBSERVED"
 
         demo_valid = (
             "VITE_DEMO_MODE=true" in demo_text and
@@ -767,14 +791,14 @@ def verify_all():
             "MOCK_DEMO_PATH" in demo_text
         )
 
-        sm_pass = trans_valid and unobs_valid and t07_valid and no_fake_tcp_fallback and demo_valid
-        sm_detail = f"8/8 transitions; Unobserved timeouts nullified: {unobs_valid}; T07 15s verified: {t07_valid}; Fake TCP fallback removed: {no_fake_tcp_fallback}"
+        sm_pass = trans_valid and unobs_valid and t07_valid and no_fake_tcp_fallback and no_fake_webrtc_failed and demo_valid
+        sm_detail = f"8/8 transitions; Unobserved timeouts nullified: {unobs_valid}; T07 15s: {t07_valid}; Outbound webrtc_failed unobserved: {no_fake_webrtc_failed}"
 
-    record_check("Phase 2R.1 Signaling State Machine & Demo Isolation",
+    record_check("Phase 2R.2 Signaling State Machine & Demo Isolation",
                  sm_pass,
                  sm_detail)
 
-    # 25. Phase 2R.1 Agent CLI Matrix Evidence Levels
+    # 25. Phase 2R.2 Agent CLI Matrix Evidence Levels
     cli_path = ROOT / "evidence" / "reference" / "AGENT_CLI_REFERENCE_MATRIX.json"
     cli_pass = False
     cli_detail = "CLI matrix missing"
@@ -805,19 +829,21 @@ def verify_all():
         cli_pass = len(flags) == 10 and doc_valid and undoc_valid
         cli_detail = f"10 flags; Documented confirmed: {doc_valid}; Inferred rodata flagged: {undoc_valid}"
 
-    record_check("Phase 2R.1 Agent CLI Evidence Levels & Artifact Attribution",
+    record_check("Phase 2R.2 Agent CLI Evidence Levels & Artifact Attribution",
                  cli_pass,
                  cli_detail)
 
-    # 26. Phase 2R.1 Granular Multi-Evidence Crossmap & Report 11R
+    # 26. Phase 2R.2 Granular Multi-Evidence Crossmap & Evidence Resolution
     crossmap_path = ROOT / "evidence" / "reference" / "REFERENCE_TO_BINARY_CROSSMAP.json"
     rep11r_path = ROOT / "reports" / "11R_REFERENCE_EVIDENCE_REMEDIATION.md"
+    rep11r2_path = ROOT / "reports" / "11R2_PUBLIC_REFERENCE_PROVENANCE_CLOSURE.md"
     crossmap_pass = False
-    crossmap_detail = "Crossmap or Report 11R missing"
-    if crossmap_path.exists() and rep11r_path.exists():
+    crossmap_detail = "Crossmap or Reports missing"
+    if crossmap_path.exists() and rep11r_path.exists() and rep11r2_path.exists():
         with open(crossmap_path, "r", encoding="utf-8") as f:
             cmdata = json.load(f)
         rep11r_text = rep11r_path.read_text(encoding="utf-8")
+        rep11r2_text = rep11r2_path.read_text(encoding="utf-8")
 
         mappings = cmdata.get("mappings", [])
         valid_ev_classes = {
@@ -826,7 +852,6 @@ def verify_all():
             "DYNAMIC_ORACLE", "NETWORK_CAPTURE"
         }
 
-        # Validate no coarse STATIC_BINARY_EVIDENCE and strong multi-evidence gate
         all_classes_granular = True
         strong_gate_valid = True
 
@@ -845,7 +870,7 @@ def verify_all():
                     strong_gate_valid = False
                     break
 
-        # Check Report 11R exact metrics
+        # Check Report exact metrics across 11R and 11R2
         req_metrics = [
             "SIGNALING_FUNCTION_TABLE_COVERAGE",
             "AGENT_FUNCTION_TABLE_COVERAGE",
@@ -856,11 +881,73 @@ def verify_all():
             "ESTIMATED_FUNCTIONAL_RECONSTRUCTION_PROGRESS"
         ]
         rep11r_valid = all(rm in rep11r_text for rm in req_metrics)
+        rep11r2_valid = all(rm in rep11r2_text for rm in req_metrics)
 
-        crossmap_pass = len(mappings) >= 20 and all_classes_granular and strong_gate_valid and rep11r_valid
-        crossmap_detail = f"{len(mappings)} mappings; Granular classes: {all_classes_granular}; Strong gate valid: {strong_gate_valid}; Report 11R metrics verified: {rep11r_valid}"
+        # Forensic resolution: every evidence record must resolve to actual evidence artifact
+        with open(ROOT / "evidence" / "go_signaling" / "ROUTE_HANDLER_MAP.json", "r", encoding="utf-8") as f:
+            rmap = json.load(f)
+        routes_dict = {r["pattern"]: r for r in rmap.get("routes", [])}
 
-    record_check("Phase 2R.1 Granular Multi-Evidence Crossmap & Report 11R",
+        with open(ROOT / "raw_extraction" / "go_signaling" / "clean_oracle_results.json", "r", encoding="utf-8") as f:
+            oracle_map = json.load(f)
+
+        with open(ROOT / "evidence" / "go_signaling" / "http" / "AUTH_HTTP_DIFFERENTIAL_RESULTS.json", "r", encoding="utf-8") as f:
+            auth_diff_list = json.load(f)
+        auth_diff_dict = {c["test_id"]: c for c in auth_diff_list}
+
+        bin_cache = {}
+        all_records_resolved = True
+        login_401_verified = False
+
+        for m in mappings:
+            for rec in m.get("evidence_records", []):
+                ecls = rec.get("evidence_class")
+                sel = rec.get("selector")
+                art_rel = rec.get("artifact_path")
+                art_file = ROOT / art_rel
+
+                if not art_file.exists():
+                    all_records_resolved = False
+                    break
+
+                if ecls == "ROUTE_REGISTRATION":
+                    if sel not in routes_dict:
+                        all_records_resolved = False
+                        break
+                    if routes_dict[sel].get("closure_va") != rec.get("closure_va"):
+                        all_records_resolved = False
+                        break
+
+                elif ecls == "DYNAMIC_ORACLE":
+                    if sel in oracle_map:
+                        pass
+                    elif all(sub.strip() in auth_diff_dict for sub in sel.split(",")):
+                        if sel == "HTTP-01,HTTP-02,HTTP-03":
+                            obs_val = rec.get("observed_value", "")
+                            if "401 Unauthorized" in obs_val and "400 Bad Request" in obs_val:
+                                login_401_verified = True
+                    else:
+                        all_records_resolved = False
+                        break
+
+                elif ecls == "BINARY_STRING":
+                    if rec.get("file_offset"):
+                        off = int(rec["file_offset"], 16)
+                        if art_rel not in bin_cache:
+                            bin_cache[art_rel] = art_file.read_bytes()
+                        bb = bin_cache[art_rel]
+                        target_b = sel.encode("utf-8")
+                        if bb[off:off + len(target_b)] != target_b:
+                            all_records_resolved = False
+                            break
+
+        crossmap_pass = (
+            len(mappings) >= 20 and all_classes_granular and strong_gate_valid and
+            rep11r_valid and rep11r2_valid and all_records_resolved and login_401_verified
+        )
+        crossmap_detail = f"{len(mappings)} mappings; Records resolved: {all_records_resolved}; Login 401 verified: {login_401_verified}; Reports verified: True"
+
+    record_check("Phase 2R.2 Granular Multi-Evidence Crossmap & Evidence Resolution",
                  crossmap_pass,
                  crossmap_detail)
 

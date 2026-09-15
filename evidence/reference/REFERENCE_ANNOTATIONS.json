@@ -1,0 +1,148 @@
+{
+  "annotations": [
+    {
+      "annotation_id": "ANN-DC-01",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 750,
+      "line_end": 760,
+      "observed_text_hash": "0321a897e1fd97b85c7a27dc32b7342c228e2ec070ec23f46077e03012fb1511",
+      "claim": "input-channel received by browser via pc.ondatachannel; ordered and binaryType are not set by frontend and remain UNKNOWN_FROM_FRONTEND",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-DC-02",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 1031,
+      "line_end": 1045,
+      "observed_text_hash": "588a144e04d5e94838d4beabc82cd672af237b8a93c00d619d9e81030ebb045b",
+      "claim": "Touch events on inputChannel are serialized via JSON.stringify({type: touch, id, seq, client_ts_ms, action, x, y, w, h}) and sent via inputChannel.send(msg)",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-DC-03",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 1141,
+      "line_end": 1153,
+      "observed_text_hash": "7b552e46514f5457413da7bc10e54dfe4791b62b6c60e6ccba8c9f63b9ca3502",
+      "claim": "Scroll events on inputChannel are serialized via JSON.stringify({type: inject_scroll, seq, client_ts_ms, x, y, w, h, scroll_h, scroll_v})",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-DC-04",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 761,
+      "line_end": 786,
+      "observed_text_hash": "b0fd52444bd00a186e85f29ea2d4b25bbf1111ad16f35cd04725e008e929a8b5",
+      "claim": "clipboard-channel received via pc.ondatachannel; incoming messages decoded from ArrayBuffer or string as JSON {type: clipboard, text, source, origin_client_id}",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-DC-05",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 787,
+      "line_end": 815,
+      "observed_text_hash": "7dde8ff27ed53f9e513d08adb930710c7e963ee01a332007ce2da674794a094b",
+      "claim": "camera-channel received via pc.ondatachannel; incoming control messages parsed as JSON {action: start|stop}",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-DC-06",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 578,
+      "line_end": 582,
+      "observed_text_hash": "d61b836a57b1584c50e639c9a5df9e215d0cf7751ea8e9852602a50b377c9e8c",
+      "claim": "file-channel created by browser via pc.createDataChannel(file-channel, { ordered: true }) and binaryType set to arraybuffer",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-DC-07",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 303,
+      "line_end": 307,
+      "observed_text_hash": "7b3e9b07dc2b9823cac17dd8bae2e98ee586488b623a7b1056847119a48b09cb",
+      "claim": "ai-command-channel created by browser via pc.createDataChannel(ai-command-channel, { ordered: true }) and binaryType set to arraybuffer",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-DC-08",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 1236,
+      "line_end": 1240,
+      "observed_text_hash": "00524f73e16a9107c0f5652f6b7bb15056beb15fbfe5751e64f6c62d0c7e86f1",
+      "claim": "adb-channel created by browser via pc.createDataChannel(adb-channel, { ordered: true }) and binaryType set to arraybuffer",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-SM-01",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 65,
+      "line_end": 88,
+      "observed_text_hash": "2b85afd78373ddddf2fc5b64f6f39c13698cee571fbcc1a57ae31cfb1c4dba7d",
+      "claim": "WebSocket connect() establishes connection without hardcoded client-side timeout in reference source; timeout_ms is null",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-SM-02",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 728,
+      "line_end": 748,
+      "observed_text_hash": "9ad815d38edb0972cec90509d0224cd2244718c6036b4cf110154825851437a2",
+      "claim": "oniceconnectionstatechange and onconnectionstatechange update reactive error and status variables; no outbound webrtc_failed message is sent in pinned commit 65567d",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-SM-03",
+      "source_file": "web-app/src/composables/useWebRTC.js",
+      "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+      "line_start": 339,
+      "line_end": 355,
+      "observed_text_hash": "4d27fdc60258953f219b9538b98da6f4e0402fb5204edfa742631cdad0b46e74",
+      "claim": "executeCommandP2P specifies timeoutMs default of 15000ms with rejection timer",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    },
+    {
+      "annotation_id": "ANN-CLI-01",
+      "source_file": "docs/agent-deploy.md",
+      "source_blob_sha": "cdd44cf77c95a1597c03906448f0ae0843688546",
+      "line_start": 65,
+      "line_end": 105,
+      "observed_text_hash": "ecdad955bcacf169531c5fadfc38e91f9a300c0c3b2146fb59776c36eb95aa4e",
+      "claim": "agent deployment flags -id, -signaling, -jar, -external-addr, -webrtc-port documented in agent-deploy.md",
+      "classification": "REFERENCE_OBSERVED",
+      "confidence": "HIGH",
+      "review_status": "VERIFIED"
+    }
+  ]
+}

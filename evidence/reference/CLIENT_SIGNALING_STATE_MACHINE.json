@@ -4,7 +4,8 @@
     "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
     "source_repository": "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
     "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-    "description": "Deterministic state transitions of browser WebUI during WebRTC connection setup, media negotiation, and control streaming. Timeouts and fallbacks reflect strictly observed source properties."
+    "source_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+    "description": "Deterministic state transitions of browser WebUI during WebRTC connection setup, media negotiation, and control streaming. Timeouts and fallbacks dynamically extracted and bound to pinned reference commit."
   },
   "states": [
     "DISCONNECTED",
@@ -29,7 +30,8 @@
       "timeout_evidence": "NOT_OBSERVED",
       "fallback": null,
       "fallback_evidence": "NOT_OBSERVED",
-      "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:65-88"
+      "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:65-88",
+      "annotation_binding": "ANN-SM-01"
     },
     {
       "transition_id": "T02_WS_OPEN",
@@ -127,9 +129,11 @@
       "expected_inbound_response": "Agent opens DataChannels (input-channel, clipboard-channel)",
       "timeout_ms": null,
       "timeout_evidence": "NOT_OBSERVED",
-      "fallback": "Sends message_type: 'webrtc_failed' if connection fails (no automatic protocol switch observed in frontend)",
+      "fallback": "Sets reactive error state (status='error', error='ICE \u8fde\u63a5\u5931\u8d25'). Outbound webrtc_failed message is NOT observed in pinned commit 65567d.",
       "fallback_evidence": "REFERENCE_OBSERVED",
-      "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215-227, 725-748"
+      "outbound_webrtc_failed": "NOT_OBSERVED_IN_PINNED_SOURCE",
+      "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215-227, 728-748",
+      "annotation_binding": "ANN-SM-02"
     },
     {
       "transition_id": "T07_COMMAND_EXECUTION",
@@ -142,7 +146,8 @@
       "timeout_evidence": "REFERENCE_OBSERVED",
       "fallback": "aiCommandPromises timer fires at 15000ms; rejects promise with timeout error",
       "fallback_evidence": "REFERENCE_OBSERVED",
-      "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:339-369"
+      "source_reference": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:339-369",
+      "annotation_binding": "ANN-SM-03"
     },
     {
       "transition_id": "T08_TERMINATION",
