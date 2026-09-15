@@ -11,13 +11,13 @@
 |---|---|---|
 | **Total Functions Detected** | **15,398** | Complete function bounds in `.gopclntab` |
 | **Functions with pclntab Entries** | **15,398 (100.00%)** | Zero unmapped function entries |
-| **Readable Runtime / Pion / Stdlib Functions** | **8,942** | `runtime.*`, `github.com/pion/*`, stdlib |
-| **Garbled Project Functions** | **6,456** | Custom agent orchestration & control logic |
+| **Readable Runtime / Pion / Stdlib Functions** | **9,214** | `runtime.*`, `github.com/pion/*`, stdlib |
+| **Garbled Project Functions** | **6,184** | Custom agent orchestration & control logic |
 | **JSON Schema Keys Recovered** | **169** | Protocol attributes for device, video, and control |
 | **Environment Variables & Flags Recovered** | **18** | Configuration flags and fallback defaults |
-| **Direct Callgraph Edges Extracted** | **2,361** | Verified call relationships |
-| **High Confidence Inferred Functions** | **8,942 (Stdlib/Pion) + 185 (Agent Core)** | Core Scrcpy and WebRTC lifecycle handlers |
-| **Unknown Project Functions** | **6,271** | Scrambled helpers reserved for Phase 2 |
+| **Direct Callgraph Edges Extracted** | **52,168** | Direct BL branch links across 10,473 caller nodes |
+| **High / Medium Confidence Identified** | **9,214 (High) + 185 (Medium)** | Core Scrcpy and WebRTC lifecycle handlers |
+| **Unknown Project Functions** | **5,999** | Scrambled helpers reserved for Phase 2 |
 
 ## 3. Cross-Architecture Corroboration (ARM64 vs ARMv7)
 - **Binary Parity**: The ARM64 and ARMv7 binaries implement identical protocol state machines.

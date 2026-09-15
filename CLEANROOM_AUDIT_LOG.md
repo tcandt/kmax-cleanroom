@@ -111,8 +111,9 @@
   - Recovered Environment Variables: 14
 - **Quantitative Metrics - Agent**:
   - Total Functions: 15,398 (100% pclntab coverage)
-  - Readable Runtime/Pion Functions: 8,942
-  - Garbled Application Functions: 6,456
+  - Readable Runtime/Pion Functions: 9,214
+  - Garbled Application Functions: 6,184
+  - Direct Callgraph Edges Extracted: 52,168 direct branch links across 10,473 caller nodes
   - Recovered JSON Keys: 169
   - Recovered Environment Variables & Flags: 18
   - IPC Mechanism Decoded: UDS sockets (`[Stream] Dial video UDS`), `/data/local/tmp/libsys_core.so`, UID 2000 shell drop.
@@ -122,6 +123,7 @@
   - `reports/02_GO_SIGNALING_FORENSICS.md`
   - `reports/03_GO_AGENT_FORENSICS.md`
 - **Next Step**: Awaiting user approval to proceed to Phase 2 (Protocol Mapping & Clean Source Reconstruction).
+
 
 
 
