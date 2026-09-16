@@ -192,8 +192,9 @@ def ws_send_text(s, text):
 def hash_pwd(pwd: str, salt: str) -> str:
     return hashlib.sha256((pwd + salt).encode("utf-8")).hexdigest()
 
-def generate_evidence():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+def generate_evidence(output_dir=None):
+    target_dir = Path(output_dir) if output_dir else OUTPUT_DIR
+    target_dir.mkdir(parents=True, exist_ok=True)
     temp_dir = REPO_ROOT / "scratch" / "forensic_sig_fixture"
     if temp_dir.exists():
         shutil.rmtree(temp_dir, ignore_errors=True)
@@ -326,7 +327,7 @@ def generate_evidence():
                 }
             route_id_matrix["routes"][c] = c_data
 
-        (OUTPUT_DIR / "DEVICE_ROUTE_IDENTITY_MATRIX.json").write_text(json.dumps(route_id_matrix, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_ROUTE_IDENTITY_MATRIX.json").write_text(json.dumps(route_id_matrix, indent=2), encoding="utf-8")
 
         # -------------------------------------------------------------
         # 2. ENUMERATE DEVICE/REGISTRY ROUTE FAMILY
@@ -395,7 +396,7 @@ def generate_evidence():
                 }
             ]
         }
-        (OUTPUT_DIR / "DEVICE_ROUTE_FAMILY.json").write_text(json.dumps(route_family, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_ROUTE_FAMILY.json").write_text(json.dumps(route_family, indent=2), encoding="utf-8")
 
         # -------------------------------------------------------------
         # 3. RECOVER DEVICE DATA MODEL FROM BINARY RUNTIME DESCRIPTORS
@@ -430,7 +431,7 @@ def generate_evidence():
                 "fields": entry_struct["fields"]
             }
         }
-        (OUTPUT_DIR / "DEVICE_TYPE_EVIDENCE.json").write_text(json.dumps(device_type_ev, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_TYPE_EVIDENCE.json").write_text(json.dumps(device_type_ev, indent=2), encoding="utf-8")
 
         # -------------------------------------------------------------
         # 4. EMPTY REGISTRY ORACLE CONTRACT
@@ -463,7 +464,7 @@ def generate_evidence():
             },
             "observations": empty_obs
         }
-        (OUTPUT_DIR / "DEVICE_EMPTY_REGISTRY_CONTRACT.json").write_text(json.dumps(empty_contract, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_EMPTY_REGISTRY_CONTRACT.json").write_text(json.dumps(empty_contract, indent=2), encoding="utf-8")
 
         # -------------------------------------------------------------
         # 5. POPULATED REGISTRY ORACLE & LIFECYCLE OBSERVATIONS
@@ -568,7 +569,7 @@ def generate_evidence():
                 "order_rule": "GO_MAP_ITERATION"
             }
         }
-        (OUTPUT_DIR / "DEVICE_POPULATED_REGISTRY_CONTRACT.json").write_text(json.dumps(populated_contract, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_POPULATED_REGISTRY_CONTRACT.json").write_text(json.dumps(populated_contract, indent=2), encoding="utf-8")
 
         # -------------------------------------------------------------
         # 6. LIFECYCLE MATRIX (with duplicate active and abrupt drop)
@@ -656,7 +657,7 @@ def generate_evidence():
                 }
             ]
         }
-        (OUTPUT_DIR / "DEVICE_REGISTRY_LIFECYCLE_MATRIX.json").write_text(json.dumps(lifecycle_matrix, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_REGISTRY_LIFECYCLE_MATRIX.json").write_text(json.dumps(lifecycle_matrix, indent=2), encoding="utf-8")
 
         # -------------------------------------------------------------
         # 7. AUTHORIZATION & ASSIGNMENT FILTERING MATRIX
@@ -698,7 +699,7 @@ def generate_evidence():
             },
             "cases": auth_vis_cases
         }
-        (OUTPUT_DIR / "DEVICE_VISIBILITY_AUTH_MATRIX.json").write_text(json.dumps(auth_vis_matrix, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_VISIBILITY_AUTH_MATRIX.json").write_text(json.dumps(auth_vis_matrix, indent=2), encoding="utf-8")
 
         ws_a.close()
         ws_b.close()
@@ -785,7 +786,7 @@ def generate_evidence():
                 }
             }
         }
-        (OUTPUT_DIR / "DEVICE_NOAUTH_CONTRACT.json").write_text(json.dumps(noauth_contract, indent=2), encoding="utf-8")
+        (target_dir / "DEVICE_NOAUTH_CONTRACT.json").write_text(json.dumps(noauth_contract, indent=2), encoding="utf-8")
     finally:
         proc_noauth.terminate()
         try:
@@ -1011,9 +1012,9 @@ def generate_evidence():
             extract_handler_slices("main.rXQMyuE", "0x74da60")
         ]
     }
-    (OUTPUT_DIR / "DEVICE_HTTP_FUNCTION_SLICES.json").write_text(json.dumps(handler_slices_doc, indent=2), encoding="utf-8")
+    (target_dir / "DEVICE_HTTP_FUNCTION_SLICES.json").write_text(json.dumps(handler_slices_doc, indent=2), encoding="utf-8")
 
-    print("[+] All Phase 2C.3BR forensic evidence artifacts successfully generated in", OUTPUT_DIR)
+    print("[+] All Phase 2C.3BR forensic evidence artifacts successfully generated in", target_dir)
 
 if __name__ == "__main__":
     generate_evidence()

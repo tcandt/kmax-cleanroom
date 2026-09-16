@@ -1,0 +1,79 @@
+{
+  "/api/admin/users": {
+    "ADMIN": 200,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 200
+  },
+  "/api/admin/users/create": {
+    "ADMIN": 400,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 400
+  },
+  "/api/admin/users/delete": {
+    "ADMIN": 400,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 400
+  },
+  "/api/admin/users/update": {
+    "ADMIN": 400,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 400
+  },
+  "/api/admin/users/update_note": {
+    "ADMIN": 400,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 400
+  },
+  "/api/admin/users/reset_password": {
+    "ADMIN": 400,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 400
+  },
+  "/api/admin/users/rename": {
+    "ADMIN": 405,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 405
+  },
+  "/api/admin/users/kick": {
+    "ADMIN": 400,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 400
+  },
+  "/api/admin/assign": {
+    "ADMIN": 400,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 400
+  },
+  "/api/register": {
+    "ADMIN": 403,
+    "NORMAL_USER": 403,
+    "MISSING_TOKEN": 403,
+    "INVALID_TOKEN": 403,
+    "NO_AUTH_MODE": 403
+  },
+  "/api/user/ai-config": {
+    "ADMIN": 405,
+    "NORMAL_USER": 405,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 405
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "initial_me_assigned_devices": [
+    "dev-001"
+  ],
+  "mutation_applied": [
+    "dev-999"
+  ],
+  "live_session_me_assigned_devices": [
+    "dev-999"
+  ],
+  "live_session_device_visibility_count": 0,
+  "semantics": "Session token retains username; /api/me and /devices dynamically resolve fresh assigned_devices from storage without requiring re-login"
+}

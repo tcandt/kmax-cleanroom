@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "generator": "generate_user_admin_forensics.py",
+    "source_evidence": "ROUTE_HANDLER_MAP.json + capstone disassembly"
+  },
+  "routes": [
+    {
+      "route": "/api/admin/users",
+      "registration_call_va": "0x765a78",
+      "handler_symbol": "main.eiuBQux8",
+      "handler_va": "0x741ec0",
+      "candidate_semantic_role": "LIST_USERS",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "HEAD",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/users/create",
+      "registration_call_va": "0x765ac0",
+      "handler_symbol": "main.zrTQTiT",
+      "handler_va": "0x744140",
+      "candidate_semantic_role": "CREATE_USER",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/users/delete",
+      "registration_call_va": "0x765ad8",
+      "handler_symbol": "main._Wcin_o",
+      "handler_va": "0x745ba0",
+      "candidate_semantic_role": "DELETE_USER",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/users/update",
+      "registration_call_va": "0x765b08",
+      "handler_symbol": "main.m3nYlgst",
+      "handler_va": "0x744c20",
+      "candidate_semantic_role": "UPDATE_USER_PERMISSIONS_AND_EXPIRY",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/users/update_note",
+      "registration_call_va": "0x765af0",
+      "handler_symbol": "main.daDbGP",
+      "handler_va": "0x7464e0",
+      "candidate_semantic_role": "UPDATE_USER_NOTE",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/users/reset_password",
+      "registration_call_va": "0x765b20",
+      "handler_symbol": "main.rmHttgOpxTKh",
+      "handler_va": "0x746e80",
+      "candidate_semantic_role": "RESET_USER_PASSWORD",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/users/rename",
+      "registration_call_va": "0x765a90",
+      "handler_symbol": "main.sGuPXW2D",
+      "handler_va": "0x740f40",
+      "candidate_semantic_role": "RENAME_USER",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/users/kick",
+      "registration_call_va": "0x765b38",
+      "handler_symbol": "main.eIddSiN_g",
+      "handler_va": "0x747880",
+      "candidate_semantic_role": "KICK_USER_DEVICE",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/admin/assign",
+      "registration_call_va": "0x765aa8",
+      "handler_symbol": "main.as5uExtX",
+      "handler_va": "0x7432a0",
+      "candidate_semantic_role": "ASSIGN_USER_DEVICES",
+      "auth_requirement": "ADMIN_ROLE_TOKEN",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/register",
+      "registration_call_va": "0x765a18",
+      "handler_symbol": "main.ajyljXiIN8",
+      "handler_va": "0x73e7c0",
+      "candidate_semantic_role": "PUBLIC_REGISTRATION",
+      "auth_requirement": "NONE",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    },
+    {
+      "route": "/api/user/ai-config",
+      "registration_call_va": "0x765a48",
+      "handler_symbol": "main.jc6UOob61gVD",
+      "handler_va": "0x73ffc0",
+      "candidate_semantic_role": "USER_AI_CONFIG",
+      "auth_requirement": "AUTHENTICATED_USER",
+      "allowed_methods": [
+        "POST",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+    }
+  ]
+}

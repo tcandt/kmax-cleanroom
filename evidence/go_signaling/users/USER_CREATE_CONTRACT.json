@@ -1,0 +1,28 @@
+{
+  "valid_minimal": {
+    "status": 200,
+    "body": "{\"status\":\"success\"}\n",
+    "persisted_role": "user",
+    "persisted_assigned_devices": [],
+    "salt_len": 32,
+    "password_hash_len": 64
+  },
+  "valid_full": {
+    "status": 200,
+    "body": "{\"status\":\"success\"}\n",
+    "persisted_role": "admin",
+    "persisted_note": "Special note"
+  },
+  "duplicate_username": {
+    "status": 409,
+    "body": "Username already exists\n"
+  },
+  "missing_username": {
+    "status": 400,
+    "body": "Username and password are required\n"
+  },
+  "missing_password": {
+    "status": 400,
+    "body": "Username and password are required\n"
+  }
+}

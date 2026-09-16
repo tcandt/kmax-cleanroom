@@ -1,0 +1,318 @@
+{
+  "metadata": {
+    "suite": "test_users_admin_http_diff.py",
+    "timestamp": "2026-09-16T01:51:42.899142+00:00",
+    "total_executed": 30,
+    "passed": 30,
+    "failed": 0,
+    "metric": "IMPLEMENTED_USER_ADMIN_CONTRACT_DIFFERENTIAL_PASS_RATE = 30/30"
+  },
+  "results": [
+    {
+      "test_id": "USER-HTTP-01",
+      "name": "List Users Baseline",
+      "status": "PASS",
+      "duration_ms": 2.31,
+      "detail": {
+        "item_count": 3
+      }
+    },
+    {
+      "test_id": "USER-HTTP-02",
+      "name": "Populated List Schema & Key Omissions",
+      "status": "PASS",
+      "duration_ms": 1.98,
+      "detail": {
+        "keys": [
+          "active_devices",
+          "assigned_devices",
+          "expires_at",
+          "forbid_audio",
+          "forbid_bitrate",
+          "forbid_fps",
+          "forbid_resolution",
+          "note",
+          "online",
+          "role",
+          "settings",
+          "username"
+        ]
+      }
+    },
+    {
+      "test_id": "USER-HTTP-03",
+      "name": "Normal User Admin Route Rejection (403)",
+      "status": "PASS",
+      "duration_ms": 1.95,
+      "detail": {
+        "status": 403,
+        "body": "Forbidden\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-04",
+      "name": "Missing Token Rejection (401)",
+      "status": "PASS",
+      "duration_ms": 1.82,
+      "detail": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-05",
+      "name": "Invalid Token Rejection (401)",
+      "status": "PASS",
+      "duration_ms": 1.79,
+      "detail": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-06",
+      "name": "Create Valid User & Disk Persistence",
+      "status": "PASS",
+      "duration_ms": 3.03,
+      "detail": {
+        "response": "{\"status\":\"success\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-07",
+      "name": "Duplicate User Conflict (409)",
+      "status": "PASS",
+      "duration_ms": 2.03,
+      "detail": {
+        "status": 409,
+        "body": "Username already exists\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-08",
+      "name": "Missing Fields on Create (400)",
+      "status": "PASS",
+      "duration_ms": 1.78,
+      "detail": {
+        "status": 400,
+        "body": "Username and password are required\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-09",
+      "name": "Update User Note",
+      "status": "PASS",
+      "duration_ms": 2.52,
+      "detail": {
+        "response": "{\"status\":\"success\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-10",
+      "name": "Assign Devices to User",
+      "status": "PASS",
+      "duration_ms": 2.6,
+      "detail": {
+        "response": "{\"status\":\"success\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-11",
+      "name": "Update User Permissions",
+      "status": "PASS",
+      "duration_ms": 2.17,
+      "detail": {
+        "code": 0
+      }
+    },
+    {
+      "test_id": "USER-HTTP-12",
+      "name": "Update User Expiry",
+      "status": "PASS",
+      "duration_ms": 2.3,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "test_id": "USER-HTTP-13",
+      "name": "Reset User Password",
+      "status": "PASS",
+      "duration_ms": 2.72,
+      "detail": {
+        "response": "{\"status\":\"success\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-14",
+      "name": "Login After Password Mutation (Old 401, New 200)",
+      "status": "PASS",
+      "duration_ms": 3.67,
+      "detail": {
+        "old_status": 401,
+        "new_status": 200
+      }
+    },
+    {
+      "test_id": "USER-HTTP-15",
+      "name": "Delete User & Mutation",
+      "status": "PASS",
+      "duration_ms": 2.54,
+      "detail": {
+        "response": "{\"status\":\"success\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-16",
+      "name": "Delete Nonexistent User (404)",
+      "status": "PASS",
+      "duration_ms": 1.83,
+      "detail": {
+        "status": 404,
+        "body": "User not found\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-17",
+      "name": "Session Retained in Memory Post-Deletion",
+      "status": "PASS",
+      "duration_ms": 8.52,
+      "detail": {
+        "ro_status": 200,
+        "rr_status": 200,
+        "ro_body": "{\"ai_config\":null,\"assigned_devices\":null,\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"\",\"settings\":null,\"username\":\"user_temp\"}\n",
+        "rr_body": "{\"ai_config\":null,\"assigned_devices\":null,\"expires_at\":\"0001-01-01T00:00:00Z\",\"forbid_audio\":false,\"forbid_bitrate\":false,\"forbid_fps\":false,\"forbid_resolution\":false,\"role\":\"\",\"settings\":null,\"username\":\"user_temp\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-18",
+      "name": "No-Auth Mode Bypass on Admin Endpoints",
+      "status": "PASS",
+      "duration_ms": 2.35,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "test_id": "USER-HTTP-19",
+      "name": "HEAD Method Behavior on List Users",
+      "status": "PASS",
+      "duration_ms": 2.04,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "test_id": "USER-HTTP-20",
+      "name": "OPTIONS and CORS Headers",
+      "status": "PASS",
+      "duration_ms": 1.98,
+      "detail": {
+        "status": 200,
+        "cors": "*"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-21",
+      "name": "Persistence File Mode & JSON Contract",
+      "status": "PASS",
+      "duration_ms": 0.34,
+      "detail": {
+        "exists": true,
+        "json_match": true
+      }
+    },
+    {
+      "test_id": "USER-HTTP-22",
+      "name": "Dynamic Reflection of Assigned Devices on /api/me",
+      "status": "PASS",
+      "duration_ms": 4.96,
+      "detail": {
+        "assigned_devices": [
+          "dev-alpha-001",
+          "dev-beta-002"
+        ]
+      }
+    },
+    {
+      "test_id": "USER-HTTP-23",
+      "name": "Cannot Delete Self Guard (403)",
+      "status": "PASS",
+      "duration_ms": 2.06,
+      "detail": {
+        "status": 403,
+        "body": "Cannot delete yourself\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-24",
+      "name": "Update Note Unknown User (404)",
+      "status": "PASS",
+      "duration_ms": 2.63,
+      "detail": {
+        "status": 404,
+        "body": "User not found\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-25",
+      "name": "Reset Password Unknown User (404)",
+      "status": "PASS",
+      "duration_ms": 2.57,
+      "detail": {
+        "status": 404,
+        "body": "User not found\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-26",
+      "name": "Assign Devices Unknown User (404)",
+      "status": "PASS",
+      "duration_ms": 1.98,
+      "detail": {
+        "status": 404,
+        "body": "User not found\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-27",
+      "name": "User Personal AI Config Update",
+      "status": "PASS",
+      "duration_ms": 2.78,
+      "detail": {
+        "response": "{\"status\":\"success\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-28",
+      "name": "Public Registration Disabled Contract (403)",
+      "status": "PASS",
+      "duration_ms": 1.84,
+      "detail": {
+        "status": 403,
+        "body": "{\"error\":\"Public registration is disabled. Please contact an administrator to create an account.\"}\n"
+      }
+    },
+    {
+      "test_id": "USER-HTTP-29",
+      "name": "Kick User Endpoint Contract",
+      "status": "PASS",
+      "duration_ms": 3.57,
+      "detail": {
+        "valid_status": 200,
+        "emp_status": 400
+      }
+    },
+    {
+      "test_id": "USER-HTTP-30",
+      "name": "Rename User Endpoint Contract",
+      "status": "PASS",
+      "duration_ms": 6.35,
+      "detail": {
+        "same_status": 200,
+        "unk_status": 404,
+        "conf_status": 409
+      }
+    }
+  ]
+}

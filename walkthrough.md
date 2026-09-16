@@ -369,10 +369,73 @@ In Phase 2C.3BR, all 7 identified hold/remediation items were rigorously address
 - [x] Persistence differential tests 8/8 PASS
 - [x] Auth core differential tests 12/12 PASS
 - [x] Auth HTTP differential tests 18/18 PASS
-- [x] Expanded device differential cases 28/28 PASS
-- [x] Provenance auditor 73/73 declared functions PASS
+- [x] Device differential cases 28/28 PASS
+- [x] Users/Admin differential cases 30/30 PASS
+- [x] Provenance auditor 88/88 declared functions PASS
 - [x] Master verifier `tools/verify_phase2.py` OVERALL AUDIT VERDICT: PASS
 - [x] Zero production WebSocket implementation
 - [x] Zero WebRTC implementation
-- [x] Users/Admin/Tags/Shares untouched
+- [x] Tags/Shares untouched
+
+---
+
+# Phase 2C.3C: Users & Admin REST Reconstruction
+
+## 1. Overview & Forensic Gate Pass
+
+- **Pre-Flight A Completed**: Corrected wording in `reproduce_device_forensics.py` and master verifier to distinguish static type reproducibility from committed dynamic invariants. Both `reproduce_device_forensics.py` and `reproduce_user_admin_forensics.py` regenerate evidence into isolated temporary scratch directories before canonical normalization and parity checks.
+- **Route Family Discovered (11 routes)**:
+  - `/api/admin/users` (List users, 0x741ec0)
+  - `/api/admin/users/create` (Create user, 0x744140)
+  - `/api/admin/users/delete` (Delete user, 0x745ba0)
+  - `/api/admin/users/update` (Update permissions/expiry, 0x744c20)
+  - `/api/admin/users/update_note` (Update note, 0x7464e0)
+  - `/api/admin/users/reset_password` (Reset password, 0x746e80)
+  - `/api/admin/users/rename` (Rename user, 0x740f40)
+  - `/api/admin/users/kick` (Kick user, 0x747880)
+  - `/api/admin/assign` (Assign devices, 0x7432a0)
+  - `/api/register` (Public registration, 0x73e7c0)
+  - `/api/user/ai-config` (User personal AI config, 0x73ffc0)
+- **Direct Type Recovery from Binary ELF**:
+  - `User` structType descriptor at `0x80a0c0` (152 bytes, 13 fields: YpukG23I, A13r7C, H8f8eOCvpE, Nddaca, IrGKkzPChN, GQdUwM, REj4vX, hYw0Qj, CEvG8R, tE7WfS, q_fDcg, dY9iT6, v_2v0W).
+  - `AIConfig` structType descriptor at `0x7ed060` (64 bytes, 4 fields: ai_api_url, ai_api_key, ai_model, ai_provider).
+  - 8 request DTO descriptors parsed directly from binary bytes.
+
+## 2. Differential Test Results Matrix (30/30 PASS)
+
+| Test ID | Test Name | Classification | Result | Notes |
+|---|---|---|---|---|
+| `USER-HTTP-01` | List Users Baseline | `STRUCTURAL_EXACT_MATCH` | **PASS** | 200 OK, application/json, matching array length & user ordering |
+| `USER-HTTP-02` | Populated List Schema & Key Omissions | `BIT_EXACT_MATCH` | **PASS** | 12-field projection; password and salt strictly omitted |
+| `USER-HTTP-03` | Normal User Admin Route Rejection (403) | `BIT_EXACT_MATCH` | **PASS** | 403 Forbidden with exact body `Forbidden\n` |
+| `USER-HTTP-04` | Missing Token Rejection (401) | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized with exact body `Unauthorized\n` |
+| `USER-HTTP-05` | Invalid Token Rejection (401) | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized with exact body `Unauthorized\n` |
+| `USER-HTTP-06` | Create Valid User & Disk Persistence | `BIT_EXACT_MATCH` | **PASS** | 200 OK `{"status":"success"}\n`, 32-char hex salt, SHA256 stored |
+| `USER-HTTP-07` | Duplicate User Conflict (409) | `BIT_EXACT_MATCH` | **PASS** | 409 Conflict with exact body `Username already exists\n` |
+| `USER-HTTP-08` | Missing Fields on Create (400) | `BIT_EXACT_MATCH` | **PASS** | 400 Bad Request with exact body `Username and password are required\n` |
+| `USER-HTTP-09` | Update User Note | `BIT_EXACT_MATCH` | **PASS** | 200 OK `{"status":"success"}\n`, note persisted |
+| `USER-HTTP-10` | Assign Devices to User | `BIT_EXACT_MATCH` | **PASS** | 200 OK `{"status":"success"}\n`, assigned_devices updated |
+| `USER-HTTP-11` | Update User Permissions | `BIT_EXACT_MATCH` | **PASS** | 200 OK `{"code":0,"data":{...},"msg":"success"}\n` |
+| `USER-HTTP-12` | Update User Expiry | `BIT_EXACT_MATCH` | **PASS** | Expiration timestamp updated in ISO8601/RFC3339 format |
+| `USER-HTTP-13` | Reset User Password | `BIT_EXACT_MATCH` | **PASS** | Generates fresh salt, re-hashes password, returns 200 OK |
+| `USER-HTTP-14` | Login After Password Mutation | `BIT_EXACT_MATCH` | **PASS** | Old password rejected (401), new password authenticated (200) |
+| `USER-HTTP-15` | Delete User & Mutation | `BIT_EXACT_MATCH` | **PASS** | 200 OK `{"status":"success"}\n`, removed from `users.json` |
+| `USER-HTTP-16` | Delete Nonexistent User (404) | `BIT_EXACT_MATCH` | **PASS** | 404 Not Found with exact body `User not found\n` |
+| `USER-HTTP-17` | Session Retained in Memory Post-Deletion | `STRUCTURAL_EXACT_MATCH` | **PASS** | Matches binary jump 0x73b459: active in-memory session valid on `/api/me` |
+| `USER-HTTP-18` | No-Auth Mode Bypass on Admin Endpoints | `STRUCTURAL_EXACT_MATCH` | **PASS** | No-auth server mode bypasses admin token requirement |
+| `USER-HTTP-19` | HEAD Method Behavior on List Users | `BIT_EXACT_MATCH` | **PASS** | 200 OK with Content-Type: application/json and 0 body bytes |
+| `USER-HTTP-20` | OPTIONS and CORS Headers | `STRUCTURAL_EXACT_MATCH` | **PASS** | 200 OK with `Access-Control-Allow-Origin: *` |
+| `USER-HTTP-21` | Persistence File Mode & JSON Contract | `BIT_EXACT_MATCH` | **PASS** | Atomic JSON format on disk matches original |
+| `USER-HTTP-22` | Dynamic Reflection on /api/me | `BIT_EXACT_MATCH` | **PASS** | Device assignment mutation immediately visible in `/api/me` |
+| `USER-HTTP-23` | Cannot Delete Self Guard (403) | `BIT_EXACT_MATCH` | **PASS** | 403 Forbidden with exact body `Cannot delete yourself\n` |
+| `USER-HTTP-24` | Update Note Unknown User (404) | `BIT_EXACT_MATCH` | **PASS** | 404 Not Found with exact body `User not found\n` |
+| `USER-HTTP-25` | Reset Password Unknown User (404) | `BIT_EXACT_MATCH` | **PASS** | 404 Not Found with exact body `User not found\n` |
+| `USER-HTTP-26` | Assign Devices Unknown User (404) | `BIT_EXACT_MATCH` | **PASS** | 404 Not Found with exact body `User not found\n` |
+| `USER-HTTP-27` | User Personal AI Config Update | `STRUCTURAL_EXACT_MATCH` | **PASS** | 200 OK and 4-field AIConfig persisted to users.json |
+| `USER-HTTP-28` | Public Registration Disabled (403) | `BIT_EXACT_MATCH` | **PASS** | 403 Forbidden with exact error JSON message |
+| `USER-HTTP-29` | Kick User Endpoint Contract | `BIT_EXACT_MATCH` | **PASS** | 200 OK on valid kick, 400 on empty username |
+| `USER-HTTP-30` | Rename User Endpoint Contract | `BIT_EXACT_MATCH` | **PASS** | Same-name 200, unknown 404, conflict 409; deadlock bug resolved |
+
+Metric: **`IMPLEMENTED_USER_ADMIN_CONTRACT_DIFFERENTIAL_PASS_RATE = 30/30`**
+
 

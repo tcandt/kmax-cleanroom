@@ -54,6 +54,19 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 	s.mux.HandleFunc("/devices", s.HandleDevices)
 	s.mux.HandleFunc("/api/devices/", s.HandleDeviceDelete)
 
+	// Register user & admin REST routes matching original binary
+	s.mux.HandleFunc("/api/admin/users", s.HandleAdminUsers)
+	s.mux.HandleFunc("/api/admin/users/create", s.HandleAdminCreateUser)
+	s.mux.HandleFunc("/api/admin/users/delete", s.HandleAdminDeleteUser)
+	s.mux.HandleFunc("/api/admin/users/update", s.HandleAdminUpdateUser)
+	s.mux.HandleFunc("/api/admin/users/update_note", s.HandleAdminUpdateNote)
+	s.mux.HandleFunc("/api/admin/users/reset_password", s.HandleAdminResetPassword)
+	s.mux.HandleFunc("/api/admin/users/rename", s.HandleAdminRenameUser)
+	s.mux.HandleFunc("/api/admin/users/kick", s.HandleAdminKickUser)
+	s.mux.HandleFunc("/api/admin/assign", s.HandleAdminAssign)
+	s.mux.HandleFunc("/api/register", s.HandleRegister)
+	s.mux.HandleFunc("/api/user/ai-config", s.HandleUserAIConfig)
+
 	// Register differential test fixture endpoints
 	s.mux.HandleFunc("/_test/register_device", s.HandleTestRegisterDevice)
 	s.mux.HandleFunc("/_test/disconnect_device", s.HandleTestDisconnectDevice)

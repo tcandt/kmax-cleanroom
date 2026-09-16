@@ -1,0 +1,91 @@
+{
+  "update_note": {
+    "success": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "unknown_user": {
+      "status": 404,
+      "body": "User not found\n"
+    },
+    "empty_username": {
+      "status": 400,
+      "body": "Username is required\n"
+    },
+    "empty_note": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    }
+  },
+  "reset_password": {
+    "success": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "unknown_user": {
+      "status": 404,
+      "body": "User not found\n"
+    },
+    "empty_fields": {
+      "status": 400,
+      "body": "Username and new password are required\n"
+    }
+  },
+  "assign": {
+    "success": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "unknown_user": {
+      "status": 404,
+      "body": "User not found\n"
+    },
+    "empty_username": {
+      "status": 400,
+      "body": "Target username is required\n"
+    }
+  },
+  "update_permissions": {
+    "success": {
+      "status": 200,
+      "body": "{\"code\":0,\"data\":{\"expires_at\":\"2026-09-16T10:38:59.952383+07:00\",\"forbid_audio\":true,\"forbid_bitrate\":true,\"forbid_fps\":false,\"forbid_resolution\":false,\"settings\":null,\"username\":\"created_min\"},\"msg\":\"success\"}\n"
+    },
+    "unknown_user": {
+      "status": 404,
+      "body": "User not found\n"
+    },
+    "empty_username": {
+      "status": 400,
+      "body": "username is required\n"
+    }
+  },
+  "kick": {
+    "success": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "unknown_user": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "empty_username": {
+      "status": 400,
+      "body": "Username is required\n"
+    }
+  },
+  "rename": {
+    "same_username": {
+      "status": 200,
+      "body": "{\"status\":\"success\"}\n"
+    },
+    "unknown_user": {
+      "status": 404,
+      "body": "User not found\n"
+    },
+    "conflict_existing": {
+      "status": 409,
+      "body": "Username already exists\n"
+    },
+    "cross_user_mutation_deadlock_note": "Original binary self-deadlocks on cross-user rename due to outer usersLock.Lock() and saveUsers() usersLock.RLock()"
+  }
+}

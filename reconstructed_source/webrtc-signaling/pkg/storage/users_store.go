@@ -225,3 +225,27 @@ func (s *UsersStore) DeleteUser(username string) error {
 	delete(s.users, username)
 	return s.saveLocked()
 }
+
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.sGuPXW2D
+// VA: 0x740f40
+// Evidence: user key swap, avoiding the original binary's self-deadlock
+// Confidence: HIGH
+func (s *UsersStore) RenameUser(oldName, newName string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	user, exists := s.users[oldName]
+	if !exists {
+		return fmt.Errorf("user not found")
+	}
+	if _, exists := s.users[newName]; exists {
+		return fmt.Errorf("username already exists")
+	}
+
+	delete(s.users, oldName)
+	user.Username = newName
+	s.users[newName] = user
+	return s.saveLocked()
+}

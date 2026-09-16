@@ -63,6 +63,16 @@ func NewAuthenticator(usersStore *storage.UsersStore, sessionMgr *session.Sessio
 }
 
 // CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Purpose: Accessor for internal UsersStore
+// Confidence: HIGH
+func (a *Authenticator) UsersStore() *storage.UsersStore {
+	return a.usersStore
+}
+
+// CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
 // Mapping Scope: BEHAVIOR_SLICE
 // Binary Target: Linux AMD64 (SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
@@ -147,7 +157,8 @@ func (a *Authenticator) ValidateToken(token string) (string, error) {
 	// User account lookup & expiration check (VA 0x73b346 - 0x73b448)
 	user, exists := a.usersStore.GetUser(sess.Username)
 	if !exists {
-		return "", ErrUnauthorized
+		// Matching binary jump to 0x73b459: session valid even if user deleted from persistent storage
+		return sess.Username, nil
 	}
 
 	if !user.ExpiresAt.IsZero() && time.Now().After(user.ExpiresAt) {
@@ -190,7 +201,9 @@ func (a *Authenticator) Logout(token string) {
 func (a *Authenticator) GetUserProfile(username string) (*types.User, error) {
 	user, exists := a.usersStore.GetUser(username)
 	if !exists {
-		return nil, ErrUnauthorized
+		// In original binary (VA 0x73f550), if token is valid but user no longer exists in map,
+		// an empty record with just the session username is returned
+		return &types.User{Username: username}, nil
 	}
 
 	// Sanitized copy without password or salt

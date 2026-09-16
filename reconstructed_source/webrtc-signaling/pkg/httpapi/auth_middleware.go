@@ -40,6 +40,11 @@ func ExtractToken(r *http.Request) string {
 	if token == "" {
 		token = r.URL.Query().Get("token")
 	}
+	if token == "" {
+		if cookie, err := r.Cookie("token"); err == nil {
+			token = cookie.Value
+		}
+	}
 	return token
 }
 

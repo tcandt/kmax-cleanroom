@@ -1,0 +1,717 @@
+{
+  "/api/admin/users": {
+    "GET": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 1067,
+      "body_sha256": "3b040d3d4a1f55739c068932293cedd882509dc2e3609378eed24fffe9cd751f",
+      "body_sample": "[{\"active_devices\":[],\"assigned_devices\":[\"*\"],\"expires_at\":\"2099-12-31T23:59:59"
+    },
+    "POST": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 1067,
+      "body_sha256": "3b040d3d4a1f55739c068932293cedd882509dc2e3609378eed24fffe9cd751f",
+      "body_sample": "[{\"active_devices\":[],\"assigned_devices\":[\"*\"],\"expires_at\":\"2099-12-31T23:59:59"
+    },
+    "PUT": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 1067,
+      "body_sha256": "3b040d3d4a1f55739c068932293cedd882509dc2e3609378eed24fffe9cd751f",
+      "body_sample": "[{\"active_devices\":[],\"assigned_devices\":[\"*\"],\"expires_at\":\"2099-12-31T23:59:59"
+    },
+    "PATCH": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 1067,
+      "body_sha256": "3b040d3d4a1f55739c068932293cedd882509dc2e3609378eed24fffe9cd751f",
+      "body_sample": "[{\"active_devices\":[],\"assigned_devices\":[\"*\"],\"expires_at\":\"2099-12-31T23:59:59"
+    },
+    "DELETE": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 1067,
+      "body_sha256": "3b040d3d4a1f55739c068932293cedd882509dc2e3609378eed24fffe9cd751f",
+      "body_sample": "[{\"active_devices\":[],\"assigned_devices\":[\"*\"],\"expires_at\":\"2099-12-31T23:59:59"
+    },
+    "HEAD": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/users/create": {
+    "GET": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PATCH": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "HEAD": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/users/delete": {
+    "GET": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PATCH": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "HEAD": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/users/update": {
+    "GET": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 16,
+      "body_sha256": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+      "body_sample": "Invalid payload "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 16,
+      "body_sha256": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+      "body_sample": "Invalid payload "
+    },
+    "PUT": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 16,
+      "body_sha256": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+      "body_sample": "Invalid payload "
+    },
+    "PATCH": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 16,
+      "body_sha256": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+      "body_sample": "Invalid payload "
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 16,
+      "body_sha256": "c745c1baa734469c447dbf72ddb77a127d7537b1dd03461543893e1f45ae6fff",
+      "body_sample": "Invalid payload "
+    },
+    "HEAD": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/users/update_note": {
+    "GET": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PATCH": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "HEAD": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/users/reset_password": {
+    "GET": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PATCH": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "HEAD": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/users/rename": {
+    "GET": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "PATCH": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "DELETE": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "HEAD": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/users/kick": {
+    "GET": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PATCH": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "HEAD": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/admin/assign": {
+    "GET": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PATCH": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "HEAD": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/register": {
+    "GET": {
+      "status": 403,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 99,
+      "body_sha256": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+      "body_sample": "{\"error\":\"Public registration is disabled. Please contact an administrator to cr"
+    },
+    "POST": {
+      "status": 403,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 99,
+      "body_sha256": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+      "body_sample": "{\"error\":\"Public registration is disabled. Please contact an administrator to cr"
+    },
+    "PUT": {
+      "status": 403,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 99,
+      "body_sha256": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+      "body_sample": "{\"error\":\"Public registration is disabled. Please contact an administrator to cr"
+    },
+    "PATCH": {
+      "status": 403,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 99,
+      "body_sha256": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+      "body_sample": "{\"error\":\"Public registration is disabled. Please contact an administrator to cr"
+    },
+    "DELETE": {
+      "status": 403,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 99,
+      "body_sha256": "edd45acc24da86fcfe36a15ad92ca21ae41979daa653428caaa465286cff82be",
+      "body_sample": "{\"error\":\"Public registration is disabled. Please contact an administrator to cr"
+    },
+    "HEAD": {
+      "status": 403,
+      "location": null,
+      "content_type": "application/json",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  },
+  "/api/user/ai-config": {
+    "GET": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "PATCH": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "DELETE": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6",
+      "body_sample": "Method not allowed "
+    },
+    "HEAD": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors": "*",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  }
+}

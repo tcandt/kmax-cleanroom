@@ -1,0 +1,104 @@
+{
+  "status": 200,
+  "item_count": 4,
+  "keys_present": [
+    "active_devices",
+    "assigned_devices",
+    "expires_at",
+    "forbid_audio",
+    "forbid_bitrate",
+    "forbid_fps",
+    "forbid_resolution",
+    "note",
+    "online",
+    "role",
+    "settings",
+    "username"
+  ],
+  "field_types": {
+    "active_devices": "list",
+    "assigned_devices": "list",
+    "expires_at": "str",
+    "forbid_audio": "bool",
+    "forbid_bitrate": "bool",
+    "forbid_fps": "bool",
+    "forbid_resolution": "bool",
+    "note": "str",
+    "online": "bool",
+    "role": "str",
+    "settings": "NoneType",
+    "username": "str"
+  },
+  "password_exposed": false,
+  "salt_exposed": false,
+  "user_ordering": [
+    "admin",
+    "user_assigned",
+    "user_expired",
+    "user_unassigned"
+  ],
+  "sample_items": [
+    {
+      "active_devices": [],
+      "assigned_devices": [
+        "*"
+      ],
+      "expires_at": "2099-12-31T23:59:59Z",
+      "forbid_audio": false,
+      "forbid_bitrate": false,
+      "forbid_fps": false,
+      "forbid_resolution": false,
+      "note": "Root administrator",
+      "online": false,
+      "role": "admin",
+      "settings": null,
+      "username": "admin"
+    },
+    {
+      "active_devices": [],
+      "assigned_devices": [
+        "dev-001"
+      ],
+      "expires_at": "2099-12-31T23:59:59Z",
+      "forbid_audio": false,
+      "forbid_bitrate": false,
+      "forbid_fps": false,
+      "forbid_resolution": false,
+      "note": "Assigned user",
+      "online": false,
+      "role": "user",
+      "settings": null,
+      "username": "user_assigned"
+    },
+    {
+      "active_devices": [],
+      "assigned_devices": [
+        "dev-002"
+      ],
+      "expires_at": "2020-01-01T00:00:00Z",
+      "forbid_audio": false,
+      "forbid_bitrate": false,
+      "forbid_fps": false,
+      "forbid_resolution": false,
+      "note": "Expired account",
+      "online": false,
+      "role": "user",
+      "settings": null,
+      "username": "user_expired"
+    },
+    {
+      "active_devices": [],
+      "assigned_devices": [],
+      "expires_at": "2099-12-31T23:59:59Z",
+      "forbid_audio": false,
+      "forbid_bitrate": false,
+      "forbid_fps": false,
+      "forbid_resolution": false,
+      "note": "",
+      "online": false,
+      "role": "user",
+      "settings": null,
+      "username": "user_unassigned"
+    }
+  ]
+}

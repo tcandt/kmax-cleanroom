@@ -1,0 +1,441 @@
+{
+  "metadata": {
+    "generator": "generate_user_admin_forensics.py",
+    "target_binary": "webrtc-signaling (Linux AMD64 SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)",
+    "classification": "DIRECT_TYPE_RECOVERY"
+  },
+  "storage_types": {
+    "User": {
+      "struct_va": "0x80a0c0",
+      "name": "*main.AaXW78",
+      "size_bytes": 152,
+      "kind": 25,
+      "field_count": 13,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "YpukG23I",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "A13r7C",
+          "tag": "json:\"password\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 2,
+          "name": "H8f8eOCvpE",
+          "tag": "json:\"salt\"",
+          "offset": 32,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 3,
+          "name": "Nddaca",
+          "tag": "json:\"role\"",
+          "offset": 48,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 4,
+          "name": "IrGKkzPChN",
+          "tag": "json:\"assigned_devices\"",
+          "offset": 64,
+          "type_va": "0x7989e0"
+        },
+        {
+          "field_index": 5,
+          "name": "GQdUwM",
+          "tag": "json:\"note\"",
+          "offset": 88,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 6,
+          "name": "REj4vX",
+          "tag": "json:\"forbid_bitrate\"",
+          "offset": 104,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 7,
+          "name": "P7GdpqxjR",
+          "tag": "json:\"forbid_fps\"",
+          "offset": 105,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 8,
+          "name": "KBxUH2AHag",
+          "tag": "json:\"forbid_resolution\"",
+          "offset": 106,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 9,
+          "name": "SoVCFPkwkM31",
+          "tag": "json:\"forbid_audio\"",
+          "offset": 107,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 10,
+          "name": "XcEZKBoB",
+          "tag": "json:\"settings,omitempty\"",
+          "offset": 112,
+          "type_va": "0x7bf940"
+        },
+        {
+          "field_index": 11,
+          "name": "XDKPcp4G",
+          "tag": "json:\"expires_at\"",
+          "offset": 120,
+          "type_va": "0x816e80"
+        },
+        {
+          "field_index": 12,
+          "name": "DsE7MJ",
+          "tag": "json:\"ai_config,omitempty\"",
+          "offset": 144,
+          "type_va": "0x78ffa0"
+        }
+      ]
+    },
+    "AIConfig": {
+      "struct_va": "0x7ed060",
+      "name": "*main.C8aP5BseiM",
+      "size_bytes": 64,
+      "kind": 25,
+      "field_count": 4,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "Uu7QjUZaAXTH",
+          "tag": "json:\"ai_api_url\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "KuePdJVPJWA",
+          "tag": "json:\"ai_api_key\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 2,
+          "name": "PGIyImTT",
+          "tag": "json:\"ai_model\"",
+          "offset": 32,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 3,
+          "name": "G1Q9TmesGJ",
+          "tag": "json:\"ai_provider\"",
+          "offset": 48,
+          "type_va": "0x79e2c0"
+        }
+      ]
+    }
+  },
+  "request_dtos": {
+    "CreateUserDTO": {
+      "struct_va": "0x7f3020",
+      "name": "\u0001*struct { DFBIeGnwfD string \"json:\\\"username\\\"\"; JRvA41aS string \"json:\\\"password\\\"\"; VC_GOjj8 string \"json:\\\"role\\\"\"; ALMwjp string \"json:\\\"note\\\"\"; ZpskU4c8we int64 \"json:\\\"expire_seconds\\\"\" ",
+      "size_bytes": 72,
+      "kind": 25,
+      "field_count": 5,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "DFBIeGnwfD",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "JRvA41aS",
+          "tag": "json:\"password\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 2,
+          "name": "VC_GOjj8",
+          "tag": "json:\"role\"",
+          "offset": 32,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 3,
+          "name": "ALMwjp",
+          "tag": "json:\"note\"",
+          "offset": 48,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 4,
+          "name": "ZpskU4c8we",
+          "tag": "json:\"expire_seconds\"",
+          "offset": 64,
+          "type_va": "0x79e480"
+        }
+      ]
+    },
+    "UpdateUserDTO": {
+      "struct_va": "0x7fe6c0",
+      "name": "\u0002*struct { MTzFOC35jRTV string \"json:\\\"username\\\"\"; Ybsmu9mIyqko bool \"json:\\\"forbid_bitrate\\\"\"; RnreFxyNvaXK bool \"json:\\\"forbid_fps\\\"\"; YDiM3xuD bool \"json:\\\"forbid_resolution\\\"\"; Cx11",
+      "size_bytes": 40,
+      "kind": 25,
+      "field_count": 7,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "MTzFOC35jRTV",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "Ybsmu9mIyqko",
+          "tag": "json:\"forbid_bitrate\"",
+          "offset": 16,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 2,
+          "name": "RnreFxyNvaXK",
+          "tag": "json:\"forbid_fps\"",
+          "offset": 17,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 3,
+          "name": "YDiM3xuD",
+          "tag": "json:\"forbid_resolution\"",
+          "offset": 18,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 4,
+          "name": "Cx11p1",
+          "tag": "json:\"forbid_audio\"",
+          "offset": 19,
+          "type_va": "0x79e6c0"
+        },
+        {
+          "field_index": 5,
+          "name": "BFd2EWEu",
+          "tag": "json:\"settings\"",
+          "offset": 24,
+          "type_va": "0x7bf940"
+        },
+        {
+          "field_index": 6,
+          "name": "Zz3a0au",
+          "tag": "json:\"expire_seconds\"",
+          "offset": 32,
+          "type_va": "0x790da0"
+        }
+      ]
+    },
+    "AssignDevicesDTO": {
+      "struct_va": "0x7caba0",
+      "name": "*struct { D85viAXh string \"json:\\\"username\\\"\"; Cawx9f76z []string \"json:\\\"devices\\\"\" }",
+      "size_bytes": 40,
+      "kind": 25,
+      "field_count": 2,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "D85viAXh",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "Cawx9f76z",
+          "tag": "json:\"devices\"",
+          "offset": 16,
+          "type_va": "0x7989e0"
+        }
+      ]
+    },
+    "UpdateNoteDTO": {
+      "struct_va": "0x7cac20",
+      "name": "*struct { HcUe0w string \"json:\\\"username\\\"\"; IIwhhF9A3m string \"json:\\\"note\\\"\" }",
+      "size_bytes": 32,
+      "kind": 25,
+      "field_count": 2,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "HcUe0w",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "IIwhhF9A3m",
+          "tag": "json:\"note\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        }
+      ]
+    },
+    "ResetPasswordDTO": {
+      "struct_va": "0x7cada0",
+      "name": "*struct { Tw1Fz8z string \"json:\\\"username\\\"\"; ScNNGDkRstH string \"json:\\\"password\\\"\" }",
+      "size_bytes": 32,
+      "kind": 25,
+      "field_count": 2,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "Tw1Fz8z",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "ScNNGDkRstH",
+          "tag": "json:\"password\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        }
+      ]
+    },
+    "KickUserDTO": {
+      "struct_va": "0x7cae20",
+      "name": "*struct { VfS_naFuSiPn string \"json:\\\"username\\\"\"; Niy7SpR string \"json:\\\"device_id\\\"\" }",
+      "size_bytes": 32,
+      "kind": 25,
+      "field_count": 2,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "VfS_naFuSiPn",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "Niy7SpR",
+          "tag": "json:\"device_id\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        }
+      ]
+    },
+    "RenameUserDTO": {
+      "struct_va": "0x7caf20",
+      "name": "*struct { YqI05F string \"json:\\\"old_username\\\"\"; OpkwhalWC string \"json:\\\"new_username\\\"\" }",
+      "size_bytes": 32,
+      "kind": 25,
+      "field_count": 2,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "YqI05F",
+          "tag": "json:\"old_username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "OpkwhalWC",
+          "tag": "json:\"new_username\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        }
+      ]
+    },
+    "DeleteUserDTO": {
+      "struct_va": "0x7bd600",
+      "name": "*struct { IHKlrtIMmtFD string \"json:\\\"username\\\"\" }",
+      "size_bytes": 16,
+      "kind": 25,
+      "field_count": 1,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "IHKlrtIMmtFD",
+          "tag": "json:\"username\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        }
+      ]
+    }
+  },
+  "response_schemas": {
+    "AdminUserListItemDTO": {
+      "provenance": "DYNAMIC_JSON_CONFIRMED + MAP_BUILD_DECOMPILED",
+      "field_count": 12,
+      "fields": [
+        {
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "name": "role",
+          "type": "string"
+        },
+        {
+          "name": "assigned_devices",
+          "type": "[]string"
+        },
+        {
+          "name": "note",
+          "type": "string"
+        },
+        {
+          "name": "forbid_bitrate",
+          "type": "bool"
+        },
+        {
+          "name": "forbid_fps",
+          "type": "bool"
+        },
+        {
+          "name": "forbid_resolution",
+          "type": "bool"
+        },
+        {
+          "name": "forbid_audio",
+          "type": "bool"
+        },
+        {
+          "name": "settings",
+          "type": "map[string]interface{}"
+        },
+        {
+          "name": "expires_at",
+          "type": "string (ISO8601)"
+        },
+        {
+          "name": "online",
+          "type": "bool"
+        },
+        {
+          "name": "active_devices",
+          "type": "[]string"
+        }
+      ],
+      "omitted_fields": [
+        "password",
+        "salt"
+      ]
+    }
+  }
+}
