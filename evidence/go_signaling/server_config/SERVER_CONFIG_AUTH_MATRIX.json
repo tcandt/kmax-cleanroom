@@ -1,0 +1,119 @@
+{
+  "/api/server/addresses": {
+    "GET": {
+      "ADMIN": {
+        "status_code": 200,
+        "body": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59635\",\"[fd7a:115c:a1e0::b34:c72d]:59635\",\"100.81.199.44:5"
+      },
+      "NORMAL_USER": {
+        "status_code": 200,
+        "body": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59635\",\"[fd7a:115c:a1e0::b34:c72d]:59635\",\"100.81.199.44:5"
+      },
+      "MISSING_TOKEN": {
+        "status_code": 401,
+        "body": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "status_code": 401,
+        "body": "Unauthorized"
+      },
+      "NO_AUTH_MODE": {
+        "status_code": 200,
+        "body": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59636\",\"[fd7a:115c:a1e0::b34:c72d]:59636\",\"100.81.199.44:5"
+      }
+    },
+    "POST_RBAC": {}
+  },
+  "/api/default_settings": {
+    "GET": {
+      "ADMIN": {
+        "status_code": 200,
+        "body": "{}"
+      },
+      "NORMAL_USER": {
+        "status_code": 200,
+        "body": "{}"
+      },
+      "MISSING_TOKEN": {
+        "status_code": 401,
+        "body": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "status_code": 401,
+        "body": "Unauthorized"
+      },
+      "NO_AUTH_MODE": {
+        "status_code": 200,
+        "body": "{}"
+      }
+    },
+    "POST_RBAC": {
+      "POST_ADMIN": {
+        "status_code": 200,
+        "body": "{\"status\":\"success\"}"
+      },
+      "POST_NORMAL_USER": {
+        "status_code": 403,
+        "body": "Forbidden: admin only"
+      },
+      "POST_MISSING_TOKEN": {
+        "status_code": 401,
+        "body": "Unauthorized"
+      },
+      "POST_NO_AUTH_MODE": {
+        "status_code": 200,
+        "body": "{\"status\":\"success\"}"
+      }
+    }
+  },
+  "/api/ice_servers": {
+    "GET": {
+      "ADMIN": {
+        "status_code": 200,
+        "body": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+      },
+      "NORMAL_USER": {
+        "status_code": 200,
+        "body": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+      },
+      "MISSING_TOKEN": {
+        "status_code": 401,
+        "body": "Unauthorized"
+      },
+      "INVALID_TOKEN": {
+        "status_code": 401,
+        "body": "Unauthorized"
+      },
+      "NO_AUTH_MODE": {
+        "status_code": 200,
+        "body": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+      }
+    },
+    "POST_RBAC": {}
+  },
+  "/api/version": {
+    "GET": {
+      "ADMIN": {
+        "status_code": 200,
+        "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      },
+      "NORMAL_USER": {
+        "status_code": 200,
+        "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      },
+      "MISSING_TOKEN": {
+        "status_code": 200,
+        "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      },
+      "INVALID_TOKEN": {
+        "status_code": 200,
+        "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      },
+      "NO_AUTH_MODE": {
+        "status_code": 200,
+        "body": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+      }
+    },
+    "POST_RBAC": {}
+  }
+}

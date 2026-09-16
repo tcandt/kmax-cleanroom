@@ -119,8 +119,11 @@ func (s *ShortcutsStore) Get(username string) []types.Shortcut {
 	defer s.mu.RUnlock()
 
 	list, exists := s.shortcuts[username]
-	if !exists || list == nil {
+	if !exists {
 		return []types.Shortcut{}
+	}
+	if list == nil {
+		return nil
 	}
 	// Return a copy to prevent external race conditions
 	result := make([]types.Shortcut, len(list))
@@ -141,9 +144,6 @@ func (s *ShortcutsStore) Set(username string, list []types.Shortcut) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if list == nil {
-		list = []types.Shortcut{}
-	}
 	s.shortcuts[username] = list
 	return s.saveLocked()
 }

@@ -1,0 +1,91 @@
+{
+  "route": "/api/server/addresses",
+  "handler_symbol": "main.vz0hZo0q1IzM",
+  "handler_va": "0x7632a0",
+  "methods_allowed": [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "HEAD",
+    "OPTIONS"
+  ],
+  "auth_required": true,
+  "response_structure": {
+    "code": "int (always 0)",
+    "data": {
+      "addresses": "[]string (host:port or [ipv6]:port)",
+      "current": "string (r.Host exact string)"
+    }
+  },
+  "field_classification": {
+    "current": {
+      "classification": "REQUEST_DERIVED",
+      "origin": "r.Host"
+    },
+    "addresses": {
+      "classification": "ENVIRONMENT_AND_REQUEST_DERIVED",
+      "composition": [
+        "Index 0: r.Host (exact client request host)",
+        "Subsequent indices: non-loopback IP addresses from net.InterfaceAddrs(), formatted with request port or server port"
+      ]
+    }
+  },
+  "observed_samples": {
+    "standard_loopback_host": {
+      "code": 0,
+      "data": {
+        "addresses": [
+          "127.0.0.1:59635",
+          "[fd7a:115c:a1e0::b34:c72d]:59635",
+          "100.81.199.44:59635",
+          "[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:59635",
+          "[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:59635",
+          "[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:59635",
+          "[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:59635",
+          "192.168.1.163:59635",
+          "172.22.224.1:59635",
+          "172.29.64.1:59635"
+        ],
+        "current": "127.0.0.1:59635"
+      }
+    },
+    "custom_host_with_port": {
+      "code": 0,
+      "data": {
+        "addresses": [
+          "my-domain.net:9090",
+          "[fd7a:115c:a1e0::b34:c72d]:9090",
+          "100.81.199.44:9090",
+          "[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:9090",
+          "[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:9090",
+          "[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:9090",
+          "[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:9090",
+          "192.168.1.163:9090",
+          "172.22.224.1:9090",
+          "172.29.64.1:9090"
+        ],
+        "current": "my-domain.net:9090"
+      }
+    },
+    "custom_host_no_port": {
+      "code": 0,
+      "data": {
+        "addresses": [
+          "my-domain.net",
+          "[fd7a:115c:a1e0::b34:c72d]:59635",
+          "100.81.199.44:59635",
+          "[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:59635",
+          "[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:59635",
+          "[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:59635",
+          "[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:59635",
+          "192.168.1.163:59635",
+          "172.22.224.1:59635",
+          "172.29.64.1:59635"
+        ],
+        "current": "my-domain.net"
+      }
+    }
+  }
+}

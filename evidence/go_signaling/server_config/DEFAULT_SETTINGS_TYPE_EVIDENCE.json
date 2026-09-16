@@ -1,0 +1,10 @@
+{
+  "classification": "DIRECT_TYPE_RECOVERY",
+  "descriptor_va": "0x7bf940",
+  "type_name": "*map[string]interface {}",
+  "decode_pointer_va": "0x7968e0",
+  "runtime_type": "map[string]interface{}",
+  "lifecycle": "IN_MEMORY_GLOBAL",
+  "persistence_to_disk": false,
+  "default_initial_value": {}
+}

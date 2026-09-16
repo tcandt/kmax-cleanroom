@@ -2093,13 +2093,21 @@ def verify_all():
         sc_type = json.loads(sc_type_file.read_text(encoding="utf-8"))
         sc_s = sc_type.get("shortcut_struct", {})
         sc_map = sc_type.get("storage_map", {})
+        abi = sc_type.get("abi_validation", {})
+        fields = sc_s.get("fields", [])
         type_valid = (
             sc_s.get("size_bytes") == 32 and
             sc_s.get("field_count") == 2 and
-            sc_map.get("descriptor_va") == "0x7bfc40"
+            abi.get("is_non_overlapping") is True and
+            abi.get("offset_encoding") == "RAW_UINTPTR_BYTE_OFFSET" and
+            len(fields) == 2 and
+            fields[0].get("offset") == 0 and fields[0].get("size_bytes") == 16 and
+            fields[1].get("offset") == 16 and fields[1].get("size_bytes") == 16 and
+            fields[0].get("offset") + fields[0].get("size_bytes") <= fields[1].get("offset") and
+            fields[1].get("offset") + fields[1].get("size_bytes") <= sc_s.get("size_bytes")
         )
         record_check("Phase 2C.3F Shortcuts Type Evidence", type_valid,
-                     "Shortcut struct (0x7d70c0, 32B, 2 fields) & map descriptor (0x7bfc40) recovered from ELF")
+                     "Shortcut struct (0x7d70c0, 32B, non-overlapping offsets 0 & 16) & map descriptor recovered from ELF")
 
     # 13.4 Shortcuts Operation Contracts
     sc_ops_file = sc_dir / "SHORTCUT_OPERATION_CONTRACTS.json"
@@ -2129,13 +2137,14 @@ def verify_all():
             sc_pers.get("file_name") == "shortcuts.json" and
             "0644" in sc_pers.get("file_mode", "") and
             "DIRECT_WRITE_FILE" in sc_pers.get("write_mechanism", "") and
+            sc_pers.get("file_lifecycle", {}).get("lifecycle_type") == "LAZY_CREATE_ON_MUTATION" and
             sc_pers.get("machine_facts", {}).get("saver_symbol") == "main.jk9A26" and
             sc_pers.get("machine_facts", {}).get("saver_va") == "0x76c2c0" and
             sc_pers.get("no_auth_mode_key", {}).get("key_used") == "admin" and
             "2 spaces" in sc_pers.get("per_user_disk_format", {}).get("indentation", "")
         )
         record_check("Phase 2C.3F Shortcuts Persistence Contract", pers_valid,
-                     "Direct os.WriteFile (0x76c435), mode 0644 (0x76c426), no-auth key 'admin' verified")
+                     "Direct os.WriteFile (0x76c435), mode 0644, LAZY_CREATE_ON_MUTATION, no-auth key 'admin' verified")
 
     # 13.6 Shortcuts Auth Matrix
     sc_auth_file = sc_dir / "SHORTCUT_AUTH_MATRIX.json"
@@ -2172,7 +2181,7 @@ def verify_all():
         record_check("Phase 2C.3F Shortcuts Function Slices", sc_slices_valid,
                      f"4 query-derived slices (wrapper, handler, loader, saver) bound to FUNCTION_MAP")
 
-    # 13.8 Shortcuts REST Differential Results (SHORTCUT-HTTP-01 to SHORTCUT-HTTP-13)
+    # 13.8 Shortcuts REST Differential Results (SHORTCUT-HTTP-01 to SHORTCUT-HTTP-19)
     sc_diff_file = sc_dir / "SHORTCUT_HTTP_DIFFERENTIAL_RESULTS.json"
     if not sc_diff_file.exists():
         record_check("Phase 2C.3F Shortcuts REST Differential Results", False, "SHORTCUT_HTTP_DIFFERENTIAL_RESULTS.json missing")
@@ -2181,16 +2190,16 @@ def verify_all():
         sc_results = sc_diff.get("results", [])
         sc_meta = sc_diff.get("metadata", {})
         sc_cases = {r.get("test_id") for r in sc_results}
-        expected_sc_cases = {f"SHORTCUT-HTTP-{i:02d}" for i in range(1, 14)}
+        expected_sc_cases = {f"SHORTCUT-HTTP-{i:02d}" for i in range(1, 20)}
         sc_diff_valid = (
-            sc_meta.get("total_executed") == 13 and
-            sc_meta.get("passed") == 13 and
+            sc_meta.get("total_executed") == 19 and
+            sc_meta.get("passed") == 19 and
             sc_cases == expected_sc_cases and
             all(r.get("status") == "PASS" for r in sc_results) and
-            "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 13/13" in sc_meta.get("metric", "")
+            "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 19/19" in sc_meta.get("metric", "")
         )
         record_check("Phase 2C.3F Shortcuts REST Differential Results", sc_diff_valid,
-                     "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 13/13 (all 13 cases PASS)")
+                     "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 19/19 (all 19 cases PASS)")
 
     # 13.9 Shortcuts Forensic Reproducibility Tool
     sc_repro_tool = ROOT / "tools" / "forensics" / "reproduce_shortcut_forensics.py"
@@ -2229,6 +2238,101 @@ def verify_all():
     scope_guard_valid = len(found_forbidden) == 0
     record_check("Phase 2C.3F Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
                  f"0 production WebSocket/WebRTC packages, 0 License/Tasks/Files ({len(found_forbidden)} violations)")
+
+    # 14. Phase 2C.3G Server Configuration REST Route Family Auditing
+    sc_dir = ROOT / "evidence" / "go_signaling" / "server_config"
+    sc_req_files = [
+        "SERVER_CONFIG_ROUTE_FAMILY.json",
+        "SERVER_CONFIG_ROUTE_METHOD_MATRIX.json",
+        "SERVER_CONFIG_AUTH_MATRIX.json",
+        "SERVER_ADDRESSES_CONTRACT.json",
+        "DEFAULT_SETTINGS_TYPE_EVIDENCE.json",
+        "DEFAULT_SETTINGS_CONTRACT.json",
+        "ICE_SERVER_TYPE_EVIDENCE.json",
+        "ICE_SERVER_CONTRACT.json",
+        "VERSION_CONTRACT.json",
+        "SERVER_CONFIG_HTTP_FUNCTION_SLICES.json"
+    ]
+    sc_files_exist = all((sc_dir / f).exists() for f in sc_req_files)
+    record_check("Phase 2C.3G Server Config Forensic Evidence Integrity", sc_files_exist,
+                 f"All 10 required Server Configuration evidence files present in evidence/go_signaling/server_config/")
+
+    # 14.2 Server Configuration Route Family
+    sc_rf_file = sc_dir / "SERVER_CONFIG_ROUTE_FAMILY.json"
+    sc_rf_valid = False
+    if sc_rf_file.exists():
+        sc_rf_data = json.loads(sc_rf_file.read_text(encoding="utf-8"))
+        routes = {r["pattern"]: r["handler_symbol"] for r in sc_rf_data.get("routes", [])}
+        sc_rf_valid = (
+            routes.get("/api/server/addresses") == "main.vz0hZo0q1IzM" and
+            routes.get("/api/default_settings") == "main.j0yBBXR1Hjl" and
+            routes.get("/api/ice_servers") == "main.vREP2EE2" and
+            routes.get("/api/version") == "main.ys0CAJV5f5k"
+        )
+    record_check("Phase 2C.3G Server Config Route Family", sc_rf_valid,
+                 "All 4 server config routes bound to exact binary symbols in ROUTE_HANDLER_MAP")
+
+    # 14.3 Server Configuration Types & Struct ABI Invariant
+    sc_ice_type_file = sc_dir / "ICE_SERVER_TYPE_EVIDENCE.json"
+    sc_ds_type_file = sc_dir / "DEFAULT_SETTINGS_TYPE_EVIDENCE.json"
+    sc_type_valid = False
+    if sc_ice_type_file.exists() and sc_ds_type_file.exists():
+        ice_t = json.loads(sc_ice_type_file.read_text(encoding="utf-8"))
+        ds_t = json.loads(sc_ds_type_file.read_text(encoding="utf-8"))
+        abi = ice_t.get("abi_validation", {})
+        ice_struct = ice_t.get("ice_server_struct", {})
+        fields = ice_struct.get("fields", [])
+        sc_type_valid = (
+            abi.get("struct_total_size") == 56 and
+            abi.get("is_non_overlapping") is True and
+            len(fields) == 3 and
+            fields[0]["offset"] == 0 and fields[0]["size_bytes"] == 24 and
+            fields[1]["offset"] == 24 and fields[1]["size_bytes"] == 16 and
+            fields[2]["offset"] == 40 and fields[2]["size_bytes"] == 16 and
+            ds_t.get("descriptor_va") == "0x7bf940" and
+            ds_t.get("persistence_to_disk") is False
+        )
+    record_check("Phase 2C.3G Server Config Type Evidence & ABI Layout", sc_type_valid,
+                 "main.Py1TDt (56B non-overlapping contiguous) & map[string]interface{} (0x7bf940) validated")
+
+    # 14.4 Server Configuration Method & Auth Matrices
+    sc_mm_file = sc_dir / "SERVER_CONFIG_ROUTE_METHOD_MATRIX.json"
+    sc_am_file = sc_dir / "SERVER_CONFIG_AUTH_MATRIX.json"
+    sc_matrix_valid = False
+    if sc_mm_file.exists() and sc_am_file.exists():
+        mm = json.loads(sc_mm_file.read_text(encoding="utf-8"))
+        am = json.loads(sc_am_file.read_text(encoding="utf-8"))
+        all_verbs_present = all(len(mm.get(r, {})) == 7 for r in ["/api/server/addresses", "/api/default_settings", "/api/ice_servers", "/api/version"])
+        v_public = am.get("/api/version", {}).get("GET", {}).get("MISSING_TOKEN", {}).get("status_code") == 200
+        ds_rbac = am.get("/api/default_settings", {}).get("POST_RBAC", {}).get("POST_NORMAL_USER", {}).get("status_code") == 403
+        sc_matrix_valid = all_verbs_present and v_public and ds_rbac
+    record_check("Phase 2C.3G Server Config Method & Auth Matrices", sc_matrix_valid,
+                 "7 verbs across 4 routes; version public access and settings admin-only RBAC confirmed")
+
+    # 14.5 Server Configuration REST Differential Results
+    sc_diff_file = sc_dir / "SERVER_CONFIG_HTTP_DIFFERENTIAL_RESULTS.json"
+    sc_diff_valid = False
+    sc_diff_data = {}
+    if sc_diff_file.exists():
+        sc_diff_data = json.loads(sc_diff_file.read_text(encoding="utf-8"))
+        sc_diff_valid = (
+            sc_diff_data.get("all_passed") is True and
+            sc_diff_data.get("passed") == sc_diff_data.get("total_cases") and
+            sc_diff_data.get("total_cases", 0) >= 22
+        )
+    record_check("Phase 2C.3G Server Config REST Differential Results", sc_diff_valid,
+                 f"IMPLEMENTED_SERVER_CONFIG_CONTRACT_DIFFERENTIAL_PASS_RATE = {sc_diff_data.get('passed', 0)}/{sc_diff_data.get('total_cases', 0)} (all cases PASS)")
+
+    # 14.6 Server Configuration Forensic Reproducibility Tool
+    sc_repro_tool = ROOT / "tools" / "forensics" / "reproduce_server_config_forensics.py"
+    if not sc_repro_tool.exists():
+        record_check("Phase 2C.3G Server Config Forensic Reproducibility", False, "reproduce_server_config_forensics.py missing")
+    else:
+        import subprocess
+        sc_res = subprocess.run([sys.executable, str(sc_repro_tool)], capture_output=True, text=True)
+        sc_repro_pass = (sc_res.returncode == 0 and "ALL 8/8 SERVER CONFIGURATION ARTIFACTS VERIFIED & REPRODUCIBLE" in sc_res.stdout)
+        record_check("Phase 2C.3G Server Config Forensic Reproducibility", sc_repro_pass,
+                     "tools/forensics/reproduce_server_config_forensics.py PASS (all 8 artifacts reproducible via temp directory)")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

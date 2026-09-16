@@ -1,0 +1,47 @@
+{
+  "classification": "DIRECT_TYPE_RECOVERY",
+  "abi_validation": {
+    "architecture": "AMD64",
+    "runtime_struct_field_size": 24,
+    "offset_encoding": "RAW_UINTPTR_BYTE_OFFSET",
+    "is_non_overlapping": true,
+    "struct_total_size": 56,
+    "struct_alignment": 8
+  },
+  "ice_server_struct": {
+    "struct_va": "0x7e24e0",
+    "struct_name": "*main.Py1TDt",
+    "size_bytes": 56,
+    "field_count": 3,
+    "fields": [
+      {
+        "field_index": 0,
+        "name": "KWpyoL",
+        "tag": "json:\"urls\"",
+        "offset": 0,
+        "size_bytes": 24,
+        "type_va": "0x7989e0"
+      },
+      {
+        "field_index": 1,
+        "name": "Do87J_",
+        "tag": "json:\"username,omitempty\"",
+        "offset": 24,
+        "size_bytes": 16,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 2,
+        "name": "G4kKJB5xuff",
+        "tag": "json:\"credential,omitempty\"",
+        "offset": 40,
+        "size_bytes": 16,
+        "type_va": "0x79e2c0"
+      }
+    ]
+  },
+  "slice_type_descriptor": {
+    "descriptor_va": "0x797460",
+    "type_name": "*[]main.Py1TDt"
+  }
+}

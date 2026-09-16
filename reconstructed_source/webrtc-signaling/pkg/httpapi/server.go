@@ -9,10 +9,12 @@ package httpapi
 
 import (
 	"net/http"
+	"sync"
 
 	"cloudphone-signaling/pkg/auth"
 	"cloudphone-signaling/pkg/devices"
 	"cloudphone-signaling/pkg/storage"
+	"cloudphone-signaling/pkg/types"
 )
 
 // Server encapsulates the HTTP handler router and associated auth/session/device services.
@@ -20,10 +22,19 @@ type Server struct {
 	mux       *http.ServeMux
 	auth      *auth.Authenticator
 	noAuth    bool
-	deviceReg   *devices.Registry
+	deviceReg *devices.Registry
+
 	tagsStore      *storage.TagsStore
 	sharesStore    *storage.SharesStore
 	shortcutsStore *storage.ShortcutsStore
+
+	// Server Configuration state (Phase 2C.3G)
+	iceServersMu      sync.RWMutex
+	iceServers        []types.ICEServer
+	defaultSettingsMu sync.RWMutex
+	defaultSettings   map[string]interface{}
+	versionInfo       types.VersionInfo
+	listeningPort     string
 }
 
 // CLEANROOM-PROVENANCE:
@@ -42,10 +53,19 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 	}
 
 	s := &Server{
-		mux:       http.NewServeMux(),
-		auth:      authenticator,
-		noAuth:    noAuth,
-		deviceReg: dReg,
+		mux:             http.NewServeMux(),
+		auth:            authenticator,
+		noAuth:          noAuth,
+		deviceReg:       dReg,
+		defaultSettings: make(map[string]interface{}),
+		iceServers: []types.ICEServer{
+			{URLs: []string{"stun:stun.l.google.com:19302"}},
+		},
+		versionInfo: types.VersionInfo{
+			BuildTime: "2026-09-07T09:58:25Z",
+			GitCommit: "2693ef1",
+			Version:   "v0.3.6",
+		},
 	}
 
 	// Register auth routes matching original binary
@@ -85,6 +105,12 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 
 	// Register shortcuts route matching original binary
 	s.mux.HandleFunc("/api/shortcuts", s.HandleShortcuts)
+
+	// Register server configuration routes matching original binary (Phase 2C.3G)
+	s.mux.HandleFunc("/api/server/addresses", s.HandleServerAddresses)
+	s.mux.HandleFunc("/api/default_settings", s.HandleDefaultSettings)
+	s.mux.HandleFunc("/api/ice_servers", s.HandleICEServers)
+	s.mux.HandleFunc("/api/version", s.HandleVersion)
 
 	// Register differential test fixture endpoints
 	s.mux.HandleFunc("/_test/register_device", s.HandleTestRegisterDevice)

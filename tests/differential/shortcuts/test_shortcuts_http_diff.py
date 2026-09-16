@@ -169,6 +169,12 @@ def main():
         })
 
     try:
+        # Check initial file existence before any requests
+        f_orig = DIFF_TMP_ORIG / "shortcuts.json"
+        f_recon = DIFF_TMP_RECON / "shortcuts.json"
+        file_init_orig = f_orig.exists()
+        file_init_recon = f_recon.exists()
+
         # Step 0: Authenticate sessions
         r = requests.post(f"{URL_ORIG}/api/login", json={"username": "admin", "password": "admin123"})
         token_orig_admin = r.json()["token"]
@@ -188,6 +194,8 @@ def main():
         # Case 1: SHORTCUT-HTTP-01 - Baseline empty GET ([]\n)
         r_orig = requests.get(f"{URL_ORIG}/api/shortcuts", headers=hdr_orig_admin)
         r_recon = requests.get(f"{URL_RECON}/api/shortcuts", headers=hdr_recon_admin)
+        file_after_get_orig = f_orig.exists()
+        file_after_get_recon = f_recon.exists()
         orig_res = {"status": r_orig.status_code, "body": r_orig.text, "ct": r_orig.headers.get("Content-Type")}
         recon_res = {"status": r_recon.status_code, "body": r_recon.text, "ct": r_recon.headers.get("Content-Type")}
         passed = (r_orig.status_code == r_recon.status_code == 200 and
@@ -294,6 +302,8 @@ def main():
         admin_shortcuts_1 = [{"name": "Terminal", "cmd": "cmd.exe"}]
         r_orig = requests.post(f"{URL_ORIG}/api/shortcuts", headers=hdr_orig_admin, json=admin_shortcuts_1)
         r_recon = requests.post(f"{URL_RECON}/api/shortcuts", headers=hdr_recon_admin, json=admin_shortcuts_1)
+        file_after_post_orig = f_orig.exists()
+        file_after_post_recon = f_recon.exists()
         orig_res = {"status": r_orig.status_code, "body": r_orig.text}
         recon_res = {"status": r_recon.status_code, "body": r_recon.text}
         p1 = (r_orig.status_code == r_recon.status_code == 200 and r_orig.text == r_recon.text == '{"status":"success"}\n')
@@ -358,6 +368,8 @@ def main():
             f"-data={DIFF_TMP_RECON}"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(2.0)
+        file_after_restart_orig = f_orig.exists()
+        file_after_restart_recon = f_recon.exists()
 
         # Re-login admin and user_test after restart
         r = requests.post(f"{URL_ORIG}/api/login", json={"username": "admin", "password": "admin123"})
@@ -398,6 +410,138 @@ def main():
                   r_orig_user_get.json() == r_recon_user_get.json() == user_shortcuts and
                   r_orig_admin_get.json() != r_orig_user_get.json())
         log_diff("SHORTCUT-HTTP-13", "Per-user isolation (multi-user independent state)", "ISOLATION_CONTRACT", orig_res, recon_res, passed)
+
+        # Case 14: SHORTCUT-HTTP-14 - POST null literal parity (null literal, null\n readback, null on disk, persist restart)
+        r_orig_null = requests.post(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}", "Content-Type": "application/json"}, data="null")
+        r_recon_null = requests.post(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}", "Content-Type": "application/json"}, data="null")
+        
+        r_orig_get_null = requests.get(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"})
+        r_recon_get_null = requests.get(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"})
+        
+        time.sleep(0.1)
+        disk_orig_null = json.loads(f_orig.read_text(encoding="utf-8")).get("admin")
+        disk_recon_null = json.loads(f_recon.read_text(encoding="utf-8")).get("admin")
+        
+        # Restart servers to verify persistence of null across restart
+        proc_orig.terminate()
+        proc_recon.terminate()
+        proc_orig.wait()
+        proc_recon.wait()
+        
+        proc_orig = subprocess.Popen([
+            str(EXE_ORIG), "-tls=false", f"-port={PORT_ORIG}", f"-data={DIFF_TMP_ORIG}", f"-assets={ASSETS}", "-debug"
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        proc_recon = subprocess.Popen([
+            str(EXE_RECON), f"-port={PORT_RECON}", f"-data={DIFF_TMP_RECON}"
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        time.sleep(2.0)
+        
+        r_a = requests.post(f"{URL_ORIG}/api/login", json={"username": "admin", "password": "admin123"})
+        t_orig_admin = r_a.json()["token"]
+        r_a = requests.post(f"{URL_RECON}/api/login", json={"username": "admin", "password": "admin123"})
+        t_recon_admin = r_a.json()["token"]
+        
+        r_orig_restart_null = requests.get(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"})
+        r_recon_restart_null = requests.get(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"})
+        
+        orig_res = {
+            "post_status": r_orig_null.status_code, "post_body": r_orig_null.text,
+            "get_body": r_orig_get_null.text, "disk_val": disk_orig_null,
+            "restart_get_body": r_orig_restart_null.text
+        }
+        recon_res = {
+            "post_status": r_recon_null.status_code, "post_body": r_recon_null.text,
+            "get_body": r_recon_get_null.text, "disk_val": disk_recon_null,
+            "restart_get_body": r_recon_restart_null.text
+        }
+        passed = (
+            r_orig_null.status_code == r_recon_null.status_code == 200 and
+            r_orig_null.text == r_recon_null.text == "{\"status\":\"success\"}\n" and
+            r_orig_get_null.text == r_recon_get_null.text == "null\n" and
+            disk_orig_null is None and disk_recon_null is None and
+            r_orig_restart_null.text == r_recon_restart_null.text == "null\n"
+        )
+        log_diff("SHORTCUT-HTTP-14", "POST null literal parity (success, null\\n readback, null on disk, persist restart)", "NULL_EDGE_CONTRACT", orig_res, recon_res, passed)
+
+        # Case 15: SHORTCUT-HTTP-15 - POST [null] parity (zero-value struct initialization)
+        r_orig_p15 = requests.post(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}", "Content-Type": "application/json"}, data="[null]")
+        r_recon_p15 = requests.post(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}", "Content-Type": "application/json"}, data="[null]")
+        r_orig_g15 = requests.get(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"})
+        r_recon_g15 = requests.get(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"})
+        orig_res = {"post_status": r_orig_p15.status_code, "get_body": r_orig_g15.text}
+        recon_res = {"post_status": r_recon_p15.status_code, "get_body": r_recon_g15.text}
+        passed = (
+            r_orig_p15.status_code == r_recon_p15.status_code == 200 and
+            r_orig_g15.status_code == r_recon_g15.status_code == 200 and
+            r_orig_g15.text == r_recon_g15.text == '[{"name":"","cmd":""}]\n'
+        )
+        log_diff("SHORTCUT-HTTP-15", "POST [null] array element parity (zero-value struct initialization)", "JSON_EDGE_CONTRACT", orig_res, recon_res, passed)
+
+        # Case 16: SHORTCUT-HTTP-16 - Partial fields mutation parity
+        # Subcase 1: name only
+        r_orig_p16a = requests.post(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"}, json=[{"name": "OnlyName"}])
+        r_recon_p16a = requests.post(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"}, json=[{"name": "OnlyName"}])
+        r_orig_g16a = requests.get(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"})
+        r_recon_g16a = requests.get(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"})
+        
+        # Subcase 2: cmd only
+        r_orig_p16b = requests.post(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"}, json=[{"cmd": "OnlyCmd"}])
+        r_recon_p16b = requests.post(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"}, json=[{"cmd": "OnlyCmd"}])
+        r_orig_g16b = requests.get(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"})
+        r_recon_g16b = requests.get(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"})
+        
+        orig_res = {"name_only": r_orig_g16a.json(), "cmd_only": r_orig_g16b.json()}
+        recon_res = {"name_only": r_recon_g16a.json(), "cmd_only": r_recon_g16b.json()}
+        passed = (
+            r_orig_g16a.json() == r_recon_g16a.json() == [{"name": "OnlyName", "cmd": ""}] and
+            r_orig_g16b.json() == r_recon_g16b.json() == [{"name": "", "cmd": "OnlyCmd"}]
+        )
+        log_diff("SHORTCUT-HTTP-16", "Partial fields mutation parity (missing fields default to zero-value empty string)", "JSON_EDGE_CONTRACT", orig_res, recon_res, passed)
+
+        # Case 17: SHORTCUT-HTTP-17 - Extra fields ignored
+        r_orig_p17 = requests.post(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"}, json=[{"name": "x", "cmd": "y", "extra": "z"}])
+        r_recon_p17 = requests.post(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"}, json=[{"name": "x", "cmd": "y", "extra": "z"}])
+        r_orig_g17 = requests.get(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}"})
+        r_recon_g17 = requests.get(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}"})
+        orig_res = {"post_status": r_orig_p17.status_code, "get_json": r_orig_g17.json()}
+        recon_res = {"post_status": r_recon_p17.status_code, "get_json": r_recon_g17.json()}
+        passed = (
+            r_orig_p17.status_code == r_recon_p17.status_code == 200 and
+            r_orig_g17.json() == r_recon_g17.json() == [{"name": "x", "cmd": "y"}]
+        )
+        log_diff("SHORTCUT-HTTP-17", "Extra fields ignored parity (unknown fields ignored by decoder)", "JSON_EDGE_CONTRACT", orig_res, recon_res, passed)
+
+        # Case 18: SHORTCUT-HTTP-18 - Type mismatch 400 Invalid JSON
+        r_orig_p18 = requests.post(f"{URL_ORIG}/api/shortcuts", headers={"Authorization": f"Bearer {t_orig_admin}", "Content-Type": "application/json"}, data='[{"name":123,"cmd":"x"}]')
+        r_recon_p18 = requests.post(f"{URL_RECON}/api/shortcuts", headers={"Authorization": f"Bearer {t_recon_admin}", "Content-Type": "application/json"}, data='[{"name":123,"cmd":"x"}]')
+        orig_res = {"status": r_orig_p18.status_code, "body": r_orig_p18.text}
+        recon_res = {"status": r_recon_p18.status_code, "body": r_recon_p18.text}
+        passed = (
+            r_orig_p18.status_code == r_recon_p18.status_code == 400 and
+            r_orig_p18.text == r_recon_p18.text == "Invalid JSON\n"
+        )
+        log_diff("SHORTCUT-HTTP-18", "Type mismatch 400 (number in string field -> Invalid JSON\\n)", "ERROR_HANDLING", orig_res, recon_res, passed)
+
+        # Case 19: SHORTCUT-HTTP-19 - First-run file lifecycle contract (LAZY_CREATE_ON_MUTATION)
+        orig_res = {
+            "file_at_startup": file_init_orig,
+            "file_after_first_get": file_after_get_orig,
+            "file_after_first_post": file_after_post_orig,
+            "file_after_restart": file_after_restart_orig
+        }
+        recon_res = {
+            "file_at_startup": file_init_recon,
+            "file_after_first_get": file_after_get_recon,
+            "file_after_first_post": file_after_post_recon,
+            "file_after_restart": file_after_restart_recon
+        }
+        passed = (
+            not file_init_orig and not file_init_recon and
+            not file_after_get_orig and not file_after_get_recon and
+            file_after_post_orig and file_after_post_recon and
+            file_after_restart_orig and file_after_restart_recon
+        )
+        log_diff("SHORTCUT-HTTP-19", "First-run file lifecycle contract (LAZY_CREATE_ON_MUTATION proven)", "PERSISTENCE_LIFECYCLE", orig_res, recon_res, passed)
 
     finally:
         for p in [proc_orig, proc_recon, proc_orig_na, proc_recon_na]:

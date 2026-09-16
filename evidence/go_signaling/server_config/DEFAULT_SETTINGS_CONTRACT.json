@@ -1,0 +1,42 @@
+{
+  "route": "/api/default_settings",
+  "handler_symbol": "main.j0yBBXR1Hjl",
+  "handler_va": "0x768980",
+  "methods_allowed": [
+    "GET",
+    "POST",
+    "OPTIONS"
+  ],
+  "disallowed_methods_status": 405,
+  "auth_required_get": true,
+  "auth_required_post": "ADMIN_ONLY (403 Forbidden: admin only\\n)",
+  "initial_state": {},
+  "mutation_behavior": {
+    "post_success_response": "{\"status\":\"success\"}",
+    "readback_after_mutation": {
+      "video_bitrate": 5000,
+      "fps": 60,
+      "encoder": "nvenc"
+    },
+    "storage_mechanism": "IN_MEMORY_GLOBAL",
+    "persistence_across_restart": false
+  },
+  "error_handling": {
+    "empty_body": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    },
+    "malformed_json": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    },
+    "json_null": {
+      "status_code": 200,
+      "body": "{\"status\":\"success\"}"
+    },
+    "json_array": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    }
+  }
+}

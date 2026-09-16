@@ -32,6 +32,11 @@ func main() {
 	dataDir := flag.String("data", "./data", "Data directory containing users.json")
 	noAuth := flag.Bool("noAuth", false, "Disable authentication requirements")
 	flag.BoolVar(noAuth, "no-auth", false, "Disable authentication requirements (alias)")
+	iceServersFlag := flag.String("ice_servers", "", "Comma-separated list of STUN/TURN servers")
+	stunServerFlag := flag.String("stun_server", "stun:stun.l.google.com:19302", "Deprecated STUN server fallback")
+	_ = flag.Bool("tls", false, "Enable TLS (accepted for CLI parity)")
+	_ = flag.String("assets", "./assets", "Assets directory (accepted for CLI parity)")
+	_ = flag.Bool("debug", false, "Enable debug mode (accepted for CLI parity)")
 	flag.Parse()
 
 	usersPath := filepath.Join(*dataDir, "users.json")
@@ -64,6 +69,8 @@ func main() {
 	server.SetTagsStore(tagsStore)
 	server.SetSharesStore(sharesStore)
 	server.SetShortcutsStore(shortcutsStore)
+	server.SetICEServers(httpapi.ParseICEServers(*iceServersFlag, *stunServerFlag))
+	server.SetListeningPort(fmt.Sprintf("%d", *port))
 
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	log.Printf("[HTTP] Reconstructed server listening on %s", addr)

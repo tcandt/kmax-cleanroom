@@ -1,0 +1,130 @@
+{
+  "family_name": "SERVER_CONFIGURATION_REST",
+  "description": "Family of 4 core server configuration, metadata, and environment discovery REST endpoints",
+  "routes": [
+    {
+      "pattern": "/api/server/addresses",
+      "semantic_role": "SERVER_ADDRESSES_DISPATCHER",
+      "registration_call_va": "0x765bf8",
+      "handler_va": "0x7632a0",
+      "handler_symbol": "main.vz0hZo0q1IzM",
+      "size_bytes": 3104,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "runtime.memequal",
+        "runtime.convT64",
+        "pER41ea1gx.BQr0Xdaj",
+        "qaJ6F8.AHChVLQ6",
+        "runtime.rand"
+      ],
+      "referenced_strings": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Headers",
+        "Content-Type, AuthorizationTarget username is required",
+        "Access-Control-Allow-Methods",
+        "GET, OPTIONSUnauthorizedforbid_audiomessage_typestop_preview",
+        "share:",
+        "Unauthorized",
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+        "code"
+      ]
+    },
+    {
+      "pattern": "/api/default_settings",
+      "semantic_role": "DEFAULT_SETTINGS_DISPATCHER",
+      "registration_call_va": "0x765ce8",
+      "handler_va": "0x768980",
+      "handler_symbol": "main.j0yBBXR1Hjl",
+      "size_bytes": 3680,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "uOfWpGI3.JJS1TL",
+        "runtime.stringtoslicebyte",
+        "main.chIaMDTZ",
+        "Y0caeZ_zze.AFewevPD9",
+        "dGxLbta0.UxZa5e4P"
+      ],
+      "referenced_strings": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Headers",
+        "Content-Type, AuthorizationTarget username is required",
+        "Access-Control-Allow-Methods",
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+        "DEFAULT_SETTINGS",
+        "Method not allowed",
+        "Unauthorized",
+        "Invalid JSON"
+      ]
+    },
+    {
+      "pattern": "/api/ice_servers",
+      "semantic_role": "ICE_SERVERS_CONFIGURATION",
+      "registration_call_va": "0x765d00",
+      "handler_va": "0x768500",
+      "handler_symbol": "main.vREP2EE2",
+      "size_bytes": 1152,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.convTslice",
+        "JOaOfPm.(*Za4F248ANZ7).Encode",
+        "runtime.typeAssert",
+        "runtime.morestack_noctxt"
+      ],
+      "referenced_strings": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Headers",
+        "Content-Type, AuthorizationTarget username is required",
+        "Access-Control-Allow-Methods",
+        "GET, OPTIONSUnauthorizedforbid_audiomessage_typestop_preview",
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+        "Unauthorized"
+      ]
+    },
+    {
+      "pattern": "/api/version",
+      "semantic_role": "VERSION_INFO_DISPATCHER",
+      "registration_call_va": "0x765d18",
+      "handler_va": "0x769840",
+      "handler_symbol": "main.ys0CAJV5f5k",
+      "size_bytes": 1280,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "runtime.makemap_small",
+        "JOaOfPm.(*Za4F248ANZ7).Encode",
+        "runtime.typeAssert",
+        "runtime.morestack_noctxt"
+      ],
+      "referenced_strings": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Headers",
+        "Content-Type, AuthorizationTarget username is required",
+        "Access-Control-Allow-Methods",
+        "GET, OPTIONSUnauthorizedforbid_audiomessage_typestop_preview",
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+        "version",
+        "git_commit",
+        "build_time"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "route": "/api/ice_servers",
+  "handler_symbol": "main.vREP2EE2",
+  "handler_va": "0x768500",
+  "methods_allowed": [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "HEAD",
+    "OPTIONS"
+  ],
+  "auth_required": true,
+  "element_schema": {
+    "urls": "[]string (required)",
+    "username": "string (optional, omitempty)",
+    "credential": "string (optional, omitempty)"
+  },
+  "precedence_rules": {
+    "cli_flag_ice_servers": "Highest precedence. Comma-separated list of stun:host:port or turn:user:pass@host:port",
+    "cli_flag_stun_server": "Deprecated fallback if -ice_servers is omitted. Formatted as single STUN entry",
+    "compiled_default": "[{\"urls\": [\"stun:stun.l.google.com:19302\"]}]"
+  },
+  "observed_samples": {
+    "default_configuration": [
+      {
+        "urls": [
+          "stun:stun.l.google.com:19302"
+        ]
+      }
+    ],
+    "custom_cli_configuration": [
+      {
+        "urls": [
+          "stun:stun1.example.com:19302"
+        ]
+      },
+      {
+        "urls": [
+          "turn:turn.example.com:3478"
+        ],
+        "username": "user",
+        "credential": "pass"
+      }
+    ]
+  }
+}

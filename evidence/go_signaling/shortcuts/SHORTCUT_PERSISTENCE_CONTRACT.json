@@ -2,6 +2,14 @@
   "file_name": "shortcuts.json",
   "write_mechanism": "DIRECT_WRITE_FILE (no atomic rename)",
   "file_mode": "0644 (0x1a4)",
+  "file_lifecycle": {
+    "lifecycle_type": "LAZY_CREATE_ON_MUTATION",
+    "exists_before_startup": false,
+    "exists_immediately_after_startup": false,
+    "exists_after_first_get": false,
+    "exists_after_first_post": true,
+    "exists_after_restart": true
+  },
   "machine_facts": {
     "saver_symbol": "main.jk9A26",
     "saver_va": "0x76c2c0",

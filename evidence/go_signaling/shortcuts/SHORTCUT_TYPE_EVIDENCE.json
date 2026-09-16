@@ -1,5 +1,13 @@
 {
   "classification": "DIRECT_TYPE_RECOVERY",
+  "abi_validation": {
+    "architecture": "AMD64",
+    "runtime_struct_field_size": 24,
+    "offset_encoding": "RAW_UINTPTR_BYTE_OFFSET",
+    "is_non_overlapping": true,
+    "struct_total_size": 32,
+    "struct_alignment": 8
+  },
   "shortcut_struct": {
     "struct_va": "0x7d70c0",
     "struct_name": "*main.KXuCJAAi60",
@@ -11,20 +19,22 @@
         "name": "DIHvMDn",
         "tag": "json:\"name\"",
         "offset": 0,
+        "size_bytes": 16,
         "type_va": "0x79e2c0"
       },
       {
         "field_index": 1,
         "name": "MTkDoTKb",
         "tag": "json:\"cmd\"",
-        "offset": 8,
+        "offset": 16,
+        "size_bytes": 16,
         "type_va": "0x79e2c0"
       }
     ]
   },
   "storage_map": {
-    "descriptor_va": "0x7bfc40",
-    "type_name": "*map[string][]main.KXuCJAAi60",
+    "descriptor_va": "0x7c0340",
+    "type_name": "*map[string]string",
     "kind": "0x35 (pointer to map)",
     "key_type": "string (username)",
     "value_type": "[]main.KXuCJAAi60 ([]Shortcut)"

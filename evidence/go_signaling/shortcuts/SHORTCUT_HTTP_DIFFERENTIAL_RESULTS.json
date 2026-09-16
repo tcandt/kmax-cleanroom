@@ -1,12 +1,12 @@
 {
   "metadata": {
     "title": "Phase 2C.3F Shortcuts REST HTTP Differential Verification Results",
-    "timestamp": "2026-09-16T05:10:41.413895+00:00",
+    "timestamp": "2026-09-16T06:58:18.217422+00:00",
     "target": "/api/shortcuts",
-    "total_executed": 13,
-    "passed": 13,
+    "total_executed": 19,
+    "passed": 19,
     "failed": 0,
-    "metric": "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 13/13",
+    "metric": "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 19/19",
     "all_passed": true
   },
   "results": [
@@ -289,6 +289,142 @@
             "cmd": "echo user"
           }
         ]
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-14",
+      "test_name": "POST null literal parity (success, null\\n readback, null on disk, persist restart)",
+      "classification": "NULL_EDGE_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "post_status": 200,
+        "post_body": "{\"status\":\"success\"}\n",
+        "get_body": "null\n",
+        "disk_val": null,
+        "restart_get_body": "null\n"
+      },
+      "reconstructed": {
+        "post_status": 200,
+        "post_body": "{\"status\":\"success\"}\n",
+        "get_body": "null\n",
+        "disk_val": null,
+        "restart_get_body": "null\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-15",
+      "test_name": "POST [null] array element parity (zero-value struct initialization)",
+      "classification": "JSON_EDGE_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "post_status": 200,
+        "get_body": "[{\"name\":\"\",\"cmd\":\"\"}]\n"
+      },
+      "reconstructed": {
+        "post_status": 200,
+        "get_body": "[{\"name\":\"\",\"cmd\":\"\"}]\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-16",
+      "test_name": "Partial fields mutation parity (missing fields default to zero-value empty string)",
+      "classification": "JSON_EDGE_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "name_only": [
+          {
+            "name": "OnlyName",
+            "cmd": ""
+          }
+        ],
+        "cmd_only": [
+          {
+            "name": "",
+            "cmd": "OnlyCmd"
+          }
+        ]
+      },
+      "reconstructed": {
+        "name_only": [
+          {
+            "name": "OnlyName",
+            "cmd": ""
+          }
+        ],
+        "cmd_only": [
+          {
+            "name": "",
+            "cmd": "OnlyCmd"
+          }
+        ]
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-17",
+      "test_name": "Extra fields ignored parity (unknown fields ignored by decoder)",
+      "classification": "JSON_EDGE_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "post_status": 200,
+        "get_json": [
+          {
+            "name": "x",
+            "cmd": "y"
+          }
+        ]
+      },
+      "reconstructed": {
+        "post_status": 200,
+        "get_json": [
+          {
+            "name": "x",
+            "cmd": "y"
+          }
+        ]
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-18",
+      "test_name": "Type mismatch 400 (number in string field -> Invalid JSON\\n)",
+      "classification": "ERROR_HANDLING",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "reconstructed": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-19",
+      "test_name": "First-run file lifecycle contract (LAZY_CREATE_ON_MUTATION proven)",
+      "classification": "PERSISTENCE_LIFECYCLE",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "file_at_startup": false,
+        "file_after_first_get": false,
+        "file_after_first_post": true,
+        "file_after_restart": true
+      },
+      "reconstructed": {
+        "file_at_startup": false,
+        "file_after_first_get": false,
+        "file_after_first_post": true,
+        "file_after_restart": true
       },
       "details": ""
     }

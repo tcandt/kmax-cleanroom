@@ -1,0 +1,290 @@
+{
+  "/api/server/addresses": {
+    "GET": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "391",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 391,
+      "body_preview": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59635\",\"[fd7a:115c:a1e0::b34:c72d]:59635\",\"100.81.199.44:5"
+    },
+    "POST": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "391",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 391,
+      "body_preview": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59635\",\"[fd7a:115c:a1e0::b34:c72d]:59635\",\"100.81.199.44:5"
+    },
+    "PUT": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "391",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 391,
+      "body_preview": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59635\",\"[fd7a:115c:a1e0::b34:c72d]:59635\",\"100.81.199.44:5"
+    },
+    "PATCH": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "391",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 391,
+      "body_preview": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59635\",\"[fd7a:115c:a1e0::b34:c72d]:59635\",\"100.81.199.44:5"
+    },
+    "DELETE": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "391",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 391,
+      "body_preview": "{\"code\":0,\"data\":{\"addresses\":[\"127.0.0.1:59635\",\"[fd7a:115c:a1e0::b34:c72d]:59635\",\"100.81.199.44:5"
+    },
+    "HEAD": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "391",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "content_type": null,
+      "content_length": "0",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    }
+  },
+  "/api/default_settings": {
+    "GET": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "2",
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 2,
+      "body_preview": "{}"
+    },
+    "POST": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "20",
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 20,
+      "body_preview": "{\"status\":\"success\"}"
+    },
+    "PUT": {
+      "status_code": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": "19",
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_preview": "Method not allowed"
+    },
+    "PATCH": {
+      "status_code": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": "19",
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_preview": "Method not allowed"
+    },
+    "DELETE": {
+      "status_code": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": "19",
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_preview": "Method not allowed"
+    },
+    "HEAD": {
+      "status_code": 405,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": "19",
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "content_type": null,
+      "content_length": "0",
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    }
+  },
+  "/api/ice_servers": {
+    "GET": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "44",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 44,
+      "body_preview": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+    },
+    "POST": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "44",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 44,
+      "body_preview": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+    },
+    "PUT": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "44",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 44,
+      "body_preview": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+    },
+    "PATCH": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "44",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 44,
+      "body_preview": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+    },
+    "DELETE": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "44",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 44,
+      "body_preview": "[{\"urls\":[\"stun:stun.l.google.com:19302\"]}]"
+    },
+    "HEAD": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "44",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "content_type": null,
+      "content_length": "0",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    }
+  },
+  "/api/version": {
+    "GET": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "80",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 80,
+      "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "POST": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "80",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 80,
+      "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "PUT": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "80",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 80,
+      "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "PATCH": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "80",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 80,
+      "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "DELETE": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "80",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 80,
+      "body_preview": "{\"build_time\":\"2026-09-07T09:58:25Z\",\"git_commit\":\"2693ef1\",\"version\":\"v0.3.6\"}"
+    },
+    "HEAD": {
+      "status_code": 200,
+      "content_type": "application/json",
+      "content_length": "80",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "content_type": null,
+      "content_length": "0",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_preview": ""
+    }
+  }
+}

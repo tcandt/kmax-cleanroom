@@ -1,0 +1,53 @@
+{
+  "classification": "DIRECT_GLOBAL_RECOVERY",
+  "route": "/api/version",
+  "auth_required": false,
+  "methods_allowed": [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "HEAD",
+    "OPTIONS"
+  ],
+  "metadata_fields": {
+    "version": {
+      "value": "v0.3.6",
+      "data_ptr_va": "0xbeee00",
+      "len_va": "0xbeee08",
+      "origin": "COMPILE_TIME_LDFLAGS"
+    },
+    "git_commit": {
+      "value": "2693ef1",
+      "data_ptr_va": "0xbeee10",
+      "len_va": "0xbeee18",
+      "origin": "COMPILE_TIME_LDFLAGS"
+    },
+    "build_time": {
+      "value": "2026-09-07T09:58:25Z",
+      "data_ptr_va": "0xbeee20",
+      "len_va": "0xbeee28",
+      "origin": "COMPILE_TIME_LDFLAGS"
+    }
+  },
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "string"
+      },
+      "git_commit": {
+        "type": "string"
+      },
+      "build_time": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "version",
+      "git_commit",
+      "build_time"
+    ]
+  }
+}

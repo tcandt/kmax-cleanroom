@@ -1,0 +1,645 @@
+{
+  "execution_timestamp": "2026-09-16T07:17:22.241485+00:00",
+  "total_cases": 53,
+  "passed": 53,
+  "failed": 0,
+  "all_passed": true,
+  "results": [
+    {
+      "case_id": "SERVER-CONFIG-01-addresses",
+      "description": "Route /api/server/addresses registration presence",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-01-default_settings",
+      "description": "Route /api/default_settings registration presence",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-01-ice_servers",
+      "description": "Route /api/ice_servers registration presence",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-01-version",
+      "description": "Route /api/version registration presence",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-02",
+      "description": "/api/version public access without auth token (200 OK)",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Keys mismatch: orig=['build_time', 'git_commit', 'version'], recon=['build_time', 'git_commit', 'version']"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-03-POST",
+      "description": "/api/version method POST parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-03-PUT",
+      "description": "/api/version method PUT parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-03-PATCH",
+      "description": "/api/version method PATCH parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-03-DELETE",
+      "description": "/api/version method DELETE parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-03-HEAD",
+      "description": "/api/version method HEAD parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-03-OPTIONS",
+      "description": "/api/version method OPTIONS parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": null,
+        "recon_content_type": null,
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-04",
+      "description": "/api/version schema and fields parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Content mismatch: orig={'build_time': '2026-09-07T09:58:25Z', 'git_commit': '2693ef1', 'version': 'v0.3.6'}, recon={'build_time': '2026-09-07T09:58:25Z', 'git_commit': '2693ef1', 'version': 'v0.3.6'}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-05",
+      "description": "/api/ice_servers default configuration GET parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "ICE server default mismatch: orig=[{'urls': ['stun:stun.l.google.com:19302']}], recon=[{'urls': ['stun:stun.l.google.com:19302']}]"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-06-missing",
+      "description": "/api/ice_servers missing token returns 401 Unauthorized",
+      "status": "PASS",
+      "details": {
+        "orig_status": 401,
+        "recon_status": 401,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-06-invalid",
+      "description": "/api/ice_servers invalid token returns 401 Unauthorized",
+      "status": "PASS",
+      "details": {
+        "orig_status": 401,
+        "recon_status": 401,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-07-POST",
+      "description": "/api/ice_servers method POST parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-07-PUT",
+      "description": "/api/ice_servers method PUT parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-07-PATCH",
+      "description": "/api/ice_servers method PATCH parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-07-DELETE",
+      "description": "/api/ice_servers method DELETE parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-07-HEAD",
+      "description": "/api/ice_servers method HEAD parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-07-OPTIONS",
+      "description": "/api/ice_servers method OPTIONS parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": null,
+        "recon_content_type": null,
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-08",
+      "description": "/api/ice_servers custom CLI -ice_servers parsing parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Custom ICE mismatch: orig=[{'urls': ['stun:stun1.example.com:19302']}, {'urls': ['turn:turn.example.com:3478'], 'username': 'user', 'credential': 'pass'}], recon=[{'urls': ['stun:stun1.example.com:19302']}, {'urls': ['turn:turn.example.com:3478'], 'username': 'user', 'credential': 'pass'}]"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-09",
+      "description": "/api/server/addresses standard address discovery parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Address mismatch: orig={'code': 0, 'data': {'addresses': ['127.0.0.1:55714', '[fd7a:115c:a1e0::b34:c72d]:55714', '100.81.199.44:55714', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55714', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55714', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55714', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55714', '192.168.1.163:55714', '172.22.224.1:55714', '172.29.64.1:55714'], 'current': '127.0.0.1:55714'}}, recon={'code': 0, 'data': {'addresses': ['127.0.0.1:55715', '[fd7a:115c:a1e0::b34:c72d]:55715', '100.81.199.44:55715', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55715', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55715', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55715', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55715', '192.168.1.163:55715', '172.22.224.1:55715', '172.29.64.1:55715'], 'current': '127.0.0.1:55715'}}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-10",
+      "description": "/api/server/addresses custom Host header with port parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Host with port mismatch: orig={'code': 0, 'data': {'addresses': ['custom-domain.org:8443', '[fd7a:115c:a1e0::b34:c72d]:8443', '100.81.199.44:8443', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:8443', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:8443', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:8443', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:8443', '192.168.1.163:8443', '172.22.224.1:8443', '172.29.64.1:8443'], 'current': 'custom-domain.org:8443'}}, recon={'code': 0, 'data': {'addresses': ['custom-domain.org:8443', '[fd7a:115c:a1e0::b34:c72d]:8443', '100.81.199.44:8443', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:8443', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:8443', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:8443', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:8443', '192.168.1.163:8443', '172.22.224.1:8443', '172.29.64.1:8443'], 'current': 'custom-domain.org:8443'}}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-11",
+      "description": "/api/server/addresses custom Host header without port parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Host without port mismatch: orig={'code': 0, 'data': {'addresses': ['custom-domain.org', '[fd7a:115c:a1e0::b34:c72d]:55714', '100.81.199.44:55714', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55714', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55714', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55714', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55714', '192.168.1.163:55714', '172.22.224.1:55714', '172.29.64.1:55714'], 'current': 'custom-domain.org'}}, recon={'code': 0, 'data': {'addresses': ['custom-domain.org', '[fd7a:115c:a1e0::b34:c72d]:55715', '100.81.199.44:55715', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55715', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55715', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55715', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55715', '192.168.1.163:55715', '172.22.224.1:55715', '172.29.64.1:55715'], 'current': 'custom-domain.org'}}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-12-missing",
+      "description": "/api/server/addresses missing token returns 401 Unauthorized",
+      "status": "PASS",
+      "details": {
+        "orig_status": 401,
+        "recon_status": 401,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-12-invalid",
+      "description": "/api/server/addresses invalid token returns 401 Unauthorized",
+      "status": "PASS",
+      "details": {
+        "orig_status": 401,
+        "recon_status": 401,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-13-POST",
+      "description": "/api/server/addresses method POST parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-13-PUT",
+      "description": "/api/server/addresses method PUT parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-13-PATCH",
+      "description": "/api/server/addresses method PATCH parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-13-DELETE",
+      "description": "/api/server/addresses method DELETE parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-13-HEAD",
+      "description": "/api/server/addresses method HEAD parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-13-OPTIONS",
+      "description": "/api/server/addresses method OPTIONS parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": null,
+        "recon_content_type": null,
+        "error": "Status mismatch: orig=200, recon=200"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-14",
+      "description": "/api/default_settings initial GET returns empty map {}",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Initial settings mismatch: orig={}, recon={}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-15-missing",
+      "description": "/api/default_settings missing token returns 401 Unauthorized",
+      "status": "PASS",
+      "details": {
+        "orig_status": 401,
+        "recon_status": 401,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-15-invalid",
+      "description": "/api/default_settings invalid token returns 401 Unauthorized",
+      "status": "PASS",
+      "details": {
+        "orig_status": 401,
+        "recon_status": 401,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-16-user-403",
+      "description": "/api/default_settings normal user POST returns 403 Forbidden: admin only",
+      "status": "PASS",
+      "details": {
+        "orig_status": 403,
+        "recon_status": 403,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "RBAC 403 body mismatch: orig='Forbidden: admin only\\n', recon='Forbidden: admin only\\n'"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-17",
+      "description": "/api/default_settings mutation and readback parity",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Mutation readback mismatch: orig={\"video_bitrate\": 8000, \"fps\": 60, \"encoder\": \"h264\"}, recon={\"encoder\":\"h264\",\"fps\":60,\"video_bitrate\":8000}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-18-empty",
+      "description": "/api/default_settings empty POST body returns 400 Invalid JSON",
+      "status": "PASS",
+      "details": {
+        "orig_status": 400,
+        "recon_status": 400,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "400 body mismatch: orig='Invalid JSON\\n', recon='Invalid JSON\\n'"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-18-malformed",
+      "description": "/api/default_settings malformed JSON POST body returns 400 Invalid JSON",
+      "status": "PASS",
+      "details": {
+        "orig_status": 400,
+        "recon_status": 400,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "400 body mismatch: orig='Invalid JSON\\n', recon='Invalid JSON\\n'"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-18-array",
+      "description": "/api/default_settings non-object JSON POST body returns 400 Invalid JSON",
+      "status": "PASS",
+      "details": {
+        "orig_status": 400,
+        "recon_status": 400,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "400 body mismatch: orig='Invalid JSON\\n', recon='Invalid JSON\\n'"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-19-post",
+      "description": "/api/default_settings POST null returns 200 {\"status\":\"success\"}",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "POST null response mismatch: orig={\"status\":\"success\"}, recon={\"status\":\"success\"}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-19-get",
+      "description": "/api/default_settings GET after POST null returns 200 null",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "GET after null mismatch: orig=null, recon=null"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-20-PUT",
+      "description": "/api/default_settings method PUT returns 405 Method not allowed",
+      "status": "PASS",
+      "details": {
+        "orig_status": 405,
+        "recon_status": 405,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "405 mismatch: orig=405 'Method not allowed\\n', recon=405 'Method not allowed\\n'"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-20-PATCH",
+      "description": "/api/default_settings method PATCH returns 405 Method not allowed",
+      "status": "PASS",
+      "details": {
+        "orig_status": 405,
+        "recon_status": 405,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "405 mismatch: orig=405 'Method not allowed\\n', recon=405 'Method not allowed\\n'"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-20-DELETE",
+      "description": "/api/default_settings method DELETE returns 405 Method not allowed",
+      "status": "PASS",
+      "details": {
+        "orig_status": 405,
+        "recon_status": 405,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "405 mismatch: orig=405 'Method not allowed\\n', recon=405 'Method not allowed\\n'"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-20-HEAD",
+      "description": "/api/default_settings method HEAD returns 405 Method not allowed",
+      "status": "PASS",
+      "details": {
+        "orig_status": 405,
+        "recon_status": 405,
+        "orig_content_type": "text/plain; charset=utf-8",
+        "recon_content_type": "text/plain; charset=utf-8",
+        "error": "405 mismatch: orig=405 '', recon=405 ''"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-21",
+      "description": "/api/default_settings in-memory lifecycle resets to {} across restart",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Restart persistence leak: orig={}, recon={}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-22-version",
+      "description": "-no-auth mode access to /api/version without token",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-22-ice_servers",
+      "description": "-no-auth mode access to /api/ice_servers without token",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-22-addresses",
+      "description": "-no-auth mode access to /api/server/addresses without token",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-22-default_settings",
+      "description": "-no-auth mode access to /api/default_settings without token",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-22-default_settings-post",
+      "description": "-no-auth mode allows POST /api/default_settings without token",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": ""
+      }
+    }
+  ]
+}

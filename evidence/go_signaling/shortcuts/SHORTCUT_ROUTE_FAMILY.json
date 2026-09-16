@@ -2,6 +2,15 @@
   "pattern": "/api/shortcuts",
   "registration_type": "HandleFunc",
   "registration_call_va": "0x765984",
+  "query_seed": {
+    "route_pattern": "/api/shortcuts"
+  },
+  "machine_derivation": {
+    "wrapper_source": "ROUTE_HANDLER_MAP[/api/shortcuts]",
+    "business_handler_source": "disasm(main.main.func3) -> call main.yHBQWSpi",
+    "saver_source": "disasm(main.yHBQWSpi) -> call main.jk9A26",
+    "loader_source": "disasm(main.main) -> call main.iXiPYH2zBLTK"
+  },
   "wrapper": {
     "symbol": "main.main.func3",
     "va": "0x76d4c0",
