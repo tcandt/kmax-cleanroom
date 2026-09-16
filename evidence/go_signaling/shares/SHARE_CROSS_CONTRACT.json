@@ -1,0 +1,5 @@
+{
+  "devices_endpoint_isolation": "/devices does not expose share tokens or modify DeviceDTO",
+  "users_endpoint_isolation": "User deletion or rename leaves existing share tokens in shares.json with their original creator username string intact (no cascade deletion in binary)",
+  "device_uniqueness": "Only 1 active share permitted per device_id at any time; second creation returns 409 Conflict"
+}

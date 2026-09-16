@@ -1,0 +1,12 @@
+{
+  "creation_duration_unit": "seconds via expire_seconds parameter",
+  "permanent_share_representation": "0001-01-01T00:00:00Z (Go time.Time zero value)",
+  "extension_unit": "seconds via extend_seconds parameter",
+  "cleanup_worker": {
+    "symbol": "main.dYBSRoVh.func1",
+    "va": "0x73a120",
+    "size_bytes": 992,
+    "mechanism": "Goroutine runs in background, checks expired shares, deletes from memory map and calls main.fomL4ATwVV1 (saveShares) to persist cleanup to disk"
+  },
+  "lazy_check_on_query": "GET /api/share/info verifies remaining_seconds > 0 before returning; returns 404 Share link expired or invalid\\n on expired tokens"
+}

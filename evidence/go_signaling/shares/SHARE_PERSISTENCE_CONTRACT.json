@@ -1,0 +1,14 @@
+{
+  "file_name": "shares.json",
+  "file_mode": "0600 (0x180 octal)",
+  "file_mode_binary_instruction": "0x739cd9: mov r8d, 0x180",
+  "write_mechanism": "ATOMIC_TMP_RENAME",
+  "atomic_tmp_rename": true,
+  "binary_evidence": "main.fomL4ATwVV1 (0x739900) marshals with json.MarshalIndent (2 spaces), writes to shares.json.tmp via os.WriteFile (0x4e0da0) with perm 0x180 (0600), then renames shares.json.tmp -> shares.json via os.Rename (0x4e1160).",
+  "json_format": {
+    "indentation": "2 spaces (json.MarshalIndent)",
+    "root_type": "array",
+    "empty_state": "[]"
+  },
+  "observed_disk_content": "[\n  {\n    \"token_id\": \"st_4095205df064500203b7bc9073fcb99f\",\n    \"card_code\": \"CP-BPPZ-H3CV\",\n    \"device_id\": \"dev-002\",\n    \"creator\": \"admin\",\n    \"created_at\": \"2026-09-16T09:59:10.6379036+07:00\",\n    \"expires_at\": \"2026-09-16T12:29:10.6379036+07:00\",\n    \"access_mode\": \"full\",\n    \"require_password\": true,\n    \"password_hash\": \"21f8a90e3fcaf7acc6c7935a198fdbd6ebce93636de6bb3109c1249b24492ad9\",\n    \"allow_clipboard\": true,\n    \"allow_file_tx\": true,\n    \"forbid_bitrate\": false,\n    \"forbid_fps\": false,\n    \"forbid_resolution\": false,\n    \"forbid_audio\": true,\n    \"description\": \"Full share probe\",\n    \"use_count\": 0\n  }\n]"
+}

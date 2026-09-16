@@ -1,0 +1,18 @@
+{
+  "endpoint": "/api/share/redeem_card",
+  "method": "POST",
+  "auth_requirement": "PUBLIC_UNAUTHENTICATED (no Bearer token required)",
+  "empty_card_code": {
+    "status_code": 400,
+    "body": "card_code is required\n"
+  },
+  "invalid_card_code": {
+    "status_code": 200,
+    "code_field": 404
+  },
+  "valid_card_code": {
+    "status_code": 200,
+    "code_field": 404,
+    "returned_token": null
+  }
+}

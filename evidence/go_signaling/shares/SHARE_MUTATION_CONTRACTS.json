@@ -1,0 +1,44 @@
+{
+  "update_contract": {
+    "endpoint": "/api/share/update",
+    "auth_requirement": "ADMIN_ONLY",
+    "empty_token_status": 400,
+    "empty_token_body": "token is required\n",
+    "valid_status": 200,
+    "valid_code": 0,
+    "request_struct_va": "0x7f9640",
+    "mutable_fields": [
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "forbid_audio",
+      "guest_settings"
+    ],
+    "immutable_fields_ignored": [
+      "allow_clipboard",
+      "allow_file_tx",
+      "description"
+    ]
+  },
+  "extend_contract": {
+    "endpoint": "/api/share/extend",
+    "auth_requirement": "ADMIN_ONLY",
+    "permanent_share_rejection": {
+      "status_code": 200,
+      "code_field": 400
+    },
+    "expiring_share_extension": {
+      "status_code": 200,
+      "code_field": 0
+    }
+  },
+  "revoke_contract": {
+    "endpoint": "/api/share/revoke",
+    "auth_requirement": "ADMIN_ONLY",
+    "empty_status": 404,
+    "unknown_status": 404,
+    "valid_status": 200,
+    "already_revoked_status": 404,
+    "deletion_from_state": true
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "classification": "DIRECT_TYPE_RECOVERY",
+  "share_token_struct": {
+    "struct_va": "0x80f700",
+    "struct_name": "*main.IopTpsqKRhA",
+    "size_bytes": 192,
+    "kind": "0x19",
+    "field_count": 18,
+    "fields": [
+      {
+        "field_index": 0,
+        "name": "YAAH305",
+        "tag": "json:\"token_id\"",
+        "offset": 0,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 1,
+        "name": "Q45msAArJ",
+        "tag": "json:\"card_code\"",
+        "offset": 8,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 2,
+        "name": "ZuTGEwH_",
+        "tag": "json:\"device_id\"",
+        "offset": 16,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 3,
+        "name": "Z3ypniy",
+        "tag": "json:\"creator\"",
+        "offset": 24,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 4,
+        "name": "U5KigcLg8GuC",
+        "tag": "json:\"created_at\"",
+        "offset": 32,
+        "type_va": "0x816e80"
+      },
+      {
+        "field_index": 5,
+        "name": "On9zW3fr3xq",
+        "tag": "json:\"expires_at\"",
+        "offset": 44,
+        "type_va": "0x816e80"
+      },
+      {
+        "field_index": 6,
+        "name": "OgzTZQxn",
+        "tag": "json:\"access_mode\"",
+        "offset": 56,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 7,
+        "name": "BUU6RQ",
+        "tag": "json:\"require_password\"",
+        "offset": 64,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "field_index": 8,
+        "name": "WVN3jZO3C",
+        "tag": "json:\"password_hash,omitempty\"",
+        "offset": 68,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 9,
+        "name": "OEAjaJAXJ",
+        "tag": "json:\"allow_clipboard\"",
+        "offset": 76,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "field_index": 10,
+        "name": "Qlq9Lz_WAMNa",
+        "tag": "json:\"allow_file_tx\"",
+        "offset": 76,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "field_index": 11,
+        "name": "TkpOqDWT",
+        "tag": "json:\"forbid_bitrate\"",
+        "offset": 77,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "field_index": 12,
+        "name": "NPKv2lKLrmxk",
+        "tag": "json:\"forbid_fps\"",
+        "offset": 77,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "field_index": 13,
+        "name": "HiBWiwBHEKPM",
+        "tag": "json:\"forbid_resolution\"",
+        "offset": 78,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "field_index": 14,
+        "name": "ADE4a_iH1",
+        "tag": "json:\"forbid_audio\"",
+        "offset": 78,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "field_index": 15,
+        "name": "PFMzZQzyNpiO",
+        "tag": "json:\"guest_settings,omitempty\"",
+        "offset": 80,
+        "type_va": "0x7bf940"
+      },
+      {
+        "field_index": 16,
+        "name": "ZjNTj0K6Mon",
+        "tag": "json:\"description\"",
+        "offset": 84,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 17,
+        "name": "Cg3JpYG",
+        "tag": "json:\"use_count\"",
+        "offset": 92,
+        "type_va": "0x79e480"
+      }
+    ]
+  },
+  "guest_settings_type": {
+    "descriptor_va": "0x7bf940",
+    "type_name": "*map[string]interface {}",
+    "kind": "0x35 (pointer to map)",
+    "json_tag": "json:\"guest_settings,omitempty\""
+  },
+  "token_generation": {
+    "token_format": "st_<32_hex_chars>",
+    "token_prefix": "st_",
+    "token_random_bytes": 16,
+    "token_entropy_source": "crypto/rand.Read (VA 0x52a5e0)",
+    "card_code_format": "CP-%s-%s",
+    "card_code_alphabet": "23456789ABCDEFGHJKLMNPQRSTUVWXYZ",
+    "card_code_alphabet_va": "0x8312b7",
+    "card_code_generator_va": "0x739440 (main.cLTBoWx9C0)",
+    "password_hash_algorithm": "SHA256(password) (no salt, lowercase hex 64 chars)"
+  }
+}

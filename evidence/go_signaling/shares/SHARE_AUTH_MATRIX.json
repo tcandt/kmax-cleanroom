@@ -1,0 +1,156 @@
+{
+  "/api/share/create": {
+    "ADMIN": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "NORMAL_USER": {
+      "status_code": 403,
+      "body_prefix": "Forbidden: admin only\n"
+    },
+    "MISSING_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "INVALID_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "NO_AUTH_MODE": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    }
+  },
+  "/api/share/extend": {
+    "ADMIN": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "NORMAL_USER": {
+      "status_code": 403,
+      "body_prefix": "Forbidden: admin only\n"
+    },
+    "MISSING_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "INVALID_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "NO_AUTH_MODE": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    }
+  },
+  "/api/share/info": {
+    "ADMIN": {
+      "status_code": 400,
+      "body_prefix": "Token required\n"
+    },
+    "NORMAL_USER": {
+      "status_code": 400,
+      "body_prefix": "Token required\n"
+    },
+    "MISSING_TOKEN": {
+      "status_code": 400,
+      "body_prefix": "Token required\n"
+    },
+    "INVALID_TOKEN": {
+      "status_code": 400,
+      "body_prefix": "Token required\n"
+    },
+    "NO_AUTH_MODE": {
+      "status_code": 400,
+      "body_prefix": "Token required\n"
+    }
+  },
+  "/api/share/list": {
+    "ADMIN": {
+      "status_code": 200,
+      "body_prefix": "{\"code\":0,\"data\":[]}\n"
+    },
+    "NORMAL_USER": {
+      "status_code": 403,
+      "body_prefix": "Forbidden: admin only\n"
+    },
+    "MISSING_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "INVALID_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "NO_AUTH_MODE": {
+      "status_code": 200,
+      "body_prefix": "{\"code\":0,\"data\":[]}\n"
+    }
+  },
+  "/api/share/redeem_card": {
+    "ADMIN": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "NORMAL_USER": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "MISSING_TOKEN": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "INVALID_TOKEN": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "NO_AUTH_MODE": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    }
+  },
+  "/api/share/revoke": {
+    "ADMIN": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "NORMAL_USER": {
+      "status_code": 403,
+      "body_prefix": "Forbidden: admin only\n"
+    },
+    "MISSING_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "INVALID_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "NO_AUTH_MODE": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    }
+  },
+  "/api/share/update": {
+    "ADMIN": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    },
+    "NORMAL_USER": {
+      "status_code": 403,
+      "body_prefix": "Forbidden: admin only\n"
+    },
+    "MISSING_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "INVALID_TOKEN": {
+      "status_code": 401,
+      "body_prefix": "Unauthorized\n"
+    },
+    "NO_AUTH_MODE": {
+      "status_code": 400,
+      "body_prefix": "Invalid payload\n"
+    }
+  }
+}

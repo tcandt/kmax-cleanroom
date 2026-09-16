@@ -46,10 +46,17 @@ func main() {
 		log.Printf("Failed to initialize tags store: %v", err)
 	}
 
+	sharesPath := filepath.Join(*dataDir, "shares.json")
+	sharesStore := storage.NewSharesStore(sharesPath)
+	if err := sharesStore.Load(); err != nil {
+		log.Printf("Failed to initialize shares store: %v", err)
+	}
+
 	sm := session.NewSessionManager(session.RealClock{})
 	authenticator := auth.NewAuthenticator(usersStore, sm, *noAuth)
 	server := httpapi.NewServer(authenticator, *noAuth)
 	server.SetTagsStore(tagsStore)
+	server.SetSharesStore(sharesStore)
 
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	log.Printf("[HTTP] Reconstructed server listening on %s", addr)

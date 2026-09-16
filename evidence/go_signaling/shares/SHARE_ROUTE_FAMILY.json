@@ -1,0 +1,146 @@
+{
+  "namespace": "/api/share/*",
+  "route_count": 7,
+  "routes": [
+    {
+      "pattern": "/api/share/create",
+      "registration_call_va": "0x765b50",
+      "registration_type": "HandleFunc",
+      "handler_symbol": "main.cYYycnP3",
+      "handler_va": "0x75c240",
+      "function_size_bytes": 5984,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "runtime.memequal",
+        "main.chIaMDTZ",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.gcWriteBarrier1",
+        "JOaOfPm.(*PFVf3KWTUcg).Decode"
+      ]
+    },
+    {
+      "pattern": "/api/share/extend",
+      "registration_call_va": "0x765b98",
+      "registration_type": "HandleFunc",
+      "handler_symbol": "main.d1oM4aHeERk4",
+      "handler_va": "0x75ee20",
+      "function_size_bytes": 3328,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "runtime.memequal",
+        "main.chIaMDTZ",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.gcWriteBarrier1",
+        "JOaOfPm.(*PFVf3KWTUcg).Decode"
+      ]
+    },
+    {
+      "pattern": "/api/share/info",
+      "registration_call_va": "0x765bc8",
+      "registration_type": "HandleFunc",
+      "handler_symbol": "main.busbgD",
+      "handler_va": "0x760480",
+      "function_size_bytes": 5536,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "EupnhXqvhu0.(*Wi41ybxZAeg).Query",
+        "EupnhXqvhu0.J1WXoffm.Get",
+        "sync.wC1Ayu5",
+        "runtime.mapaccess2_faststr",
+        "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+        "fZqVo7pKK.RuHIa4"
+      ]
+    },
+    {
+      "pattern": "/api/share/list",
+      "registration_call_va": "0x765b68",
+      "registration_type": "HandleFunc",
+      "handler_symbol": "main._0VLCRLL",
+      "handler_va": "0x75d9a0",
+      "function_size_bytes": 2592,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "runtime.memequal",
+        "main.chIaMDTZ",
+        "EupnhXqvhu0.(*Wi41ybxZAeg).Query",
+        "EupnhXqvhu0.J1WXoffm.Get",
+        "fZqVo7pKK.RuHIa4"
+      ]
+    },
+    {
+      "pattern": "/api/share/redeem_card",
+      "registration_call_va": "0x765be0",
+      "registration_type": "HandleFunc",
+      "handler_symbol": "main.iSjKlH94xCO",
+      "handler_va": "0x761a20",
+      "function_size_bytes": 6272,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "runtime.gcWriteBarrier1",
+        "JOaOfPm.(*PFVf3KWTUcg).Decode",
+        "jMkU1MzrAJ.Sg6kvDEQn",
+        "jMkU1MzrAJ.BRy_Gl0FaPXr",
+        "sync.wC1Ayu5",
+        "runtime.mapaccess2_faststr"
+      ]
+    },
+    {
+      "pattern": "/api/share/revoke",
+      "registration_call_va": "0x765b80",
+      "registration_type": "HandleFunc",
+      "handler_symbol": "main.nFuQn_o",
+      "handler_va": "0x75e5a0",
+      "function_size_bytes": 2176,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "runtime.memequal",
+        "main.chIaMDTZ",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.gcWriteBarrier1",
+        "JOaOfPm.(*PFVf3KWTUcg).Decode"
+      ]
+    },
+    {
+      "pattern": "/api/share/update",
+      "registration_call_va": "0x765bb0",
+      "registration_type": "HandleFunc",
+      "handler_symbol": "main.nMFGdqfO",
+      "handler_va": "0x75fb20",
+      "function_size_bytes": 2400,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.lYKp_Iuf",
+        "runtime.memequal",
+        "main.chIaMDTZ",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.gcWriteBarrier1",
+        "JOaOfPm.(*PFVf3KWTUcg).Decode"
+      ]
+    }
+  ]
+}

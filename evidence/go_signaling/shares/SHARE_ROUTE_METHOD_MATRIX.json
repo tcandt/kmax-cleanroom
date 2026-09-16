@@ -1,0 +1,310 @@
+{
+  "/api/share/create": {
+    "GET": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "POST": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PUT": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PATCH": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "DELETE": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "HEAD": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": ""
+    }
+  },
+  "/api/share/extend": {
+    "GET": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "POST": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PUT": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PATCH": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "DELETE": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "HEAD": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": ""
+    }
+  },
+  "/api/share/info": {
+    "GET": {
+      "status_code": 400,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "POST": {
+      "status_code": 400,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PUT": {
+      "status_code": 400,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PATCH": {
+      "status_code": 400,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "DELETE": {
+      "status_code": 400,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "HEAD": {
+      "status_code": 400,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": ""
+    }
+  },
+  "/api/share/list": {
+    "GET": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "application/json"
+    },
+    "POST": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "application/json"
+    },
+    "PUT": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "application/json"
+    },
+    "PATCH": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "application/json"
+    },
+    "DELETE": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "application/json"
+    },
+    "HEAD": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "application/json"
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "access_control_allow_methods": "GET, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": ""
+    }
+  },
+  "/api/share/redeem_card": {
+    "GET": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "POST": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PUT": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PATCH": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "DELETE": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "HEAD": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": ""
+    }
+  },
+  "/api/share/revoke": {
+    "GET": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "POST": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PUT": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PATCH": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "DELETE": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "HEAD": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": ""
+    }
+  },
+  "/api/share/update": {
+    "GET": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "POST": {
+      "status_code": 400,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PUT": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "PATCH": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "DELETE": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "HEAD": {
+      "status_code": 405,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "OPTIONS": {
+      "status_code": 200,
+      "access_control_allow_methods": "POST, OPTIONS",
+      "access_control_allow_origin": "*",
+      "content_type": ""
+    }
+  }
+}

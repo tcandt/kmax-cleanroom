@@ -18,6 +18,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"cloudphone-signaling/pkg/types"
 )
@@ -155,3 +156,110 @@ func (s *SharesStore) DeleteToken(tokenID string) error {
 	delete(s.shares, tokenID)
 	return s.saveLocked()
 }
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: finds active share token by device ID under read lock
+// Confidence: N/A
+func (s *SharesStore) GetTokenByDeviceID(deviceID string) (types.ShareToken, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	for _, tok := range s.shares {
+		if tok.DeviceID == deviceID {
+			return tok, true
+		}
+	}
+	return types.ShareToken{}, false
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: finds share token by card code under read lock
+// Confidence: N/A
+func (s *SharesStore) GetTokenByCardCode(cardCode string) (types.ShareToken, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	for _, tok := range s.shares {
+		if tok.CardCode == cardCode {
+			return tok, true
+		}
+	}
+	return types.ShareToken{}, false
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: extends share expiration by seconds under write lock followed by save
+// Confidence: N/A
+func (s *SharesStore) ExtendToken(tokenID string, extendSeconds int64) (types.ShareToken, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	tok, exists := s.shares[tokenID]
+	if !exists {
+		return types.ShareToken{}, fmt.Errorf("token not found")
+	}
+	if tok.ExpiresAt.IsZero() {
+		return tok, fmt.Errorf("permanent share")
+	}
+	tok.ExpiresAt = tok.ExpiresAt.Add(time.Duration(extendSeconds) * time.Second)
+	s.shares[tokenID] = tok
+	if err := s.saveLocked(); err != nil {
+		return types.ShareToken{}, err
+	}
+	return tok, nil
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Source Behavior: updates mutable share fields under write lock followed by save
+// Confidence: N/A
+func (s *SharesStore) UpdateToken(tokenID string, req types.UpdateShareRequest) (types.ShareToken, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	tok, exists := s.shares[tokenID]
+	if !exists {
+		return types.ShareToken{}, fmt.Errorf("token not found")
+	}
+
+	tok.ForbidBitrate = req.ForbidBitrate
+	tok.ForbidFPS = req.ForbidFPS
+	tok.ForbidResolution = req.ForbidResolution
+	tok.ForbidAudio = req.ForbidAudio
+	if req.GuestSettings != nil {
+		tok.GuestSettings = req.GuestSettings
+	}
+
+	s.shares[tokenID] = tok
+	if err := s.saveLocked(); err != nil {
+		return types.ShareToken{}, err
+	}
+	return tok, nil
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.dYBSRoVh.func1
+// VA: 0x73a120
+// Evidence: SHARE_HTTP_FUNCTION_SLICES.json, SHARE_EXPIRY_CONTRACT.json
+// Confidence: HIGH
+func (s *SharesStore) ReapExpired(now time.Time) (int, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	reaped := 0
+	for id, tok := range s.shares {
+		if !tok.ExpiresAt.IsZero() && now.After(tok.ExpiresAt) {
+			delete(s.shares, id)
+			reaped++
+		}
+	}
+	if reaped > 0 {
+		return reaped, s.saveLocked()
+	}
+	return 0, nil
+}
+

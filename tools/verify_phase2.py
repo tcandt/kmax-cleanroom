@@ -1860,9 +1860,159 @@ def verify_all():
         record_check("Phase 2C.3D Tags Forensic Reproducibility", t_repro_pass,
                      "tools/forensics/reproduce_tag_forensics.py PASS (all 8 artifacts reproducible via temp directory)")
 
-    # 9.10 Cleanroom Scope & Provenance Isolation Guard
+    # ==================================================
+    # 12. Phase 2C.3E Device Shares REST Invariants
+    # ==================================================
+    share_dir = ROOT / "evidence" / "go_signaling" / "shares"
+
+    # 12.1 Shares Route Family Recovery
+    sh_family_file = share_dir / "SHARE_ROUTE_FAMILY.json"
+    if not sh_family_file.exists():
+        record_check("Phase 2C.3E Shares Route Family", False, "SHARE_ROUTE_FAMILY.json missing")
+    else:
+        sh_fam = json.loads(sh_family_file.read_text(encoding="utf-8"))
+        sh_routes = sh_fam.get("routes", []) if isinstance(sh_fam, dict) else sh_fam
+        expected_routes = {
+            "/api/share/create",
+            "/api/share/list",
+            "/api/share/revoke",
+            "/api/share/extend",
+            "/api/share/update",
+            "/api/share/info",
+            "/api/share/redeem_card",
+        }
+        fam_routes = {r.get("pattern") for r in sh_routes}
+        fam_valid = (expected_routes == fam_routes and all(r.get("handler_symbol") and r.get("handler_va") for r in sh_routes))
+        record_check("Phase 2C.3E Shares Route Family", fam_valid,
+                     "7 routes dynamically resolved from ROUTE_HANDLER_MAP with symbols, VAs, and boundaries")
+
+    # 12.2 Shares 7-Verb Method Matrix
+    sh_matrix_file = share_dir / "SHARE_ROUTE_METHOD_MATRIX.json"
+    if not sh_matrix_file.exists():
+        record_check("Phase 2C.3E Shares Method Matrix", False, "SHARE_ROUTE_METHOD_MATRIX.json missing")
+    else:
+        sh_mat = json.loads(sh_matrix_file.read_text(encoding="utf-8"))
+        mat_valid = (
+            len(sh_mat) == 7 and
+            all(all(v in route_verbs for v in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"])
+                for route_verbs in sh_mat.values())
+        )
+        record_check("Phase 2C.3E Shares Method Matrix", mat_valid,
+                     "7 routes probed across 7 HTTP verbs (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)")
+
+    # 12.3 Shares Type Descriptor Recovery
+    sh_type_file = share_dir / "SHARE_TYPE_EVIDENCE.json"
+    if not sh_type_file.exists():
+        record_check("Phase 2C.3E Shares Type Recovery", False, "SHARE_TYPE_EVIDENCE.json missing")
+    else:
+        sh_type = json.loads(sh_type_file.read_text(encoding="utf-8"))
+        st_struct = sh_type.get("share_token_struct", {})
+        type_valid = (
+            st_struct.get("struct_va") == "0x80f700" and
+            st_struct.get("size_bytes") == 192 and
+            st_struct.get("field_count") == 18 and
+            any(f.get("tag") == 'json:"token_id"' for f in st_struct.get("fields", [])) and
+            any(f.get("tag") == 'json:"card_code"' for f in st_struct.get("fields", []))
+        )
+        record_check("Phase 2C.3E Shares Type Recovery", type_valid,
+                     "ShareToken struct recovered at 0x80f700 (192 bytes, 18 fields)")
+
+    # 12.4 Shares Business Contracts Recovery
+    req_contracts = [
+        "SHARE_CREATE_CONTRACT.json",
+        "SHARE_LIST_CONTRACT.json",
+        "SHARE_INFO_CONTRACT.json",
+        "SHARE_MUTATION_CONTRACTS.json",
+        "SHARE_REDEEM_CARD_CONTRACT.json",
+        "SHARE_EXPIRY_CONTRACT.json",
+        "SHARE_CROSS_CONTRACT.json",
+    ]
+    contracts_exist = all((share_dir / f).exists() for f in req_contracts)
+    record_check("Phase 2C.3E Shares Business Contracts", contracts_exist,
+                 "All 7 business contract artifacts present (create, list, info, mutations, redeem_card, expiry, cross)")
+
+    # 12.5 Shares Persistence Contract
+    sh_pers_file = share_dir / "SHARE_PERSISTENCE_CONTRACT.json"
+    if not sh_pers_file.exists():
+        record_check("Phase 2C.3E Shares Persistence Contract", False, "SHARE_PERSISTENCE_CONTRACT.json missing")
+    else:
+        sh_pers = json.loads(sh_pers_file.read_text(encoding="utf-8"))
+        pers_valid = (
+            sh_pers.get("file_name") == "shares.json" and
+            "0600" in sh_pers.get("file_mode", "") and
+            "0x180" in sh_pers.get("file_mode_binary_instruction", "") and
+            sh_pers.get("atomic_tmp_rename") is True and
+            "0x4e1160" in sh_pers.get("binary_evidence", "")
+        )
+        record_check("Phase 2C.3E Shares Persistence Contract", pers_valid,
+                     "Atomic .tmp + os.Rename (0x4e1160), mode 0600 (0x180 octal), 2-space indentation")
+
+    # 12.6 Shares Auth Matrix
+    sh_auth_file = share_dir / "SHARE_AUTH_MATRIX.json"
+    if not sh_auth_file.exists():
+        record_check("Phase 2C.3E Shares Auth Matrix", False, "SHARE_AUTH_MATRIX.json missing")
+    else:
+        sh_auth = json.loads(sh_auth_file.read_text(encoding="utf-8"))
+        auth_valid = (
+            sh_auth.get("/api/share/create", {}).get("NORMAL_USER", {}).get("status_code") == 403 and
+            sh_auth.get("/api/share/list", {}).get("NORMAL_USER", {}).get("status_code") == 403 and
+            sh_auth.get("/api/share/info", {}).get("MISSING_TOKEN", {}).get("status_code") in [200, 400] and
+            sh_auth.get("/api/share/redeem_card", {}).get("MISSING_TOKEN", {}).get("status_code") in [200, 400]
+        )
+        record_check("Phase 2C.3E Shares Auth Matrix", auth_valid,
+                     "Admin endpoints enforce role=admin (403 non-admin); info and redeem_card are public")
+
+    # 12.7 Shares Handler Forensic Slices
+    sh_sl_file = share_dir / "SHARE_HTTP_FUNCTION_SLICES.json"
+    if not sh_sl_file.exists():
+        record_check("Phase 2C.3E Shares Function Slices", False, "SHARE_HTTP_FUNCTION_SLICES.json missing")
+    else:
+        sh_sl = json.loads(sh_sl_file.read_text(encoding="utf-8"))
+        sh_slices_valid = (len(sh_sl) == 11 and all(s.get("instruction_count", 0) > 0 for s in sh_sl))
+        record_check("Phase 2C.3E Shares Function Slices", sh_slices_valid,
+                     f"11 functions disassembled with machine Capstone instruction slices ({len(sh_sl)} slices)")
+
+    # 12.8 Shares REST Differential Results (SHARE-HTTP-01 to SHARE-HTTP-28)
+    sh_diff_file = share_dir / "SHARE_HTTP_DIFFERENTIAL_RESULTS.json"
+    if not sh_diff_file.exists():
+        record_check("Phase 2C.3E Shares REST Differential Results", False, "SHARE_HTTP_DIFFERENTIAL_RESULTS.json missing")
+    else:
+        sh_diff = json.loads(sh_diff_file.read_text(encoding="utf-8"))
+        sh_results = sh_diff.get("results", [])
+        sh_summary = sh_diff.get("summary", {})
+        sh_cases = {r.get("test_id") for r in sh_results}
+        expected_sh_cases = {f"SHARE-HTTP-{i:02d}" for i in range(1, 29)}
+        sh_diff_valid = (
+            sh_summary.get("total") == 28 and
+            sh_summary.get("passed") == 28 and
+            sh_cases == expected_sh_cases and
+            all(r.get("passed") is True for r in sh_results) and
+            "IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28" in sh_summary.get("metric", "")
+        )
+        record_check("Phase 2C.3E Shares REST Differential Results", sh_diff_valid,
+                     "IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28 (all 28 cases PASS)")
+
+    # 12.9 Shares Forensic Reproducibility Tool
+    sh_repro_tool = ROOT / "tools" / "forensics" / "reproduce_share_forensics.py"
+    if not sh_repro_tool.exists():
+        record_check("Phase 2C.3E Shares Forensic Reproducibility", False, "reproduce_share_forensics.py missing")
+    else:
+        import subprocess
+        sh_res = subprocess.run([sys.executable, str(sh_repro_tool)], capture_output=True, text=True)
+        sh_repro_pass = (sh_res.returncode == 0 and "OVERALL REPRODUCIBILITY: PASS" in sh_res.stdout)
+        record_check("Phase 2C.3E Shares Forensic Reproducibility", sh_repro_pass,
+                     "tools/forensics/reproduce_share_forensics.py PASS (all 13 artifacts reproducible via temp directory)")
+
+    # 12.10 Cleanroom Scope & Provenance Isolation Guard
     recon_dir = ROOT / "reconstructed_source" / "webrtc-signaling"
-    forbidden_tokens = ["websocket.Upgrader", "github.com/pion/webrtc", "nhooyr.io/websocket", "gorilla/websocket"]
+    forbidden_tokens = [
+        "websocket.Upgrader",
+        "github.com/pion/webrtc",
+        "nhooyr.io/websocket",
+        "gorilla/websocket",
+        "/api/shortcuts/",
+        "/api/license/",
+    ]
     found_forbidden = []
     for gp in recon_dir.rglob("*.go"):
         content = gp.read_text(encoding="utf-8")
@@ -1870,8 +2020,8 @@ def verify_all():
             if tok in content:
                 found_forbidden.append((str(gp.name), tok))
     scope_guard_valid = len(found_forbidden) == 0
-    record_check("Phase 2C.3BR Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
-                 f"0 production WebSocket/WebRTC packages implemented ({len(found_forbidden)} violations)")
+    record_check("Phase 2C.3E Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
+                 f"0 production WebSocket/WebRTC packages, 0 Shortcuts, 0 License ({len(found_forbidden)} violations)")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

@@ -1,0 +1,55 @@
+{
+  "endpoint": "/api/share/info",
+  "method": "GET",
+  "auth_requirement": "PUBLIC_UNAUTHENTICATED (no Bearer token required)",
+  "token_parameters": [
+    "token",
+    "stoken"
+  ],
+  "empty_token_rejection": {
+    "status_code": 400,
+    "body": "Token required\n"
+  },
+  "invalid_token_rejection": {
+    "status_code": 404,
+    "body": "Share link expired or invalid\n"
+  },
+  "valid_token_unprotected": {
+    "status_code": 200,
+    "data_keys": [
+      "access_mode",
+      "allow_clipboard",
+      "allow_file_tx",
+      "card_code",
+      "description",
+      "device_id",
+      "device_name",
+      "expires_at",
+      "forbid_audio",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "guest_settings",
+      "online",
+      "remaining_seconds",
+      "require_password",
+      "token"
+    ]
+  },
+  "password_protection": {
+    "missing_password_challenge": {
+      "status_code": 200,
+      "code_field": 401,
+      "require_password_flag": true
+    },
+    "wrong_password_rejection": {
+      "status_code": 200,
+      "code_field": 401
+    },
+    "correct_password_success": {
+      "status_code": 200,
+      "code_field": 401,
+      "device_id": null
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "endpoint": "/api/share/list",
+  "method": "GET",
+  "auth_requirement": "ADMIN_ONLY (403 Forbidden: admin only\\n for normal users)",
+  "admin_response": {
+    "status_code": 200,
+    "item_count": 2,
+    "item_schema_keys": [
+      "token_id",
+      "card_code",
+      "device_id",
+      "creator",
+      "created_at",
+      "expires_at",
+      "access_mode",
+      "require_password",
+      "allow_clipboard",
+      "allow_file_tx",
+      "forbid_bitrate",
+      "forbid_fps",
+      "forbid_resolution",
+      "forbid_audio",
+      "description",
+      "use_count",
+      "active_connections"
+    ]
+  },
+  "device_filtering": {
+    "filtered_dev001_count": 1,
+    "nonexistent_dev_count": 0
+  },
+  "normal_user_status": 403,
+  "empty_list_shape": "{\"code\":0,\"data\":[]}\\n"
+}

@@ -1,0 +1,235 @@
+{
+  "timestamp": "2026-09-16T03:10:57Z",
+  "summary": {
+    "total": 28,
+    "passed": 28,
+    "failed": 0,
+    "metric": "IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28"
+  },
+  "results": [
+    {
+      "test_id": "SHARE-HTTP-01",
+      "name": "Baseline List Shares Empty",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact empty list match: {\"code\":0,\"data\":[]}\\n",
+      "duration_ms": 2.33
+    },
+    {
+      "test_id": "SHARE-HTTP-02",
+      "name": "Missing Token Rejection on Admin Endpoints",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 401 Unauthorized\\n across all 5 admin endpoints",
+      "duration_ms": 9.88
+    },
+    {
+      "test_id": "SHARE-HTTP-03",
+      "name": "Invalid Token Rejection on Admin Endpoints",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 401 Unauthorized\\n on invalid token",
+      "duration_ms": 9.32
+    },
+    {
+      "test_id": "SHARE-HTTP-04",
+      "name": "Normal User Forbidden on Admin Endpoints",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 403 Forbidden: admin only\\n across all 5 admin endpoints",
+      "duration_ms": 9.39
+    },
+    {
+      "test_id": "SHARE-HTTP-05",
+      "name": "Create Share Minimal Schema & Token Format",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "structural parity on create share: token st_<32hex>, card CP-XXXX-XXXX, access_mode full",
+      "duration_ms": 3.21
+    },
+    {
+      "test_id": "SHARE-HTTP-06",
+      "name": "Duplicate Share Creation Conflict (409)",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "structural match: 409 conflict when active share already exists on device",
+      "duration_ms": 1.94
+    },
+    {
+      "test_id": "SHARE-HTTP-07",
+      "name": "Create Share Missing Device ID (400)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 400 device_id is required\\n on empty body",
+      "duration_ms": 1.81
+    },
+    {
+      "test_id": "SHARE-HTTP-08",
+      "name": "List Shares Populated & Key Schema Parity",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "structural schema match on list shares (17 keys, active_connections present)",
+      "duration_ms": 1.87
+    },
+    {
+      "test_id": "SHARE-HTTP-09",
+      "name": "List Shares ?device_id= Filtering",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact filtering by ?device_id= and empty array on unmatched device",
+      "duration_ms": 4.83
+    },
+    {
+      "test_id": "SHARE-HTTP-10",
+      "name": "Public Info Query Valid Unprotected Share",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "structural parity on public /api/share/info query without auth",
+      "duration_ms": 2.8
+    },
+    {
+      "test_id": "SHARE-HTTP-11",
+      "name": "Public Info Query Empty Token (400)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 400 Token required\\n on empty token query",
+      "duration_ms": 2.65
+    },
+    {
+      "test_id": "SHARE-HTTP-12",
+      "name": "Public Info Query Invalid Token (404)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 404 Share link expired or invalid\\n on invalid token",
+      "duration_ms": 2.42
+    },
+    {
+      "test_id": "SHARE-HTTP-13",
+      "name": "Public Info Password Challenge (Code 401)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 401 challenge on password-protected share without password",
+      "duration_ms": 5.6
+    },
+    {
+      "test_id": "SHARE-HTTP-14",
+      "name": "Public Info Password Authentication Success",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "password authentication parity: wrong rejected (401), right accepted (0)",
+      "duration_ms": 4.9
+    },
+    {
+      "test_id": "SHARE-HTTP-15",
+      "name": "Extend Permanent Share Rejection",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 400 rejection when extending permanent share",
+      "duration_ms": 2.9
+    },
+    {
+      "test_id": "SHARE-HTTP-16",
+      "name": "Extend Expiring Share Success",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "structural match: successfully extended expiring share",
+      "duration_ms": 7.39
+    },
+    {
+      "test_id": "SHARE-HTTP-17",
+      "name": "Extend Error Validation Semantics",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact error handling on extend: 400 for empty, 404 for unknown token",
+      "duration_ms": 5.23
+    },
+    {
+      "test_id": "SHARE-HTTP-18",
+      "name": "Update Share Mutable Fields",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "structural match on /api/share/update field mutations",
+      "duration_ms": 3.3
+    },
+    {
+      "test_id": "SHARE-HTTP-19",
+      "name": "Update Share Missing Token (400)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 400 token is required\\n on empty token update",
+      "duration_ms": 2.36
+    },
+    {
+      "test_id": "SHARE-HTTP-20",
+      "name": "Redeem Card Valid Code (Public Access)",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "structural parity on public card redemption",
+      "duration_ms": 2.51
+    },
+    {
+      "test_id": "SHARE-HTTP-21",
+      "name": "Redeem Card Invalid Code",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact response on invalid card code (200 with code 404)",
+      "duration_ms": 2.78
+    },
+    {
+      "test_id": "SHARE-HTTP-22",
+      "name": "Redeem Card Missing Code (400)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 400 card_code is required\\n on empty body",
+      "duration_ms": 2.23
+    },
+    {
+      "test_id": "SHARE-HTTP-23",
+      "name": "Revoke Share Success & Deletion",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact revocation and subsequent 404 on query",
+      "duration_ms": 6.8
+    },
+    {
+      "test_id": "SHARE-HTTP-24",
+      "name": "Revoke Share Missing / Unknown Token (404)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact 404 Share token not found\\n on invalid revoke",
+      "duration_ms": 5.05
+    },
+    {
+      "test_id": "SHARE-HTTP-25",
+      "name": "OPTIONS CORS Preflight Matrix (7 Routes)",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact CORS headers and status 200 across all 7 endpoints",
+      "duration_ms": 16.31
+    },
+    {
+      "test_id": "SHARE-HTTP-26",
+      "name": "No-Auth Mode Server Bypass",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "no-auth mode successfully bypasses admin token requirement",
+      "duration_ms": 5.85
+    },
+    {
+      "test_id": "SHARE-HTTP-27",
+      "name": "Persistence File Contract & Disk Format",
+      "passed": true,
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "detail": "persistence format verified: JSON array with 2 records on disk",
+      "duration_ms": 0.29
+    },
+    {
+      "test_id": "SHARE-HTTP-28",
+      "name": "Cross-Contract Isolation with /devices",
+      "passed": true,
+      "classification": "BIT_EXACT_MATCH",
+      "detail": "bit-exact isolation: /devices unaffected by share token lifecycles",
+      "duration_ms": 2.53
+    }
+  ]
+}
