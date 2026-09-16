@@ -1,0 +1,23 @@
+{
+  "classification": "GENERATED_WIRE_MODEL",
+  "description": "Wire schema representation for /api/files JSON items",
+  "fields": {
+    "name": {
+      "type": "string",
+      "json_tag": "name"
+    },
+    "size": {
+      "type": "int64",
+      "json_tag": "size"
+    },
+    "updated_at": {
+      "type": "string (RFC3339 timestamp with timezone)",
+      "json_tag": "updated_at"
+    },
+    "url": {
+      "type": "string",
+      "json_tag": "url",
+      "format": "/downloads/{name}"
+    }
+  }
+}

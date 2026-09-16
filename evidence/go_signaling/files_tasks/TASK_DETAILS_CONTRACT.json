@@ -1,0 +1,18 @@
+{
+  "endpoint": "/api/tasks/details",
+  "methods_allowed": [
+    "GET",
+    "OPTIONS"
+  ],
+  "auth": "AUTHENTICATED_ANY_ROLE",
+  "query_parameter": "task_id",
+  "missing_task_id_status": 400,
+  "missing_task_id_body": "Missing task_id parameter\n",
+  "task_not_found_status": 404,
+  "task_not_found_body": "Task not found\n",
+  "success_response": {
+    "status": 200,
+    "content_type": "application/json",
+    "dto_reference": "Task (0x7fb3c0)"
+  }
+}

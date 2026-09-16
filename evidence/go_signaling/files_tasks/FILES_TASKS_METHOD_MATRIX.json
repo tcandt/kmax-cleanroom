@@ -1,0 +1,555 @@
+{
+  "UPLOAD_STANDARD_FILE": {
+    "GET": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "POST": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 26,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 26,
+      "body_sha256": "ba42a7c69046bc9d3297492cd63b2b714c4a2e769d1f2e9c30975e81814feaa6"
+    },
+    "PUT": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "PATCH": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "DELETE": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "HEAD": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "content_length": 0,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    }
+  },
+  "UPLOAD_SNAPSHOT_INGEST": {
+    "GET": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "POST": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 34,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 34,
+      "body_sha256": "adbedefc9a401ae19c15947176cdfcd7c66ae258ec47204f03d798511a41dd17"
+    },
+    "PUT": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "PATCH": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "DELETE": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "HEAD": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "content_length": 0,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    }
+  },
+  "/api/files": {
+    "GET": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "content_length": 355,
+      "cors_origin": "*",
+      "cors_methods": "GET, DELETE, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 355,
+      "body_sha256": "a1164331788fbd484a36db0b72168c5bd958a37fce1e565a953473b490371868"
+    },
+    "POST": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, DELETE, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "PUT": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, DELETE, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "PATCH": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, DELETE, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "DELETE": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 23,
+      "cors_origin": "*",
+      "cors_methods": "GET, DELETE, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 23,
+      "body_sha256": "6efcd157ef29a14bed06f62e2adda55fca2210c674e6a6b0c0adebe694a23127"
+    },
+    "HEAD": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, DELETE, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "content_length": 0,
+      "cors_origin": "*",
+      "cors_methods": "GET, DELETE, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    }
+  },
+  "/api/tasks": {
+    "GET": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "POST": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "content_length": 70,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 70,
+      "body_sha256": "b31ce693581a125d32fcd2484d503377d66d944967ffc3a933a4ead2dada8a12"
+    },
+    "PUT": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "PATCH": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "DELETE": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "HEAD": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "content_length": 0,
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    }
+  },
+  "/api/tasks/details": {
+    "GET": {
+      "status": 404,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 15,
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 15,
+      "body_sha256": "0f35b25a389b6bef763156c91a4300e6b6143c0b133ec15c3668b1f2291e09a9"
+    },
+    "POST": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "PUT": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "PATCH": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "DELETE": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 19,
+      "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+    },
+    "HEAD": {
+      "status": 405,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 19,
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "content_length": 0,
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    }
+  },
+  "/downloads/": {
+    "GET": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 17,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 17,
+      "body_sha256": "beeae1beb9f1ac0bb869e34959cdfeb422bf4c19205ada27fe7c3263ecf932cc"
+    },
+    "POST": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 17,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 17,
+      "body_sha256": "beeae1beb9f1ac0bb869e34959cdfeb422bf4c19205ada27fe7c3263ecf932cc"
+    },
+    "PUT": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 17,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 17,
+      "body_sha256": "beeae1beb9f1ac0bb869e34959cdfeb422bf4c19205ada27fe7c3263ecf932cc"
+    },
+    "PATCH": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 17,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 17,
+      "body_sha256": "beeae1beb9f1ac0bb869e34959cdfeb422bf4c19205ada27fe7c3263ecf932cc"
+    },
+    "DELETE": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 17,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 17,
+      "body_sha256": "beeae1beb9f1ac0bb869e34959cdfeb422bf4c19205ada27fe7c3263ecf932cc"
+    },
+    "HEAD": {
+      "status": 200,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 17,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "content_length": 0,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    }
+  },
+  "/snapshots/": {
+    "GET": {
+      "status": 200,
+      "location": null,
+      "content_type": "image/jpeg",
+      "content_length": 9,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 9,
+      "body_sha256": "2d897cf4d83990706fa8022f0b488260f0a356c5bab514850849437fbe1b1b48"
+    },
+    "POST": {
+      "status": 200,
+      "location": null,
+      "content_type": "image/jpeg",
+      "content_length": 9,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 9,
+      "body_sha256": "2d897cf4d83990706fa8022f0b488260f0a356c5bab514850849437fbe1b1b48"
+    },
+    "PUT": {
+      "status": 200,
+      "location": null,
+      "content_type": "image/jpeg",
+      "content_length": 9,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 9,
+      "body_sha256": "2d897cf4d83990706fa8022f0b488260f0a356c5bab514850849437fbe1b1b48"
+    },
+    "PATCH": {
+      "status": 200,
+      "location": null,
+      "content_type": "image/jpeg",
+      "content_length": 9,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 9,
+      "body_sha256": "2d897cf4d83990706fa8022f0b488260f0a356c5bab514850849437fbe1b1b48"
+    },
+    "DELETE": {
+      "status": 200,
+      "location": null,
+      "content_type": "image/jpeg",
+      "content_length": 9,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 9,
+      "body_sha256": "2d897cf4d83990706fa8022f0b488260f0a356c5bab514850849437fbe1b1b48"
+    },
+    "HEAD": {
+      "status": 200,
+      "location": null,
+      "content_type": "image/jpeg",
+      "content_length": 9,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 0,
+      "body_sha256": null
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": "image/jpeg",
+      "content_length": 9,
+      "cors_origin": "*",
+      "cors_methods": null,
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes": 9,
+      "body_sha256": "2d897cf4d83990706fa8022f0b488260f0a356c5bab514850849437fbe1b1b48"
+    }
+  }
+}

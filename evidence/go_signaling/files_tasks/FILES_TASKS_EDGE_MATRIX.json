@@ -1,0 +1,50 @@
+{
+  "upload_missing_name": {
+    "status": 400,
+    "body": "Missing file name\n"
+  },
+  "upload_path_traversal": {
+    "status": 400,
+    "body": "Invalid file path (path traversal detected)\n"
+  },
+  "upload_missing_device_id": {
+    "status": 400,
+    "body": "Missing device_id\n"
+  },
+  "files_missing_name_param": {
+    "status": 400,
+    "body": "Missing name parameter\n"
+  },
+  "files_delete_not_found": {
+    "status": 404,
+    "body": "File not found\n"
+  },
+  "tasks_empty_targets": {
+    "status": 400,
+    "body": "Targets cannot be empty\n"
+  },
+  "tasks_eof_body": {
+    "status": 400,
+    "body": "EOF\n"
+  },
+  "tasks_details_missing_id": {
+    "status": 400,
+    "body": "Missing task_id parameter\n"
+  },
+  "tasks_details_not_found": {
+    "status": 404,
+    "body": "Task not found\n"
+  },
+  "snapshots_missing_device": {
+    "status": 404,
+    "body": "404 page not found\n"
+  },
+  "snapshots_unassigned_device": {
+    "status": 403,
+    "body": "Forbidden\n"
+  },
+  "snapshots_unauthenticated": {
+    "status": 401,
+    "body": "Unauthorized\n"
+  }
+}

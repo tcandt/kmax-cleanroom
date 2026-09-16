@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "data_flag": "-data",
+    "default_data_dir": "data"
+  },
+  "roots": {
+    "downloads": {
+      "path": "data/downloads",
+      "classification": "EAGER_CREATED",
+      "access": "READ_WRITE",
+      "filesystem_target": true,
+      "description": "Exposed via /downloads/ and managed via /api/files and /upload"
+    },
+    "snapshots": {
+      "path": "memory",
+      "classification": "IN_MEMORY_MAP",
+      "disk_directory_present": true,
+      "access": "READ_WRITE",
+      "filesystem_target": false,
+      "description": "In-memory sync.Map storing JPEG snapshots keyed by device_id"
+    }
+  }
+}

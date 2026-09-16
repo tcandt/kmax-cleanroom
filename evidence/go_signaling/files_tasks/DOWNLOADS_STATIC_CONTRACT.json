@@ -1,0 +1,20 @@
+{
+  "endpoint": "/downloads/",
+  "wrapper_chain": "http.StripPrefix('/downloads/', corsHandler(http.FileServer))",
+  "cors": {
+    "origin": "*",
+    "headers": "Content-Type, Authorization",
+    "options_status": 200
+  },
+  "directory_behavior": {
+    "status": 301,
+    "location": "./"
+  },
+  "features": {
+    "mime_sniffing": true,
+    "accept_ranges": "bytes",
+    "range_requests_supported": true,
+    "head_supported": true,
+    "last_modified_emitted": true
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "endpoint": "/api/files",
+  "methods_allowed": [
+    "GET",
+    "DELETE",
+    "OPTIONS"
+  ],
+  "auth": "AUTHENTICATED_ANY_ROLE",
+  "read_operation": {
+    "source_directory": "data/downloads",
+    "directories_excluded": true,
+    "sorting": "LEXICOGRAPHICAL_BY_FILENAME",
+    "empty_response": "[]\n"
+  },
+  "delete_operation": {
+    "query_param": "name",
+    "missing_name_status": 400,
+    "missing_name_body": "Missing name parameter\n",
+    "not_found_status": 404,
+    "not_found_body": "File not found\n",
+    "success_status": 200,
+    "success_body": "{\"status\":\"success\"}"
+  }
+}

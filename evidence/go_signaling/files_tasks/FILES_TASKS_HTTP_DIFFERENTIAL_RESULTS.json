@@ -1,0 +1,679 @@
+{
+  "execution_timestamp": "2026-09-16T12:32:36.493934+00:00",
+  "total_cases": 67,
+  "passed": 67,
+  "failed": 0,
+  "all_passed": true,
+  "results": [
+    {
+      "case_id": "FT-DIFF-01",
+      "description": "Standard upload unauthenticated (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-02",
+      "description": "Standard upload by normal user (403 Forbidden)",
+      "status": "PASS",
+      "orig_status": 403,
+      "recon_status": 403,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-03",
+      "description": "Standard upload missing name parameter (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-04",
+      "description": "Standard upload path traversal '.' (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-05",
+      "description": "Standard upload path traversal '..' (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-06",
+      "description": "Standard upload success by admin (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-07",
+      "description": "Standard upload success in NO_AUTH_MODE (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-08",
+      "description": "Standard upload method GET parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-09",
+      "description": "Standard upload method PUT parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-10",
+      "description": "Standard upload method PATCH parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-11",
+      "description": "Standard upload method DELETE parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-12",
+      "description": "Standard upload method OPTIONS parity",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "",
+      "recon_content_type": "",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-13",
+      "description": "Snapshot ingest unauthenticated (200 OK, memory cache)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-14",
+      "description": "Snapshot ingest missing device_id (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-15",
+      "description": "Snapshot ingest invalid device_id '.' (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-16",
+      "description": "Snapshot ingest method GET parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-17",
+      "description": "Snapshot ingest method PUT parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-18",
+      "description": "Snapshot ingest method PATCH parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-19",
+      "description": "Snapshot ingest method DELETE parity",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-20",
+      "description": "Snapshot ingest method OPTIONS parity",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "",
+      "recon_content_type": "",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-21",
+      "description": "Static download of uploaded file (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-22",
+      "description": "Static download HEAD request (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-23",
+      "description": "Static download OPTIONS preflight (200 OK, CORS)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "",
+      "recon_content_type": "",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-24",
+      "description": "Static download nonexistent file (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-25",
+      "description": "List files unauthenticated (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-26",
+      "description": "List files by normal user (200 OK, FileItem schema)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-27",
+      "description": "List files by admin (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-28",
+      "description": "List files OPTIONS preflight (200 OK, CORS GET, DELETE, OPTIONS)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "",
+      "recon_content_type": "",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-29",
+      "description": "Delete file missing name parameter (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-30",
+      "description": "Delete nonexistent file (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-31",
+      "description": "Delete uploaded file (200 OK, status success)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-32",
+      "description": "List files after deletion (200 OK, empty list parity)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-33",
+      "description": "/api/files method POST rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-34",
+      "description": "/api/files method PUT rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-35",
+      "description": "/api/files method PATCH rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-36",
+      "description": "Create task unauthenticated (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-37",
+      "description": "Create task by normal user (403 Forbidden: admin only)",
+      "status": "PASS",
+      "orig_status": 403,
+      "recon_status": 403,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-38",
+      "description": "Create task empty targets (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-39",
+      "description": "Create task malformed JSON (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-40",
+      "description": "Create task success by admin (200 OK, task_id generated)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-41",
+      "description": "Tasks endpoint OPTIONS preflight (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "",
+      "recon_content_type": "",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-42",
+      "description": "/api/tasks method GET rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-43",
+      "description": "/api/tasks method PUT rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-44",
+      "description": "/api/tasks method PATCH rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-45",
+      "description": "/api/tasks method DELETE rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-46",
+      "description": "Task details unauthenticated (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-47",
+      "description": "Task details missing task_id (400 Bad Request)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-48",
+      "description": "Task details nonexistent task_id (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-49",
+      "description": "Task details read by admin (200 OK, offline failure parity)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-50",
+      "description": "Task details offline target status parity (failed, 0, 'Device offline')",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-51",
+      "description": "Task details read by normal user (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-52",
+      "description": "/api/tasks/details method POST rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-53",
+      "description": "/api/tasks/details method PUT rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-54",
+      "description": "/api/tasks/details method PATCH rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-55",
+      "description": "/api/tasks/details method DELETE rejection (405 Method Not Allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-56",
+      "description": "Snapshot delivery unauthenticated (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-57",
+      "description": "Snapshot delivery by unassigned user (403 Forbidden)",
+      "status": "PASS",
+      "orig_status": 403,
+      "recon_status": 403,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-58",
+      "description": "Snapshot delivery by assigned user .jpg (200 OK, image/jpeg bytes match)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "image/jpeg",
+      "recon_content_type": "image/jpeg",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-59",
+      "description": "Snapshot delivery extensionless URL (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "image/jpeg",
+      "recon_content_type": "image/jpeg",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-60",
+      "description": "Snapshot delivery invalid extension '.png' (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-61",
+      "description": "Snapshot delivery nonexistent device (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-62",
+      "description": "Snapshot delivery HEAD request (200 OK, empty body)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "image/jpeg",
+      "recon_content_type": "image/jpeg",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-63",
+      "description": "Snapshot delivery unauthenticated OPTIONS request (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-64",
+      "description": "Snapshot delivery authenticated OPTIONS request (200 OK, image/jpeg)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "image/jpeg",
+      "recon_content_type": "image/jpeg",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-65",
+      "description": "Snapshot delivery in NO_AUTH_MODE (200 OK)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-66",
+      "description": "Task memory store resets to empty across restart (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-67",
+      "description": "Snapshot memory store resets to empty across restart (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    }
+  ]
+}

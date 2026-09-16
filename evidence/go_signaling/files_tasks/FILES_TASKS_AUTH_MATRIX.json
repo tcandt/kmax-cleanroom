@@ -1,0 +1,226 @@
+{
+  "UPLOAD_STANDARD_FILE": {
+    "ADMIN": {
+      "status": 200,
+      "body_len": 26,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_ASSIGNED": {
+      "status": 403,
+      "body_len": 48,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 403,
+      "body_len": 48,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "MISSING_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "INVALID_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NO_AUTH_MODE": {
+      "status": 200,
+      "body_len": 26,
+      "content_type": "text/plain; charset=utf-8"
+    }
+  },
+  "UPLOAD_SNAPSHOT_INGEST": {
+    "ADMIN": {
+      "status": 200,
+      "body_len": 34,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_ASSIGNED": {
+      "status": 200,
+      "body_len": 34,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 200,
+      "body_len": 34,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "MISSING_TOKEN": {
+      "status": 200,
+      "body_len": 34,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "INVALID_TOKEN": {
+      "status": 200,
+      "body_len": 34,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NO_AUTH_MODE": {
+      "status": 200,
+      "body_len": 34,
+      "content_type": "text/plain; charset=utf-8"
+    }
+  },
+  "/api/files": {
+    "ADMIN": {
+      "status": 200,
+      "body_len": 473,
+      "content_type": "application/json"
+    },
+    "NORMAL_USER_ASSIGNED": {
+      "status": 200,
+      "body_len": 473,
+      "content_type": "application/json"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 200,
+      "body_len": 473,
+      "content_type": "application/json"
+    },
+    "MISSING_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "INVALID_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NO_AUTH_MODE": {
+      "status": 200,
+      "body_len": 120,
+      "content_type": "application/json"
+    }
+  },
+  "/api/tasks": {
+    "ADMIN": {
+      "status": 200,
+      "body_len": 70,
+      "content_type": "application/json"
+    },
+    "NORMAL_USER_ASSIGNED": {
+      "status": 403,
+      "body_len": 22,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 403,
+      "body_len": 22,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "MISSING_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "INVALID_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NO_AUTH_MODE": {
+      "status": 200,
+      "body_len": 70,
+      "content_type": "application/json"
+    }
+  },
+  "/api/tasks/details": {
+    "ADMIN": {
+      "status": 404,
+      "body_len": 15,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_ASSIGNED": {
+      "status": 404,
+      "body_len": 15,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 404,
+      "body_len": 15,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "MISSING_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "INVALID_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NO_AUTH_MODE": {
+      "status": 404,
+      "body_len": 15,
+      "content_type": "text/plain; charset=utf-8"
+    }
+  },
+  "/downloads/": {
+    "ADMIN": {
+      "status": 200,
+      "body_len": 17,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_ASSIGNED": {
+      "status": 200,
+      "body_len": 17,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 200,
+      "body_len": 17,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "MISSING_TOKEN": {
+      "status": 200,
+      "body_len": 17,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "INVALID_TOKEN": {
+      "status": 200,
+      "body_len": 17,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NO_AUTH_MODE": {
+      "status": 404,
+      "body_len": 19,
+      "content_type": "text/plain; charset=utf-8"
+    }
+  },
+  "/snapshots/": {
+    "ADMIN": {
+      "status": 200,
+      "body_len": 14,
+      "content_type": "image/jpeg"
+    },
+    "NORMAL_USER_ASSIGNED": {
+      "status": 200,
+      "body_len": 14,
+      "content_type": "image/jpeg"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 403,
+      "body_len": 10,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "MISSING_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "INVALID_TOKEN": {
+      "status": 401,
+      "body_len": 13,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    "NO_AUTH_MODE": {
+      "status": 200,
+      "body_len": 14,
+      "content_type": "image/jpeg"
+    }
+  }
+}

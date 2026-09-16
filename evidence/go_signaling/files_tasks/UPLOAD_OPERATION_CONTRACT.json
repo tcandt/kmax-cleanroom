@@ -1,0 +1,27 @@
+{
+  "standard_file": {
+    "method": "POST",
+    "auth": "ADMIN_ONLY",
+    "missing_name_status": 400,
+    "missing_name_body": "Missing file name\n",
+    "traversal_detected_status": 400,
+    "traversal_detected_body": "Invalid file path (path traversal detected)\n",
+    "unauthorized_status": 401,
+    "unauthorized_body": "Unauthorized\n",
+    "forbidden_status": 403,
+    "forbidden_body": "Forbidden: Only administrators can upload files\n",
+    "success_status": 200,
+    "success_body_template": "Uploaded to {name}"
+  },
+  "snapshot_ingest": {
+    "method": "POST",
+    "auth": "UNAUTHENTICATED",
+    "missing_device_id_status": 400,
+    "missing_device_id_body": "Missing device_id\n",
+    "invalid_device_id_status": 400,
+    "invalid_device_id_body": "Invalid device_id\n",
+    "success_status": 200,
+    "success_body_template": "Uploaded to memory for {device_id}.jpg",
+    "destination": "IN_MEMORY_MAP"
+  }
+}

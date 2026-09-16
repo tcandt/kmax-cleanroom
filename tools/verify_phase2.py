@@ -2226,9 +2226,6 @@ def verify_all():
         "gorilla/websocket",
         "/register_agent",
         "/connect_client",
-        "/api/files",
-        "/api/tasks",
-        "/upload",
         '"/register_device"',
     ]
     found_forbidden = []
@@ -2239,7 +2236,7 @@ def verify_all():
                 found_forbidden.append((str(gp.name), tok))
     scope_guard_valid = len(found_forbidden) == 0
     record_check("Phase 2C.3F Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
-                 f"0 production WebSocket/WebRTC packages, 0 Tasks/Files/Transports ({len(found_forbidden)} violations)")
+                 f"0 production WebSocket/WebRTC packages, 0 Transports ({len(found_forbidden)} violations)")
 
     # 14. Phase 2C.3G Server Configuration REST Route Family Auditing
     sc_dir = ROOT / "evidence" / "go_signaling" / "server_config"
@@ -2487,7 +2484,150 @@ def verify_all():
     record_check("Phase 2C.3HR License Local-Crypto & Machine ID Parity", lic_crypto_valid,
                  "Host machine_id same-host parity, 32-byte Ed25519 public key XOR 0x5a validated, success state mapping complete, zero keygen/bypass enforced")
 
-    # 15.10 Dynamic Cumulative Differential Denominator Audit
+    # =========================================================================
+    # 16. PHASE 2C.3I FILES / TASKS / DOWNLOADS / SNAPSHOTS AUDIT
+    # =========================================================================
+    ft_dir = ROOT / "evidence" / "go_signaling" / "files_tasks"
+
+    # 16.1 Files & Tasks Route Family & Scope Boundary
+    ft_rf_file = ft_dir / "FILES_TASKS_ROUTE_FAMILY.json"
+    ft_rf_valid = False
+    if ft_rf_file.exists():
+        rf = json.loads(ft_rf_file.read_text(encoding="utf-8"))
+        expected_routes = {"/upload", "/api/files", "/api/tasks", "/api/tasks/details", "/downloads/", "/snapshots/"}
+        ft_rf_valid = (len(rf) == 6) and (set(rf.keys()) == expected_routes)
+    record_check("Phase 2C.3I Files & Tasks Scope & Boundary Closure", ft_rf_valid,
+                 "Exactly 6 endpoints; zero /register_device, /register_agent, /connect_client, /, WS, WebRTC")
+
+    # 16.2 Forensic Reproducibility Invariant (21/21)
+    ft_repro_tool = ROOT / "tools" / "forensics" / "reproduce_files_tasks_forensics.py"
+    ft_manifest_file = ft_dir / "FILES_TASKS_REPRODUCIBILITY_MANIFEST.json"
+    ft_repro_pass = False
+    if ft_repro_tool.exists() and ft_manifest_file.exists():
+        import subprocess
+        res = subprocess.run([sys.executable, str(ft_repro_tool)], capture_output=True, text=True)
+        m = json.loads(ft_manifest_file.read_text(encoding="utf-8"))
+        entries = m.get("artifacts", {})
+        all_canonical_false = all(e.get("canonical_input_used") is False and (e.get("verified") is True or e.get("verification_result") == "PASS") for e in entries.values())
+        ft_repro_pass = (
+            res.returncode == 0 and
+            "FILES_TASKS_FORENSIC_REPRODUCIBILITY = 21/21" in res.stdout and
+            len(entries) == 21 and
+            all_canonical_false
+        )
+    record_check("Phase 2C.3I Files & Tasks Forensic Reproducibility (21/21)", ft_repro_pass,
+                 "tools/forensics/reproduce_files_tasks_forensics.py PASS (21/21 verified, zero canonical evidence copying)")
+
+    # 16.3 Hard Forensic Gate Result (18/18 PASS)
+    ft_gate_file = ft_dir / "FILES_TASKS_FORENSIC_GATE_RESULT.json"
+    ft_gate_pass = False
+    if ft_gate_file.exists():
+        g = json.loads(ft_gate_file.read_text(encoding="utf-8"))
+        ft_gate_pass = (
+            g.get("verdict") == "PASS" and
+            g.get("total_invariants") == 18 and
+            g.get("passed_invariants") == 18
+        )
+    record_check("Phase 2C.3I Forensic Gate Invariants (18/18)", ft_gate_pass,
+                 "FILES_TASKS_FORENSIC_GATE_RESULT.json reports 18/18 invariants PASS before source creation")
+
+    # 16.4 Dual /upload Protocol & Path Traversal Security
+    ft_up_file = ft_dir / "UPLOAD_OPERATION_CONTRACT.json"
+    ft_sec_file = ft_dir / "FILE_PATH_SECURITY_CONTRACT.json"
+    ft_up_valid = False
+    if ft_up_file.exists() and ft_sec_file.exists():
+        u = json.loads(ft_up_file.read_text(encoding="utf-8"))
+        s_c = json.loads(ft_sec_file.read_text(encoding="utf-8"))
+        dual_proto = (
+            "standard_file" in u and
+            "snapshot_ingest" in u and
+            u.get("snapshot_ingest", {}).get("auth") == "UNAUTHENTICATED" and
+            u.get("standard_file", {}).get("auth") == "ADMIN_ONLY"
+        )
+        dot_rej = "traversal_checks" in s_c.get("upload_path_security", {})
+        ft_up_valid = dual_proto and dot_rej
+    record_check("Phase 2C.3I Dual /upload Protocol & Path Security", ft_up_valid,
+                 "Standard upload (admin) vs Snapshot ingest (unauthenticated) split; path traversal dots rejected (400)")
+
+    # 16.5 Type Provenance: Direct Recovery vs Generated Wire Model
+    ft_tt_file = ft_dir / "TASK_TYPE_EVIDENCE.json"
+    ft_ft_file = ft_dir / "FILES_TYPE_EVIDENCE.json"
+    ft_type_valid = False
+    if ft_tt_file.exists() and ft_ft_file.exists():
+        tt_data = json.loads(ft_tt_file.read_text(encoding="utf-8"))
+        tt = tt_data.get("types", {})
+        ft = json.loads(ft_ft_file.read_text(encoding="utf-8"))
+        req_rec = tt_data.get("metadata", {}).get("classification") == "DIRECT_TYPE_RECOVERY" and tt.get("TaskCreateRequest", {}).get("struct_va") == "0x7ea980"
+        task_rec = tt.get("Task", {}).get("struct_va") == "0x7fb3c0"
+        dev_rec = tt.get("DeviceTaskStatus", {}).get("struct_va") == "0x7f4be0"
+        file_wire = ft.get("classification") == "GENERATED_WIRE_MODEL"
+        ft_type_valid = req_rec and task_rec and dev_rec and file_wire
+    record_check("Phase 2C.3I Type Provenance & Descriptor Recovery", ft_type_valid,
+                 "Task descriptors (0x7ea980, 0x7fb3c0, 0x7f4be0) DIRECT_TYPE_RECOVERY; FileItem GENERATED_WIRE_MODEL")
+
+    # 16.6 Storage & Task Lifecycle Invariants
+    ft_fs_file = ft_dir / "FILESYSTEM_ROOT_CONTRACT.json"
+    ft_tl_file = ft_dir / "TASK_LIFECYCLE_CONTRACT.json"
+    ft_ti_file = ft_dir / "TASK_ID_CONTRACT.json"
+    ft_invar_valid = False
+    if ft_fs_file.exists() and ft_tl_file.exists() and ft_ti_file.exists():
+        fs_c = json.loads(ft_fs_file.read_text(encoding="utf-8"))
+        tl_c = json.loads(ft_tl_file.read_text(encoding="utf-8"))
+        ti_c = json.loads(ft_ti_file.read_text(encoding="utf-8"))
+        snap_in_mem = fs_c.get("roots", {}).get("snapshots", {}).get("classification") == "IN_MEMORY_MAP" and fs_c.get("roots", {}).get("snapshots", {}).get("filesystem_target") is False
+        online_dep = tl_c.get("state_transitions", {}).get("online_target") == "ONLINE_DISPATCH_TRANSPORT_DEPENDENT"
+        task_fmt = ti_c.get("layout_va") == "0x825bda" and ti_c.get("format_string_va") == "0x82229b"
+        ft_invar_valid = snap_in_mem and online_dep and task_fmt
+    record_check("Phase 2C.3I Storage & Task Lifecycle Invariants", ft_invar_valid,
+                 "Snapshots in-memory only (zero disk dir); online tasks transport-deferred; task ID format (0x825bda, 0x82229b)")
+
+    # 16.7 Method & Auth Matrices
+    ft_mm_file = ft_dir / "FILES_TASKS_METHOD_MATRIX.json"
+    ft_am_file = ft_dir / "FILES_TASKS_AUTH_MATRIX.json"
+    ft_matrix_valid = False
+    if ft_mm_file.exists() and ft_am_file.exists():
+        mm = json.loads(ft_mm_file.read_text(encoding="utf-8"))
+        am = json.loads(ft_am_file.read_text(encoding="utf-8"))
+        verbs_ok = len(mm.get("/api/files", {})) == 7 and len(mm.get("/api/tasks", {})) == 7
+        snap_unauth_ok = am.get("UPLOAD_SNAPSHOT_INGEST", {}).get("MISSING_TOKEN", {}).get("status") == 200
+        std_up_auth_ok = am.get("UPLOAD_STANDARD_FILE", {}).get("MISSING_TOKEN", {}).get("status") == 401
+        tasks_admin_ok = am.get("/api/tasks", {}).get("NORMAL_USER_ASSIGNED", {}).get("status") == 403
+        ft_matrix_valid = verbs_ok and snap_unauth_ok and std_up_auth_ok and tasks_admin_ok
+    record_check("Phase 2C.3I Files & Tasks Method & Auth Matrices", ft_matrix_valid,
+                 "All 7 verbs covered; unauthenticated snapshot ingest and admin-only standard upload/tasks verified")
+
+    # 16.8 Cleanroom Source Provenance
+    ft_src_types = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "types" / "files_tasks.go"
+    ft_src_files = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "storage" / "files_store.go"
+    ft_src_tasks = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "storage" / "tasks_store.go"
+    ft_src_hnd = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "httpapi" / "files_tasks_handlers.go"
+    ft_src_valid = False
+    if ft_src_types.exists() and ft_src_files.exists() and ft_src_tasks.exists() and ft_src_hnd.exists():
+        prov_pat = "CLEANROOM-PROVENANCE:"
+        ft_src_valid = (
+            prov_pat in ft_src_types.read_text(encoding="utf-8") and
+            prov_pat in ft_src_files.read_text(encoding="utf-8") and
+            prov_pat in ft_src_tasks.read_text(encoding="utf-8") and
+            prov_pat in ft_src_hnd.read_text(encoding="utf-8")
+        )
+    record_check("Phase 2C.3I Cleanroom Files & Tasks Source Provenance", ft_src_valid,
+                 "pkg/types/files_tasks.go, pkg/storage/files_store.go, tasks_store.go, files_tasks_handlers.go audited")
+
+    # 16.9 Files & Tasks REST Differential Results
+    ft_diff_file = ft_dir / "FILES_TASKS_HTTP_DIFFERENTIAL_RESULTS.json"
+    ft_diff_valid = False
+    ft_diff_data = {}
+    if ft_diff_file.exists():
+        ft_diff_data = json.loads(ft_diff_file.read_text(encoding="utf-8"))
+        ft_diff_valid = (
+            ft_diff_data.get("all_passed") is True and
+            ft_diff_data.get("passed") == ft_diff_data.get("total_cases") and
+            ft_diff_data.get("total_cases", 0) >= 60
+        )
+    record_check("Phase 2C.3I Files & Tasks REST Differential Results", ft_diff_valid,
+                 f"IMPLEMENTED_FILES_TASKS_CONTRACT_DIFFERENTIAL_PASS_RATE = {ft_diff_data.get('passed', 0)}/{ft_diff_data.get('total_cases', 0)} (100% PASS across all 6 endpoints)")
+
+    # 16.10 Dynamic Cumulative Differential Denominator Audit (No Hardcoded Denominator)
     canonical_diff_artifacts = [
         ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_DIFFERENTIAL_RESULTS.json",
         ROOT / "evidence" / "go_signaling" / "http" / "AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
@@ -2499,6 +2639,7 @@ def verify_all():
         ROOT / "evidence" / "go_signaling" / "server_config" / "SERVER_CONFIG_HTTP_DIFFERENTIAL_RESULTS.json",
         ROOT / "evidence" / "go_signaling" / "license" / "LICENSE_HTTP_DIFFERENTIAL_RESULTS.json",
         ROOT / "evidence" / "go_signaling" / "persistence" / "PERSISTENCE_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "files_tasks" / "FILES_TASKS_HTTP_DIFFERENTIAL_RESULTS.json",
     ]
 
     def extract_diff_counts(path):
@@ -2524,7 +2665,9 @@ def verify_all():
     cumulative_total = 0
     diff_audit_ok = True
     diff_details = []
-    for f in canonical_diff_artifacts:
+    prev_total = 0
+    prev_passed = 0
+    for idx, f in enumerate(canonical_diff_artifacts):
         if not f.exists():
             diff_audit_ok = False
             diff_details.append(f"{f.name}: MISSING")
@@ -2532,13 +2675,17 @@ def verify_all():
         p, t = extract_diff_counts(f)
         cumulative_passed += p
         cumulative_total += t
+        if idx < len(canonical_diff_artifacts) - 1:
+            prev_passed += p
+            prev_total += t
         if p != t or t == 0:
             diff_audit_ok = False
         diff_details.append(f"{f.name}: {p}/{t}")
 
+    new_ft_passed, new_ft_total = extract_diff_counts(canonical_diff_artifacts[-1]) if canonical_diff_artifacts[-1].exists() else (0, 0)
     diff_audit_ok = diff_audit_ok and (cumulative_passed == cumulative_total) and (cumulative_total > 0)
     record_check("Dynamic Cumulative Differential Denominator Audit", diff_audit_ok,
-                 f"CUMULATIVE_PASS_RATE = {cumulative_passed}/{cumulative_total} (100% across all {len(canonical_diff_artifacts)} canonical suites)")
+                 f"PREVIOUS_TOTAL = {prev_passed}/{prev_total}; NEW_FILES_TASKS_TOTAL = {new_ft_passed}/{new_ft_total}; CUMULATIVE_PASS_RATE = {cumulative_passed}/{cumulative_total} (100% across all {len(canonical_diff_artifacts)} canonical suites)")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

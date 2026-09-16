@@ -1,0 +1,29 @@
+{
+  "standard_upload": {
+    "source": "URL_QUERY",
+    "parameters": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Destination file name in downloads directory"
+      }
+    },
+    "body": "RAW_STREAM"
+  },
+  "snapshot_ingest": {
+    "source": "URL_QUERY",
+    "parameters": {
+      "type": {
+        "type": "string",
+        "required": true,
+        "expected": "snapshot"
+      },
+      "device_id": {
+        "type": "string",
+        "required": true,
+        "description": "Device identifier"
+      }
+    },
+    "body": "RAW_STREAM_IMAGE_JPEG"
+  }
+}

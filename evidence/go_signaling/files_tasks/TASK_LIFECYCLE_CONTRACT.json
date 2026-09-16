@@ -1,0 +1,10 @@
+{
+  "storage": "IN_MEMORY_MAP",
+  "persistence_target": "NONE",
+  "state_transitions": {
+    "initial": "created",
+    "offline_target": "failed (result: Device offline)",
+    "online_target": "ONLINE_DISPATCH_TRANSPORT_DEPENDENT"
+  },
+  "restart_behavior": "IN_MEMORY_STATE_RESET"
+}

@@ -77,6 +77,16 @@ func main() {
 	licenseMgr := license.NewManager(*dataDir)
 	server.SetLicenseManager(licenseMgr)
 
+	fileMgr := storage.NewFileManager(filepath.Join(*dataDir, "downloads"))
+	if err := fileMgr.EnsureDirectories(); err != nil {
+		log.Printf("Failed to initialize downloads directory: %v", err)
+	}
+	server.SetFileManager(fileMgr)
+	taskMgr := storage.NewTaskManager()
+	server.SetTaskManager(taskMgr)
+	snapshotMgr := storage.NewSnapshotManager()
+	server.SetSnapshotManager(snapshotMgr)
+
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	log.Printf("[HTTP] Reconstructed server listening on %s", addr)
 	if err := http.ListenAndServe(addr, server); err != nil {

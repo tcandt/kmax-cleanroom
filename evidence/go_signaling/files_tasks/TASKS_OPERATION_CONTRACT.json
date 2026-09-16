@@ -1,0 +1,33 @@
+{
+  "endpoint": "/api/tasks",
+  "methods_allowed": [
+    "POST",
+    "OPTIONS"
+  ],
+  "auth": "ADMIN_ONLY",
+  "rbac_rejection": {
+    "status": 403,
+    "body": "Forbidden: admin only\n"
+  },
+  "validation": {
+    "empty_targets_status": 400,
+    "empty_targets_body": "Targets cannot be empty\n",
+    "invalid_json_status": 400
+  },
+  "success_response": {
+    "status": 200,
+    "schema": {
+      "status": "success",
+      "task_id": "string (format: task_YYYYMMDDhhmmss_<random_hex16>)"
+    }
+  },
+  "offline_dispatch": {
+    "behavior": "IMMEDIATE_FAILED_STATUS",
+    "device_status": {
+      "status": "failed",
+      "progress": 0,
+      "result": "Device offline"
+    }
+  },
+  "online_dispatch_classification": "ONLINE_DISPATCH_TRANSPORT_DEPENDENT"
+}

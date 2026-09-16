@@ -1,0 +1,15 @@
+{
+  "downloads_files": {
+    "storage": "FILESYSTEM",
+    "path": "data/downloads",
+    "persisted_across_restarts": true
+  },
+  "tasks_metadata": {
+    "storage": "IN_MEMORY_ONLY",
+    "persisted_across_restarts": false
+  },
+  "snapshots_data": {
+    "storage": "IN_MEMORY_ONLY",
+    "persisted_across_restarts": false
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "endpoint": "/snapshots/",
+  "handler_symbol": "main.main.func5",
+  "storage": "IN_MEMORY_MAP",
+  "producer_classification": "PRODUCER_DEFERRED_TO_TRANSPORT_PHASE",
+  "url_matching": {
+    "with_jpg_extension": true,
+    "without_extension": true,
+    "other_extensions": false
+  },
+  "auth_and_rbac": {
+    "unauthenticated_status": 401,
+    "unauthenticated_body": "Unauthorized\n",
+    "unassigned_device_status": 403,
+    "unassigned_device_body": "Forbidden\n",
+    "missing_snapshot_status": 404,
+    "missing_snapshot_body": "404 page not found\n"
+  },
+  "success_delivery": {
+    "content_type": "image/jpeg",
+    "cache_control": "no-cache, no-store, must-revalidate",
+    "cors_origin": "*"
+  }
+}

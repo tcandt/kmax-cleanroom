@@ -1,0 +1,310 @@
+{
+  "metadata": {
+    "phase": "2C.3I",
+    "generator": "reproduce_files_tasks_forensics.py",
+    "timestamp": "2026-09-16T12:33:11Z",
+    "total_canonical_artifacts": 21,
+    "verified_count": 21,
+    "all_reproducible": true,
+    "canonical_input_used": false,
+    "hr3_strict_mode": true
+  },
+  "artifacts": {
+    "FILES_TASKS_ROUTE_FAMILY.json": {
+      "artifact_name": "FILES_TASKS_ROUTE_FAMILY.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "6_routes_verified",
+        "route_symbols_resolved"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TASKS_METHOD_MATRIX.json": {
+      "artifact_name": "FILES_TASKS_METHOD_MATRIX.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "7_verbs_across_7_semantic_targets",
+        "split_upload_semantics_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TASKS_AUTH_MATRIX.json": {
+      "artifact_name": "FILES_TASKS_AUTH_MATRIX.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "auth_contexts_verified_including_rbac"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILESYSTEM_ROOT_CONTRACT.json": {
+      "artifact_name": "FILESYSTEM_ROOT_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "in_memory_snapshot_storage_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "UPLOAD_REQUEST_TYPE_EVIDENCE.json": {
+      "artifact_name": "UPLOAD_REQUEST_TYPE_EVIDENCE.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "raw_body_with_query_params_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "UPLOAD_OPERATION_CONTRACT.json": {
+      "artifact_name": "UPLOAD_OPERATION_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "upload_error_branches_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILE_PATH_SECURITY_CONTRACT.json": {
+      "artifact_name": "FILE_PATH_SECURITY_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "traversal_rejection_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TYPE_EVIDENCE.json": {
+      "artifact_name": "FILES_TYPE_EVIDENCE.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "files_list_dto_fields_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_LIST_CONTRACT.json": {
+      "artifact_name": "FILES_LIST_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "files_crud_and_delete_errors_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "DOWNLOADS_STATIC_CONTRACT.json": {
+      "artifact_name": "DOWNLOADS_STATIC_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "downloads_static_delivery_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "SNAPSHOTS_STATIC_CONTRACT.json": {
+      "artifact_name": "SNAPSHOTS_STATIC_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "snapshot_in_memory_and_deferral_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "TASK_TYPE_EVIDENCE.json": {
+      "artifact_name": "TASK_TYPE_EVIDENCE.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "task_struct_descriptors_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "TASKS_OPERATION_CONTRACT.json": {
+      "artifact_name": "TASKS_OPERATION_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "task_creation_and_offline_dispatch_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "TASK_DETAILS_CONTRACT.json": {
+      "artifact_name": "TASK_DETAILS_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "task_selector_and_errors_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "TASK_LIFECYCLE_CONTRACT.json": {
+      "artifact_name": "TASK_LIFECYCLE_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "in_memory_lifecycle_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "TASK_ID_CONTRACT.json": {
+      "artifact_name": "TASK_ID_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "task_id_layout_and_randomness_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TASKS_PERSISTENCE_CONTRACT.json": {
+      "artifact_name": "FILES_TASKS_PERSISTENCE_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "persistence_boundaries_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TASKS_CROSS_CONTRACT.json": {
+      "artifact_name": "FILES_TASKS_CROSS_CONTRACT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "cross_contract_edges_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TASKS_EDGE_MATRIX.json": {
+      "artifact_name": "FILES_TASKS_EDGE_MATRIX.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "edge_and_error_cases_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TASKS_FUNCTION_SLICES.json": {
+      "artifact_name": "FILES_TASKS_FUNCTION_SLICES.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "capstone_disassembly_slices_verified"
+      ],
+      "verification_result": "PASS"
+    },
+    "FILES_TASKS_FORENSIC_GATE_RESULT.json": {
+      "artifact_name": "FILES_TASKS_FORENSIC_GATE_RESULT.json",
+      "generation_sources": [
+        "canonical_builds/linux_amd64/webrtc-signaling",
+        "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "canonical_input_used": false,
+      "semantic_checks": [
+        "forensic_gate_18_invariants_pass"
+      ],
+      "verification_result": "PASS"
+    }
+  }
+}

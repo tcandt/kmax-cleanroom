@@ -1,0 +1,27 @@
+{
+  "upload_path_security": {
+    "base_cleaner": "filepath.Base",
+    "traversal_checks": [
+      {
+        "input": ".",
+        "verdict": "REJECT_400",
+        "error": "Invalid file path (path traversal detected)\n"
+      },
+      {
+        "input": "..",
+        "verdict": "REJECT_400",
+        "error": "Invalid file path (path traversal detected)\n"
+      }
+    ],
+    "containment_mechanism": "filepath.Join(dataDir, 'downloads', filepath.Base(cleanName))",
+    "security_classification": "BENIGN_SAFE_CONTAINED"
+  },
+  "delete_path_security": {
+    "mechanism": "filepath.Join(dataDir, 'downloads', name)",
+    "traversal_result": "404 File not found (does not escape downloads directory or match existing non-download file)"
+  },
+  "downloads_static_security": {
+    "mechanism": "http.StripPrefix('/downloads/', http.FileServer)",
+    "traversal_result": "404 Not Found (standard Go http.FileServer containment)"
+  }
+}

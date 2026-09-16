@@ -1,0 +1,179 @@
+{
+  "/upload": {
+    "pattern": "/upload",
+    "registration_type": "HandleFunc",
+    "registration_call_va": "0x765c88",
+    "handler_symbol": "main.swqKgLrjAZT9",
+    "handler_va": "0x758c80",
+    "size_bytes": 5376,
+    "direct_callees": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "EupnhXqvhu0.(*Wi41ybxZAeg).Query",
+      "EupnhXqvhu0.J1WXoffm.Get",
+      "jMkU1MzrAJ.Sg6kvDEQn",
+      "Jk0DYHRIQaFY.AVguyNdyr",
+      "Jk0DYHRIQaFY.A1YF185",
+      "runtime.concatstring2"
+    ],
+    "referenced_strings": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "device_id",
+      "type",
+      "name",
+      ".jpg",
+      "X-Snapshot-Status"
+    ],
+    "confidence": "HIGH"
+  },
+  "/api/files": {
+    "pattern": "/api/files",
+    "registration_type": "HandleFunc",
+    "registration_call_va": "0x765ca0",
+    "handler_symbol": "main.qa3RvDW",
+    "handler_va": "0x75a2c0",
+    "size_bytes": 3200,
+    "direct_callees": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "KXR_scQKvD.i3oaq0oB",
+      "uOfWpGI3.U85kLXYq",
+      "uOfWpGI3.iSy6hPaRTh8",
+      "Y0caeZ_zze.AFewevPD9",
+      "EupnhXqvhu0.(*Wi41ybxZAeg).Query"
+    ],
+    "referenced_strings": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "GET, DELETE, OPTIONSjson: Unmarshal(nil)json: Unmarshal(nil ",
+      "downloadsdest_pathcard_codeshare_urladdresses-license=ParseB",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "name",
+      "File not found"
+    ],
+    "confidence": "HIGH"
+  },
+  "/api/tasks": {
+    "pattern": "/api/tasks",
+    "registration_type": "HandleFunc",
+    "registration_call_va": "0x765cb8",
+    "handler_symbol": "main.koVbnsD4T0d",
+    "handler_va": "0x75afa0",
+    "size_bytes": 4000,
+    "direct_callees": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "main.chIaMDTZ",
+      "Y0caeZ_zze.AFewevPD9",
+      "runtime.gcWriteBarrier1",
+      "JOaOfPm.(*PFVf3KWTUcg).Decode",
+      "main.g0bIYv"
+    ],
+    "referenced_strings": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Unauthorized",
+      "Method not allowed",
+      "2006-01-02T15:04:05Z07:00",
+      "[Error] handleCreateBatchTask failed: targets cannot be empt",
+      "Targets cannot be empty"
+    ],
+    "confidence": "HIGH"
+  },
+  "/api/tasks/details": {
+    "pattern": "/api/tasks/details",
+    "registration_type": "HandleFunc",
+    "registration_call_va": "0x765cd0",
+    "handler_symbol": "main.bhMId7t5J",
+    "handler_va": "0x763ec0",
+    "size_bytes": 1600,
+    "direct_callees": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "Y0caeZ_zze.AFewevPD9",
+      "main.lYKp_Iuf",
+      "EupnhXqvhu0.(*Wi41ybxZAeg).Query",
+      "EupnhXqvhu0.J1WXoffm.Get",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess2_faststr"
+    ],
+    "referenced_strings": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "GET, OPTIONSUnauthorizedforbid_audiomessage_typestop_preview",
+      "Method not allowed",
+      "task_id",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "Task not found"
+    ],
+    "confidence": "HIGH"
+  },
+  "/downloads/": {
+    "pattern": "/downloads/",
+    "registration_type": "Handle",
+    "registration_call_va": "0x765d6b",
+    "handler_symbol": "Y0caeZ_zze.MB_aa9i.ServeHTTP",
+    "handler_va": "0x6e0340",
+    "size_bytes": 96,
+    "direct_callees": [
+      "runtime.morestack_noctxt"
+    ],
+    "referenced_strings": [],
+    "confidence": "HIGH"
+  },
+  "/snapshots/": {
+    "pattern": "/snapshots/",
+    "registration_type": "HandleFunc",
+    "registration_call_va": "0x765d83",
+    "handler_symbol": "main.main.func5",
+    "handler_va": "0x76da00",
+    "size_bytes": 1536,
+    "direct_callees": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "flX0bVTmvaoI.DfOrHEtA",
+      "runtime.memequal",
+      "main.pVOasuBli",
+      "G9edjO.(*Q8g2dH[go.shape.interface {},go.shape.interface {}]).Load",
+      "Y0caeZ_zze.AFewevPD9"
+    ],
+    "referenced_strings": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      ".jpg",
+      "Content-Type",
+      "Cache-Control",
+      "404 page not found",
+      "Forbidden",
+      "Unauthorized"
+    ],
+    "confidence": "HIGH"
+  }
+}

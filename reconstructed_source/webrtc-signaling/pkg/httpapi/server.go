@@ -42,6 +42,11 @@ type Server struct {
 	licenseMgr *license.Manager
 	debugMu    sync.RWMutex
 	debug      bool
+
+	// Files, Tasks, Downloads, and Snapshots state (Phase 2C.3I)
+	fileMgr     *storage.FileManager
+	taskMgr     *storage.TaskManager
+	snapshotMgr *storage.SnapshotManager
 }
 
 // CLEANROOM-PROVENANCE:
@@ -74,6 +79,9 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 			Version:   "v0.3.6",
 		},
 		licenseMgr: license.NewManager(""),
+		fileMgr:     storage.NewFileManager("./data/downloads"),
+		taskMgr:     storage.NewTaskManager(),
+		snapshotMgr: storage.NewSnapshotManager(),
 	}
 
 	// Register auth routes matching original binary
@@ -125,12 +133,79 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 	s.mux.HandleFunc("/api/license_status", s.HandleLicenseStatus)
 	s.mux.HandleFunc("/debug/license", s.HandleDebugLicense)
 
+	// Register files, tasks, downloads, and snapshots routes matching original binary (Phase 2C.3I)
+	s.mux.HandleFunc("/upload", s.HandleUpload)
+	s.mux.HandleFunc("/api/files", s.HandleFiles)
+	s.mux.HandleFunc("/api/tasks", s.HandleTasks)
+	s.mux.HandleFunc("/api/tasks/details", s.HandleTaskDetails)
+	s.mux.Handle("/downloads/", http.StripPrefix("/downloads/", s.downloadsHandler()))
+	s.mux.HandleFunc("/snapshots/", s.HandleSnapshots)
+
 	// Register differential test fixture endpoints
 	s.mux.HandleFunc("/_test/register_device", s.HandleTestRegisterDevice)
 	s.mux.HandleFunc("/_test/disconnect_device", s.HandleTestDisconnectDevice)
 	s.mux.HandleFunc("/_test/reset", s.HandleTestReset)
 
 	return s
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Purpose: Sets the FileManager for handling file uploads and downloads
+// Source Behavior: Mutates Server.fileMgr
+// Confidence: HIGH
+func (s *Server) SetFileManager(fm *storage.FileManager) {
+	s.fileMgr = fm
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Purpose: Sets the TaskManager for handling batch tasks
+// Source Behavior: Mutates Server.taskMgr
+// Confidence: HIGH
+func (s *Server) SetTaskManager(tm *storage.TaskManager) {
+	s.taskMgr = tm
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Purpose: Sets the SnapshotManager for handling in-memory snapshots
+// Source Behavior: Mutates Server.snapshotMgr
+// Confidence: HIGH
+func (s *Server) SetSnapshotManager(sm *storage.SnapshotManager) {
+	s.snapshotMgr = sm
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.main.func4
+// VA: 0x76d760
+// Evidence: DOWNLOADS_STATIC_CONTRACT.json
+// Purpose: Wraps http.FileServer with CORS headers and OPTIONS preflight handling
+// Confidence: HIGH
+func (s *Server) downloadsHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		var dir string
+		if s.fileMgr != nil {
+			dir = s.fileMgr.DownloadsDir()
+		}
+		if dir == "" {
+			dir = "./data/downloads"
+		}
+		http.FileServer(http.Dir(dir)).ServeHTTP(w, r)
+	})
 }
 
 // CLEANROOM-PROVENANCE:

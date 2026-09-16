@@ -1,0 +1,44 @@
+{
+  "edges": [
+    {
+      "from": "POST /upload?name={name}",
+      "to": "data/downloads/{name}",
+      "edge_type": "FILE_WRITTEN"
+    },
+    {
+      "from": "data/downloads/{name}",
+      "to": "GET /api/files",
+      "edge_type": "LISTED_IN_COLLECTION"
+    },
+    {
+      "from": "data/downloads/{name}",
+      "to": "GET /downloads/{name}",
+      "edge_type": "SERVED_VIA_HTTP"
+    },
+    {
+      "from": "DELETE /api/files?name={name}",
+      "to": "data/downloads/{name}",
+      "edge_type": "FILE_DELETED"
+    },
+    {
+      "from": "POST /upload?type=snapshot&device_id={id}",
+      "to": "memory.snapshots[{id}]",
+      "edge_type": "IN_MEMORY_INGEST"
+    },
+    {
+      "from": "memory.snapshots[{id}]",
+      "to": "GET /snapshots/{id}.jpg",
+      "edge_type": "IN_MEMORY_SERVE"
+    },
+    {
+      "from": "POST /api/tasks",
+      "to": "memory.tasks[{task_id}]",
+      "edge_type": "TASK_CREATED"
+    },
+    {
+      "from": "memory.tasks[{task_id}]",
+      "to": "GET /api/tasks/details?task_id={task_id}",
+      "edge_type": "TASK_INSPECTED"
+    }
+  ]
+}
