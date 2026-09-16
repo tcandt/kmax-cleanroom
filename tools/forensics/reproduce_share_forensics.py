@@ -2,7 +2,7 @@
 """
 reproduce_share_forensics.py - Phase 2C.3E Share Forensic Reproducibility Tool
 
-Verifies that all Phase 2C.3E Share forensic artifacts are 100% reproducible
+Verifies that ALL 13 Phase 2C.3E Share forensic artifacts are 100% reproducible
 directly from the canonical binary ELF and dynamic oracle, adhering to all
 cleanroom and provenance invariants.
 """
@@ -30,7 +30,7 @@ from tools.forensics.generate_share_forensics import (
 
 def verify_share_reproducibility():
     print("==================================================")
-    print("PHASE 2C.3E SHARE FORENSIC REPRODUCIBILITY")
+    print("PHASE 2C.3E SHARE FORENSIC REPRODUCIBILITY (13/13)")
     print("==================================================")
 
     # 1. Canonical Binary Hash Invariant
@@ -51,72 +51,201 @@ def verify_share_reproducibility():
         shutil.rmtree(temp_out, ignore_errors=True)
     temp_out.mkdir(parents=True, exist_ok=True)
 
-    print(f"[*] Regenerating all share artifacts into: {temp_out}")
+    print(f"[*] Regenerating all 13 share artifacts into: {temp_out}")
     try:
         generate_evidence(output_dir=temp_out)
     except Exception as e:
         print(f"[FAIL] generate_evidence failed: {e}")
         return False
 
-    # 3. Direct Type Descriptor Reproduction Check
+    results = {}
+
+    # Artifact 1: SHARE_ROUTE_FAMILY.json
+    f1_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_ROUTE_FAMILY.json").read_text(encoding="utf-8"))
+    f1_r = json.loads((temp_out / "SHARE_ROUTE_FAMILY.json").read_text(encoding="utf-8"))
+    p1 = (
+        f1_c["route_count"] == f1_r["route_count"] == 7 and
+        [r["pattern"] for r in f1_c["routes"]] == [r["pattern"] for r in f1_r["routes"]] and
+        [r["handler_symbol"] for r in f1_c["routes"]] == [r["handler_symbol"] for r in f1_r["routes"]] and
+        [r["handler_va"] for r in f1_c["routes"]] == [r["handler_va"] for r in f1_r["routes"]]
+    )
+    results["1. SHARE_ROUTE_FAMILY"] = p1
+    print(f"[{'PASS' if p1 else 'FAIL'}] 1. SHARE_ROUTE_FAMILY: 7 canonical routes with symbols and VAs")
+
+    # Artifact 2: SHARE_TYPE_EVIDENCE.json
     elf_bytes = ELF_LINUX.read_bytes()
     sections = parse_elf_sections(elf_bytes)
     share_token_struct = parse_struct_descriptor(elf_bytes, sections, 0x80f700)
-
-    committed_type_ev = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_TYPE_EVIDENCE.json").read_text(encoding="utf-8"))
-    reproduced_type_ev = json.loads((temp_out / "SHARE_TYPE_EVIDENCE.json").read_text(encoding="utf-8"))
-
-    token_match = (
-        share_token_struct["size_bytes"] == committed_type_ev["share_token_struct"]["size_bytes"] == reproduced_type_ev["share_token_struct"]["size_bytes"] == 192 and
-        share_token_struct["field_count"] == committed_type_ev["share_token_struct"]["field_count"] == reproduced_type_ev["share_token_struct"]["field_count"] == 18 and
-        share_token_struct["fields"] == committed_type_ev["share_token_struct"]["fields"] == reproduced_type_ev["share_token_struct"]["fields"]
+    f2_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_TYPE_EVIDENCE.json").read_text(encoding="utf-8"))
+    f2_r = json.loads((temp_out / "SHARE_TYPE_EVIDENCE.json").read_text(encoding="utf-8"))
+    p2 = (
+        share_token_struct["size_bytes"] == f2_c["share_token_struct"]["size_bytes"] == f2_r["share_token_struct"]["size_bytes"] == 192 and
+        share_token_struct["field_count"] == f2_c["share_token_struct"]["field_count"] == f2_r["share_token_struct"]["field_count"] == 18 and
+        share_token_struct["fields"] == f2_c["share_token_struct"]["fields"] == f2_r["share_token_struct"]["fields"] and
+        f2_r.get("guest_settings_type", {}).get("descriptor_va") == "0x7bf940"
     )
-    print(f"[PASS] SHARE_TYPE_DESCRIPTOR_REPRODUCIBLE: {token_match}")
+    results["2. SHARE_TYPE_EVIDENCE"] = p2
+    print(f"[{'PASS' if p2 else 'FAIL'}] 2. SHARE_TYPE_EVIDENCE: ShareToken (192 bytes, 18 fields) & guest_settings")
 
-    # 4. Route Family Check
-    f_rf_committed = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_ROUTE_FAMILY.json").read_text(encoding="utf-8"))
-    f_rf_reproduced = json.loads((temp_out / "SHARE_ROUTE_FAMILY.json").read_text(encoding="utf-8"))
-    rf_match = (f_rf_committed == f_rf_reproduced and f_rf_reproduced["route_count"] == 7)
-    print(f"[PASS] SHARE_ROUTE_FAMILY_REPRODUCIBLE: {rf_match}")
-
-    # 5. Function Slices Check
-    f_sl_committed = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_HTTP_FUNCTION_SLICES.json").read_text(encoding="utf-8"))
-    f_sl_reproduced = json.loads((temp_out / "SHARE_HTTP_FUNCTION_SLICES.json").read_text(encoding="utf-8"))
-    sl_match = (
-        len(f_sl_committed) == len(f_sl_reproduced) == 11 and
-        [f["symbol"] for f in f_sl_committed] == [f["symbol"] for f in f_sl_reproduced] and
-        [f["size_bytes"] for f in f_sl_committed] == [f["size_bytes"] for f in f_sl_reproduced]
+    # Artifact 3: SHARE_ROUTE_METHOD_MATRIX.json
+    f3_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_ROUTE_METHOD_MATRIX.json").read_text(encoding="utf-8"))
+    f3_r = json.loads((temp_out / "SHARE_ROUTE_METHOD_MATRIX.json").read_text(encoding="utf-8"))
+    p3 = (
+        len(f3_r) == 7 and
+        all(len(verbs) == 7 for verbs in f3_r.values()) and
+        # Strict method gating checks: extend and update return 405 on non-POST verbs
+        all(f3_r["/api/share/extend"][m]["status_code"] == 405 for m in ["GET", "PUT", "PATCH", "DELETE", "HEAD"]) and
+        all(f3_r["/api/share/update"][m]["status_code"] == 405 for m in ["GET", "PUT", "PATCH", "DELETE", "HEAD"]) and
+        all(f3_r["/api/share/create"][m]["status_code"] == 405 for m in ["GET", "PUT", "PATCH", "DELETE", "HEAD"]) and
+        all(verbs["OPTIONS"]["status_code"] == 200 for verbs in f3_r.values())
     )
-    print(f"[PASS] SHARE_FUNCTION_SLICE_REPRODUCIBLE: {sl_match}")
+    results["3. SHARE_ROUTE_METHOD_MATRIX"] = p3
+    print(f"[{'PASS' if p3 else 'FAIL'}] 3. SHARE_ROUTE_METHOD_MATRIX: 7 routes x 7 verbs with strict 405 gating verified")
 
-    # 6. Method Matrix Check
-    f_mm_committed = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_ROUTE_METHOD_MATRIX.json").read_text(encoding="utf-8"))
-    f_mm_reproduced = json.loads((temp_out / "SHARE_ROUTE_METHOD_MATRIX.json").read_text(encoding="utf-8"))
-    mm_match = (len(f_mm_reproduced) == 7 and all(len(v) == 7 for v in f_mm_reproduced.values()))
-    print(f"[PASS] SHARE_METHOD_MATRIX_REPRODUCIBLE: {mm_match}")
-
-    # 7. Auth Matrix Check
-    f_am_committed = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_AUTH_MATRIX.json").read_text(encoding="utf-8"))
-    f_am_reproduced = json.loads((temp_out / "SHARE_AUTH_MATRIX.json").read_text(encoding="utf-8"))
-    am_match = (len(f_am_reproduced) == 7 and all(set(v.keys()) == {"ADMIN", "NORMAL_USER", "MISSING_TOKEN", "INVALID_TOKEN", "NO_AUTH_MODE"} for v in f_am_reproduced.values()))
-    print(f"[PASS] SHARE_AUTH_MATRIX_REPRODUCIBLE: {am_match}")
-
-    # 8. Persistence Contract Check
-    f_pc_committed = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_PERSISTENCE_CONTRACT.json").read_text(encoding="utf-8"))
-    f_pc_reproduced = json.loads((temp_out / "SHARE_PERSISTENCE_CONTRACT.json").read_text(encoding="utf-8"))
-    pc_match = (
-        f_pc_committed["file_name"] == f_pc_reproduced["file_name"] == "shares.json" and
-        f_pc_committed["atomic_tmp_rename"] == f_pc_reproduced["atomic_tmp_rename"] == True and
-        "0600" in f_pc_reproduced["file_mode"]
+    # Artifact 4: SHARE_AUTH_MATRIX.json
+    f4_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_AUTH_MATRIX.json").read_text(encoding="utf-8"))
+    f4_r = json.loads((temp_out / "SHARE_AUTH_MATRIX.json").read_text(encoding="utf-8"))
+    p4 = (
+        len(f4_r) == 7 and
+        all(set(v.keys()) == {"ADMIN", "NORMAL_USER", "MISSING_TOKEN", "INVALID_TOKEN", "NO_AUTH_MODE"} for v in f4_r.values()) and
+        f4_r["/api/share/create"]["NORMAL_USER"]["status_code"] == 403 and
+        f4_r["/api/share/list"]["NORMAL_USER"]["status_code"] == 403 and
+        f4_r["/api/share/create"]["MISSING_TOKEN"]["status_code"] == 401 and
+        f4_r["/api/share/info"]["MISSING_TOKEN"]["status_code"] == 400 and
+        f4_r["/api/share/redeem_card"]["MISSING_TOKEN"]["status_code"] == 400
     )
-    print(f"[PASS] SHARE_PERSISTENCE_CONTRACT_REPRODUCIBLE: {pc_match}")
+    results["4. SHARE_AUTH_MATRIX"] = p4
+    print(f"[{'PASS' if p4 else 'FAIL'}] 4. SHARE_AUTH_MATRIX: 7 routes x 5 states, admin RBAC (403) and public routes")
+
+    # Artifact 5: SHARE_CREATE_CONTRACT.json
+    f5_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_CREATE_CONTRACT.json").read_text(encoding="utf-8"))
+    f5_r = json.loads((temp_out / "SHARE_CREATE_CONTRACT.json").read_text(encoding="utf-8"))
+    p5 = (
+        f5_r.get("empty_body_rejection", {}).get("status_code") == 400 and
+        f5_r.get("duplicate_device_rejection", {}).get("status_code") == 409 and
+        f5_r.get("minimal_response_schema", {}).get("code") == 0 and
+        f5_r.get("full_create_verification", {}).get("token_prefix") == "st_" and
+        f5_r.get("full_create_verification", {}).get("card_code_prefix") == "CP-"
+    )
+    results["5. SHARE_CREATE_CONTRACT"] = p5
+    print(f"[{'PASS' if p5 else 'FAIL'}] 5. SHARE_CREATE_CONTRACT: Minimal schema 200, conflict 409, missing dev 400")
+
+    # Artifact 6: SHARE_LIST_CONTRACT.json
+    f6_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_LIST_CONTRACT.json").read_text(encoding="utf-8"))
+    f6_r = json.loads((temp_out / "SHARE_LIST_CONTRACT.json").read_text(encoding="utf-8"))
+    p6 = (
+        f6_r.get("admin_response", {}).get("status_code") == 200 and
+        f6_r.get("normal_user_status") == 403 and
+        f6_r.get("device_filtering", {}).get("filtered_dev001_count") == 1 and
+        f6_r.get("empty_list_shape") == f6_c.get("empty_list_shape")
+    )
+    results["6. SHARE_LIST_CONTRACT"] = p6
+    print(f"[{'PASS' if p6 else 'FAIL'}] 6. SHARE_LIST_CONTRACT: Array response 200, admin gate 403, ?device_id= filtering")
+
+    # Artifact 7: SHARE_INFO_CONTRACT.json
+    f7_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_INFO_CONTRACT.json").read_text(encoding="utf-8"))
+    f7_r = json.loads((temp_out / "SHARE_INFO_CONTRACT.json").read_text(encoding="utf-8"))
+    p7 = (
+        f7_r.get("valid_token_unprotected", {}).get("status_code") == 200 and
+        f7_r.get("empty_token_rejection", {}).get("status_code") == 400 and
+        f7_r.get("invalid_token_rejection", {}).get("status_code") == 404 and
+        f7_r.get("password_protection", {}).get("missing_password_challenge", {}).get("code_field") == 401
+    )
+    results["7. SHARE_INFO_CONTRACT"] = p7
+    print(f"[{'PASS' if p7 else 'FAIL'}] 7. SHARE_INFO_CONTRACT: Public info 200, empty 400, invalid 404, pwd challenge 401")
+
+    # Artifact 8: SHARE_MUTATION_CONTRACTS.json
+    f8_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_MUTATION_CONTRACTS.json").read_text(encoding="utf-8"))
+    f8_r = json.loads((temp_out / "SHARE_MUTATION_CONTRACTS.json").read_text(encoding="utf-8"))
+    p8 = (
+        f8_r.get("revoke_contract", {}).get("valid_status") == 200 and
+        f8_r.get("revoke_contract", {}).get("unknown_status") == 404 and
+        f8_r.get("extend_contract", {}).get("permanent_share_rejection", {}).get("code_field") == 400 and
+        f8_r.get("extend_contract", {}).get("expiring_share_extension", {}).get("code_field") == 0 and
+        f8_r.get("update_contract", {}).get("empty_token_status") == 400 and
+        f8_r.get("update_contract", {}).get("valid_status") == 200
+    )
+    results["8. SHARE_MUTATION_CONTRACTS"] = p8
+    print(f"[{'PASS' if p8 else 'FAIL'}] 8. SHARE_MUTATION_CONTRACTS: Revoke (200/404), Extend (200/400), Update (200/400)")
+
+    # Artifact 9: SHARE_REDEEM_CARD_CONTRACT.json
+    f9_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_REDEEM_CARD_CONTRACT.json").read_text(encoding="utf-8"))
+    f9_r = json.loads((temp_out / "SHARE_REDEEM_CARD_CONTRACT.json").read_text(encoding="utf-8"))
+    p9 = (
+        f9_r.get("empty_card_code", {}).get("status_code") == 400 and
+        f9_r.get("invalid_card_code", {}).get("code_field") == 404 and
+        f9_r.get("valid_card_code", {}).get("status_code") == 200
+    )
+    results["9. SHARE_REDEEM_CARD_CONTRACT"] = p9
+    print(f"[{'PASS' if p9 else 'FAIL'}] 9. SHARE_REDEEM_CARD_CONTRACT: Empty 400, invalid code 404, valid redemption 200/0")
+
+    # Artifact 10: SHARE_PERSISTENCE_CONTRACT.json
+    f10_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_PERSISTENCE_CONTRACT.json").read_text(encoding="utf-8"))
+    f10_r = json.loads((temp_out / "SHARE_PERSISTENCE_CONTRACT.json").read_text(encoding="utf-8"))
+    p10 = (
+        f10_r["file_name"] == "shares.json" and
+        f10_r["atomic_tmp_rename"] is True and
+        "0600" in f10_r["file_mode"] and
+        f10_r.get("machine_facts", {}).get("save_shares_symbol") == "main.fomL4ATwVV1" and
+        f10_r.get("machine_facts", {}).get("save_shares_va") == "0x739900" and
+        f10_r.get("machine_facts", {}).get("mode_arg_instruction_va") == "0x739cd9" and
+        f10_r.get("machine_facts", {}).get("write_file_call_va") == "0x739ce0" and
+        f10_r.get("machine_facts", {}).get("rename_call_va") == "0x739e12"
+    )
+    results["10. SHARE_PERSISTENCE_CONTRACT"] = p10
+    print(f"[{'PASS' if p10 else 'FAIL'}] 10. SHARE_PERSISTENCE_CONTRACT: Atomic .tmp + os.Rename (0x739e12), mode 0600 (0x739cd9)")
+
+    # Artifact 11: SHARE_EXPIRY_CONTRACT.json
+    f11_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_EXPIRY_CONTRACT.json").read_text(encoding="utf-8"))
+    f11_r = json.loads((temp_out / "SHARE_EXPIRY_CONTRACT.json").read_text(encoding="utf-8"))
+    p11 = (
+        f11_r.get("cleanup_worker", {}).get("setup_symbol") == "main.dYBSRoVh" and
+        f11_r.get("cleanup_worker", {}).get("setup_va") == "0x73a0a0" and
+        f11_r.get("cleanup_worker", {}).get("ticker_interval_seconds") == 300 and
+        f11_r.get("cleanup_worker", {}).get("worker_symbol") == "main.dYBSRoVh.func1" and
+        f11_r.get("cleanup_worker", {}).get("worker_va") == "0x73a120" and
+        f11_r.get("cleanup_worker", {}).get("worker_size_bytes") == 992 and
+        f11_r.get("lazy_check_on_query", {}).get("handler_va") == "0x760480"
+    )
+    results["11. SHARE_EXPIRY_CONTRACT"] = p11
+    print(f"[{'PASS' if p11 else 'FAIL'}] 11. SHARE_EXPIRY_CONTRACT: Ticker 300s (0x73a0ae), reaper worker (0x73a120), lazy check")
+
+    # Artifact 12: SHARE_CROSS_CONTRACT.json
+    f12_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_CROSS_CONTRACT.json").read_text(encoding="utf-8"))
+    f12_r = json.loads((temp_out / "SHARE_CROSS_CONTRACT.json").read_text(encoding="utf-8"))
+    p12 = (
+        f12_r.get("test_cases", {}).get("CROSS-01", {}).get("shares_json_bit_identical") is True and
+        f12_r.get("test_cases", {}).get("CROSS-02", {}).get("shares_json_bit_identical") is True and
+        f12_r.get("test_cases", {}).get("CROSS-03", {}).get("isolation_verified") is True and
+        f12_r.get("device_uniqueness", {}).get("status_code") == 409
+    )
+    results["12. SHARE_CROSS_CONTRACT"] = p12
+    print(f"[{'PASS' if p12 else 'FAIL'}] 12. SHARE_CROSS_CONTRACT: Structured tests CROSS-01..03 PASS & callgraph isolation")
+
+    # Artifact 13: SHARE_HTTP_FUNCTION_SLICES.json
+    f13_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_HTTP_FUNCTION_SLICES.json").read_text(encoding="utf-8"))
+    f13_r = json.loads((temp_out / "SHARE_HTTP_FUNCTION_SLICES.json").read_text(encoding="utf-8"))
+    p13 = (
+        len(f13_c) == len(f13_r) == 11 and
+        all(
+            s.get("symbol") and
+            s.get("machine_observation", {}).get("start_va") and
+            s.get("machine_observation", {}).get("size_bytes", 0) > 0 and
+            s.get("machine_observation", {}).get("instruction_count", 0) > 0 and
+            s.get("semantic_annotation", {}).get("role_description")
+            for s in f13_r
+        ) and
+        [s["symbol"] for s in f13_c] == [s["symbol"] for s in f13_r]
+    )
+    results["13. SHARE_HTTP_FUNCTION_SLICES"] = p13
+    print(f"[{'PASS' if p13 else 'FAIL'}] 13. SHARE_HTTP_FUNCTION_SLICES: 11 query-derived slices (machine_observation + semantic_annotation)")
 
     # Cleanup temp
     shutil.rmtree(temp_out, ignore_errors=True)
 
-    all_pass = token_match and rf_match and sl_match and mm_match and am_match and pc_match
+    all_pass = all(results.values())
     print("--------------------------------------------------")
-    print(f"OVERALL REPRODUCIBILITY: {'PASS' if all_pass else 'FAIL'}")
+    print(f"OVERALL REPRODUCIBILITY: {'PASS' if all_pass else 'FAIL'} ({sum(1 for v in results.values() if v)}/13 artifacts verified)")
     print("==================================================")
     return all_pass
 

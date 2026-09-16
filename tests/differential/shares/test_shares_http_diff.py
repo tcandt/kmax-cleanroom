@@ -568,6 +568,111 @@ def run_suite():
             return p, "bit-exact isolation: /devices unaffected by share token lifecycles"
         execute_test("SHARE-HTTP-28", "Cross-Contract Isolation with /devices", test_28)
 
+        # Test 29: GET Method on /api/share/extend (405 Method Not Allowed)
+        def test_29():
+            r1 = requests.get(f"{URL_ORIG}/api/share/extend", headers=h_orig_adm)
+            r2 = requests.get(f"{URL_RECON}/api/share/extend", headers=h_recon_adm)
+            p = (r1.status_code == r2.status_code == 405 and
+                 r1.headers.get("Content-Type") == r2.headers.get("Content-Type") == "text/plain; charset=utf-8" and
+                 r1.text == r2.text == "Method Not Allowed\n")
+            return p, "bit-exact 405 Method Not Allowed\\n on GET /api/share/extend"
+        execute_test("SHARE-HTTP-29", "GET Method on /api/share/extend (405)", test_29)
+
+        # Test 30: PUT/PATCH/DELETE on /api/share/extend (405 Method Not Allowed)
+        def test_30():
+            for m in ["put", "patch", "delete"]:
+                fn1 = getattr(requests, m)
+                r1 = fn1(f"{URL_ORIG}/api/share/extend", headers=h_orig_adm)
+                r2 = fn1(f"{URL_RECON}/api/share/extend", headers=h_recon_adm)
+                if not (r1.status_code == r2.status_code == 405 and r1.text == r2.text == "Method Not Allowed\n"):
+                    return False, f"mismatch on {m.upper()} /api/share/extend"
+            return True, "bit-exact 405 Method Not Allowed\\n across PUT, PATCH, DELETE on /api/share/extend"
+        execute_test("SHARE-HTTP-30", "PUT/PATCH/DELETE on /api/share/extend (405)", test_30)
+
+        # Test 31: HEAD Method on /api/share/extend (405 Method Not Allowed)
+        def test_31():
+            r1 = requests.head(f"{URL_ORIG}/api/share/extend", headers=h_orig_adm)
+            r2 = requests.head(f"{URL_RECON}/api/share/extend", headers=h_recon_adm)
+            p = (r1.status_code == r2.status_code == 405 and len(r1.content) == len(r2.content) == 0)
+            return p, "bit-exact 405 with empty body on HEAD /api/share/extend"
+        execute_test("SHARE-HTTP-31", "HEAD Method on /api/share/extend (405)", test_31)
+
+        # Test 32: GET Method on /api/share/update (405 Method Not Allowed)
+        def test_32():
+            r1 = requests.get(f"{URL_ORIG}/api/share/update", headers=h_orig_adm)
+            r2 = requests.get(f"{URL_RECON}/api/share/update", headers=h_recon_adm)
+            p = (r1.status_code == r2.status_code == 405 and
+                 r1.headers.get("Content-Type") == r2.headers.get("Content-Type") == "text/plain; charset=utf-8" and
+                 r1.text == r2.text == "Method Not Allowed\n")
+            return p, "bit-exact 405 Method Not Allowed\\n on GET /api/share/update"
+        execute_test("SHARE-HTTP-32", "GET Method on /api/share/update (405)", test_32)
+
+        # Test 33: PUT/PATCH/DELETE on /api/share/update (405 Method Not Allowed)
+        def test_33():
+            for m in ["put", "patch", "delete"]:
+                fn1 = getattr(requests, m)
+                r1 = fn1(f"{URL_ORIG}/api/share/update", headers=h_orig_adm)
+                r2 = fn1(f"{URL_RECON}/api/share/update", headers=h_recon_adm)
+                if not (r1.status_code == r2.status_code == 405 and r1.text == r2.text == "Method Not Allowed\n"):
+                    return False, f"mismatch on {m.upper()} /api/share/update"
+            return True, "bit-exact 405 Method Not Allowed\\n across PUT, PATCH, DELETE on /api/share/update"
+        execute_test("SHARE-HTTP-33", "PUT/PATCH/DELETE on /api/share/update (405)", test_33)
+
+        # Test 34: HEAD Method on /api/share/update (405 Method Not Allowed)
+        def test_34():
+            r1 = requests.head(f"{URL_ORIG}/api/share/update", headers=h_orig_adm)
+            r2 = requests.head(f"{URL_RECON}/api/share/update", headers=h_recon_adm)
+            p = (r1.status_code == r2.status_code == 405 and len(r1.content) == len(r2.content) == 0)
+            return p, "bit-exact 405 with empty body on HEAD /api/share/update"
+        execute_test("SHARE-HTTP-34", "HEAD Method on /api/share/update (405)", test_34)
+
+        # Test 35: Non-POST Verbs on /api/share/create (405 Method Not Allowed)
+        def test_35():
+            for m in ["get", "put", "patch", "delete", "head"]:
+                fn1 = getattr(requests, m)
+                r1 = fn1(f"{URL_ORIG}/api/share/create", headers=h_orig_adm)
+                r2 = fn1(f"{URL_RECON}/api/share/create", headers=h_recon_adm)
+                if not (r1.status_code == r2.status_code == 405):
+                    return False, f"status mismatch on {m.upper()} /api/share/create ({r1.status_code} != {r2.status_code})"
+                if m != "head" and r1.text != r2.text:
+                    return False, f"body mismatch on {m.upper()} /api/share/create"
+            return True, "bit-exact 405 across non-POST verbs on /api/share/create"
+        execute_test("SHARE-HTTP-35", "Non-POST Verbs on /api/share/create (405)", test_35)
+
+        # Test 36: Method Permissiveness on Body-Driven / Non-Gating Routes
+        def test_36():
+            # /api/share/list accepts GET, POST, PUT, etc. (all return 200 with JSON)
+            r1_l = requests.post(f"{URL_ORIG}/api/share/list", headers=h_orig_adm)
+            r2_l = requests.post(f"{URL_RECON}/api/share/list", headers=h_recon_adm)
+            if not (r1_l.status_code == r2_l.status_code == 200):
+                return False, "POST /api/share/list status mismatch"
+
+            # /api/share/revoke accepts any verb without 405 gate (body driven, missing body -> 400 Invalid payload\n)
+            r1_rv = requests.get(f"{URL_ORIG}/api/share/revoke", headers=h_orig_adm)
+            r2_rv = requests.get(f"{URL_RECON}/api/share/revoke", headers=h_recon_adm)
+            if not (r1_rv.status_code == r2_rv.status_code == 400 and r1_rv.text == r2_rv.text == "Invalid payload\n"):
+                return False, f"GET /api/share/revoke mismatch ({r1_rv.status_code}:{repr(r1_rv.text)} != {r2_rv.status_code}:{repr(r2_rv.text)})"
+
+            # /api/share/redeem_card accepts any verb without 405 gate (body driven, missing body -> 400)
+            r1_rc = requests.get(f"{URL_ORIG}/api/share/redeem_card")
+            r2_rc = requests.get(f"{URL_RECON}/api/share/redeem_card")
+            if not (r1_rc.status_code == r2_rc.status_code == 400 and r1_rc.text == r2_rc.text):
+                return False, f"GET /api/share/redeem_card status mismatch ({r1_rc.status_code} != {r2_rc.status_code})"
+
+            # /api/share/info accepts POST as well as GET (query driven)
+            cr1 = requests.post(f"{URL_ORIG}/api/share/create", headers=h_orig_adm, json={"device_id": "dev-method-test"})
+            cr2 = requests.post(f"{URL_RECON}/api/share/create", headers=h_recon_adm, json={"device_id": "dev-method-test"})
+            tok1 = cr1.json()["data"]["token"]
+            tok2 = cr2.json()["data"]["token"]
+
+            r1_inf = requests.post(f"{URL_ORIG}/api/share/info?token={tok1}")
+            r2_inf = requests.post(f"{URL_RECON}/api/share/info?token={tok2}")
+            if not (r1_inf.status_code == r2_inf.status_code == 200 and r1_inf.json()['code'] == r2_inf.json()['code'] == 0):
+                return False, "POST /api/share/info status/code mismatch"
+
+            return True, "verified exact non-gating/body-driven semantics on /list, /revoke, /redeem_card, /info"
+        execute_test("SHARE-HTTP-36", "Method Permissiveness on Non-Gating Routes", test_36)
+
     finally:
         for p in procs:
             p.kill()

@@ -3,10 +3,33 @@
   "permanent_share_representation": "0001-01-01T00:00:00Z (Go time.Time zero value)",
   "extension_unit": "seconds via extend_seconds parameter",
   "cleanup_worker": {
-    "symbol": "main.dYBSRoVh.func1",
-    "va": "0x73a120",
-    "size_bytes": 992,
-    "mechanism": "Goroutine runs in background, checks expired shares, deletes from memory map and calls main.fomL4ATwVV1 (saveShares) to persist cleanup to disk"
+    "setup_symbol": "main.dYBSRoVh",
+    "setup_va": "0x73a0a0",
+    "ticker_interval_hex": "0x45d964b800",
+    "ticker_interval_ns": 300000000000,
+    "ticker_interval_seconds": 300,
+    "ticker_instruction": "0x73a0ae: movabs rax, 0x45d964b800",
+    "worker_symbol": "main.dYBSRoVh.func1",
+    "worker_va": "0x73a120",
+    "worker_size_bytes": 992,
+    "machine_facts": {
+      "chan_recv_call_va": "0x73a180",
+      "time_now_call_va": "0x73a1a2",
+      "mutex_lock_call_va": "0x73a1c0",
+      "map_iter_start_va": "0x73a202",
+      "expiry_comparison_call_va": "0x73a357",
+      "expiry_comparison_callee": "fZqVo7pKK.AipSo2.After (time.Time.After)",
+      "map_delete_faststr_va1": "0x73a3b3",
+      "map_delete_faststr_va2": "0x73a3d8",
+      "mutex_unlock_call_va": "0x73a220",
+      "save_shares_call_va": "0x73a248",
+      "save_shares_callee": "main.fomL4ATwVV1"
+    },
+    "mechanism": "Goroutine runs in background every 300s (5m), checks expired shares via time.Time.After, deletes from map with mapdelete_faststr, and calls main.fomL4ATwVV1 (saveShares) to persist to disk"
   },
-  "lazy_check_on_query": "GET /api/share/info verifies remaining_seconds > 0 before returning; returns 404 Share link expired or invalid\\n on expired tokens"
+  "lazy_check_on_query": {
+    "handler_symbol": "main.busbgD",
+    "handler_va": "0x760480",
+    "mechanism": "GET /api/share/info verifies remaining_seconds > 0 before returning; returns 404 Share link expired or invalid\\n on expired tokens"
+  }
 }

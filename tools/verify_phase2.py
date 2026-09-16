@@ -1895,10 +1895,14 @@ def verify_all():
         mat_valid = (
             len(sh_mat) == 7 and
             all(all(v in route_verbs for v in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"])
-                for route_verbs in sh_mat.values())
+                for route_verbs in sh_mat.values()) and
+            all(sh_mat["/api/share/extend"][m]["status_code"] == 405 for m in ["GET", "PUT", "PATCH", "DELETE", "HEAD"]) and
+            all(sh_mat["/api/share/update"][m]["status_code"] == 405 for m in ["GET", "PUT", "PATCH", "DELETE", "HEAD"]) and
+            all(sh_mat["/api/share/create"][m]["status_code"] == 405 for m in ["GET", "PUT", "PATCH", "DELETE", "HEAD"]) and
+            all(verbs["OPTIONS"]["status_code"] == 200 for verbs in sh_mat.values())
         )
         record_check("Phase 2C.3E Shares Method Matrix", mat_valid,
-                     "7 routes probed across 7 HTTP verbs (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)")
+                     "7 routes probed across 7 verbs; strict 405 gating on create/extend/update verified")
 
     # 12.3 Shares Type Descriptor Recovery
     sh_type_file = share_dir / "SHARE_TYPE_EVIDENCE.json"
@@ -1928,8 +1932,26 @@ def verify_all():
         "SHARE_CROSS_CONTRACT.json",
     ]
     contracts_exist = all((share_dir / f).exists() for f in req_contracts)
-    record_check("Phase 2C.3E Shares Business Contracts", contracts_exist,
-                 "All 7 business contract artifacts present (create, list, info, mutations, redeem_card, expiry, cross)")
+    contracts_structured = False
+    if contracts_exist:
+        c_create = json.loads((share_dir / "SHARE_CREATE_CONTRACT.json").read_text(encoding="utf-8"))
+        c_list = json.loads((share_dir / "SHARE_LIST_CONTRACT.json").read_text(encoding="utf-8"))
+        c_info = json.loads((share_dir / "SHARE_INFO_CONTRACT.json").read_text(encoding="utf-8"))
+        c_mut = json.loads((share_dir / "SHARE_MUTATION_CONTRACTS.json").read_text(encoding="utf-8"))
+        c_red = json.loads((share_dir / "SHARE_REDEEM_CARD_CONTRACT.json").read_text(encoding="utf-8"))
+        c_exp = json.loads((share_dir / "SHARE_EXPIRY_CONTRACT.json").read_text(encoding="utf-8"))
+        c_crs = json.loads((share_dir / "SHARE_CROSS_CONTRACT.json").read_text(encoding="utf-8"))
+        contracts_structured = (
+            c_create.get("duplicate_device_rejection", {}).get("status_code") == 409 and
+            c_list.get("normal_user_status") == 403 and
+            c_info.get("invalid_token_rejection", {}).get("status_code") == 404 and
+            c_mut.get("update_contract", {}).get("valid_status") == 200 and
+            c_red.get("empty_card_code", {}).get("status_code") == 400 and
+            c_exp.get("cleanup_worker", {}).get("worker_symbol") == "main.dYBSRoVh.func1" and
+            c_crs.get("test_cases", {}).get("CROSS-01", {}).get("shares_json_bit_identical") is True
+        )
+    record_check("Phase 2C.3E Shares Business Contracts", contracts_exist and contracts_structured,
+                 "All 7 business contracts present and validated for structured semantic invariants")
 
     # 12.5 Shares Persistence Contract
     sh_pers_file = share_dir / "SHARE_PERSISTENCE_CONTRACT.json"
@@ -1937,15 +1959,19 @@ def verify_all():
         record_check("Phase 2C.3E Shares Persistence Contract", False, "SHARE_PERSISTENCE_CONTRACT.json missing")
     else:
         sh_pers = json.loads(sh_pers_file.read_text(encoding="utf-8"))
+        mf = sh_pers.get("machine_facts", {})
         pers_valid = (
             sh_pers.get("file_name") == "shares.json" and
             "0600" in sh_pers.get("file_mode", "") and
-            "0x180" in sh_pers.get("file_mode_binary_instruction", "") and
             sh_pers.get("atomic_tmp_rename") is True and
-            "0x4e1160" in sh_pers.get("binary_evidence", "")
+            mf.get("save_shares_symbol") == "main.fomL4ATwVV1" and
+            mf.get("save_shares_va") == "0x739900" and
+            mf.get("mode_arg_instruction_va") == "0x739cd9" and
+            mf.get("write_file_call_va") == "0x739ce0" and
+            mf.get("rename_call_va") == "0x739e12"
         )
         record_check("Phase 2C.3E Shares Persistence Contract", pers_valid,
-                     "Atomic .tmp + os.Rename (0x4e1160), mode 0600 (0x180 octal), 2-space indentation")
+                     "Atomic .tmp + os.Rename (0x739e12), mode 0600 (0x739cd9), saveShares 0x739900 machine facts verified")
 
     # 12.6 Shares Auth Matrix
     sh_auth_file = share_dir / "SHARE_AUTH_MATRIX.json"
@@ -1964,15 +1990,29 @@ def verify_all():
 
     # 12.7 Shares Handler Forensic Slices
     sh_sl_file = share_dir / "SHARE_HTTP_FUNCTION_SLICES.json"
+    fn_map_file = ROOT / "evidence" / "go_signaling" / "FUNCTION_MAP.json"
     if not sh_sl_file.exists():
         record_check("Phase 2C.3E Shares Function Slices", False, "SHARE_HTTP_FUNCTION_SLICES.json missing")
+    elif not fn_map_file.exists():
+        record_check("Phase 2C.3E Shares Function Slices", False, "FUNCTION_MAP.json missing")
     else:
         sh_sl = json.loads(sh_sl_file.read_text(encoding="utf-8"))
-        sh_slices_valid = (len(sh_sl) == 11 and all(s.get("instruction_count", 0) > 0 for s in sh_sl))
+        fn_map_data = {f["symbol_name"]: f for f in json.loads(fn_map_file.read_text(encoding="utf-8"))}
+        sh_slices_valid = (
+            len(sh_sl) == 11 and
+            all(
+                s.get("symbol") in fn_map_data and
+                s.get("machine_observation", {}).get("start_va") == fn_map_data[s["symbol"]]["va"] and
+                s.get("machine_observation", {}).get("size_bytes") == fn_map_data[s["symbol"]]["size_bytes"] and
+                s.get("machine_observation", {}).get("instruction_count", 0) > 0 and
+                s.get("semantic_annotation", {}).get("role_description")
+                for s in sh_sl
+            )
+        )
         record_check("Phase 2C.3E Shares Function Slices", sh_slices_valid,
-                     f"11 functions disassembled with machine Capstone instruction slices ({len(sh_sl)} slices)")
+                     f"11 query-derived slices bound to FUNCTION_MAP (symbols, VAs, sizes, Capstone instructions)")
 
-    # 12.8 Shares REST Differential Results (SHARE-HTTP-01 to SHARE-HTTP-28)
+    # 12.8 Shares REST Differential Results (SHARE-HTTP-01 to SHARE-HTTP-36)
     sh_diff_file = share_dir / "SHARE_HTTP_DIFFERENTIAL_RESULTS.json"
     if not sh_diff_file.exists():
         record_check("Phase 2C.3E Shares REST Differential Results", False, "SHARE_HTTP_DIFFERENTIAL_RESULTS.json missing")
@@ -1981,16 +2021,16 @@ def verify_all():
         sh_results = sh_diff.get("results", [])
         sh_summary = sh_diff.get("summary", {})
         sh_cases = {r.get("test_id") for r in sh_results}
-        expected_sh_cases = {f"SHARE-HTTP-{i:02d}" for i in range(1, 29)}
+        expected_sh_cases = {f"SHARE-HTTP-{i:02d}" for i in range(1, 37)}
         sh_diff_valid = (
-            sh_summary.get("total") == 28 and
-            sh_summary.get("passed") == 28 and
+            sh_summary.get("total") == 36 and
+            sh_summary.get("passed") == 36 and
             sh_cases == expected_sh_cases and
             all(r.get("passed") is True for r in sh_results) and
-            "IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28" in sh_summary.get("metric", "")
+            "IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 36/36" in sh_summary.get("metric", "")
         )
         record_check("Phase 2C.3E Shares REST Differential Results", sh_diff_valid,
-                     "IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28 (all 28 cases PASS)")
+                     "IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 36/36 (all 36 cases PASS)")
 
     # 12.9 Shares Forensic Reproducibility Tool
     sh_repro_tool = ROOT / "tools" / "forensics" / "reproduce_share_forensics.py"
@@ -2010,8 +2050,12 @@ def verify_all():
         "github.com/pion/webrtc",
         "nhooyr.io/websocket",
         "gorilla/websocket",
-        "/api/shortcuts/",
-        "/api/license/",
+        "/api/shortcuts",
+        "/api/activate",
+        "/api/license_status",
+        "/debug/license",
+        "/register_agent",
+        "/connect_client",
     ]
     found_forbidden = []
     for gp in recon_dir.rglob("*.go"):

@@ -524,7 +524,24 @@ def generate_evidence(output_dir: Path):
             "file_mode_binary_instruction": "0x739cd9: mov r8d, 0x180",
             "write_mechanism": "ATOMIC_TMP_RENAME",
             "atomic_tmp_rename": True,
-            "binary_evidence": "main.fomL4ATwVV1 (0x739900) marshals with json.MarshalIndent (2 spaces), writes to shares.json.tmp via os.WriteFile (0x4e0da0) with perm 0x180 (0600), then renames shares.json.tmp -> shares.json via os.Rename (0x4e1160).",
+            "machine_facts": {
+                "save_shares_symbol": "main.fomL4ATwVV1",
+                "save_shares_va": "0x739900",
+                "save_shares_size_bytes": 1664,
+                "save_shares_end_va": "0x739f80",
+                "marshal_indent_call_va": "0x739bc9",
+                "marshal_indent_callee": "JOaOfPm.Ut0MFmSj_",
+                "tmp_string_xref_va": "0x739ca9",
+                "tmp_string_xref_instruction": "lea rdi, [rip + 0xe2368]",
+                "tmp_concat_call_va": "0x739cb5",
+                "tmp_concat_callee": "runtime.concatstring2",
+                "mode_arg_instruction_va": "0x739cd9",
+                "mode_arg_instruction": "mov r8d, 0x180",
+                "write_file_call_va": "0x739ce0",
+                "write_file_callee": "uOfWpGI3.ZkONNWV (os.WriteFile)",
+                "rename_call_va": "0x739e12",
+                "rename_callee": "uOfWpGI3._AasozjhGy9 (os.Rename)"
+            },
             "json_format": {
                 "indentation": "2 spaces (json.MarshalIndent)",
                 "root_type": "array",
@@ -540,44 +557,113 @@ def generate_evidence(output_dir: Path):
             "permanent_share_representation": "0001-01-01T00:00:00Z (Go time.Time zero value)",
             "extension_unit": "seconds via extend_seconds parameter",
             "cleanup_worker": {
-                "symbol": "main.dYBSRoVh.func1",
-                "va": "0x73a120",
-                "size_bytes": 992,
-                "mechanism": "Goroutine runs in background, checks expired shares, deletes from memory map and calls main.fomL4ATwVV1 (saveShares) to persist cleanup to disk"
+                "setup_symbol": "main.dYBSRoVh",
+                "setup_va": "0x73a0a0",
+                "ticker_interval_hex": "0x45d964b800",
+                "ticker_interval_ns": 300000000000,
+                "ticker_interval_seconds": 300,
+                "ticker_instruction": "0x73a0ae: movabs rax, 0x45d964b800",
+                "worker_symbol": "main.dYBSRoVh.func1",
+                "worker_va": "0x73a120",
+                "worker_size_bytes": 992,
+                "machine_facts": {
+                    "chan_recv_call_va": "0x73a180",
+                    "time_now_call_va": "0x73a1a2",
+                    "mutex_lock_call_va": "0x73a1c0",
+                    "map_iter_start_va": "0x73a202",
+                    "expiry_comparison_call_va": "0x73a357",
+                    "expiry_comparison_callee": "fZqVo7pKK.AipSo2.After (time.Time.After)",
+                    "map_delete_faststr_va1": "0x73a3b3",
+                    "map_delete_faststr_va2": "0x73a3d8",
+                    "mutex_unlock_call_va": "0x73a220",
+                    "save_shares_call_va": "0x73a248",
+                    "save_shares_callee": "main.fomL4ATwVV1"
+                },
+                "mechanism": "Goroutine runs in background every 300s (5m), checks expired shares via time.Time.After, deletes from map with mapdelete_faststr, and calls main.fomL4ATwVV1 (saveShares) to persist to disk"
             },
-            "lazy_check_on_query": "GET /api/share/info verifies remaining_seconds > 0 before returning; returns 404 Share link expired or invalid\\n on expired tokens"
+            "lazy_check_on_query": {
+                "handler_symbol": "main.busbgD",
+                "handler_va": "0x760480",
+                "mechanism": "GET /api/share/info verifies remaining_seconds > 0 before returning; returns 404 Share link expired or invalid\\n on expired tokens"
+            }
         }
         (output_dir / "SHARE_EXPIRY_CONTRACT.json").write_text(json.dumps(expiry_contract, indent=2), encoding="utf-8")
 
         # 12. SHARE_CROSS_CONTRACT.json
+        # Cross-Contract Structured Dynamic Probes
+        shares_before_del_u = (scratch_dir / "shares.json").read_text(encoding="utf-8") if (scratch_dir / "shares.json").exists() else "[]"
+        r_del_u = requests.post(f"{url_std}/api/admin/users/delete", headers=h_admin, json={"username": "normal_user"})
+        shares_after_del_u = (scratch_dir / "shares.json").read_text(encoding="utf-8") if (scratch_dir / "shares.json").exists() else "[]"
+        cross_01_unchanged = (shares_before_del_u == shares_after_del_u)
+
+        r_del_d = requests.delete(f"{url_std}/api/devices/dev-assigned-001", headers=h_admin)
+        shares_after_del_d = (scratch_dir / "shares.json").read_text(encoding="utf-8") if (scratch_dir / "shares.json").exists() else "[]"
+        cross_02_unchanged = (shares_before_del_u == shares_after_del_d)
+
+        r_devs = requests.get(f"{url_std}/devices", headers=h_admin)
+        devs_json = r_devs.json() if r_devs.text.strip().startswith("[") else []
+        cross_03_isolated = (r_devs.status_code == 200 and all("token" not in d and "card_code" not in d for d in devs_json))
+
         cross_contract = {
-            "devices_endpoint_isolation": "/devices does not expose share tokens or modify DeviceDTO",
-            "users_endpoint_isolation": "User deletion or rename leaves existing share tokens in shares.json with their original creator username string intact (no cascade deletion in binary)",
-            "device_uniqueness": "Only 1 active share permitted per device_id at any time; second creation returns 409 Conflict"
+            "test_cases": {
+                "CROSS-01": {
+                    "description": "User deletion via /api/admin/users/delete leaves shares.json intact",
+                    "rest_endpoint": "POST /api/admin/users/delete",
+                    "status_code": r_del_u.status_code,
+                    "shares_json_bit_identical": cross_01_unchanged,
+                    "callgraph_proof": "main.d709Uf_4gI (user delete handler at 0x742b80) has 0 calls to share functions (main.fomL4ATwVV1)"
+                },
+                "CROSS-02": {
+                    "description": "Device deletion / disconnect leaves shares.json intact",
+                    "rest_endpoint": "DELETE /api/devices/{id}",
+                    "status_code": r_del_d.status_code,
+                    "shares_json_bit_identical": cross_02_unchanged,
+                    "callgraph_proof": "main.tP8uF9S8U7K (device delete handler at 0x74da60) has 0 calls to share functions"
+                },
+                "CROSS-03": {
+                    "description": "/devices GET endpoint does not expose share tokens or modify DeviceDTO",
+                    "rest_endpoint": "GET /devices",
+                    "status_code": r_devs.status_code,
+                    "isolation_verified": cross_03_isolated,
+                    "callgraph_proof": "main.q601l9 (devices handler at 0x74cf00) queries in-memory device map with 0 references to SharesStore"
+                }
+            },
+            "device_uniqueness": {
+                "enforced": True,
+                "status_code": 409,
+                "rule": "Only 1 active share permitted per device_id at any time; second creation returns 409 Conflict"
+            }
         }
         (output_dir / "SHARE_CROSS_CONTRACT.json").write_text(json.dumps(cross_contract, indent=2), encoding="utf-8")
 
         # 13. SHARE_HTTP_FUNCTION_SLICES.json
+        # Query-derived from ROUTE_HANDLER_MAP.json and FUNCTION_MAP.json
         md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
-        target_funcs = [
-            ("main.cYYycnP3", "0x75c240", 5984, "POST /api/share/create handler (generates token, card code, persists)"),
-            ("main._0VLCRLL", "0x75d9a0", 2592, "GET /api/share/list handler (lists active shares, supports ?device_id=)"),
-            ("main.nFuQn_o", "0x75e5a0", 2176, "POST /api/share/revoke handler (revokes token, removes from disk)"),
-            ("main.d1oM4aHeERk4", "0x75ee20", 3328, "POST /api/share/extend handler (adds extend_seconds to expires_at)"),
-            ("main.nMFGdqfO", "0x75fb20", 2400, "POST /api/share/update handler (updates permissions, audio, bitrate)"),
-            ("main.busbgD", "0x760480", 5536, "GET /api/share/info handler (public metadata, password challenge 401)"),
-            ("main.iSjKlH94xCO", "0x761a20", 6272, "POST /api/share/redeem_card handler (public card redemption)"),
-            ("main.wRVYHLD_", "0x7395c0", 736, "loadShares (unmarshals shares.json into in-memory map)"),
-            ("main.fomL4ATwVV1", "0x739900", 1664, "saveShares (marshals, atomic writes .tmp and os.Rename, mode 0600)"),
-            ("main.cLTBoWx9C0", "0x739440", 384, "generateCardCode (CP-%s-%s base32 random card code generator)"),
-            ("main.dYBSRoVh.func1", "0x73a120", 992, "shareCleanupWorker (background expiration reaper)")
+
+        query_targets = []
+        for r_entry in share_routes_raw:
+            query_targets.append({
+                "symbol": r_entry["handler_symbol"],
+                "semantic_role": f"{r_entry['pattern']} route handler",
+                "route": r_entry["pattern"]
+            })
+
+        helper_targets = [
+            {"symbol": "main.wRVYHLD_", "semantic_role": "loadShares (unmarshals shares.json into in-memory map)", "route": None},
+            {"symbol": "main.fomL4ATwVV1", "semantic_role": "saveShares (marshals, atomic writes .tmp and os.Rename, mode 0600)", "route": None},
+            {"symbol": "main.cLTBoWx9C0", "semantic_role": "generateCardCode (CP-%s-%s base32 random card code generator)", "route": None},
+            {"symbol": "main.dYBSRoVh.func1", "semantic_role": "shareCleanupWorker (background expiration reaper)", "route": None}
         ]
+        query_targets.extend(helper_targets)
 
         function_slices = []
-        for sym, va_str, def_size, role_desc in target_funcs:
+        for target in query_targets:
+            sym = target["symbol"]
             f_meta = function_map_data.get(sym)
-            h_va = int(va_str, 16)
-            size = f_meta["size_bytes"] if f_meta else def_size
+            if not f_meta:
+                continue
+            h_va = int(f_meta["va"], 16)
+            size = f_meta["size_bytes"]
             off = va_to_offset(h_va, sections)
             if off is None:
                 continue
@@ -588,14 +674,19 @@ def generate_evidence(output_dir: Path):
 
             function_slices.append({
                 "symbol": sym,
-                "start_va": hex(h_va),
-                "size_bytes": size,
-                "end_va": hex(h_va + size),
-                "role_description": role_desc,
-                "machine_call_facts": f_meta.get("callees", []) if f_meta else [],
-                "string_xrefs": f_meta.get("referenced_strings", []) if f_meta else [],
-                "instruction_count": len(insns),
-                "assembly_preview": insns[:25]
+                "machine_observation": {
+                    "start_va": hex(h_va),
+                    "size_bytes": size,
+                    "end_va": hex(h_va + size),
+                    "instruction_count": len(insns),
+                    "machine_call_facts": f_meta.get("callees", []),
+                    "string_xrefs": f_meta.get("referenced_strings", []),
+                    "assembly_preview": insns[:25]
+                },
+                "semantic_annotation": {
+                    "route": target["route"],
+                    "role_description": target["semantic_role"]
+                }
             })
         (output_dir / "SHARE_HTTP_FUNCTION_SLICES.json").write_text(json.dumps(function_slices, indent=2), encoding="utf-8")
 

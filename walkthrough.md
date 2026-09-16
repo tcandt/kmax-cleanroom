@@ -492,10 +492,56 @@ Intentional Divergence: **`DIVERGENCE-USER-01`** (Cross-User Rename deadlock bug
 
 Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
 
-## 3. Master Verification Audit
+---
 
-- `python tools/verify_phase2.py`: **`OVERALL AUDIT VERDICT: PASS`** across all 11 sections.
-- Reconstructed function provenance: 94 functions audited, 0 missing headers, 0 missing metadata fields.
+# Phase 2C.3ER Walkthrough: Device Shares REST Contract & Provenance Closure
+
+**Milestone**: Phase 2C.3ER Remediation & Closure  
+**Differential Verdict**: PASS (36/36 test cases, 100% pass rate)  
+**Total Regression Suite**: PASS (152/152 tests across all subsystems)  
+**Master Verifier Verdict**: PASS (All 12 sections in `tools/verify_phase2.py`)  
+**Scope Guard**: PASS (0 Shortcuts, 0 License, 0 WebSocket, 0 WebRTC violations)  
+
+## 1. Remediations Applied
+
+1. **HTTP Method-Gating Parity**:
+   - `/api/share/extend`: GET, PUT, PATCH, DELETE, HEAD strictly reject with `405 Method Not Allowed\n` (`text/plain; charset=utf-8`). OPTIONS returns 200 OK. POST handles body.
+   - `/api/share/update`: Same strict POST-only behavior.
+   - Verified across `SHARE-HTTP-29` to `34`.
+2. **Decode Error Response Alignment**:
+   - Aligned all 5 JSON-decoding handlers (`create`, `extend`, `update`, `revoke`, `redeem_card`) to return bit-exact `400 Invalid payload\n` when `json.NewDecoder(r.Body).Decode(&req)` fails.
+3. **Differential Suite Expansion**:
+   - Expanded from 28 to 36 test cases (`SHARE-HTTP-01` to `36`).
+   - `IMPLEMENTED_SHARE_CONTRACT_DIFFERENTIAL_PASS_RATE = 36/36` (100% pass rate).
+4. **Canonical Route Metadata & Provenance**:
+   - Documented errata: `/api/share/revoke` is `main.nFuQn_o` (`0x75e5a0`); `/api/share/redeem_card` is `main.iSjKlH94xCO` (`0x761a20`).
+   - `SharesStore.Load()` mapped to `main.wRVYHLD_` (`0x7395c0`, 736B).
+   - `generateShareToken()` mapped to `BEHAVIOR_SLICE` of `main.cYYycnP3` (`0x75c7e0`–`0x75c867`).
+5. **Hardened Evidence Artifacts**:
+   - `SHARE_PERSISTENCE_CONTRACT.json`: machine instruction facts for `saveShares` (`0x739900`), `MarshalIndent` (`0x739bc9`), `.tmp` xref (`0x739ca9`), mode `0600` (`0x739cd9`), `os.WriteFile` (`0x4e0da0`), `os.Rename` (`0x739e12`).
+   - `SHARE_EXPIRY_CONTRACT.json`: setup `main.dYBSRoVh` (`0x73a0a0`), ticker interval `0x45d964b800` (300s), worker `main.dYBSRoVh.func1` (`0x73a120`).
+   - `SHARE_CROSS_CONTRACT.json`: structured test proofs `CROSS-01` (user deletion), `CROSS-02` (device deletion), `CROSS-03` (/devices isolation) + callgraph proofs.
+   - `SHARE_HTTP_FUNCTION_SLICES.json`: query-derived from `ROUTE_HANDLER_MAP` and `FUNCTION_MAP`, separating `machine_observation` and `semantic_annotation`.
+6. **Forensic Reproducibility**:
+   - `tools/forensics/reproduce_share_forensics.py`: independently verifies all 13 artifacts (13/13 PASS).
+7. **Scope Guard**:
+   - Tightened `tools/verify_phase2.py` Check 12.10 to check exact routes: `/api/shortcuts`, `/api/activate`, `/api/license_status`, `/debug/license`, `/register_agent`, `/connect_client`, and production WebSocket/WebRTC packages. 0 violations found.
+8. **Historical Evidence Scope Cleanliness**:
+   - Reverted volatile tokens/timestamps churn on historical evidence files back to parent commit `f373d57`.
+
+## 2. Regression & Verification Verification Summary
+
+- **Persistence**: 8/8 PASS
+- **Auth Core**: 12/12 PASS
+- **Auth HTTP**: 18/18 PASS
+- **Devices**: 28/28 PASS
+- **Users/Admin**: 30/30 PASS
+- **Tags**: 20/20 PASS
+- **Shares**: 36/36 PASS
+- **Total Differential Suite**: 152/152 PASS (100%)
+- **Go Unit Tests**: PASS
+- **Function Provenance Auditor**: 110/110 functions PASS (0 missing headers, 0 missing metadata fields)
+- **Master Verifier (`verify_phase2.py`)**: PASS across all 12 sections
 
 
 

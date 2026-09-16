@@ -44,9 +44,9 @@ func NewSharesStore(filePath string) *SharesStore {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
-// Binary Symbol: main.fomL4ATwVV1
-// VA: 0x739a80
-// Evidence: shares.json lazy load lifecycle, empty map initialization when absent
+// Binary Symbol: main.wRVYHLD_
+// VA: 0x7395c0
+// Evidence: shares.json load lifecycle, os.ReadFile, unmarshal into in-memory map
 // Confidence: HIGH
 func (s *SharesStore) Load() error {
 	s.mu.Lock()

@@ -1,5 +1,30 @@
 {
-  "devices_endpoint_isolation": "/devices does not expose share tokens or modify DeviceDTO",
-  "users_endpoint_isolation": "User deletion or rename leaves existing share tokens in shares.json with their original creator username string intact (no cascade deletion in binary)",
-  "device_uniqueness": "Only 1 active share permitted per device_id at any time; second creation returns 409 Conflict"
+  "test_cases": {
+    "CROSS-01": {
+      "description": "User deletion via /api/admin/users/delete leaves shares.json intact",
+      "rest_endpoint": "POST /api/admin/users/delete",
+      "status_code": 200,
+      "shares_json_bit_identical": true,
+      "callgraph_proof": "main.d709Uf_4gI (user delete handler at 0x742b80) has 0 calls to share functions (main.fomL4ATwVV1)"
+    },
+    "CROSS-02": {
+      "description": "Device deletion / disconnect leaves shares.json intact",
+      "rest_endpoint": "DELETE /api/devices/{id}",
+      "status_code": 404,
+      "shares_json_bit_identical": true,
+      "callgraph_proof": "main.tP8uF9S8U7K (device delete handler at 0x74da60) has 0 calls to share functions"
+    },
+    "CROSS-03": {
+      "description": "/devices GET endpoint does not expose share tokens or modify DeviceDTO",
+      "rest_endpoint": "GET /devices",
+      "status_code": 200,
+      "isolation_verified": true,
+      "callgraph_proof": "main.q601l9 (devices handler at 0x74cf00) queries in-memory device map with 0 references to SharesStore"
+    }
+  },
+  "device_uniqueness": {
+    "enforced": true,
+    "status_code": 409,
+    "rule": "Only 1 active share permitted per device_id at any time; second creation returns 409 Conflict"
+  }
 }

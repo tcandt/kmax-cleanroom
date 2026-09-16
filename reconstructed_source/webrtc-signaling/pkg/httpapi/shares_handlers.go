@@ -76,9 +76,10 @@ func generateCardCode() string {
 
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
-// Binary Symbol: main.vT6rYK_v
-// VA: 0x739320
-// Evidence: SHARE_TYPE_EVIDENCE.json, SHARE_HTTP_FUNCTION_SLICES.json
+// Mapping Scope: BEHAVIOR_SLICE
+// Binary Symbol: main.cYYycnP3
+// VA: 0x75c7e0
+// Evidence: inlined 16-byte random read, lowercase hex encoding, and st_ prefix concatenation (0x75c7e0-0x75c867)
 // Confidence: HIGH
 func generateShareToken() string {
 	b := make([]byte, 16)
@@ -131,7 +132,7 @@ func (s *Server) HandleShareCreate(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("device_id is required\n"))
+		w.Write([]byte("Invalid payload\n"))
 		return
 	}
 
@@ -306,7 +307,12 @@ func (s *Server) HandleShareRevoke(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req types.RevokeShareRequest
-	_ = json.NewDecoder(r.Body).Decode(&req)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid payload\n"))
+		return
+	}
 
 	if req.Token == "" {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -349,6 +355,13 @@ func (s *Server) HandleShareExtend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Method != http.MethodPost {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("Method Not Allowed\n"))
+		return
+	}
+
 	if !s.noAuth {
 		user, err := s.Authenticate(r)
 		if err != nil {
@@ -366,7 +379,12 @@ func (s *Server) HandleShareExtend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req types.ExtendShareRequest
-	_ = json.NewDecoder(r.Body).Decode(&req)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid payload\n"))
+		return
+	}
 
 	if req.Token == "" || req.ExtendSeconds <= 0 {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -422,6 +440,13 @@ func (s *Server) HandleShareUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Method != http.MethodPost {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("Method Not Allowed\n"))
+		return
+	}
+
 	if !s.noAuth {
 		user, err := s.Authenticate(r)
 		if err != nil {
@@ -439,7 +464,12 @@ func (s *Server) HandleShareUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req types.UpdateShareRequest
-	_ = json.NewDecoder(r.Body).Decode(&req)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid payload\n"))
+		return
+	}
 
 	if req.Token == "" {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -580,7 +610,12 @@ func (s *Server) HandleShareRedeemCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req types.RedeemCardRequest
-	_ = json.NewDecoder(r.Body).Decode(&req)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid payload\n"))
+		return
+	}
 
 	if req.CardCode == "" {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
