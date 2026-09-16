@@ -1,9 +1,10 @@
 {
   "metadata": {
     "title": "Agent Binary Disassembly Facts",
-    "description": "Machine-verifiable control flow and xref facts derived directly from binary disassembly.",
+    "description": "Machine-verifiable control flow, call, xref, and argument facts derived directly from binary disassembly.",
     "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
     "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+    "derivation_method": "BINARY_DISASSEMBLY_EXTRACTION",
     "total_facts": 5
   },
   "facts": [
@@ -13,10 +14,53 @@
       "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
       "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
       "function_va": "0x53c730",
+      "function_size": 10976,
       "instruction_ranges": [
         {
           "start_va": "0x53e540",
           "end_va": "0x53e5bc"
+        }
+      ],
+      "machine_observation": {
+        "direct_calls": [
+          {
+            "call_va": "0x53e588",
+            "target_va": "0x4b95b0",
+            "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel",
+            "derivation": "MACHINE_DISASSEMBLY"
+          }
+        ],
+        "string_xrefs": [
+          {
+            "instruction_va": "0x53e57c",
+            "string_va": "0x6b8548",
+            "string_file_offset": "0x6a8548",
+            "string_value": "input-channel",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          }
+        ],
+        "argument_recovery": {
+          "channel_name": "input-channel",
+          "ordered": true,
+          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "ordered_init_va": "0x53e550",
+          "ordered_store_va": "0x53e554",
+          "ordered_value": 1,
+          "details": "Statically proven from binary instructions: bool heap allocation at 0x53e548, initialized to 1 at 0x53e550 (mov x3, #1) and 0x53e554 (strb w3, [x0]), stored in DataChannelInit.Ordered struct offset 0."
+        }
+      },
+      "semantic_annotation": {
+        "claim": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
+        "confidence": "HIGH",
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by heap boolean initialization."
+      },
+      "semantic_claim": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by heap boolean initialization.",
+      "confidence": "HIGH",
+      "direct_calls": [
+        {
+          "va": "0x53e588",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
         }
       ],
       "string_xrefs": [
@@ -24,16 +68,7 @@
           "va": "0x53e57c",
           "string": "input-channel"
         }
-      ],
-      "direct_calls": [
-        {
-          "va": "0x53e588",
-          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
-        }
-      ],
-      "semantic_claim": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0.",
-      "confidence": "HIGH"
+      ]
     },
     {
       "fact_id": "AGENT-DCF-002",
@@ -41,10 +76,53 @@
       "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
       "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
       "function_va": "0x53c730",
+      "function_size": 10976,
       "instruction_ranges": [
         {
           "start_va": "0x53e5dc",
           "end_va": "0x53e650"
+        }
+      ],
+      "machine_observation": {
+        "direct_calls": [
+          {
+            "call_va": "0x53e610",
+            "target_va": "0x4b95b0",
+            "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel",
+            "derivation": "MACHINE_DISASSEMBLY"
+          }
+        ],
+        "string_xrefs": [
+          {
+            "instruction_va": "0x53e604",
+            "string_va": "0x6bc175",
+            "string_file_offset": "0x6ac175",
+            "string_value": "clipboard-channel",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          }
+        ],
+        "argument_recovery": {
+          "channel_name": "clipboard-channel",
+          "ordered": true,
+          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "ordered_init_va": "0x53e550",
+          "ordered_store_va": "0x53e554",
+          "ordered_value": 1,
+          "details": "Statically proven from binary instructions: bool heap allocation at 0x53e548, initialized to 1 at 0x53e550 (mov x3, #1) and 0x53e554 (strb w3, [x0]), stored in DataChannelInit.Ordered struct offset 0."
+        }
+      },
+      "semantic_annotation": {
+        "claim": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
+        "confidence": "HIGH",
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load."
+      },
+      "semantic_claim": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load.",
+      "confidence": "HIGH",
+      "direct_calls": [
+        {
+          "va": "0x53e610",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
         }
       ],
       "string_xrefs": [
@@ -52,16 +130,7 @@
           "va": "0x53e604",
           "string": "clipboard-channel"
         }
-      ],
-      "direct_calls": [
-        {
-          "va": "0x53e610",
-          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
-        }
-      ],
-      "semantic_claim": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0.",
-      "confidence": "HIGH"
+      ]
     },
     {
       "fact_id": "AGENT-DCF-003",
@@ -69,10 +138,53 @@
       "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
       "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
       "function_va": "0x53c730",
+      "function_size": 10976,
       "instruction_ranges": [
         {
           "start_va": "0x53e700",
           "end_va": "0x53e748"
+        }
+      ],
+      "machine_observation": {
+        "direct_calls": [
+          {
+            "call_va": "0x53e740",
+            "target_va": "0x4b95b0",
+            "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel",
+            "derivation": "MACHINE_DISASSEMBLY"
+          }
+        ],
+        "string_xrefs": [
+          {
+            "instruction_va": "0x53e734",
+            "string_va": "0x6b93ba",
+            "string_file_offset": "0x6a93ba",
+            "string_value": "camera-channel",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          }
+        ],
+        "argument_recovery": {
+          "channel_name": "camera-channel",
+          "ordered": true,
+          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "ordered_init_va": "0x53e550",
+          "ordered_store_va": "0x53e554",
+          "ordered_value": 1,
+          "details": "Statically proven from binary instructions: bool heap allocation at 0x53e548, initialized to 1 at 0x53e550 (mov x3, #1) and 0x53e554 (strb w3, [x0]), stored in DataChannelInit.Ordered struct offset 0."
+        }
+      },
+      "semantic_annotation": {
+        "claim": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
+        "confidence": "HIGH",
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load."
+      },
+      "semantic_claim": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load.",
+      "confidence": "HIGH",
+      "direct_calls": [
+        {
+          "va": "0x53e740",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
         }
       ],
       "string_xrefs": [
@@ -80,16 +192,7 @@
           "va": "0x53e734",
           "string": "camera-channel"
         }
-      ],
-      "direct_calls": [
-        {
-          "va": "0x53e740",
-          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
-        }
-      ],
-      "semantic_claim": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0.",
-      "confidence": "HIGH"
+      ]
     },
     {
       "fact_id": "AGENT-DCF-004",
@@ -97,22 +200,39 @@
       "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
       "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
       "function_va": "0x53c730",
+      "function_size": 10976,
       "instruction_ranges": [
         {
           "start_va": "0x53e7d0",
           "end_va": "0x53e820"
         }
       ],
-      "string_xrefs": [],
+      "machine_observation": {
+        "direct_calls": [
+          {
+            "call_va": "0x53e818",
+            "target_va": "0x4ad380",
+            "target_symbol": "IV04EXWpwj.(*VOMNaNery).OnDataChannel",
+            "derivation": "MACHINE_DISASSEMBLY"
+          }
+        ],
+        "string_xrefs": []
+      },
+      "semantic_annotation": {
+        "claim": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
+        "confidence": "HIGH",
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380."
+      },
+      "semantic_claim": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380.",
+      "confidence": "HIGH",
       "direct_calls": [
         {
           "va": "0x53e818",
           "target_symbol": "IV04EXWpwj.(*VOMNaNery).OnDataChannel"
         }
       ],
-      "semantic_claim": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380.",
-      "confidence": "HIGH"
+      "string_xrefs": []
     },
     {
       "fact_id": "AGENT-DCF-005",
@@ -120,38 +240,237 @@
       "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
       "function_symbol": "main.init",
       "function_va": "0x5152f0",
+      "function_size": 2064,
       "instruction_ranges": [
         {
           "start_va": "0x5152f0",
-          "end_va": "0x515ad0"
+          "end_va": "0x515b00"
         }
       ],
-      "string_xrefs": [
-        {
-          "va": "0x51530c",
-          "string": "signaling"
-        },
-        {
-          "va": "0x515354",
-          "string": "id"
-        },
-        {
-          "va": "0x51539c",
-          "string": "external-addr"
-        },
-        {
-          "va": "0x5153e4",
-          "string": "webrtc-port"
-        },
-        {
-          "va": "0x515428",
-          "string": "jar"
-        },
-        {
-          "va": "0x51567c",
-          "string": "root"
-        }
-      ],
+      "machine_observation": {
+        "direct_calls": [
+          {
+            "call_va": "0x51532c",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515374",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5153bc",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515400",
+            "target_va": "0x39f2c0",
+            "target_symbol": "aFaUKV.A1a3KwX",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x51544c",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515498",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5154e0",
+            "target_va": "0x39f2c0",
+            "target_symbol": "aFaUKV.A1a3KwX",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515524",
+            "target_va": "0x39f2c0",
+            "target_symbol": "aFaUKV.A1a3KwX",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515568",
+            "target_va": "0x39f2c0",
+            "target_symbol": "aFaUKV.A1a3KwX",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5155b0",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5155f4",
+            "target_va": "0x39f2c0",
+            "target_symbol": "aFaUKV.A1a3KwX",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515638",
+            "target_va": "0x39f190",
+            "target_symbol": "aFaUKV.RTCObKURJKV",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x51567c",
+            "target_va": "0x39f190",
+            "target_symbol": "aFaUKV.RTCObKURJKV",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5156c8",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x51570c",
+            "target_va": "0x39f190",
+            "target_symbol": "aFaUKV.RTCObKURJKV",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515758",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x51579c",
+            "target_va": "0x39f190",
+            "target_symbol": "aFaUKV.RTCObKURJKV",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5157e0",
+            "target_va": "0x39f190",
+            "target_symbol": "aFaUKV.RTCObKURJKV",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x51582c",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515870",
+            "target_va": "0x39f190",
+            "target_symbol": "aFaUKV.RTCObKURJKV",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5158bc",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515908",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515950",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515998",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x5159dc",
+            "target_va": "0x39f2c0",
+            "target_symbol": "aFaUKV.A1a3KwX",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515a20",
+            "target_va": "0x39f190",
+            "target_symbol": "aFaUKV.RTCObKURJKV",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515a68",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          },
+          {
+            "call_va": "0x515ab4",
+            "target_va": "0x39f420",
+            "target_symbol": "aFaUKV.CMNJxRQ7",
+            "derivation": "MACHINE_DISASSEMBLY"
+          }
+        ],
+        "string_xrefs": [
+          {
+            "instruction_va": "0x51530c",
+            "string_va": "0x6b1e6c",
+            "string_file_offset": "0x6a1e6c",
+            "string_value": "signaling",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          },
+          {
+            "instruction_va": "0x515358",
+            "string_va": "0x6abfb0",
+            "string_file_offset": "0x69bfb0",
+            "string_value": "id",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          },
+          {
+            "instruction_va": "0x5153a0",
+            "string_va": "0x6b8492",
+            "string_file_offset": "0x6a8492",
+            "string_value": "external-addr",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          },
+          {
+            "instruction_va": "0x5153e8",
+            "string_va": "0x6b5722",
+            "string_file_offset": "0x6a5722",
+            "string_value": "webrtc-port",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          },
+          {
+            "instruction_va": "0x51542c",
+            "string_va": "0x6ac334",
+            "string_file_offset": "0x69c334",
+            "string_value": "jar",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          },
+          {
+            "instruction_va": "0x515664",
+            "string_va": "0x6ac7ed",
+            "string_file_offset": "0x69c7ed",
+            "string_value": "root",
+            "derivation": "MACHINE_INSTRUCTION_XREF"
+          }
+        ]
+      },
+      "semantic_annotation": {
+        "claim": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
+        "confidence": "HIGH",
+        "rationale": "Disassembly of main.init at 0x5152f0-0x515b00 establishes exact bl call VAs and .bss store offsets for all 28 flags."
+      },
+      "semantic_claim": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
+      "derivation": "Disassembly of main.init at 0x5152f0-0x515b00 establishes exact bl call VAs and .bss store offsets for all 28 flags.",
+      "confidence": "HIGH",
       "direct_calls": [
         {
           "va": "0x51532c",
@@ -162,17 +481,136 @@
           "target_symbol": "aFaUKV.CMNJxRQ7"
         },
         {
+          "va": "0x5153bc",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
           "va": "0x515400",
           "target_symbol": "aFaUKV.A1a3KwX"
         },
         {
+          "va": "0x51544c",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515498",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x5154e0",
+          "target_symbol": "aFaUKV.A1a3KwX"
+        },
+        {
+          "va": "0x515524",
+          "target_symbol": "aFaUKV.A1a3KwX"
+        },
+        {
+          "va": "0x515568",
+          "target_symbol": "aFaUKV.A1a3KwX"
+        },
+        {
+          "va": "0x5155b0",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x5155f4",
+          "target_symbol": "aFaUKV.A1a3KwX"
+        },
+        {
+          "va": "0x515638",
+          "target_symbol": "aFaUKV.RTCObKURJKV"
+        },
+        {
           "va": "0x51567c",
           "target_symbol": "aFaUKV.RTCObKURJKV"
+        },
+        {
+          "va": "0x5156c8",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x51570c",
+          "target_symbol": "aFaUKV.RTCObKURJKV"
+        },
+        {
+          "va": "0x515758",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x51579c",
+          "target_symbol": "aFaUKV.RTCObKURJKV"
+        },
+        {
+          "va": "0x5157e0",
+          "target_symbol": "aFaUKV.RTCObKURJKV"
+        },
+        {
+          "va": "0x51582c",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515870",
+          "target_symbol": "aFaUKV.RTCObKURJKV"
+        },
+        {
+          "va": "0x5158bc",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515908",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515950",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515998",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x5159dc",
+          "target_symbol": "aFaUKV.A1a3KwX"
+        },
+        {
+          "va": "0x515a20",
+          "target_symbol": "aFaUKV.RTCObKURJKV"
+        },
+        {
+          "va": "0x515a68",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515ab4",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
         }
       ],
-      "semantic_claim": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
-      "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags.",
-      "confidence": "HIGH"
+      "string_xrefs": [
+        {
+          "va": "0x51530c",
+          "string": "signaling"
+        },
+        {
+          "va": "0x515358",
+          "string": "id"
+        },
+        {
+          "va": "0x5153a0",
+          "string": "external-addr"
+        },
+        {
+          "va": "0x5153e8",
+          "string": "webrtc-port"
+        },
+        {
+          "va": "0x51542c",
+          "string": "jar"
+        },
+        {
+          "va": "0x515664",
+          "string": "root"
+        }
+      ]
     }
   ]
 }

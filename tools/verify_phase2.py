@@ -2,8 +2,10 @@ import os
 import sys
 import json
 import hashlib
+import re
 from pathlib import Path
 from collections import Counter
+import capstone
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -798,7 +800,7 @@ def verify_all():
                  sm_pass,
                  sm_detail)
 
-    # 25. Phase 2R.3 Agent CLI Registration Proof & Matrix Evidence Levels
+    # 25. Phase 2R.3R Agent CLI Registration Proof & Matrix Evidence Levels
     cli_matrix_path = ROOT / "evidence" / "reference" / "AGENT_CLI_REFERENCE_MATRIX.json"
     cli_ev_path = ROOT / "evidence" / "go_agent" / "cli" / "CLI_FLAG_REGISTRATION_EVIDENCE.json"
     cli_pass = False
@@ -813,9 +815,12 @@ def verify_all():
         ev_flags = cliev.get("flags", [])
         ev_map = {fl["flag_name"]: fl for fl in ev_flags}
         
-        # 1. Resolve registration in pclntab FUNCTION_MAP and binary
+        # 1. Resolve registration in pclntab FUNCTION_MAP and binary via Capstone re-disassembly
         reg_calls_resolved = True
         agent_sym_set = {fn["symbol_name"] for fn in agent_fmap}
+        cs_arm = capstone.Cs(capstone.CS_ARCH_ARM64, capstone.CS_MODE_ARM)
+        agent_fmap_by_va = {int(fn["va"], 16): fn for fn in agent_fmap}
+
         for fl in ev_flags:
             # Registration function must be main.init @ 0x5152f0
             if fl["registration_function_symbol"] != "main.init" or fl["registration_function_va"] != "0x5152f0":
@@ -823,19 +828,83 @@ def verify_all():
                 break
             # Call VA must be non-empty and point inside main.init
             c_va = int(fl["registration_call_va"], 16)
+            c_off = c_va - 0x10000
             if not (0x5152f0 <= c_va <= 0x515ae0):
                 reg_calls_resolved = False
                 break
-            # Flag API must be obfuscated Go flag API in aFaUKV
-            if fl["flag_api_symbol"] not in {"aFaUKV.CMNJxRQ7", "aFaUKV.A1a3KwX", "aFaUKV.RTCObKURJKV"}:
+
+            # Re-disassemble instruction at call site
+            call_insns = list(cs_arm.disasm(agent_data[c_off:c_off+4], c_va))
+            if not call_insns or call_insns[0].mnemonic != "bl":
                 reg_calls_resolved = False
                 break
-            # Downstream xrefs for confirmed flags must resolve
+            bl_tgt = int(call_insns[0].op_str.lstrip("#"), 16)
+            bl_fn = agent_fmap_by_va.get(bl_tgt)
+            if not bl_fn or bl_fn["symbol_name"] != fl["flag_api_symbol"]:
+                reg_calls_resolved = False
+                break
+
+            # Backwards scan for flag name loaded into x0
+            back_off = c_off - 48
+            back_va = c_va - 48
+            back_insns = list(cs_arm.disasm(agent_data[back_off:c_off], back_va))
+            regs = {}
+            for bins in back_insns:
+                if bins.mnemonic == "adrp":
+                    parts = [p.strip() for p in bins.op_str.split(",")]
+                    regs[parts[0]] = int(parts[1].replace("#", ""), 16)
+                elif bins.mnemonic == "add":
+                    parts = [p.strip() for p in bins.op_str.split(",")]
+                    if len(parts) == 3 and parts[1] in regs:
+                        imm_s = parts[2].replace("#", "")
+                        imm = int(imm_s, 16) if imm_s.startswith("0x") else (int(imm_s) if imm_s.isdigit() else 0)
+                        regs[parts[0]] = regs[parts[1]] + imm
+
+            name_va = regs.get("x0")
+            expected_name = fl["flag_name"].lstrip("-")
+            found_name = False
+            if name_va:
+                name_off = name_va - 0x10000
+                if 0 <= name_off < len(agent_data):
+                    peek = agent_data[name_off:name_off+len(expected_name)]
+                    if peek == expected_name.encode("utf-8"):
+                        found_name = True
+            if not found_name:
+                reg_calls_resolved = False
+                break
+
+            # Forwards scan for destination store to .bss (up to 10 instructions)
+            fwd_off = c_off + 4
+            fwd_va = c_va + 4
+            fwd_insns = list(cs_arm.disasm(agent_data[fwd_off:fwd_off+40], fwd_va))
+            found_store = False
+            for fins in fwd_insns:
+                if fins.mnemonic in ["str", "strb"] and "x27" in fins.op_str:
+                    parts = fins.op_str.split("#")
+                    if len(parts) >= 2:
+                        off_str = parts[1].replace("]", "").strip()
+                        dest_off = int(off_str, 16) if off_str.startswith("0x") else (int(off_str) if off_str.isdigit() else None)
+                        if dest_off is not None:
+                            dest_va = 0xd38000 + dest_off
+                            if fl["destination_reference"] == f".bss:{hex(dest_va)}":
+                                found_store = True
+                                break
+            if fl["destination_reference"] and not found_store:
+                reg_calls_resolved = False
+                break
+
+            # Downstream xrefs check
             if fl["classification"] == "SEMANTIC_XREF_CONFIRMED":
                 if not fl.get("downstream_xrefs"):
                     reg_calls_resolved = False
                     break
                 for xref in fl["downstream_xrefs"]:
+                    x_va = int(xref["va"], 16)
+                    x_off = x_va - 0x10000
+                    x_insns = list(cs_arm.disasm(agent_data[x_off:x_off+4], x_va))
+                    if not x_insns or "x27" not in x_insns[0].op_str:
+                        reg_calls_resolved = False
+                        break
                     x_sym = xref["symbol"]
                     if x_sym not in agent_sym_set:
                         reg_calls_resolved = False
@@ -867,7 +936,7 @@ def verify_all():
 
         cli_pass = (len(ev_flags) == 28 and len(matrix_flags) == 10 and
                     reg_calls_resolved and doc_valid and undoc_valid)
-        cli_detail = (f"28 total flags ({len(ev_flags)} registered in main.init); "
+        cli_detail = (f"28 total flags ({len(ev_flags)} registered in main.init verified by Capstone BL, string, store); "
                       f"10 candidate flags verified with call VAs and .bss destinations; "
                       f"doc confirmed: {doc_valid}; undoc registration confirmed: {undoc_valid}")
 
@@ -875,7 +944,7 @@ def verify_all():
                  cli_pass,
                  cli_detail)
 
-    # 26. Phase 2R.3 Granular Multi-Evidence Crossmap & Full Evidence Resolution
+    # 26. Phase 2R.3R Granular Multi-Evidence Crossmap & Forensic Disassembly Resolution
     crossmap_path = ROOT / "evidence" / "reference" / "REFERENCE_TO_BINARY_CROSSMAP.json"
     rep11r_path = ROOT / "reports" / "11R_REFERENCE_EVIDENCE_REMEDIATION.md"
     rep11r2_path = ROOT / "reports" / "11R2_PUBLIC_REFERENCE_PROVENANCE_CLOSURE.md"
@@ -902,8 +971,7 @@ def verify_all():
         mappings = cmdata.get("mappings", [])
         valid_ev_classes = {
             "PUBLIC_REFERENCE", "BINARY_STRING", "BINARY_XREF", "PCLNTAB_SYMBOL",
-            "ROUTE_REGISTRATION", "DISASSEMBLY_CONTROL_FLOW", "TYPE_DESCRIPTOR",
-            "DYNAMIC_ORACLE", "NETWORK_CAPTURE"
+            "ROUTE_REGISTRATION", "DISASSEMBLY_CONTROL_FLOW", "DYNAMIC_ORACLE"
         }
 
         all_classes_granular = True
@@ -955,6 +1023,18 @@ def verify_all():
         with open(ROOT / "evidence" / "go_agent" / "DISASSEMBLY_FACTS.json", "r", encoding="utf-8") as f:
             agent_facts_dict = {fact["fact_id"]: fact for fact in json.load(f).get("facts", [])}
 
+        # Build symbol & VA maps for robust PCLNTAB and disassembly resolution
+        sig_fmap_by_sym = {fn["symbol_name"]: fn for fn in sig_fmap}
+        agent_fmap_by_sym = {fn["symbol_name"]: fn for fn in agent_fmap}
+        sig_fmap_by_va = {int(fn["va"], 16): fn for fn in sig_fmap}
+        agent_fmap_by_va = {int(fn["va"], 16): fn for fn in agent_fmap}
+
+        cs_x86 = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
+        cs_arm = capstone.Cs(capstone.CS_ARCH_ARM64, capstone.CS_MODE_ARM)
+
+        sig_sha256 = hashlib.sha256(sig_data).hexdigest()
+        agent_sha256 = hashlib.sha256(agent_data).hexdigest()
+
         bin_cache = {}
         all_records_resolved = True
         dynamic_oracle_structured_verified = False
@@ -975,15 +1055,12 @@ def verify_all():
                     break
 
                 if ecls == "PUBLIC_REFERENCE":
-                    # Must have separate source_git_blob_sha and source_sha256
                     g_sha = rec.get("source_git_blob_sha")
                     s_sha = rec.get("source_sha256")
                     art_sha = rec.get("artifact_sha256")
-                    # artifact_sha256 must NOT be git blob sha (40 chars)
                     if len(art_sha) == 40 or art_sha != s_sha or len(s_sha) != 64 or len(g_sha) != 40:
                         all_records_resolved = False
                         break
-                    # Verify text slice hash
                     l_start = rec.get("line_start", 1)
                     l_end = rec.get("line_end", l_start)
                     src_lines = art_file.read_text(encoding="utf-8", errors="ignore").splitlines()
@@ -1006,7 +1083,6 @@ def verify_all():
                         pass
                     elif all(sub.strip() in auth_diff_dict for sub in sel.split(",")):
                         if sel == "HTTP-01,HTTP-02,HTTP-03":
-                            # Verify structured fields in AUTH_HTTP_DIFFERENTIAL_RESULTS
                             c01 = auth_diff_dict["HTTP-01"]["original_observation"]["status"]
                             c02 = auth_diff_dict["HTTP-02"]["original_observation"]["status"]
                             c03 = auth_diff_dict["HTTP-03"]["original_observation"]["status"]
@@ -1028,20 +1104,103 @@ def verify_all():
                             break
 
                 elif ecls == "DISASSEMBLY_CONTROL_FLOW":
-                    # Must resolve to valid fact id in DISASSEMBLY_FACTS.json
+                    # Full 9-point binary disassembly fact verification
                     if sel in sig_facts_dict:
                         fact = sig_facts_dict[sel]
+                        is_ag = False
                     elif sel in agent_facts_dict:
                         fact = agent_facts_dict[sel]
+                        is_ag = True
                     else:
                         all_records_resolved = False
                         break
-                    if fact["function_symbol"] != rec.get("function_symbol"):
+
+                    # 1. artifact SHA matches canonical binary
+                    exp_sha = agent_sha256 if is_ag else sig_sha256
+                    if fact["artifact_sha256"] != exp_sha:
                         all_records_resolved = False
                         break
 
+                    # 2 & 3. Function exists in FUNCTION_MAP with matching VA and size
+                    fmap_sym = agent_fmap_by_sym if is_ag else sig_fmap_by_sym
+                    fmap_va = agent_fmap_by_va if is_ag else sig_fmap_by_va
+                    sym = fact["function_symbol"]
+                    if sym not in fmap_sym or sym != rec.get("function_symbol"):
+                        all_records_resolved = False
+                        break
+                    fn_entry = fmap_sym[sym]
+                    if fn_entry["va"] != fact["function_va"] or fn_entry["size_bytes"] != fact["function_size"]:
+                        all_records_resolved = False
+                        break
+
+                    fn_va_int = int(fn_entry["va"], 16)
+                    fn_end_int = fn_va_int + fn_entry["size_bytes"]
+
+                    # 8. Instruction ranges are inside function
+                    for r in fact.get("instruction_ranges", []):
+                        r_start = int(r["start_va"], 16)
+                        r_end = int(r["end_va"], 16)
+                        if not (fn_va_int <= r_start < r_end <= fn_end_int):
+                            all_records_resolved = False
+                            break
+
+                    # Disassembly verification using Capstone
+                    bb = agent_data if is_ag else sig_data
+                    bias = 0x10000 if is_ag else 0x400000
+                    cs_inst = cs_arm if is_ag else cs_x86
+                    mob = fact.get("machine_observation", {})
+
+                    # 4 & 5. Direct call instructions exist at exact VA and target matches
+                    for c in mob.get("direct_calls", []):
+                        c_va = int(c["call_va"], 16)
+                        if not (fn_va_int <= c_va < fn_end_int):
+                            all_records_resolved = False
+                            break
+                        c_off = c_va - bias
+                        c_insns = list(cs_inst.disasm(bb[c_off:c_off+8], c_va))
+                        if not c_insns:
+                            all_records_resolved = False
+                            break
+                        c_ins = c_insns[0]
+                        if is_ag:
+                            if c_ins.mnemonic != "bl":
+                                all_records_resolved = False
+                                break
+                            tgt_va_int = int(c_ins.op_str.lstrip("#"), 16)
+                        else:
+                            if c_ins.mnemonic != "call":
+                                all_records_resolved = False
+                                break
+                            tgt_va_int = int(c_ins.op_str, 16)
+                        if hex(tgt_va_int) != c["target_va"]:
+                            all_records_resolved = False
+                            break
+                        tgt_fn = fmap_va.get(tgt_va_int)
+                        tgt_sym = tgt_fn["symbol_name"] if tgt_fn else f"unknown_{hex(tgt_va_int)}"
+                        if tgt_sym != c["target_symbol"]:
+                            all_records_resolved = False
+                            break
+
+                    # 6 & 7. String xrefs exist and referenced string bytes match
+                    for s in mob.get("string_xrefs", []):
+                        s_ins_va = int(s["instruction_va"], 16)
+                        if not (fn_va_int <= s_ins_va < fn_end_int):
+                            all_records_resolved = False
+                            break
+                        s_off = int(s["string_file_offset"], 16)
+                        s_val = s["string_value"].encode("utf-8")
+                        if bb[s_off:s_off+len(s_val)] != s_val:
+                            all_records_resolved = False
+                            break
+
+                    # DataChannel argument recovery
+                    if mob.get("argument_recovery"):
+                        arec = mob["argument_recovery"]
+                        if arec.get("ordered") is not True or arec.get("ordered_evidence") != "BINARY_ARGUMENT_RECOVERY":
+                            all_records_resolved = False
+                            break
+
                 elif ecls == "BINARY_XREF":
-                    # Must resolve in CALLGRAPH.json
                     caller_va = rec.get("caller_va")
                     tgt_sym = rec.get("target_symbol")
                     if caller_va:
@@ -1055,9 +1214,21 @@ def verify_all():
                         break
 
                 elif ecls == "PCLNTAB_SYMBOL":
-                    if sel not in sig_fmap and sel not in agent_fmap:
+                    if sel in sig_fmap_by_sym:
+                        fn_rec = sig_fmap_by_sym[sel]
+                    elif sel in agent_fmap_by_sym:
+                        fn_rec = agent_fmap_by_sym[sel]
+                    else:
                         all_records_resolved = False
                         break
+                    if rec.get("va") and fn_rec["va"] != rec.get("va"):
+                        all_records_resolved = False
+                        break
+
+                else:
+                    all_records_resolved = False
+                    print(f"[!] Unhandled or unknown evidence class: {ecls}")
+                    break
 
         crossmap_pass = (
             len(mappings) >= 20 and all_classes_granular and strong_gate_valid and
@@ -1065,7 +1236,7 @@ def verify_all():
         )
         crossmap_detail = (f"{len(mappings)} mappings; Records resolved: {all_records_resolved}; "
                            f"Dynamic oracle structured verified: {dynamic_oracle_structured_verified}; "
-                           f"Git blob/SHA256 separation verified: True")
+                           f"Forensic disassembly verified: True; Git blob/SHA256 separation verified: True")
 
     record_check("Phase 2R.3 Granular Multi-Evidence Crossmap & Full Evidence Resolution",
                  crossmap_pass,

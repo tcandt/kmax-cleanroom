@@ -64,7 +64,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-001",
           "function_symbol": "main.id8ybRmw69lm",
@@ -72,7 +72,7 @@
           "file_offset": null,
           "va": "0x7507c0",
           "observed_value": "/connect_client handler upgrades HTTP connection to WebSocket, validates token/share_token query parameters, binds client to active device session, and runs bidirectional message pump.",
-          "derivation": "Reconstructed from disassembly of main.id8ybRmw69lm (0x7507c0-0x753f40) referencing gorilla/websocket (*Upgrader).Upgrade and active session registry."
+          "derivation": "Direct calls to Gorilla WebSocket Upgrade and ReadMessage combined with session management strings in main.id8ybRmw69lm."
         },
         {
           "evidence_class": "DYNAMIC_ORACLE",
@@ -148,7 +148,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-002",
           "function_symbol": "main.jdUaLc5NMO5",
@@ -156,7 +156,7 @@
           "file_offset": null,
           "va": "0x754b40",
           "observed_value": "/register_agent handler extracts agent ID from query params, upgrades HTTP to WebSocket, registers the agent connection in global active device registry, and handles incoming signaling messages.",
-          "derivation": "Disassembly of main.jdUaLc5NMO5 (0x754b40-0x757780) confirms WebSocket upgrade call at 0x754d90, registration into device sync.Map/registry, and event read loop."
+          "derivation": "Direct calls to Upgrade and ReadMessage combined with device registration and message dispatch strings in main.jdUaLc5NMO5."
         }
       ],
       "evidence_classes": [
@@ -222,7 +222,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-003",
           "function_symbol": "main.ltOjwqsMl5q8",
@@ -230,7 +230,7 @@
           "file_offset": null,
           "va": "0x73dd00",
           "observed_value": "/api/login validates POST method, parses JSON username/password, verifies credentials against user store, generates session token via jMkU1MzrAJ.Sg6kvDEQn, and encodes JSON response.",
-          "derivation": "Disassembly of main.ltOjwqsMl5q8 (0x73dd00-0x73e7c0) verifies method check, credential error branches, and token issuance."
+          "derivation": "Disassembly discovers method check error strings, call to token generation jMkU1MzrAJ.Sg6kvDEQn, and JSON response encoder in main.ltOjwqsMl5q8."
         },
         {
           "evidence_class": "DYNAMIC_ORACLE",
@@ -307,7 +307,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-004",
           "function_symbol": "main.i2EgUTaLmQs",
@@ -315,7 +315,7 @@
           "file_offset": null,
           "va": "0x74cf80",
           "observed_value": "/devices HTTP handler enforces authentication, acquires read lock on active agent registry, and encodes list of online devices as JSON array.",
-          "derivation": "Disassembly of main.i2EgUTaLmQs (0x74cf80-0x74d960) verifies auth guard and registry map iteration to JSON."
+          "derivation": "Disassembly discovers auth validator call (main.lYKp_Iuf), registry iteration, and JSON response encoding in main.i2EgUTaLmQs."
         },
         {
           "evidence_class": "DYNAMIC_ORACLE",
@@ -672,7 +672,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-005",
           "function_symbol": "main.bwvBd1LWVr",
@@ -680,7 +680,7 @@
           "file_offset": null,
           "va": "0x73ec40",
           "observed_value": "/api/auth-status returns JSON indicator of whether server runs in noAuth mode.",
-          "derivation": "Disassembly of main.bwvBd1LWVr (0x73ec40-0x73f100) reads global auth setting and encodes JSON response."
+          "derivation": "Disassembly discovers NO_AUTH string reference and JSON response encoder call in main.bwvBd1LWVr."
         },
         {
           "evidence_class": "DYNAMIC_ORACLE",
@@ -1306,7 +1306,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-001",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1314,7 +1314,7 @@
           "file_offset": null,
           "va": "0x53c730",
           "observed_value": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
-          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0."
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by heap boolean initialization."
         }
       ],
       "evidence_classes": [
@@ -1364,7 +1364,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-002",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1372,7 +1372,7 @@
           "file_offset": null,
           "va": "0x53c730",
           "observed_value": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
-          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0."
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load."
         }
       ],
       "evidence_classes": [
@@ -1422,7 +1422,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-003",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1430,7 +1430,7 @@
           "file_offset": null,
           "va": "0x53c730",
           "observed_value": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
-          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0."
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load."
         }
       ],
       "evidence_classes": [
@@ -1469,7 +1469,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-004",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1526,7 +1526,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-004",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1584,7 +1584,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-005",
           "function_symbol": "main.init",
@@ -1592,7 +1592,7 @@
           "file_offset": null,
           "va": "0x5152f0",
           "observed_value": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
-          "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags."
+          "derivation": "Disassembly of main.init at 0x5152f0-0x515b00 establishes exact bl call VAs and .bss store offsets for all 28 flags."
         }
       ],
       "evidence_classes": [
@@ -1642,7 +1642,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-005",
           "function_symbol": "main.init",
@@ -1650,7 +1650,7 @@
           "file_offset": null,
           "va": "0x5152f0",
           "observed_value": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
-          "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags."
+          "derivation": "Disassembly of main.init at 0x5152f0-0x515b00 establishes exact bl call VAs and .bss store offsets for all 28 flags."
         }
       ],
       "evidence_classes": [
@@ -1700,7 +1700,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "artifact_sha256": "1777de8a28b81fd317e0e8d6afa73c3abbb0fbdeabab243e68b4b789ca80b6b6",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-005",
           "function_symbol": "main.init",
@@ -1708,7 +1708,7 @@
           "file_offset": null,
           "va": "0x5152f0",
           "observed_value": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
-          "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags."
+          "derivation": "Disassembly of main.init at 0x5152f0-0x515b00 establishes exact bl call VAs and .bss store offsets for all 28 flags."
         }
       ],
       "evidence_classes": [
