@@ -1,0 +1,256 @@
+{
+  "metadata": {
+    "title": "Phase 2C.3B Device REST Differential Results",
+    "total_cases": 14,
+    "passed_cases": 14,
+    "failed_cases": 0
+  },
+  "results": [
+    {
+      "test_id": "DEV-HTTP-01",
+      "test_name": "Empty Registry Admin Query",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "body": "[]\n",
+        "ct": "application/json"
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "body": "[]\n",
+        "ct": "application/json"
+      },
+      "comparison_result": "Both emit 200 OK, application/json, exact body '[]\\n'",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-02",
+      "test_name": "Populated Registry One Device",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "count": 1,
+        "dev": "dev-alpha-001",
+        "online": true
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "count": 1,
+        "dev": "dev-alpha-001",
+        "online": true
+      },
+      "comparison_result": "Both emit 200 OK with matching 1-device JSON schema, online=true, client_count=0, and timestamps",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-03",
+      "test_name": "Populated Registry Multiple Devices",
+      "classification": "NORMALIZED_JSON_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "count": 2,
+        "device_ids": [
+          "dev-alpha-001",
+          "dev-beta-002"
+        ]
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "count": 2,
+        "device_ids": [
+          "dev-alpha-001",
+          "dev-beta-002"
+        ]
+      },
+      "comparison_result": "Both contain exact 2 registered devices under non-deterministic map iteration order",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-04",
+      "test_name": "Invalid Token Rejection",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "comparison_result": "Both reject invalid token with 401 Unauthorized",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-05",
+      "test_name": "Missing Token Rejection",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "comparison_result": "Both reject unauthenticated request with 401 Unauthorized",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-06",
+      "test_name": "Normal User Assigned Device Filtering",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "visible_devices": [
+          "dev-alpha-001"
+        ]
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "visible_devices": [
+          "dev-alpha-001"
+        ]
+      },
+      "comparison_result": "Both filter devices to only the assigned device dev-alpha-001",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-07",
+      "test_name": "Normal User Unassigned Visibility",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "body": "[]\n"
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "body": "[]\n"
+      },
+      "comparison_result": "Both emit empty array '[]\\n' for unassigned normal user",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-08",
+      "test_name": "Reconnected Device State Restoration",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "dev_alpha_online": true
+      },
+      "reconstructed_observation": {
+        "dev_alpha_online": true
+      },
+      "comparison_result": "Both restore online=true when existing device reconnects",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-09",
+      "test_name": "Disconnect Lifecycle & Offline State",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "dev_alpha_online": false,
+        "dev_beta_online": true
+      },
+      "reconstructed_observation": {
+        "dev_alpha_online": false,
+        "dev_beta_online": true
+      },
+      "comparison_result": "Both retain disconnected device in registry with online=false while active device remains online=true",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-10",
+      "test_name": "Wrong Method (GET) on /api/devices/{id}",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 405,
+        "body": "Method not allowed\n"
+      },
+      "reconstructed_observation": {
+        "status": 405,
+        "body": "Method not allowed\n"
+      },
+      "comparison_result": "Both reject non-DELETE request with 405 Method not allowed",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-11",
+      "test_name": "HEAD Method on /devices",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "body_len": 0,
+        "ct": "application/json"
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "body_len": 0,
+        "ct": "application/json"
+      },
+      "comparison_result": "Both return 200 OK with empty body and Content-Type: application/json for HEAD",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-12",
+      "test_name": "OPTIONS Preflight CORS Headers",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "origin": "*",
+        "methods": "GET, OPTIONS"
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "origin": "*",
+        "methods": "GET, OPTIONS"
+      },
+      "comparison_result": "Both emit 200 OK with Access-Control-Allow-Origin: * and Access-Control-Allow-Methods: GET, OPTIONS",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-13",
+      "test_name": "Content-Type and Raw JSON Shape",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "ct": "application/json",
+        "ends_with_newline": true
+      },
+      "reconstructed_observation": {
+        "ct": "application/json",
+        "ends_with_newline": true
+      },
+      "comparison_result": "Both emit Content-Type: application/json with trailing newline delimiter",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-14",
+      "test_name": "Route Identity & Deletion Lifecycle",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "online_delete_status": 409,
+        "offline_delete_status": 200,
+        "alias_get_status": 405
+      },
+      "reconstructed_observation": {
+        "online_delete_status": 409,
+        "offline_delete_status": 200,
+        "alias_get_status": 405
+      },
+      "comparison_result": "Online delete rejected with 409, offline delete succeeds with 200 {'status':'deleted'}, GET /api/devices returns 405",
+      "detail": "on_del=True (orig='Device is online, disconnect it first\\n', recon='Device is online, disconnect it first\\n'), off_del=True (orig='{\"status\":\"deleted\"}\\n', recon='{\"status\":\"deleted\"}\\n'), alias=True (orig='Method not allowed\\n', recon='Method not allowed\\n')"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "title": "Device Visibility Authorization Matrix",
+    "route": "/devices",
+    "device_fixtures": [
+      "dev-alpha-001",
+      "dev-beta-002"
+    ]
+  },
+  "cases": {
+    "ADMIN": {
+      "status": 200,
+      "visible_device_ids": [
+        "dev-alpha-001",
+        "dev-beta-002"
+      ],
+      "visible_count": 2,
+      "body_preview": "[{\"device_id\":\"dev-alpha-001\",\"device_info\":{\"model\":\"Pixel 7\",\"sdk\":33},\"online\":true,\"first_seen\":"
+    },
+    "NORMAL_USER_ASSIGNED_DEVICE_A": {
+      "status": 200,
+      "visible_device_ids": [
+        "dev-alpha-001"
+      ],
+      "visible_count": 1,
+      "body_preview": "[{\"device_id\":\"dev-alpha-001\",\"device_info\":{\"model\":\"Pixel 7\",\"sdk\":33},\"online\":true,\"first_seen\":"
+    },
+    "NORMAL_USER_ASSIGNED_DEVICE_B": {
+      "status": 200,
+      "visible_device_ids": [
+        "dev-beta-002"
+      ],
+      "visible_count": 1,
+      "body_preview": "[{\"device_id\":\"dev-beta-002\",\"device_info\":{\"model\":\"Galaxy S23\",\"sdk\":34},\"online\":true,\"first_seen"
+    },
+    "NORMAL_USER_UNASSIGNED": {
+      "status": 200,
+      "visible_device_ids": [],
+      "visible_count": 0,
+      "body_preview": "[]"
+    },
+    "NORMAL_USER_WILDCARD": {
+      "status": 200,
+      "visible_device_ids": [
+        "dev-alpha-001",
+        "dev-beta-002"
+      ],
+      "visible_count": 2,
+      "body_preview": "[{\"device_id\":\"dev-alpha-001\",\"device_info\":{\"model\":\"Pixel 7\",\"sdk\":33},\"online\":true,\"first_seen\":"
+    },
+    "INVALID_TOKEN": {
+      "status": 401,
+      "visible_device_ids": [],
+      "visible_count": 0,
+      "body_preview": "Unauthorized"
+    },
+    "MISSING_TOKEN": {
+      "status": 401,
+      "visible_device_ids": [],
+      "visible_count": 0,
+      "body_preview": "Unauthorized"
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "metadata": {
+    "title": "Device Data Model Type Evidence",
+    "binary_target": "webrtc-signaling",
+    "struct_type_va": "0x7ff0e0",
+    "internal_struct_va": "0x805760"
+  },
+  "public_dto": {
+    "type_name": "DeviceDTO",
+    "descriptor_va": "0x7ff0e0",
+    "struct_size": 120,
+    "fields": [
+      {
+        "json_tag": "device_id",
+        "field_type": "string",
+        "offset": "0x0",
+        "obfuscated_symbol": "NOnUogldoZjn",
+        "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+      },
+      {
+        "json_tag": "device_info",
+        "field_type": "interface{}",
+        "offset": "0x10",
+        "obfuscated_symbol": "Yq4QMsuW",
+        "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+      },
+      {
+        "json_tag": "online",
+        "field_type": "bool",
+        "offset": "0x20",
+        "obfuscated_symbol": "HkLpT8",
+        "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+      },
+      {
+        "json_tag": "first_seen",
+        "field_type": "time.Time",
+        "offset": "0x28",
+        "obfuscated_symbol": "AzWfQXm6",
+        "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+      },
+      {
+        "json_tag": "last_seen",
+        "field_type": "time.Time",
+        "offset": "0x40",
+        "obfuscated_symbol": "A1BCftA3Oo",
+        "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+      },
+      {
+        "json_tag": "client_count",
+        "field_type": "int",
+        "offset": "0x58",
+        "obfuscated_symbol": "ZAfO5Ejq6l6",
+        "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+      },
+      {
+        "json_tag": "clients,omitempty",
+        "field_type": "[]interface{}",
+        "offset": "0x60",
+        "obfuscated_symbol": "TEZwlSS",
+        "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+      }
+    ]
+  },
+  "internal_registry_entry": {
+    "type_name": "DeviceEntry",
+    "descriptor_va": "0x805760",
+    "struct_size": 128,
+    "fields": [
+      {
+        "name": "P_JKYl",
+        "offset": "0x0",
+        "type": "string",
+        "semantic": "device_id"
+      },
+      {
+        "name": "CSM8jAk5rX",
+        "offset": "0x10",
+        "type": "interface{}",
+        "semantic": "device_info"
+      },
+      {
+        "name": "RfiEjKdnO",
+        "offset": "0x20",
+        "type": "pointer",
+        "semantic": "ws_connection"
+      },
+      {
+        "name": "HaduweVy",
+        "offset": "0x28",
+        "type": "map",
+        "semantic": "connected_clients"
+      },
+      {
+        "name": "QL2mZQk72",
+        "offset": "0x30",
+        "type": "uint32",
+        "semantic": "flags"
+      },
+      {
+        "name": "Ry_yek4T",
+        "offset": "0x34",
+        "type": "bool",
+        "semantic": "webrtc_flag"
+      },
+      {
+        "name": "Ihq7ZEVc",
+        "offset": "0x35",
+        "type": "bool",
+        "semantic": "online_status"
+      },
+      {
+        "name": "C3FbDC",
+        "offset": "0x38",
+        "type": "time.Time",
+        "semantic": "first_seen"
+      },
+      {
+        "name": "EVv6hrIzV",
+        "offset": "0x50",
+        "type": "time.Time",
+        "semantic": "last_seen"
+      },
+      {
+        "name": "NfEzpojxTS",
+        "offset": "0x68",
+        "type": "sync.RWMutex",
+        "semantic": "entry_mutex"
+      }
+    ]
+  }
+}

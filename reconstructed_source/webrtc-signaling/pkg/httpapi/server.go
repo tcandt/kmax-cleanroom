@@ -11,13 +11,15 @@ import (
 	"net/http"
 
 	"cloudphone-signaling/pkg/auth"
+	"cloudphone-signaling/pkg/devices"
 )
 
-// Server encapsulates the HTTP handler router and associated auth/session services.
+// Server encapsulates the HTTP handler router and associated auth/session/device services.
 type Server struct {
-	mux    *http.ServeMux
-	auth   *auth.Authenticator
-	noAuth bool
+	mux       *http.ServeMux
+	auth      *auth.Authenticator
+	noAuth    bool
+	deviceReg *devices.Registry
 }
 
 // CLEANROOM-PROVENANCE:
@@ -25,22 +27,50 @@ type Server struct {
 // Mapping Scope: GENERATED_ADAPTER
 // Original Function Mapping: NONE
 // Purpose: Instantiates Server and registers HTTP routes on standard library ServeMux
-// Source Behavior: Registers /api/login, /api/logout, /api/auth-status, /api/me on ServeMux
+// Source Behavior: Registers auth and device endpoints on ServeMux
 // Confidence: HIGH
-func NewServer(authenticator *auth.Authenticator, noAuth bool) *Server {
-	s := &Server{
-		mux:    http.NewServeMux(),
-		auth:   authenticator,
-		noAuth: noAuth,
+func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*devices.Registry) *Server {
+	var dReg *devices.Registry
+	if len(deviceReg) > 0 && deviceReg[0] != nil {
+		dReg = deviceReg[0]
+	} else {
+		dReg = devices.NewRegistry()
 	}
 
-	// Register the four core auth routes matching original binary
+	s := &Server{
+		mux:       http.NewServeMux(),
+		auth:      authenticator,
+		noAuth:    noAuth,
+		deviceReg: dReg,
+	}
+
+	// Register auth routes matching original binary
 	s.mux.HandleFunc("/api/login", s.HandleLogin)
 	s.mux.HandleFunc("/api/logout", s.HandleLogout)
 	s.mux.HandleFunc("/api/auth-status", s.HandleAuthStatus)
 	s.mux.HandleFunc("/api/me", s.HandleMe)
 
+	// Register device REST routes matching original binary
+	s.mux.HandleFunc("/devices", s.HandleDevices)
+	s.mux.HandleFunc("/api/devices/", s.HandleDeviceDelete)
+
+	// Register differential test fixture endpoints
+	s.mux.HandleFunc("/_test/register_device", s.HandleTestRegisterDevice)
+	s.mux.HandleFunc("/_test/disconnect_device", s.HandleTestDisconnectDevice)
+	s.mux.HandleFunc("/_test/reset", s.HandleTestReset)
+
 	return s
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Purpose: Returns the internal device registry instance
+// Source Behavior: Accessor for Server.deviceReg
+// Confidence: HIGH
+func (s *Server) GetDeviceRegistry() *devices.Registry {
+	return s.deviceReg
 }
 
 // CLEANROOM-PROVENANCE:

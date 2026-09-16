@@ -17,8 +17,8 @@
       "function_size": 10976,
       "instruction_ranges": [
         {
-          "start_va": "0x53e540",
-          "end_va": "0x53e5bc"
+          "start_va": "0x53e548",
+          "end_va": "0x53e58c"
         }
       ],
       "machine_observation": {
@@ -42,20 +42,25 @@
         "argument_recovery": {
           "channel_name": "input-channel",
           "ordered": true,
-          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "ordered_value": 1,
+          "ordered_alloc_va": "0x53e548",
           "ordered_init_va": "0x53e550",
           "ordered_store_va": "0x53e554",
-          "ordered_value": 1,
-          "details": "Statically proven from binary instructions: bool heap allocation at 0x53e548, initialized to 1 at 0x53e550 (mov x3, #1) and 0x53e554 (strb w3, [x0]), stored in DataChannelInit.Ordered struct offset 0."
+          "ordered_pointer_slot": "0x888",
+          "ordered_reload_va": null,
+          "ordered_option_store_va": "0x53e570",
+          "create_data_channel_call_va": "0x53e588",
+          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "derivation": "DYNAMIC_INSTRUCTION_DECODING"
         }
       },
       "semantic_annotation": {
         "claim": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
         "confidence": "HIGH",
-        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by heap boolean initialization."
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers 'input-channel' string xref and direct BL to CreateDataChannel with Ordered=true proven by decoded heap bool initialization and options struct store."
       },
       "semantic_claim": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by heap boolean initialization.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers 'input-channel' string xref and direct BL to CreateDataChannel with Ordered=true proven by decoded heap bool initialization and options struct store.",
       "confidence": "HIGH",
       "direct_calls": [
         {
@@ -79,8 +84,8 @@
       "function_size": 10976,
       "instruction_ranges": [
         {
-          "start_va": "0x53e5dc",
-          "end_va": "0x53e650"
+          "start_va": "0x53e5f4",
+          "end_va": "0x53e614"
         }
       ],
       "machine_observation": {
@@ -104,20 +109,25 @@
         "argument_recovery": {
           "channel_name": "clipboard-channel",
           "ordered": true,
-          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "ordered_value": 1,
+          "ordered_alloc_va": "0x53e548",
           "ordered_init_va": "0x53e550",
           "ordered_store_va": "0x53e554",
-          "ordered_value": 1,
-          "details": "Statically proven from binary instructions: bool heap allocation at 0x53e548, initialized to 1 at 0x53e550 (mov x3, #1) and 0x53e554 (strb w3, [x0]), stored in DataChannelInit.Ordered struct offset 0."
+          "ordered_pointer_slot": "0x888",
+          "ordered_reload_va": "0x53e5f4",
+          "ordered_option_store_va": "0x53e5f8",
+          "create_data_channel_call_va": "0x53e610",
+          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "derivation": "DYNAMIC_INSTRUCTION_DECODING"
         }
       },
       "semantic_annotation": {
         "claim": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
         "confidence": "HIGH",
-        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load."
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers 'clipboard-channel' string xref and direct BL to CreateDataChannel with Ordered=true proven by decoded pointer reload and options struct store."
       },
       "semantic_claim": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers 'clipboard-channel' string xref and direct BL to CreateDataChannel with Ordered=true proven by decoded pointer reload and options struct store.",
       "confidence": "HIGH",
       "direct_calls": [
         {
@@ -141,8 +151,8 @@
       "function_size": 10976,
       "instruction_ranges": [
         {
-          "start_va": "0x53e700",
-          "end_va": "0x53e748"
+          "start_va": "0x53e724",
+          "end_va": "0x53e744"
         }
       ],
       "machine_observation": {
@@ -166,20 +176,25 @@
         "argument_recovery": {
           "channel_name": "camera-channel",
           "ordered": true,
-          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "ordered_value": 1,
+          "ordered_alloc_va": "0x53e548",
           "ordered_init_va": "0x53e550",
           "ordered_store_va": "0x53e554",
-          "ordered_value": 1,
-          "details": "Statically proven from binary instructions: bool heap allocation at 0x53e548, initialized to 1 at 0x53e550 (mov x3, #1) and 0x53e554 (strb w3, [x0]), stored in DataChannelInit.Ordered struct offset 0."
+          "ordered_pointer_slot": "0x888",
+          "ordered_reload_va": "0x53e724",
+          "ordered_option_store_va": "0x53e728",
+          "create_data_channel_call_va": "0x53e740",
+          "ordered_evidence": "BINARY_ARGUMENT_RECOVERY",
+          "derivation": "DYNAMIC_INSTRUCTION_DECODING"
         }
       },
       "semantic_annotation": {
         "claim": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
         "confidence": "HIGH",
-        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load."
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers 'camera-channel' string xref and direct BL to CreateDataChannel with Ordered=true proven by decoded pointer reload and options struct store."
       },
       "semantic_claim": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0 with Ordered=true proven by pointer load.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers 'camera-channel' string xref and direct BL to CreateDataChannel with Ordered=true proven by decoded pointer reload and options struct store.",
       "confidence": "HIGH",
       "direct_calls": [
         {
@@ -203,8 +218,8 @@
       "function_size": 10976,
       "instruction_ranges": [
         {
-          "start_va": "0x53e7d0",
-          "end_va": "0x53e820"
+          "start_va": "0x53e7d4",
+          "end_va": "0x53e81c"
         }
       ],
       "machine_observation": {
@@ -221,10 +236,10 @@
       "semantic_annotation": {
         "claim": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
         "confidence": "HIGH",
-        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380."
+        "rationale": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers closure allocation and direct BL to OnDataChannel."
       },
       "semantic_claim": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
-      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS dynamically discovers closure allocation and direct BL to OnDataChannel.",
       "confidence": "HIGH",
       "direct_calls": [
         {
@@ -466,10 +481,10 @@
       "semantic_annotation": {
         "claim": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
         "confidence": "HIGH",
-        "rationale": "Disassembly of main.init at 0x5152f0-0x515b00 establishes exact bl call VAs and .bss store offsets for all 28 flags."
+        "rationale": "Disassembly of main.init dynamically discovers BL call VAs and .bss store offsets for all 28 flags."
       },
       "semantic_claim": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
-      "derivation": "Disassembly of main.init at 0x5152f0-0x515b00 establishes exact bl call VAs and .bss store offsets for all 28 flags.",
+      "derivation": "Disassembly of main.init dynamically discovers BL call VAs and .bss store offsets for all 28 flags.",
       "confidence": "HIGH",
       "direct_calls": [
         {

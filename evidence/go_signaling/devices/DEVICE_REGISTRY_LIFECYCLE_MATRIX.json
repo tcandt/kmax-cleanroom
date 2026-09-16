@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "title": "Device Registry Lifecycle Matrix",
+    "component": "webrtc-signaling device registry"
+  },
+  "transitions": [
+    {
+      "stage": "EMPTY_REGISTRY",
+      "action": "Server started with zero agents",
+      "online_state": "NONE",
+      "rest_status": 200,
+      "rest_body": "[]"
+    },
+    {
+      "stage": "AGENT_CONNECTED",
+      "action": "Agent connects to /register_agent with agent_register message",
+      "online_state": true,
+      "rest_status": 200,
+      "rest_device_count": 1,
+      "first_seen_initialized": true,
+      "last_seen_initialized": true
+    },
+    {
+      "stage": "SECOND_AGENT_CONNECTED",
+      "action": "Second distinct agent connects to /register_agent",
+      "online_state": true,
+      "rest_status": 200,
+      "rest_device_count": 2,
+      "ordering_behavior": "MAP_ITERATION_NON_DETERMINISTIC"
+    },
+    {
+      "stage": "CLEAN_DISCONNECT",
+      "action": "Agent closes WebSocket connection",
+      "online_state": false,
+      "rest_status": 200,
+      "device_retained_in_registry": true,
+      "first_seen_preserved": true
+    },
+    {
+      "stage": "SAME_ID_RECONNECT",
+      "action": "Disconnected device reconnects with same device_id",
+      "online_state": true,
+      "rest_status": 200,
+      "first_seen_preserved": true,
+      "last_seen_updated": true
+    },
+    {
+      "stage": "DELETE_OFFLINE_DEVICE",
+      "action": "Admin calls DELETE /api/devices/{deviceId} on offline device",
+      "expected_status": 200,
+      "expected_body": "{\"status\":\"deleted\"}",
+      "result_in_registry": "REMOVED"
+    },
+    {
+      "stage": "DELETE_ONLINE_DEVICE",
+      "action": "Admin calls DELETE /api/devices/{deviceId} on active online device",
+      "expected_status": 409,
+      "expected_body": "Device is online, disconnect it first",
+      "result_in_registry": "RETAINED"
+    }
+  ]
+}

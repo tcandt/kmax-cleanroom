@@ -211,6 +211,7 @@ def verify_all():
         "webrtc-signaling/pkg/auth/",
         "webrtc-signaling/cmd/auth-tool/",
         "webrtc-signaling/pkg/httpapi/",
+        "webrtc-signaling/pkg/devices/",
         "webrtc-signaling/cmd/http-server/"
     )
     disallowed_files = []
@@ -905,6 +906,15 @@ def verify_all():
                     if not x_insns or "x27" not in x_insns[0].op_str:
                         reg_calls_resolved = False
                         break
+                    parts = x_insns[0].op_str.split("#")
+                    if len(parts) < 2:
+                        reg_calls_resolved = False
+                        break
+                    off_str = parts[1].replace("]", "").strip()
+                    dest_off = int(off_str, 16) if off_str.startswith("0x") else (int(off_str) if off_str.isdigit() else None)
+                    if dest_off is None or hex(0xd38000 + dest_off) != xref.get("dest_va"):
+                        reg_calls_resolved = False
+                        break
                     x_sym = xref["symbol"]
                     if x_sym not in agent_sym_set:
                         reg_calls_resolved = False
@@ -1181,22 +1191,80 @@ def verify_all():
                             all_records_resolved = False
                             break
 
-                    # 6 & 7. String xrefs exist and referenced string bytes match
+                    # 6 & 7. String xrefs exist, target VA re-decoded from instruction, and referenced string bytes match
                     for s in mob.get("string_xrefs", []):
                         s_ins_va = int(s["instruction_va"], 16)
                         if not (fn_va_int <= s_ins_va < fn_end_int):
                             all_records_resolved = False
                             break
-                        s_off = int(s["string_file_offset"], 16)
                         s_val = s["string_value"].encode("utf-8")
-                        if bb[s_off:s_off+len(s_val)] != s_val:
+
+                        # Re-decode instruction target VA
+                        if is_ag:
+                            insn_adrp = list(cs_arm.disasm(bb[s_ins_va - 4 - bias : s_ins_va - bias], s_ins_va - 4))
+                            insn_add = list(cs_arm.disasm(bb[s_ins_va - bias : s_ins_va - bias + 4], s_ins_va))
+                            if not insn_adrp or not insn_add or insn_adrp[0].mnemonic != "adrp" or insn_add[0].mnemonic != "add":
+                                all_records_resolved = False
+                                break
+                            page = int(insn_adrp[0].op_str.split(",")[1].strip().lstrip("#"), 16)
+                            imm_str = insn_add[0].op_str.split(",")[2].strip().lstrip("#")
+                            imm = int(imm_str, 16) if imm_str.startswith("0x") else int(imm_str)
+                            decoded_target_va = page + imm
+                        else:
+                            insns = list(cs_x86.disasm(bb[s_ins_va - bias : s_ins_va - bias + 16], s_ins_va))
+                            if not insns:
+                                all_records_resolved = False
+                                break
+                            m = re.search(r"\[rip ([+-]) (0x[0-9a-f]+)\]", insns[0].op_str)
+                            if not m:
+                                all_records_resolved = False
+                                break
+                            sign = 1 if m.group(1) == "+" else -1
+                            disp = int(m.group(2), 16) * sign
+                            decoded_target_va = insns[0].address + insns[0].size + disp
+
+                        if hex(decoded_target_va) != s.get("string_va"):
+                            all_records_resolved = False
+                            break
+                        decoded_off = decoded_target_va - bias
+                        if bb[decoded_off : decoded_off + len(s_val)] != s_val:
                             all_records_resolved = False
                             break
 
-                    # DataChannel argument recovery
+                    # DataChannel argument recovery: decode newobject -> mov #1 -> strb -> pointer flow -> DataChannelInit.Ordered
                     if mob.get("argument_recovery"):
                         arec = mob["argument_recovery"]
                         if arec.get("ordered") is not True or arec.get("ordered_evidence") != "BINARY_ARGUMENT_RECOVERY":
+                            all_records_resolved = False
+                            break
+                        init_va = int(arec["ordered_init_va"], 16)
+                        store_va = int(arec["ordered_store_va"], 16)
+                        opt_va = int(arec["ordered_option_store_va"], 16)
+                        call_va = int(arec["create_data_channel_call_va"], 16)
+
+                        i_init = list(cs_inst.disasm(bb[init_va - bias : init_va - bias + 4], init_va))
+                        i_store = list(cs_inst.disasm(bb[store_va - bias : store_va - bias + 4], store_va))
+                        i_opt = list(cs_inst.disasm(bb[opt_va - bias : opt_va - bias + 4], opt_va))
+                        i_call = list(cs_inst.disasm(bb[call_va - bias : call_va - bias + 4], call_va))
+
+                        if not i_init or not i_store or not i_opt or not i_call:
+                            all_records_resolved = False
+                            break
+                        if i_init[0].mnemonic != "mov" or "#1" not in i_init[0].op_str or arec.get("ordered_value") != 1:
+                            all_records_resolved = False
+                            break
+                        if i_store[0].mnemonic != "strb":
+                            all_records_resolved = False
+                            break
+                        if i_opt[0].mnemonic != "str":
+                            all_records_resolved = False
+                            break
+                        if i_call[0].mnemonic != "bl":
+                            all_records_resolved = False
+                            break
+                        tgt_call_va = int(i_call[0].op_str.lstrip("#"), 16)
+                        tgt_call_fn = fmap_va.get(tgt_call_va)
+                        if not tgt_call_fn or "CreateDataChannel" not in tgt_call_fn["symbol_name"]:
                             all_records_resolved = False
                             break
 
@@ -1241,6 +1309,171 @@ def verify_all():
     record_check("Phase 2R.3 Granular Multi-Evidence Crossmap & Full Evidence Resolution",
                  crossmap_pass,
                  crossmap_detail)
+
+    # =========================================================================
+    # 9. Phase 2C.3B Device Registry Forensics & Differential Verification
+    # =========================================================================
+    dev_dir = ROOT / "evidence" / "go_signaling" / "devices"
+
+    # 9.1 Route Identity Reconciliation
+    r_id_file = dev_dir / "DEVICE_ROUTE_IDENTITY_MATRIX.json"
+    if not r_id_file.exists():
+        record_check("Phase 2C.3B Route Identity Reconciliation", False, "DEVICE_ROUTE_IDENTITY_MATRIX.json missing")
+    else:
+        r_id = json.loads(r_id_file.read_text(encoding="utf-8"))
+        r_dev = r_id.get("routes", {}).get("/devices", {})
+        r_api_slash = r_id.get("routes", {}).get("/api/devices/", {})
+        r_api = r_id.get("routes", {}).get("/api/devices", {})
+        r_id_valid = (
+            r_dev.get("classification") == "REGISTERED_ROUTE" and
+            r_dev.get("handler_symbol") == "main.i2EgUTaLmQs" and
+            r_dev.get("handler_va") == "0x74cf80" and
+            r_dev.get("registration_call_va") == "0x765c58" and
+            r_api_slash.get("classification") == "PREFIX_HANDLER" and
+            r_api_slash.get("handler_symbol") == "main.rXQMyuE" and
+            r_api_slash.get("handler_va") == "0x74da60" and
+            r_api_slash.get("registration_call_va") == "0x765c70" and
+            r_api.get("classification") == "ALIAS" and
+            len(r_dev.get("methods", {})) == 7 and
+            len(r_api_slash.get("methods", {})) == 7
+        )
+        record_check("Phase 2C.3B Route Identity Reconciliation", r_id_valid,
+                     "/devices: REGISTERED_ROUTE (0x74cf80), /api/devices/: PREFIX_HANDLER (0x74da60), /api/devices: ALIAS")
+
+    # 9.2 Route Family & WS Scope Isolation
+    r_fam_file = dev_dir / "DEVICE_ROUTE_FAMILY.json"
+    if not r_fam_file.exists():
+        record_check("Phase 2C.3B Route Family & WS Isolation", False, "DEVICE_ROUTE_FAMILY.json missing")
+    else:
+        r_fam = json.loads(r_fam_file.read_text(encoding="utf-8"))
+        ws_routes = [r for r in r_fam.get("routes", []) if r.get("transport") == "TRANSPORT_WS"]
+        rest_routes = [r for r in r_fam.get("routes", []) if r.get("transport") == "HTTP_REST"]
+        fam_valid = (
+            len(ws_routes) >= 1 and
+            all(r.get("scope") == "NOT_PART_OF_2C3B_IMPLEMENTATION" for r in ws_routes) and
+            len(rest_routes) >= 2 and
+            all(r.get("scope") == "PART_OF_2C3B_IMPLEMENTATION" for r in rest_routes)
+        )
+        record_check("Phase 2C.3B Route Family & WS Isolation", fam_valid,
+                     f"{len(rest_routes)} REST routes in 2C.3B scope; {len(ws_routes)} WS routes isolated from implementation")
+
+    # 9.3 Device Type Evidence & Data Model Recovery
+    t_ev_file = dev_dir / "DEVICE_TYPE_EVIDENCE.json"
+    if not t_ev_file.exists():
+        record_check("Phase 2C.3B Device Type Evidence & Data Model", False, "DEVICE_TYPE_EVIDENCE.json missing")
+    else:
+        t_ev = json.loads(t_ev_file.read_text(encoding="utf-8"))
+        pub_dto = t_ev.get("public_dto", {})
+        int_entry = t_ev.get("internal_registry_entry", {})
+        type_valid = (
+            pub_dto.get("type_name") == "DeviceDTO" and
+            pub_dto.get("descriptor_va") == "0x7ff0e0" and
+            pub_dto.get("struct_size") == 120 and
+            len(pub_dto.get("fields", [])) == 7 and
+            int_entry.get("type_name") == "DeviceEntry" and
+            int_entry.get("descriptor_va") == "0x805760" and
+            int_entry.get("struct_size") == 128 and
+            all(f.get("classification") in ["TYPE_DESCRIPTOR_CONFIRMED", "BINARY_ACCESS_CONFIRMED", "DYNAMIC_JSON_CONFIRMED"] for f in pub_dto.get("fields", []))
+        )
+        record_check("Phase 2C.3B Device Type Evidence & Data Model", type_valid,
+                     "DeviceDTO (0x7ff0e0, 120 bytes, 7 fields), DeviceEntry (0x805760, 128 bytes, 11 fields)")
+
+    # 9.4 Device Registry Empty & Populated Contracts
+    c_emp_file = dev_dir / "DEVICE_EMPTY_REGISTRY_CONTRACT.json"
+    c_pop_file = dev_dir / "DEVICE_POPULATED_REGISTRY_CONTRACT.json"
+    if not c_emp_file.exists() or not c_pop_file.exists():
+        record_check("Phase 2C.3B Device Registry Contracts", False, "Registry contract files missing")
+    else:
+        c_emp = json.loads(c_emp_file.read_text(encoding="utf-8"))
+        c_pop = json.loads(c_pop_file.read_text(encoding="utf-8"))
+        emp_adm = c_emp.get("observations", {}).get("VALID_ADMIN", {})
+        pop_one = c_pop.get("one_device", {})
+        pop_mul = c_pop.get("multiple_devices", {})
+        contracts_valid = (
+            emp_adm.get("status") == 200 and
+            emp_adm.get("is_empty_array") is True and
+            emp_adm.get("has_trailing_newline") is True and
+            emp_adm.get("content_type") == "application/json" and
+            pop_one.get("status") == 200 and
+            len(pop_one.get("parsed", [])) == 1 and
+            pop_mul.get("status") == 200 and
+            len(pop_mul.get("parsed", [])) == 2 and
+            pop_mul.get("order_rule") == "GO_MAP_ITERATION"
+        )
+        record_check("Phase 2C.3B Device Registry Contracts", contracts_valid,
+                     "Empty: 200 '[]\\n', Populated: 1-device online=true, 2-devices GO_MAP_ITERATION non-deterministic")
+
+    # 9.5 Device Registry Lifecycle & Auth Visibility Matrices
+    l_mat_file = dev_dir / "DEVICE_REGISTRY_LIFECYCLE_MATRIX.json"
+    a_mat_file = dev_dir / "DEVICE_VISIBILITY_AUTH_MATRIX.json"
+    if not l_mat_file.exists() or not a_mat_file.exists():
+        record_check("Phase 2C.3B Lifecycle & Auth Visibility Matrices", False, "Matrix files missing")
+    else:
+        l_mat = json.loads(l_mat_file.read_text(encoding="utf-8"))
+        a_mat = json.loads(a_mat_file.read_text(encoding="utf-8"))
+        transitions = l_mat.get("transitions", [])
+        trans_stages = {t.get("stage") for t in transitions}
+        cases = a_mat.get("cases", {})
+        mat_valid = (
+            len(transitions) >= 6 and
+            {"EMPTY_REGISTRY", "AGENT_CONNECTED", "CLEAN_DISCONNECT", "SAME_ID_RECONNECT", "DELETE_OFFLINE_DEVICE", "DELETE_ONLINE_DEVICE"}.issubset(trans_stages) and
+            cases.get("ADMIN", {}).get("visible_count") == 2 and
+            cases.get("NORMAL_USER_ASSIGNED_DEVICE_A", {}).get("visible_count") == 1 and
+            cases.get("NORMAL_USER_UNASSIGNED", {}).get("visible_count") == 0 and
+            cases.get("INVALID_TOKEN", {}).get("status") == 401
+        )
+        record_check("Phase 2C.3B Lifecycle & Auth Visibility Matrices", mat_valid,
+                     f"{len(transitions)} lifecycle transitions verified; Admin sees all, assigned user sees 1, unassigned receives '[]'")
+
+    # 9.6 Device HTTP Function Slices
+    f_sl_file = dev_dir / "DEVICE_HTTP_FUNCTION_SLICES.json"
+    if not f_sl_file.exists():
+        record_check("Phase 2C.3B Handler Forensic Slices", False, "DEVICE_HTTP_FUNCTION_SLICES.json missing")
+    else:
+        f_sl = json.loads(f_sl_file.read_text(encoding="utf-8"))
+        handlers = {h.get("symbol"): h for h in f_sl.get("handlers", [])}
+        slices_valid = (
+            "main.i2EgUTaLmQs" in handlers and
+            handlers["main.i2EgUTaLmQs"].get("va") == "0x74cf80" and
+            len(handlers["main.i2EgUTaLmQs"].get("slices", [])) >= 4 and
+            "main.rXQMyuE" in handlers and
+            handlers["main.rXQMyuE"].get("va") == "0x74da60" and
+            len(handlers["main.rXQMyuE"].get("slices", [])) >= 4
+        )
+        record_check("Phase 2C.3B Handler Forensic Slices", slices_valid,
+                     "main.i2EgUTaLmQs (0x74cf80) & main.rXQMyuE (0x74da60) slices mapped with auth, registry, error & JSON branches")
+
+    # 9.7 Device HTTP Differential Results (DEV-HTTP-01 to DEV-HTTP-14)
+    d_res_file = dev_dir / "DEVICE_HTTP_DIFFERENTIAL_RESULTS.json"
+    if not d_res_file.exists():
+        record_check("Phase 2C.3B Device REST Differential Results", False, "DEVICE_HTTP_DIFFERENTIAL_RESULTS.json missing")
+    else:
+        d_res = json.loads(d_res_file.read_text(encoding="utf-8"))
+        res_list = d_res.get("results", [])
+        case_ids = {r.get("test_id") for r in res_list}
+        expected_cases = {f"DEV-HTTP-{i:02d}" for i in range(1, 15)}
+        diff_valid = (
+            d_res.get("metadata", {}).get("total_cases") == 14 and
+            d_res.get("metadata", {}).get("passed_cases") == 14 and
+            d_res.get("metadata", {}).get("failed_cases") == 0 and
+            case_ids == expected_cases and
+            all(r.get("passed") is True for r in res_list)
+        )
+        record_check("Phase 2C.3B Device REST Differential Results", diff_valid,
+                     f"14/14 automated test cases passed (DEV-HTTP-01 to DEV-HTTP-14), 100% parity against original binary")
+
+    # 9.8 Cleanroom Scope & Provenance Isolation Guard
+    recon_dir = ROOT / "reconstructed_source" / "webrtc-signaling"
+    forbidden_tokens = ["websocket.Upgrader", "github.com/pion/webrtc", "nhooyr.io/websocket", "gorilla/websocket"]
+    found_forbidden = []
+    for gp in recon_dir.rglob("*.go"):
+        content = gp.read_text(encoding="utf-8")
+        for tok in forbidden_tokens:
+            if tok in content:
+                found_forbidden.append((str(gp.name), tok))
+    scope_guard_valid = len(found_forbidden) == 0
+    record_check("Phase 2C.3B Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
+                 f"0 production WebSocket/WebRTC packages implemented ({len(found_forbidden)} violations)")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

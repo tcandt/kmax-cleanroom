@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "title": "Device REST Handler Forensic Slices",
+    "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3"
+  },
+  "handlers": [
+    {
+      "symbol": "main.i2EgUTaLmQs",
+      "va": "0x74cf80",
+      "size_bytes": 2528,
+      "route": "/devices",
+      "slices": [
+        {
+          "slice_id": "DEV-LIST-CORS",
+          "instruction_range": [
+            "0x74cfe2",
+            "0x74d1a5"
+          ],
+          "operation": "SET_CORS_HEADERS",
+          "headers": {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Allow-Methods": "GET, OPTIONS"
+          }
+        },
+        {
+          "slice_id": "DEV-LIST-AUTH",
+          "instruction_range": [
+            "0x74d260",
+            "0x74d355"
+          ],
+          "operation": "AUTHENTICATE_TOKEN",
+          "auth_call_va": "0x74d260",
+          "auth_callee": "main.lYKp_Iuf",
+          "error_branch": {
+            "status": 401,
+            "body": "Unauthorized"
+          }
+        },
+        {
+          "slice_id": "DEV-LIST-REGISTRY-READ",
+          "instruction_range": [
+            "0x74d27a",
+            "0x74d380"
+          ],
+          "operation": "REGISTRY_RWLOCK_RLOCK_AND_ITERATE",
+          "rlock_va": "0x74d286",
+          "map_iter_start_va": "0x74d322",
+          "map_iter_next_va": "0x74d380"
+        },
+        {
+          "slice_id": "DEV-LIST-FILTER",
+          "instruction_range": [
+            "0x73d8a0",
+            "0x73dcac"
+          ],
+          "operation": "USER_ASSIGNED_DEVICE_FILTERING",
+          "filter_fn_symbol": "main.pVOasuBli",
+          "filter_fn_va": "0x73d8a0",
+          "rules": [
+            "role == 'admin' -> true",
+            "assigned_devices contains '*' -> true",
+            "assigned_devices contains device_id -> true",
+            "otherwise -> false"
+          ]
+        },
+        {
+          "slice_id": "DEV-LIST-DTO-CONSTRUCT",
+          "instruction_range": [
+            "0x74d533",
+            "0x74d67a"
+          ],
+          "operation": "CONSTRUCT_DEVICE_DTO",
+          "dto_type_va": "0x7ff0e0",
+          "dto_size": 120
+        },
+        {
+          "slice_id": "DEV-LIST-ENCODE",
+          "instruction_range": [
+            "0x74d784",
+            "0x74d8c0"
+          ],
+          "operation": "JSON_ENCODE_RESPONSE",
+          "encoder_call_va": "0x74d8c0",
+          "content_type": "application/json"
+        }
+      ]
+    },
+    {
+      "symbol": "main.rXQMyuE",
+      "va": "0x74da60",
+      "size_bytes": 2528,
+      "route": "/api/devices/",
+      "slices": [
+        {
+          "slice_id": "DEV-DEL-CORS-METHOD",
+          "instruction_range": [
+            "0x74dab0",
+            "0x74dd4b"
+          ],
+          "operation": "CORS_AND_METHOD_VALIDATION",
+          "allowed_methods": [
+            "DELETE",
+            "OPTIONS"
+          ],
+          "invalid_method_branch": {
+            "status": 405,
+            "body": "Method not allowed\n"
+          }
+        },
+        {
+          "slice_id": "DEV-DEL-AUTH",
+          "instruction_range": [
+            "0x74dd77",
+            "0x74de88"
+          ],
+          "operation": "REQUIRE_ADMIN_AUTH",
+          "auth_call_va": "0x74dd77",
+          "non_admin_branch": {
+            "status": 403,
+            "body": "Forbidden\n"
+          }
+        },
+        {
+          "slice_id": "DEV-DEL-EXTRACT-ID",
+          "instruction_range": [
+            "0x74def3",
+            "0x74e2c6"
+          ],
+          "operation": "PARSE_DEVICE_ID_FROM_PATH",
+          "prefix": "/api/devices/",
+          "empty_id_branch": {
+            "status": 400,
+            "body": "Invalid device id\n"
+          }
+        },
+        {
+          "slice_id": "DEV-DEL-LOCK-AND-CHECK",
+          "instruction_range": [
+            "0x74df80",
+            "0x74e256"
+          ],
+          "operation": "LOOKUP_AND_ONLINE_CHECK",
+          "lock_va": "0x74df80",
+          "not_found_branch": {
+            "status": 404,
+            "body": "Device not found\n"
+          },
+          "online_branch": {
+            "status": 409,
+            "body": "Device is online, disconnect it first\n"
+          }
+        },
+        {
+          "slice_id": "DEV-DEL-MUTATE",
+          "instruction_range": [
+            "0x74e030",
+            "0x74e042"
+          ],
+          "operation": "DELETE_FROM_MAP",
+          "delete_va": "0x74e030",
+          "unlock_va": "0x74e042"
+        },
+        {
+          "slice_id": "DEV-DEL-RESPONSE",
+          "instruction_range": [
+            "0x74e353",
+            "0x74e3b8"
+          ],
+          "operation": "JSON_STATUS_DELETED_RESPONSE",
+          "status": 200,
+          "body": "{\"status\":\"deleted\"}"
+        }
+      ]
+    }
+  ]
+}

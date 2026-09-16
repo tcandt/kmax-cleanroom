@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "title": "Device Route Family",
+    "total_routes": 4
+  },
+  "routes": [
+    {
+      "route": "/devices",
+      "registration_type": "HandleFunc",
+      "transport": "HTTP_REST",
+      "handler_symbol": "main.i2EgUTaLmQs",
+      "handler_va": "0x74cf80",
+      "registration_call_va": "0x765c58",
+      "supported_methods": [
+        "GET",
+        "OPTIONS"
+      ],
+      "reference_occurrences": [
+        "web-app/src/stores/devices.js:233"
+      ],
+      "authentication_requirement": "REQUIRED_BEARER_OR_QUERY",
+      "current_confirmation_level": "BINARY_AND_DYNAMIC_CONFIRMED",
+      "scope": "PART_OF_2C3B_IMPLEMENTATION"
+    },
+    {
+      "route": "/api/devices/",
+      "registration_type": "HandleFunc",
+      "transport": "HTTP_REST",
+      "handler_symbol": "main.rXQMyuE",
+      "handler_va": "0x74da60",
+      "registration_call_va": "0x765c70",
+      "supported_methods": [
+        "DELETE",
+        "OPTIONS"
+      ],
+      "reference_occurrences": [
+        "web-app/src/stores/devices.js:795"
+      ],
+      "authentication_requirement": "REQUIRED_ADMIN_BEARER_OR_QUERY",
+      "current_confirmation_level": "BINARY_AND_DYNAMIC_CONFIRMED",
+      "scope": "PART_OF_2C3B_IMPLEMENTATION"
+    },
+    {
+      "route": "/register_agent",
+      "registration_type": "HandleFunc",
+      "transport": "TRANSPORT_WS",
+      "handler_symbol": "main.jdUaLc5NMO5",
+      "handler_va": "0x754b40",
+      "registration_call_va": "0x765c28",
+      "supported_methods": [
+        "GET (WebSocket Upgrade)"
+      ],
+      "reference_occurrences": [
+        "docker/README.md:67",
+        "cloudphone-agent"
+      ],
+      "authentication_requirement": "TOKEN_PARAM_IF_AUTH_ENABLED",
+      "current_confirmation_level": "BINARY_AND_DYNAMIC_CONFIRMED",
+      "scope": "NOT_PART_OF_2C3B_IMPLEMENTATION"
+    },
+    {
+      "route": "/register_device",
+      "registration_type": "HandleFunc",
+      "transport": "TRANSPORT_WS",
+      "handler_symbol": "main.rQffYkwYhw",
+      "handler_va": "0x74e4a0",
+      "registration_call_va": "0x765c10",
+      "supported_methods": [
+        "GET (WebSocket Upgrade)"
+      ],
+      "reference_occurrences": [
+        "legacy agent daemon"
+      ],
+      "authentication_requirement": "TOKEN_PARAM_IF_AUTH_ENABLED",
+      "current_confirmation_level": "BINARY_AND_DYNAMIC_CONFIRMED",
+      "scope": "NOT_PART_OF_2C3B_IMPLEMENTATION"
+    }
+  ]
+}

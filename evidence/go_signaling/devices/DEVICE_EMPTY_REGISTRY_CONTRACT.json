@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "title": "Device Empty Registry Contract",
+    "route": "/devices"
+  },
+  "observations": {
+    "NO_AUTH": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "raw_body": "Unauthorized\n",
+      "raw_body_bytes_hex": "556e617574686f72697a65640a",
+      "json_type": null,
+      "is_empty_array": false,
+      "has_trailing_newline": true,
+      "body_sha256": "14577b0ba3d3049e7cfa98820033cedd2d0c3b897ef5451d0cc7a985963e7aa9"
+    },
+    "INVALID_TOKEN": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "raw_body": "Unauthorized\n",
+      "raw_body_bytes_hex": "556e617574686f72697a65640a",
+      "json_type": null,
+      "is_empty_array": false,
+      "has_trailing_newline": true,
+      "body_sha256": "14577b0ba3d3049e7cfa98820033cedd2d0c3b897ef5451d0cc7a985963e7aa9"
+    },
+    "VALID_ADMIN": {
+      "status": 200,
+      "content_type": "application/json",
+      "raw_body": "[]\n",
+      "raw_body_bytes_hex": "5b5d0a",
+      "json_type": "json_array",
+      "is_empty_array": true,
+      "has_trailing_newline": true,
+      "body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "VALID_NORMAL_USER": {
+      "status": 200,
+      "content_type": "application/json",
+      "raw_body": "[]\n",
+      "raw_body_bytes_hex": "5b5d0a",
+      "json_type": "json_array",
+      "is_empty_array": true,
+      "has_trailing_newline": true,
+      "body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "MISSING_TOKEN": {
+      "status": 401,
+      "content_type": "text/plain; charset=utf-8",
+      "raw_body": "Unauthorized\n",
+      "raw_body_bytes_hex": "556e617574686f72697a65640a",
+      "json_type": null,
+      "is_empty_array": false,
+      "has_trailing_newline": true,
+      "body_sha256": "14577b0ba3d3049e7cfa98820033cedd2d0c3b897ef5451d0cc7a985963e7aa9"
+    }
+  }
+}
