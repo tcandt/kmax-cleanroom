@@ -1,0 +1,102 @@
+{
+  "contract_name": "LICENSE_SUCCESS_PATH_STATIC_CONTRACT",
+  "scope": "STATIC_SUCCESS_BRANCH_CLOSURE",
+  "status": "STATIC_ONLY_UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS",
+  "policy": {
+    "zero_keygen": true,
+    "zero_fake_fixture": true,
+    "zero_bypass": true
+  },
+  "pipeline_steps": [
+    {
+      "step": 1,
+      "phase": "CRYPTOGRAPHIC_VERIFICATION_PASS",
+      "function": "main.ODSX7KW",
+      "va": "0x7347e0",
+      "call": "main.PmtRXo (0x733c40)",
+      "branch_edge": "0x7347e5: test rbx, rbx; je 0x7347ee (error == nil)"
+    },
+    {
+      "step": 2,
+      "phase": "MUTEX_ACQUISITION",
+      "function": "main.ODSX7KW",
+      "va": "0x7347f3-0x7347fa",
+      "call": "sync.(*D2KbQ7Jm).Lock",
+      "defer_unlock": "0x73482d: mov byte ptr [rsp+0x37], 1"
+    },
+    {
+      "step": 3,
+      "phase": "PERSISTENCE_TO_DISK",
+      "function": "main.ODSX7KW",
+      "va": "0x734857-0x73487a",
+      "target_file_global_va": "0xbeeda0 (string 'license.txt')",
+      "file_mode_hex": "0x1a4",
+      "file_mode_octal": "0644",
+      "call": "uOfWpGI3.ZkONNWV (os.WriteFile)",
+      "on_error": "0x73492b: log warning via slog/logger without failing memory activation"
+    },
+    {
+      "step": 4,
+      "phase": "MEMORY_STATE_UPDATE",
+      "function": "main.ODSX7KW",
+      "va": "0x734930-0x7349ec",
+      "state_mutations": [
+        {
+          "field": "activated",
+          "value": true,
+          "target_va": "0xc29509",
+          "instruction": "0x734930: mov byte ptr [rip + 0x4f4bd2], 1"
+        },
+        {
+          "field": "max_devices",
+          "source": "claims.MaxDevices (offset 0x10)",
+          "target_va": "0xbb0260",
+          "instruction": "0x734940: mov qword ptr [rip + 0x47b919], rdx"
+        },
+        {
+          "field": "expires_at",
+          "source": "claims.ExpiresAt (offset 0x18)",
+          "target_va": "0xbeed98",
+          "instruction": "0x73494f: mov qword ptr [rip + 0x4ba442], rdx; 0x734972: mov qword ptr [rip + 0x4ba417], rsi"
+        },
+        {
+          "field": "customer",
+          "source": "claims.Customer (offset 0x28)",
+          "target_va": "0xc06f80",
+          "instruction": "0x734981: mov qword ptr [rip + 0x4d2600], rdx; 0x7349a4: mov qword ptr [rip + 0x4d25d5], rcx"
+        },
+        {
+          "field": "raw_license_key",
+          "source": "trimmed input string",
+          "target_va": "0xc06f70",
+          "instruction": "0x7349c5: mov qword ptr [rip + 0x4d25ac], rbx; 0x7349ec: mov qword ptr [rip + 0x4d257d], rax"
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "phase": "EXPIRATION_RECOMPUTATION",
+      "function": "main.ODSX7KW",
+      "va": "0x734ace",
+      "call": "main.mt4utQs (0x734e00)",
+      "action": "Parses expires_at, evaluates if expiration date passed, updates status and days_remaining"
+    },
+    {
+      "step": 6,
+      "phase": "RETURN_NIL_ERROR",
+      "function": "main.ODSX7KW",
+      "va": "0x734afd",
+      "instruction": "ret (returns rax=0, rbx=0)"
+    },
+    {
+      "step": 7,
+      "phase": "HTTP_RESPONSE_ENCODING",
+      "function": "main.jcraNgV8Jg",
+      "va": "0x74bd11-0x74be34",
+      "http_status_code": 200,
+      "content_type": "application/json",
+      "response_body": "{\"status\":\"success\",\"message\":\"激活码更新成功\"}\n"
+    }
+  ],
+  "confidence": "HIGH"
+}

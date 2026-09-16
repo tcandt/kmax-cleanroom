@@ -2341,7 +2341,7 @@ def verify_all():
     # =========================================================================
     lic_dir = ROOT / "evidence" / "go_signaling" / "license"
 
-    # 15.1 License Forensic Evidence Integrity (10/10 artifacts)
+    # 15.1 License Forensic Evidence Integrity (17/17 artifacts)
     lic_req_files = [
         "LICENSE_ROUTE_FAMILY.json",
         "LICENSE_ROUTE_METHOD_MATRIX.json",
@@ -2352,25 +2352,34 @@ def verify_all():
         "LICENSE_PERSISTENCE_CONTRACT.json",
         "LICENSE_VALIDATION_FUNCTION_SLICES.json",
         "LICENSE_NETWORK_DEPENDENCY.json",
-        "LICENSE_FAILED_ACTIVATION_STATE_MATRIX.json"
+        "LICENSE_FAILED_ACTIVATION_STATE_MATRIX.json",
+        "LICENSE_PUBLIC_VERIFIER_EVIDENCE.json",
+        "LICENSE_CRYPTO_VERIFICATION_CONTRACT.json",
+        "LICENSE_CRYPTO_FUNCTION_SLICES.json",
+        "LICENSE_SUCCESS_PATH_STATIC_CONTRACT.json",
+        "LICENSE_MACHINE_ID_CONTRACT.json",
+        "LICENSE_STARTUP_FILE_MATRIX.json",
+        "LICENSE_CURRENT_DEVICES_CROSS_CONTRACT.json"
     ]
     lic_files_exist = all((lic_dir / f).exists() for f in lic_req_files)
     record_check("Phase 2C.3H License Forensic Evidence Integrity", lic_files_exist,
-                 "All 10 required License evidence files present in evidence/go_signaling/license/")
+                 f"All {len(lic_req_files)} required License evidence files present in evidence/go_signaling/license/")
 
     # 15.2 License Semantic Forensic Success Gate Result
     lic_gate_file = lic_dir / "LICENSE_FORENSIC_GATE_RESULT.json"
     lic_gate_valid = False
+    lg_data = {}
     if lic_gate_file.exists():
         lg_data = json.loads(lic_gate_file.read_text(encoding="utf-8"))
+        inv_total = lg_data.get("invariants_count", lg_data.get("invariants_evaluated", 0))
         lic_gate_valid = (
             lg_data.get("overall_verdict") == "PASS" and
-            lg_data.get("invariants_count", lg_data.get("invariants_evaluated")) == 12 and
-            lg_data.get("passed_count") == 12 and
+            inv_total >= 12 and
+            lg_data.get("passed_count") == inv_total and
             lg_data.get("failed_count") == 0
         )
     record_check("Phase 2C.3H License Semantic Forensic Gate Result", lic_gate_valid,
-                 "LICENSE_FORENSIC_GATE_RESULT.json evaluated 12/12 invariants PASS prior to source reconstruction")
+                 f"LICENSE_FORENSIC_GATE_RESULT.json evaluated {lg_data.get('passed_count', 0)}/{lg_data.get('invariants_count', 0)} invariants PASS prior to source reconstruction")
 
     # 15.3 License Route Family
     lic_rf_file = lic_dir / "LICENSE_ROUTE_FAMILY.json"
@@ -2450,16 +2459,32 @@ def verify_all():
     lic_diff_data = {}
     if lic_diff_file.exists():
         lic_diff_data = json.loads(lic_diff_file.read_text(encoding="utf-8"))
+        excluded = lic_diff_data.get("excluded_unknowns", [])
         lic_diff_valid = (
             lic_diff_data.get("all_passed") is True and
             lic_diff_data.get("passed") == lic_diff_data.get("total_cases") and
-            lic_diff_data.get("total_cases", 0) >= 20 and
-            "UNKNOWN_REMOTE_SUCCESS" in lic_diff_data.get("excluded_unknowns", [])
+            lic_diff_data.get("total_cases", 0) >= 60 and
+            ("UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS" in excluded or "UNKNOWN_REMOTE_SUCCESS" in excluded)
         )
     record_check("Phase 2C.3H License REST Differential Results", lic_diff_valid,
-                 f"IMPLEMENTED_LICENSE_CONTRACT_DIFFERENTIAL_PASS_RATE = {lic_diff_data.get('passed', 0)}/{lic_diff_data.get('total_cases', 0)} (all cases PASS, UNKNOWN_REMOTE_SUCCESS excluded)")
+                 f"IMPLEMENTED_LICENSE_CONTRACT_DIFFERENTIAL_PASS_RATE = {lic_diff_data.get('passed', 0)}/{lic_diff_data.get('total_cases', 0)} (all cases PASS, UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS excluded)")
 
-    # 15.9 Dynamic Cumulative Differential Denominator Audit
+    # 15.9 Phase 2C.3HR License Cryptographic Verification & Machine ID Parity
+    lic_mid_file = lic_dir / "LICENSE_MACHINE_ID_CONTRACT.json"
+    lic_pve_file = lic_dir / "LICENSE_PUBLIC_VERIFIER_EVIDENCE.json"
+    lic_crypto_valid = False
+    if lic_mid_file.exists() and lic_pve_file.exists():
+        mid_c = json.loads(lic_mid_file.read_text(encoding="utf-8"))
+        pve_c = json.loads(lic_pve_file.read_text(encoding="utf-8"))
+        mid_match = mid_c.get("host_parity_verification", {}).get("character_for_character_match") is True
+        mid_val = mid_c.get("host_parity_verification", {}).get("reconstructed_machine_id") == "8AD9-A7EF-87FB-E780"
+        key_val = pve_c.get("key_parameters", {}).get("hex_encoded_key") == "7317bed38cc0d96bd5ff35c48fc57822083757823ebac181e4ad0b08e460e820"
+        zero_keygen = pve_c.get("policy", {}).get("zero_keygen") is True
+        lic_crypto_valid = mid_match and mid_val and key_val and zero_keygen
+    record_check("Phase 2C.3HR License Local-Crypto & Machine ID Parity", lic_crypto_valid,
+                 "Host machine_id 8AD9-A7EF-87FB-E780 exact match, 32-byte Ed25519 public key XOR 0x5a validated, zero keygen/bypass enforced")
+
+    # 15.10 Dynamic Cumulative Differential Denominator Audit
     canonical_diff_artifacts = [
         ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_DIFFERENTIAL_RESULTS.json",
         ROOT / "evidence" / "go_signaling" / "http" / "AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
@@ -2470,6 +2495,7 @@ def verify_all():
         ROOT / "evidence" / "go_signaling" / "shortcuts" / "SHORTCUT_HTTP_DIFFERENTIAL_RESULTS.json",
         ROOT / "evidence" / "go_signaling" / "server_config" / "SERVER_CONFIG_HTTP_DIFFERENTIAL_RESULTS.json",
         ROOT / "evidence" / "go_signaling" / "license" / "LICENSE_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "persistence" / "PERSISTENCE_DIFFERENTIAL_RESULTS.json",
     ]
 
     def extract_diff_counts(path):

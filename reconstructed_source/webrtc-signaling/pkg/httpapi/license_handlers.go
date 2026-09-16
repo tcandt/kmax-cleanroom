@@ -155,11 +155,6 @@ func (s *Server) HandleLicenseStatus(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	if r.Method == http.MethodHead {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
 	currentDevices := 0
 	if s.deviceReg != nil {
 		currentDevices = s.deviceReg.GetDeviceCount()
@@ -172,6 +167,7 @@ func (s *Server) HandleLicenseStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+	// Go's net/http automatically retains Content-Length for HEAD while suppressing wire body bytes
 	json.NewEncoder(w).Encode(resp)
 }
 
@@ -182,7 +178,7 @@ func (s *Server) HandleLicenseStatus(w http.ResponseWriter, r *http.Request) {
 // Size: 704 bytes
 // Mapping Scope: BEHAVIOR_SLICE
 // Evidence: LICENSE_ROUTE_FAMILY.json, LICENSE_ROUTE_METHOD_MATRIX.json, LICENSE_STATUS_CONTRACT.json
-// Purpose: HTTP handler for /debug/license: returns 13-field entitlement status JSON when debug mode is enabled
+// Purpose: HTTP handler for /debug/license: returns 13-field entitlement status JSON when debug mode is enabled across all HTTP verbs without CORS headers
 // Confidence: HIGH
 func (s *Server) HandleDebugLicense(w http.ResponseWriter, r *http.Request) {
 	if !s.IsDebug() {
@@ -193,12 +189,9 @@ func (s *Server) HandleDebugLicense(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// In original binary, /debug/license emits NO Access-Control-* CORS headers,
+	// and accepts all standard verbs (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)
 	w.Header().Set("Content-Type", "application/json")
-
-	if r.Method == http.MethodHead {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
 
 	currentDevices := 0
 	if s.deviceReg != nil {
@@ -212,5 +205,6 @@ func (s *Server) HandleDebugLicense(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+	// Go's net/http automatically retains Content-Length for HEAD while suppressing wire body bytes
 	json.NewEncoder(w).Encode(resp)
 }

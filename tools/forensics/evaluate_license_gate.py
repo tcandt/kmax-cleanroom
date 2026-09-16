@@ -35,7 +35,14 @@ def evaluate_gate():
         "LICENSE_PERSISTENCE_CONTRACT.json",
         "LICENSE_VALIDATION_FUNCTION_SLICES.json",
         "LICENSE_NETWORK_DEPENDENCY.json",
-        "LICENSE_FAILED_ACTIVATION_STATE_MATRIX.json"
+        "LICENSE_FAILED_ACTIVATION_STATE_MATRIX.json",
+        "LICENSE_PUBLIC_VERIFIER_EVIDENCE.json",
+        "LICENSE_CRYPTO_VERIFICATION_CONTRACT.json",
+        "LICENSE_CRYPTO_FUNCTION_SLICES.json",
+        "LICENSE_SUCCESS_PATH_STATIC_CONTRACT.json",
+        "LICENSE_MACHINE_ID_CONTRACT.json",
+        "LICENSE_STARTUP_FILE_MATRIX.json",
+        "LICENSE_CURRENT_DEVICES_CROSS_CONTRACT.json"
     ]
 
     for a in required_artifacts:
@@ -58,6 +65,11 @@ def evaluate_gate():
     slices = json.loads((EVIDENCE_DIR / "LICENSE_VALIDATION_FUNCTION_SLICES.json").read_text(encoding="utf-8"))
     net_dep = json.loads((EVIDENCE_DIR / "LICENSE_NETWORK_DEPENDENCY.json").read_text(encoding="utf-8"))
     state_matrix = json.loads((EVIDENCE_DIR / "LICENSE_FAILED_ACTIVATION_STATE_MATRIX.json").read_text(encoding="utf-8"))
+    pub_ver = json.loads((EVIDENCE_DIR / "LICENSE_PUBLIC_VERIFIER_EVIDENCE.json").read_text(encoding="utf-8"))
+    crypto_ver = json.loads((EVIDENCE_DIR / "LICENSE_CRYPTO_VERIFICATION_CONTRACT.json").read_text(encoding="utf-8"))
+    mach_id = json.loads((EVIDENCE_DIR / "LICENSE_MACHINE_ID_CONTRACT.json").read_text(encoding="utf-8"))
+    startup_mat = json.loads((EVIDENCE_DIR / "LICENSE_STARTUP_FILE_MATRIX.json").read_text(encoding="utf-8"))
+    curr_dev = json.loads((EVIDENCE_DIR / "LICENSE_CURRENT_DEVICES_CROSS_CONTRACT.json").read_text(encoding="utf-8"))
 
     results = {}
 
@@ -189,13 +201,13 @@ def evaluate_gate():
         "evidence": "Disk and memory before/after snapshots prove failed activation does not mutate state or create license.txt"
     }
 
-    # Invariant 11: UNKNOWN_REMOTE_SUCCESS remains excluded
+    # Invariant 11: UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS remains excluded
     inv11_pass = (
-        net_dep["remote_activation_success_status"] == "UNKNOWN_REMOTE_SUCCESS"
+        net_dep.get("remote_activation_success_status") in ("UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS", "UNKNOWN_REMOTE_SUCCESS")
     )
-    results["UNKNOWN_REMOTE_SUCCESS_remains_excluded"] = {
+    results["UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS_remains_excluded"] = {
         "status": "PASS" if inv11_pass else "FAIL",
-        "evidence": "Remote success classified as UNKNOWN_REMOTE_SUCCESS and excluded from required differential denominator"
+        "evidence": "Remote success classified as UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS and excluded from required differential denominator"
     }
 
     # Invariant 12: zero bypass / zero keygen invariant passes
@@ -210,6 +222,68 @@ def evaluate_gate():
         "evidence": "Cleanroom policy strictly mandates zero bypass, zero keygen, zero signature forgery; rejection logic genuinely preserved"
     }
 
+    # Invariant 13: public Ed25519 verifier evidence with XOR 0x5a deobfuscation
+    inv13_pass = (
+        pub_ver.get("cryptographic_algorithm") == "Ed25519" and
+        pub_ver.get("key_parameters", {}).get("hex_encoded_key") == "7317bed38cc0d96bd5ff35c48fc57822083757823ebac181e4ad0b08e460e820" and
+        pub_ver.get("key_parameters", {}).get("key_length_bytes") == 32 and
+        pub_ver.get("binary_location", {}).get("xor_key_byte") == "0x5a" and
+        pub_ver.get("policy", {}).get("zero_keygen") is True and
+        pub_ver.get("policy", {}).get("zero_signature_forgery") is True
+    )
+    results["public_ed25519_verifier_key_recovery"] = {
+        "status": "PASS" if inv13_pass else "FAIL",
+        "evidence": "32-byte Ed25519 public key deobfuscated via XOR 0x5a in main.PmtRXo; zero keygen / zero signature forgery enforced"
+    }
+
+    # Invariant 14: machine ID character-for-character derivation contract
+    inv14_pass = (
+        mach_id.get("function_symbol") == "main.ZbJsqTIiz3ML" and
+        mach_id.get("host_parity_verification", {}).get("character_for_character_match") is True and
+        mach_id.get("host_parity_verification", {}).get("original_machine_id") == "8AD9-A7EF-87FB-E780" and
+        mach_id.get("host_parity_verification", {}).get("reconstructed_machine_id") == "8AD9-A7EF-87FB-E780"
+    )
+    results["machine_id_exact_derivation_contract"] = {
+        "status": "PASS" if inv14_pass else "FAIL",
+        "evidence": "Character-for-character machine ID parity on host (8AD9-A7EF-87FB-E780) via UUID, filtered MACs, and CPU cores"
+    }
+
+    # Invariant 15: startup license file graceful degradation matrix
+    inv15_pass = (
+        startup_mat.get("daemon_behavior") == "FALLBACK_TO_BUILTIN_PROMOTIONAL_ON_INVALID_FILE" and
+        len(startup_mat.get("cases", [])) == 6 and
+        all(c.get("parity") == "MATCH" and c.get("license_source") == "built-in" and c.get("file_mutated") is False for c in startup_mat.get("cases", []))
+    )
+    results["startup_license_file_graceful_matrix"] = {
+        "status": "PASS" if inv15_pass else "FAIL",
+        "evidence": "All 6 startup file cases (missing, empty, whitespace, invalid text, bad base64, invalid sig) fall back to built-in promo mode without file mutation"
+    }
+
+    # Invariant 16: current devices online counting cross contract
+    inv16_pass = (
+        curr_dev.get("proven_counting_rule") == "ONLINE_DEVICES_ONLY" and
+        "0x749d60" in curr_dev.get("disassembly_evidence", {}).get("counting_function", "") and
+        "0x35" in curr_dev.get("disassembly_evidence", {}).get("target_field_offset", "")
+    )
+    results["current_devices_online_counting_cross_contract"] = {
+        "status": "PASS" if inv16_pass else "FAIL",
+        "evidence": "Disassembly of main.fWkBbskiJi proves current_devices counts online devices only (Ihq7ZEVc == true at offset 0x35)"
+    }
+
+    # Invariant 17: crypto verification pipeline and claims contract
+    claims_step = next((s for s in crypto_ver.get("pipeline", []) if s.get("name") == "CLAIMS_JSON_UNMARSHAL"), {})
+    claim_names = [f.get("name") for f in claims_step.get("fields", [])]
+    inv17_pass = (
+        crypto_ver.get("verification_scope") == "LOCAL_OFFLINE_CRYPTOGRAPHIC_VERIFICATION" and
+        crypto_ver.get("unresolved_success_classification") == "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS" and
+        len(crypto_ver.get("pipeline", [])) == 6 and
+        "FLdrjU" in claim_names and "FzadFNPQCB" in claim_names and "TF9svpC2ha" in claim_names and "M6ofLo6ey" in claim_names
+    )
+    results["crypto_verification_pipeline_and_claims_contract"] = {
+        "status": "PASS" if inv17_pass else "FAIL",
+        "evidence": "6-step verification pipeline in main.PmtRXo and 4 JSON claims fields (FLdrjU, FzadFNPQCB, TF9svpC2ha, M6ofLo6ey) bound to contract"
+    }
+
     all_pass = all(v["status"] == "PASS" for v in results.values())
 
     gate_result = {
@@ -218,7 +292,7 @@ def evaluate_gate():
         "invariants_count": len(results),
         "passed_count": sum(1 for v in results.values() if v["status"] == "PASS"),
         "failed_count": sum(1 for v in results.values() if v["status"] == "FAIL"),
-        "permitted_unknowns": ["UNKNOWN_REMOTE_SUCCESS"],
+        "permitted_unknowns": ["UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS"],
         "source_reconstruction_permitted": all_pass,
         "invariants": results
     }

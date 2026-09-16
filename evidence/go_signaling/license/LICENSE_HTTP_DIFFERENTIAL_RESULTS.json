@@ -1,11 +1,11 @@
 {
-  "execution_timestamp": "2026-09-16T09:04:53.380959+00:00",
-  "total_cases": 26,
-  "passed": 26,
+  "execution_timestamp": "2026-09-16T09:51:10.070990+00:00",
+  "total_cases": 61,
+  "passed": 61,
   "failed": 0,
   "all_passed": true,
   "excluded_unknowns": [
-    "UNKNOWN_REMOTE_SUCCESS"
+    "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS"
   ],
   "results": [
     {
@@ -90,7 +90,7 @@
     },
     {
       "case_id": "LICENSE-HTTP-09",
-      "description": "/api/license_status HEAD request parity (200 OK, empty wire body)",
+      "description": "/api/license_status HEAD request parity (200 OK, empty wire body, Content-Length preserved)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
@@ -264,6 +264,356 @@
       "status": "PASS",
       "orig_status": 400,
       "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-MACHINE-ID-EXACT",
+      "description": "/api/license_status exact character-for-character machine_id parity (8AD9-A7EF-87FB-E780)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-HEAD-CLEN-STATUS",
+      "description": "/api/license_status HEAD retains Content-Length=277 with zero body bytes",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-HEAD-CLEN-DEBUG",
+      "description": "/debug/license HEAD retains Content-Length=277 with zero body bytes",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-VERB-POST",
+      "description": "/debug/license permissive verb POST parity with -debug (200 OK, no CORS, Content-Length: 277)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-VERB-PUT",
+      "description": "/debug/license permissive verb PUT parity with -debug (200 OK, no CORS, Content-Length: 277)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-VERB-PATCH",
+      "description": "/debug/license permissive verb PATCH parity with -debug (200 OK, no CORS, Content-Length: 277)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-VERB-DELETE",
+      "description": "/debug/license permissive verb DELETE parity with -debug (200 OK, no CORS, Content-Length: 277)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-VERB-OPTIONS",
+      "description": "/debug/license permissive verb OPTIONS parity with -debug (200 OK, no CORS, Content-Length: 277)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-NODEBUG-GET",
+      "description": "/debug/license verb GET rejection without -debug flag (404 Not found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-NODEBUG-POST",
+      "description": "/debug/license verb POST rejection without -debug flag (404 Not found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-NODEBUG-PUT",
+      "description": "/debug/license verb PUT rejection without -debug flag (404 Not found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-NODEBUG-PATCH",
+      "description": "/debug/license verb PATCH rejection without -debug flag (404 Not found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-NODEBUG-DELETE",
+      "description": "/debug/license verb DELETE rejection without -debug flag (404 Not found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-NODEBUG-OPTIONS",
+      "description": "/debug/license verb OPTIONS rejection without -debug flag (404 Not found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-DEBUG-NODEBUG-HEAD",
+      "description": "/debug/license verb HEAD rejection without -debug flag (404 Not found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-NULL",
+      "description": "/api/activate JSON edge case EDGE-NULL payload: null",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-ARRAY",
+      "description": "/api/activate JSON edge case EDGE-ARRAY payload: []",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-STRING",
+      "description": "/api/activate JSON edge case EDGE-STRING payload: \"string\"",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-LIC-NULL",
+      "description": "/api/activate JSON edge case EDGE-LIC-NULL payload: {\"license\":null}",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-LIC-INT",
+      "description": "/api/activate JSON edge case EDGE-LIC-INT payload: {\"license\":123}",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-LIC-BOOL",
+      "description": "/api/activate JSON edge case EDGE-LIC-BOOL payload: {\"license\":false}",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-LIC-ARRAY",
+      "description": "/api/activate JSON edge case EDGE-LIC-ARRAY payload: {\"license\":[]}",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-LIC-OBJ",
+      "description": "/api/activate JSON edge case EDGE-LIC-OBJ payload: {\"license\":{}}",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-EMPTY-EXTRA",
+      "description": "/api/activate JSON edge case EDGE-EMPTY-EXTRA payload: {\"license\":\"\",\"extra\":1}",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-ACT-EDGE-INVALID-EXTRA",
+      "description": "/api/activate JSON edge case EDGE-INVALID-EXTRA payload: {\"license\":\"INVALID\",\"extra\":1}",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-CRYPTO-NO-DOT",
+      "description": "/api/activate cryptographic pipeline error parity: 授权码格式错误",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-CRYPTO-BAD-BASE64",
+      "description": "/api/activate cryptographic pipeline error parity: 非法的 Base64 编码",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-CRYPTO-BAD-HEX",
+      "description": "/api/activate cryptographic pipeline error parity: 数字签名格式无效",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-CRYPTO-BAD-SIG",
+      "description": "/api/activate cryptographic pipeline error parity: 授权数字签名校验失败，可能已被篡改",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-STARTUP-01-NO-FILE",
+      "description": "Startup license.txt handling: no_license_file falls back to built-in promo",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-STARTUP-02-EMPTY",
+      "description": "Startup license.txt handling: empty_license_file falls back to built-in promo",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-STARTUP-03-WHITESPACE",
+      "description": "Startup license.txt handling: whitespace_only_file falls back to built-in promo",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-STARTUP-04-INVALID-TEXT",
+      "description": "Startup license.txt handling: obvious_invalid_text falls back to built-in promo",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-STARTUP-05-MALFORMED-B64",
+      "description": "Startup license.txt handling: malformed_base64 falls back to built-in promo",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-STARTUP-06-BAD-SIGNATURE",
+      "description": "Startup license.txt handling: plausible_bad_signature_blob falls back to built-in promo",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
       "details": ""

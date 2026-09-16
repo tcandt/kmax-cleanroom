@@ -1,11 +1,11 @@
 {
   "gate_name": "PHASE_2C_3H_LICENSE_SEMANTIC_FORENSIC_GATE",
   "overall_verdict": "PASS",
-  "invariants_count": 12,
-  "passed_count": 12,
+  "invariants_count": 17,
+  "passed_count": 17,
   "failed_count": 0,
   "permitted_unknowns": [
-    "UNKNOWN_REMOTE_SUCCESS"
+    "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS"
   ],
   "source_reconstruction_permitted": true,
   "invariants": {
@@ -49,13 +49,33 @@
       "status": "PASS",
       "evidence": "Disk and memory before/after snapshots prove failed activation does not mutate state or create license.txt"
     },
-    "UNKNOWN_REMOTE_SUCCESS_remains_excluded": {
+    "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS_remains_excluded": {
       "status": "PASS",
-      "evidence": "Remote success classified as UNKNOWN_REMOTE_SUCCESS and excluded from required differential denominator"
+      "evidence": "Remote success classified as UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS and excluded from required differential denominator"
     },
     "zero_bypass_zero_keygen_invariant": {
       "status": "PASS",
       "evidence": "Cleanroom policy strictly mandates zero bypass, zero keygen, zero signature forgery; rejection logic genuinely preserved"
+    },
+    "public_ed25519_verifier_key_recovery": {
+      "status": "PASS",
+      "evidence": "32-byte Ed25519 public key deobfuscated via XOR 0x5a in main.PmtRXo; zero keygen / zero signature forgery enforced"
+    },
+    "machine_id_exact_derivation_contract": {
+      "status": "PASS",
+      "evidence": "Character-for-character machine ID parity on host (8AD9-A7EF-87FB-E780) via UUID, filtered MACs, and CPU cores"
+    },
+    "startup_license_file_graceful_matrix": {
+      "status": "PASS",
+      "evidence": "All 6 startup file cases (missing, empty, whitespace, invalid text, bad base64, invalid sig) fall back to built-in promo mode without file mutation"
+    },
+    "current_devices_online_counting_cross_contract": {
+      "status": "PASS",
+      "evidence": "Disassembly of main.fWkBbskiJi proves current_devices counts online devices only (Ihq7ZEVc == true at offset 0x35)"
+    },
+    "crypto_verification_pipeline_and_claims_contract": {
+      "status": "PASS",
+      "evidence": "6-step verification pipeline in main.PmtRXo and 4 JSON claims fields (FLdrjU, FzadFNPQCB, TF9svpC2ha, M6ofLo6ey) bound to contract"
     }
   }
 }

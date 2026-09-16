@@ -10,7 +10,8 @@
     "activation_struct_source": "disasm(main.jcraNgV8Jg) -> KindStruct LEA operand (0x7bd580)",
     "status_response_source": "disasm(main.J_5lH4w6CU) -> KindMap (0x7bf940) runtime map construction with 13 keys",
     "persistence_file_source": ".data RIP global load (0xbeeda0) -> 'license.txt'",
-    "initial_expires_at_source": ".data RIP global load (0xbeed90) -> '2026-11-01'"
+    "initial_expires_at_source": ".data RIP global load (0xbeed90) -> '2026-11-01'",
+    "public_key_source": "disasm(main.PmtRXo) -> 4 movabs XOR 0x5a -> 7317bed38cc0d96bd5ff35c48fc57822083757823ebac181e4ad0b08e460e820"
   },
   "activation_payload_struct": {
     "descriptor_va": "0x7bd580",

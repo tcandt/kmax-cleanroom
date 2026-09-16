@@ -2,24 +2,54 @@
 // Classification: GENERATED_BUILD_STRUCTURE
 // Target Binary: webrtc-signaling (Linux AMD64 SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)
 // Scope: Thread-safe License & Entitlement State Manager
-// Evidence: LICENSE_TYPE_EVIDENCE.json, LICENSE_STATUS_CONTRACT.json, LICENSE_PERSISTENCE_CONTRACT.json
+// Evidence:
+//   - LICENSE_CRYPTO_VERIFICATION_CONTRACT.json
+//   - LICENSE_PUBLIC_VERIFIER_EVIDENCE.json
+//   - LICENSE_MACHINE_ID_CONTRACT.json
+//   - LICENSE_STATUS_CONTRACT.json
+//   - LICENSE_STARTUP_FILE_MATRIX.json
 // Confidence: HIGH
 
 package license
 
 import (
+	"crypto/ed25519"
 	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
 	"os"
 	"path/filepath"
+	"runtime"
+	"sort"
 	"strings"
 	"sync"
 	"time"
 
 	"cloudphone-signaling/pkg/types"
 )
+
+// embeddedPublicKey is the 32-byte Ed25519 public verification key embedded in main.PmtRXo (0x733c40)
+// and deobfuscated via byte-wise XOR with 0x5a at VA 0x733dbf.
+// SHA-256 Fingerprint: 4ec41f373e3d920fb155df761a8cd47b453659a8aeba799f46818ac3575dd91c
+var embeddedPublicKey = ed25519.PublicKey([]byte{
+	0x73, 0x17, 0xbe, 0xd3, 0x8c, 0xc0, 0xd9, 0x6b,
+	0xd5, 0xff, 0x35, 0xc4, 0x8f, 0xc5, 0x78, 0x22,
+	0x08, 0x37, 0x57, 0x82, 0x3e, 0xba, 0xc1, 0x81,
+	0xe4, 0xad, 0x0b, 0x08, 0xe4, 0x60, 0xe8, 0x20,
+})
+
+// licenseClaims represents the JSON payload structure embedded in the base64 part of the license token.
+// Type descriptor recovered from VA 0x7ed2a0 (56 bytes, 4 fields).
+type licenseClaims struct {
+	MachineID  string `json:"machine_id"`
+	MaxDevices int    `json:"max_devices"`
+	ExpiresAt  string `json:"expires_at"`
+	Customer   string `json:"customer"`
+}
 
 // Manager manages license state, built-in promotional entitlements,
 // hardware machine fingerprinting, and persistence.
@@ -73,42 +103,74 @@ func NewManager(dataDir string) *Manager {
 // VA: 0x732ec0
 // Size: 3456 bytes
 // Mapping Scope: BEHAVIOR_SLICE
-// Evidence: LICENSE_VALIDATION_FUNCTION_SLICES.json, LICENSE_STATUS_CONTRACT.json
+// Evidence: LICENSE_MACHINE_ID_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
 // Purpose: Computes deterministic hardware machine fingerprint formatted as XXXX-XXXX-XXXX-XXXX
 // Confidence: HIGH
 func (m *Manager) generateMachineID() string {
 	var parts []string
 
-	// Gather hardware identifiers (MAC addresses)
-	interfaces, err := net.Interfaces()
-	if err == nil {
-		for _, iface := range interfaces {
-			if len(iface.HardwareAddr) > 0 && (iface.Flags&net.FlagLoopback) == 0 {
-				parts = append(parts, iface.HardwareAddr.String())
+	// 1. UUID / Machine ID files (product_uuid, machine-id, dbus machine-id)
+	for _, p := range []string{"/sys/class/dmi/id/product_uuid", "/etc/machine-id", "/var/lib/dbus/machine-id"} {
+		data, err := os.ReadFile(p)
+		if err == nil {
+			s := strings.TrimSpace(string(data))
+			if s != "" {
+				parts = append(parts, s)
+				break
 			}
 		}
 	}
 
-	// Hostname
-	hostname, err := os.Hostname()
-	if err == nil && hostname != "" {
-		parts = append(parts, hostname)
+	// 2. Network interfaces
+	ifaces, err := net.Interfaces()
+	if err == nil {
+		var macs []string
+		ignored := []string{
+			"utun", "tun", "tap", "docker", "veth",
+			"br-", "bridge", "awdl", "llw", "p2p",
+			"gif", "stf", "vlan",
+		}
+		for _, iface := range ifaces {
+			// Skip loopback (bit 2 of flags: FlagLoopback = 4)
+			if iface.Flags&net.FlagLoopback != 0 {
+				continue
+			}
+			mac := iface.HardwareAddr.String()
+			if mac == "" {
+				continue
+			}
+			lowerName := strings.ToLower(iface.Name)
+			skip := false
+			for _, ig := range ignored {
+				if strings.HasPrefix(lowerName, ig) {
+					skip = true
+					break
+				}
+			}
+			if skip {
+				continue
+			}
+			macs = append(macs, mac)
+		}
+		sort.Strings(macs)
+		if len(macs) > 0 {
+			parts = append(parts, strings.Join(macs, ","))
+		}
 	}
 
-	// Linux machine-id fallback
-	if data, err := os.ReadFile("/etc/machine-id"); err == nil {
-		parts = append(parts, strings.TrimSpace(string(data)))
-	}
+	// 3. Cores
+	parts = append(parts, fmt.Sprintf("cores:%d", runtime.NumCPU()))
 
 	if len(parts) == 0 {
-		parts = append(parts, "kmax-cleanroom-host-seed")
+		parts = append(parts, "FALLBACK_CLOUDPHONE_ID")
 	}
 
-	h := sha256.Sum256([]byte(strings.Join(parts, "|")))
-	hexStr := fmt.Sprintf("%02X%02X%02X%02X%02X%02X%02X%02X",
-		h[0], h[1], h[2], h[3], h[4], h[5], h[6], h[7])
+	raw := strings.Join(parts, "|")
+	sum := sha256.Sum256([]byte(raw))
+	hexStr := fmt.Sprintf("%x", sum)
 
-	return fmt.Sprintf("%s-%s-%s-%s", hexStr[0:4], hexStr[4:8], hexStr[8:12], hexStr[12:16])
+	res := fmt.Sprintf("%s-%s-%s-%s", hexStr[0:4], hexStr[4:8], hexStr[8:12], hexStr[12:16])
+	return strings.ToUpper(res)
 }
 
 // CLEANROOM-PROVENANCE:
@@ -117,8 +179,8 @@ func (m *Manager) generateMachineID() string {
 // VA: 0x733fe0
 // Size: 1696 bytes
 // Mapping Scope: BEHAVIOR_SLICE
-// Evidence: LICENSE_PERSISTENCE_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
-// Purpose: Reads and validates local license.txt on daemon initialization
+// Evidence: LICENSE_STARTUP_FILE_MATRIX.json, LICENSE_PERSISTENCE_CONTRACT.json
+// Purpose: Reads and validates local license.txt on daemon initialization; ignores invalid files
 // Confidence: HIGH
 func (m *Manager) loadLicenseFile() {
 	if m.filePath == "" {
@@ -132,16 +194,19 @@ func (m *Manager) loadLicenseFile() {
 
 	key := strings.TrimSpace(string(data))
 	if key == "" {
+		// Empty/whitespace file: remain in built-in promo mode without mutating file
 		return
 	}
 
-	// In cleanroom mode, validate loaded key without keygen/bypass
-	if err := m.validateLicenseFormat(key); err != nil {
-		m.licenseSource = "license-file"
-		m.status = "expired"
-		m.licenseExpired = true
-		m.errorMsg = err.Error()
+	claims, err := m.verifyLicense(key)
+	if err != nil {
+		// Proven via differential oracle: invalid persisted key does NOT set expired state,
+		// but safely falls back to default built-in promotional entitlement.
+		return
 	}
+
+	// Valid cryptographic license loaded from file
+	m.applyValidLicense(claims, key)
 }
 
 // CLEANROOM-PROVENANCE:
@@ -150,21 +215,80 @@ func (m *Manager) loadLicenseFile() {
 // VA: 0x733c40
 // Size: 928 bytes
 // Mapping Scope: BEHAVIOR_SLICE
-// Evidence: LICENSE_ACTIVATION_REJECTION_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
-// Purpose: Original cryptographic and structural format verification for license key
+// Evidence: LICENSE_CRYPTO_VERIFICATION_CONTRACT.json, LICENSE_PUBLIC_VERIFIER_EVIDENCE.json
+// Purpose: Original cryptographic verification pipeline: base64 payload, hex Ed25519 signature,
+// JSON claims unmarshaling, and hardware machine ID binding.
 // Confidence: HIGH
-func (m *Manager) validateLicenseFormat(key string) error {
+func (m *Manager) verifyLicense(key string) (*licenseClaims, error) {
 	trimmed := strings.TrimSpace(key)
 	if trimmed == "" {
-		return errors.New("授权码格式错误")
+		return nil, errors.New("授权码格式错误")
 	}
 
-	// Zero bypass / Zero keygen invariant:
-	// The original binary enforces base64 decoding followed by cryptographic digital
-	// signature verification against an embedded public key.
-	// Since no fake/forged license keys may be generated in cleanroom development,
-	// all invalid/synthetic keys genuinely fail validation.
-	return errors.New("授权码格式错误")
+	parts := strings.Split(trimmed, ".")
+	if len(parts) != 2 {
+		return nil, errors.New("授权码格式错误")
+	}
+
+	payloadBytes, err := base64.StdEncoding.DecodeString(parts[0])
+	if err != nil {
+		return nil, errors.New("非法的 Base64 编码")
+	}
+
+	sigBytes, err := hex.DecodeString(parts[1])
+	if err != nil || len(sigBytes) != ed25519.SignatureSize {
+		return nil, errors.New("数字签名格式无效")
+	}
+
+	// Verify cryptographic signature against embedded public key
+	if !ed25519.Verify(embeddedPublicKey, payloadBytes, sigBytes) {
+		return nil, errors.New("授权数字签名校验失败，可能已被篡改")
+	}
+
+	var claims licenseClaims
+	if err := json.Unmarshal(payloadBytes, &claims); err != nil {
+		return nil, errors.New("无效的授权声明内容")
+	}
+
+	if claims.MachineID != m.machineID {
+		return nil, fmt.Errorf("机器码不匹配: 授权绑定 %s, 当前系统为 %s", claims.MachineID, m.machineID)
+	}
+
+	return &claims, nil
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.ODSX7KW
+// VA: 0x7347a0
+// Evidence: LICENSE_PERSISTENCE_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
+// Purpose: Updates manager state upon successful cryptographic verification
+// Confidence: HIGH
+func (m *Manager) applyValidLicense(claims *licenseClaims, rawKey string) {
+	m.activated = true
+	m.customer = claims.Customer
+	m.expiresAt = claims.ExpiresAt
+	m.maxDevices = claims.MaxDevices
+	m.licenseSource = "license-file"
+	m.errorMsg = ""
+
+	// Evaluate expiration
+	if expTime, err := time.Parse("2006-01-02", claims.ExpiresAt); err == nil {
+		now := time.Now()
+		expMidnight := time.Date(expTime.Year(), expTime.Month(), expTime.Day(), 23, 59, 59, 0, time.UTC)
+		nowMidnight := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+		if expMidnight.Before(nowMidnight) {
+			m.status = "expired"
+			m.licenseExpired = true
+			m.errorMsg = "授权已过期"
+		} else {
+			m.status = "valid"
+			m.licenseExpired = false
+		}
+	} else {
+		m.status = "valid"
+		m.licenseExpired = false
+	}
 }
 
 // CLEANROOM-PROVENANCE:
@@ -173,31 +297,28 @@ func (m *Manager) validateLicenseFormat(key string) error {
 // VA: 0x7347a0
 // Size: 960 bytes
 // Mapping Scope: BEHAVIOR_SLICE
-// Evidence: LICENSE_ACTIVATION_REJECTION_CONTRACT.json, LICENSE_PERSISTENCE_CONTRACT.json
-// Purpose: Validates incoming license key, persists to license.txt on success, or returns original rejection
+// Evidence: LICENSE_SUCCESS_PATH_STATIC_CONTRACT.json, LICENSE_ACTIVATION_REJECTION_CONTRACT.json
+// Purpose: Validates incoming license key, persists to license.txt (mode 0644) on success, or returns original rejection
 // Confidence: HIGH
 func (m *Manager) Activate(licenseKey string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	err := m.validateLicenseFormat(licenseKey)
+	claims, err := m.verifyLicense(licenseKey)
 	if err != nil {
-		// Does NOT mutate state or write to disk on rejection
+		// Rejection does NOT mutate in-memory state or disk
 		return err
 	}
 
 	// Persist to license.txt with mode 0644 (0x1a4)
 	if m.filePath != "" {
-		if writeErr := os.WriteFile(m.filePath, []byte(licenseKey), 0644); writeErr != nil {
+		trimmed := strings.TrimSpace(licenseKey)
+		if writeErr := os.WriteFile(m.filePath, []byte(trimmed), 0644); writeErr != nil {
 			fmt.Fprintf(os.Stderr, "[License] 写入本地授权文件失败：%v\n", writeErr)
 		}
 	}
 
-	m.activated = true
-	m.licenseSource = "license-file"
-	m.status = "valid"
-	m.licenseExpired = false
-	m.errorMsg = ""
+	m.applyValidLicense(claims, licenseKey)
 	return nil
 }
 
@@ -207,21 +328,19 @@ func (m *Manager) Activate(licenseKey string) error {
 // VA: 0x735400
 // Size: 2048 bytes
 // Mapping Scope: BEHAVIOR_SLICE
-// Evidence: LICENSE_STATUS_CONTRACT.json, LICENSE_TYPE_EVIDENCE.json
+// Evidence: LICENSE_STATUS_CONTRACT.json, LICENSE_CURRENT_DEVICES_CROSS_CONTRACT.json
 // Purpose: Calculates active entitlement state, remaining days, and returns 13-field response
 // Confidence: HIGH
 func (m *Manager) GetStatus(currentDevices int) types.LicenseStatusResponse {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	// Calculate days remaining based on expiresAt ("2006-01-02")
 	daysRemaining := 0
 	isExpired := m.licenseExpired
 	statusStr := m.status
 
 	if expTime, err := time.Parse("2006-01-02", m.expiresAt); err == nil {
 		now := time.Now()
-		// Midnight comparison
 		expMidnight := time.Date(expTime.Year(), expTime.Month(), expTime.Day(), 23, 59, 59, 0, time.UTC)
 		nowMidnight := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 		diff := expMidnight.Sub(nowMidnight)
@@ -250,4 +369,15 @@ func (m *Manager) GetStatus(currentDevices int) types.LicenseStatusResponse {
 		Promo:               m.promo,
 		Status:              statusStr,
 	}
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_TEST_INTERFACE
+// Original Function Mapping: NONE
+// Purpose: Thread-safe accessor for machine ID used in testing and verification
+// Confidence: HIGH
+func (m *Manager) GetMachineID() string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.machineID
 }

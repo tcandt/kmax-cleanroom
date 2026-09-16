@@ -7,7 +7,7 @@
   ],
   "outbound_http_calls_in_activation_callgraph": 0,
   "external_server_dependencies": [],
-  "remote_activation_success_status": "UNKNOWN_REMOTE_SUCCESS",
+  "remote_activation_success_status": "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS",
   "cleanroom_policy": [
     "Zero synthetic traffic sent to real remote licensing servers",
     "Zero forged license keys or signatures",

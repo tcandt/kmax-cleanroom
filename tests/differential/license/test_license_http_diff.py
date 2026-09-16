@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-test_license_http_diff.py - Phase 2C.3H License & Entitlement REST Differential Verification Suite
+test_license_http_diff.py - Phase 2C.3HR License & Entitlement REST Differential Verification Suite
 
 Executes side-by-side differential tests comparing the canonical original binary oracle
 against the cleanroom reconstructed HTTP signaling server across all license routes:
@@ -10,8 +10,13 @@ against the cleanroom reconstructed HTTP signaling server across all license rou
 
 Strict Invariants:
   - Dynamic denominator: cases calculated from results at runtime.
-  - UNKNOWN_REMOTE_SUCCESS excluded from test pass denominator.
-  - Zero bypass / zero keygen: validates genuine original rejection behavior.
+  - UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS excluded from test pass denominator.
+  - Zero bypass / zero keygen: validates genuine original cryptographic rejection behavior.
+  - Machine ID exact character-for-character parity.
+  - HEAD representation Content-Length parity.
+  - /debug/license 7-verb matrix covered (with and without -debug).
+  - Activation JSON edge matrix (null, arrays, type mismatches).
+  - Startup invalid license.txt file matrix.
 """
 
 import os
@@ -23,6 +28,7 @@ import socket
 import hashlib
 import requests
 import subprocess
+import base64
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -171,7 +177,7 @@ def main():
         h_o_usr = {"Authorization": f"Bearer {tok_o_usr}"}
         h_r_usr = {"Authorization": f"Bearer {tok_r_usr}"}
 
-        print("\n=== Running Phase 2C.3H License & Entitlement Differential Test Cases ===")
+        print("\n=== Running Phase 2C.3HR License & Entitlement Differential Test Cases ===")
 
         def run_test(case_id, desc, orig_fn, recon_fn, validator=None):
             nonlocal test_run_success
@@ -220,17 +226,15 @@ def main():
                     "error": str(e)
                 })
 
-        # Case 01: License Status Baseline Parity (13 fields, built-in promo values)
+        # Base validator for 13-field license status
         def val_01(ro, rr):
             jo = ro.json()
             jr = rr.json()
-            # Assert exact key set parity
             if set(jo.keys()) != set(jr.keys()):
                 return False, f"Key set mismatch: orig={set(jo.keys())}, recon={set(jr.keys())}"
             if len(jo) != 13:
                 return False, f"Expected 13 fields, got {len(jo)}"
             
-            # Compare stable invariant fields
             fields_to_match = ["activated", "current_devices", "customer", "error_msg",
                                "expires_at", "license_expired", "license_source",
                                "max_devices", "post_promo_max_devices", "promo", "status"]
@@ -238,16 +242,21 @@ def main():
                 if jo[f] != jr[f]:
                     return False, f"Field '{f}' mismatch: orig={jo[f]}, recon={jr[f]}"
             
-            # Both should have valid machine_id format (XXXX-XXXX-XXXX-XXXX)
-            if len(jr["machine_id"].split("-")) != 4:
-                return False, f"Invalid reconstructed machine_id format: {jr['machine_id']}"
+            # Exact Machine ID comparison
+            if jo["machine_id"] != jr["machine_id"]:
+                return False, f"Machine ID mismatch: orig={jo['machine_id']}, recon={jr['machine_id']}"
 
-            # Days remaining should match (both calculated relative to expires_at)
+            # Days remaining comparison
             if abs(jo["days_remaining"] - jr["days_remaining"]) > 1:
                 return False, f"Days remaining divergence: orig={jo['days_remaining']}, recon={jr['days_remaining']}"
 
             return True, ""
 
+        # =========================================================================
+        # 1. HISTORICAL TEST CASES (LICENSE-HTTP-01 to LICENSE-HTTP-19)
+        # =========================================================================
+
+        # Case 01: License Status Baseline Parity (13 fields, built-in promo values)
         run_test(
             "LICENSE-HTTP-01",
             "/api/license_status baseline unactivated entitlement parity (13 keys, built-in promo)",
@@ -334,11 +343,13 @@ def main():
 
         # Case 09: HEAD Request Semantics on /api/license_status
         def val_09(ro, rr):
-            return (len(ro.content) == len(rr.content) == 0), f"Body not empty: orig={len(ro.content)}, recon={len(rr.content)}"
+            clen_match = (ro.headers.get("Content-Length") == rr.headers.get("Content-Length"))
+            body_match = (len(ro.content) == len(rr.content) == 0)
+            return (clen_match and body_match), f"HEAD mismatch: clen=({ro.headers.get('Content-Length')},{rr.headers.get('Content-Length')}), body=({len(ro.content)},{len(rr.content)})"
 
         run_test(
             "LICENSE-HTTP-09",
-            "/api/license_status HEAD request parity (200 OK, empty wire body)",
+            "/api/license_status HEAD request parity (200 OK, empty wire body, Content-Length preserved)",
             lambda: requests.head(f"{URL_ORIG}/api/license_status"),
             lambda: requests.head(f"{URL_RECON}/api/license_status"),
             val_09
@@ -446,10 +457,8 @@ def main():
         def val_18(ro, rr):
             jo = ro.json()
             jr = rr.json()
-            # Assert state remained unactivated
             unact = (jo["activated"] is False and jr["activated"] is False)
             source_built = (jo["license_source"] == jr["license_source"] == "built-in")
-            # Assert license.txt was not created on either disk
             lic_txt_o = (DIFF_TMP_ORIG / "license.txt").exists()
             lic_txt_r = (DIFF_TMP_RECON / "license.txt").exists()
             no_file = (not lic_txt_o and not lic_txt_r)
@@ -472,6 +481,223 @@ def main():
             val_15
         )
 
+        # =========================================================================
+        # 2. PHASE 2C.3HR NEW CONTRACT CASES (EXACT PARITY & EDGE SUITES)
+        # =========================================================================
+
+        # Case G: Machine ID Exact Character-for-Character Parity
+        def val_mid(ro, rr):
+            mid_o = ro.json().get("machine_id", "")
+            mid_r = rr.json().get("machine_id", "")
+            match = (mid_o == mid_r == "8AD9-A7EF-87FB-E780")
+            return match, f"Machine ID mismatch: orig={mid_o}, recon={mid_r}, expected=8AD9-A7EF-87FB-E780"
+
+        run_test(
+            "LICENSE-HTTP-MACHINE-ID-EXACT",
+            "/api/license_status exact character-for-character machine_id parity (8AD9-A7EF-87FB-E780)",
+            lambda: requests.get(f"{URL_ORIG}/api/license_status"),
+            lambda: requests.get(f"{URL_RECON}/api/license_status"),
+            val_mid
+        )
+
+        # Case I.1: HEAD /api/license_status exact representation header parity
+        def val_head_status(ro, rr):
+            clen_o = ro.headers.get("Content-Length")
+            clen_r = rr.headers.get("Content-Length")
+            body_len_o = len(ro.content)
+            body_len_r = len(rr.content)
+            match = (clen_o == clen_r == "277") and (body_len_o == body_len_r == 0)
+            return match, f"HEAD /api/license_status header mismatch: clen=({clen_o},{clen_r}), body_len=({body_len_o},{body_len_r})"
+
+        run_test(
+            "LICENSE-HTTP-HEAD-CLEN-STATUS",
+            "/api/license_status HEAD retains Content-Length=277 with zero body bytes",
+            lambda: requests.head(f"{URL_ORIG}/api/license_status"),
+            lambda: requests.head(f"{URL_RECON}/api/license_status"),
+            val_head_status
+        )
+
+        # Case I.2: HEAD /debug/license exact representation header parity
+        def val_head_debug(ro, rr):
+            clen_o = ro.headers.get("Content-Length")
+            clen_r = rr.headers.get("Content-Length")
+            body_len_o = len(ro.content)
+            body_len_r = len(rr.content)
+            match = (clen_o == clen_r == "277") and (body_len_o == body_len_r == 0)
+            return match, f"HEAD /debug/license header mismatch: clen=({clen_o},{clen_r}), body_len=({body_len_o},{body_len_r})"
+
+        run_test(
+            "LICENSE-HTTP-HEAD-CLEN-DEBUG",
+            "/debug/license HEAD retains Content-Length=277 with zero body bytes",
+            lambda: requests.head(f"{URL_ORIG}/debug/license"),
+            lambda: requests.head(f"{URL_RECON}/debug/license"),
+            val_head_debug
+        )
+
+        # Case J.1: /debug/license Permissive Verbs with -debug enabled
+        def val_debug_verb(ro, rr):
+            status_match = (ro.status_code == rr.status_code == 200)
+            cors_absent = (ro.headers.get("Access-Control-Allow-Origin") is None and rr.headers.get("Access-Control-Allow-Origin") is None)
+            clen_match = (ro.headers.get("Content-Length") == rr.headers.get("Content-Length") == "277")
+            data_match = (ro.json() == rr.json())
+            return (status_match and cors_absent and clen_match and data_match), f"Debug verb mismatch: status=({ro.status_code},{rr.status_code}), cors=({ro.headers.get('Access-Control-Allow-Origin')},{rr.headers.get('Access-Control-Allow-Origin')})"
+
+        for v in ["POST", "PUT", "PATCH", "DELETE", "OPTIONS"]:
+            run_test(
+                f"LICENSE-HTTP-DEBUG-VERB-{v}",
+                f"/debug/license permissive verb {v} parity with -debug (200 OK, no CORS, Content-Length: 277)",
+                lambda v=v: requests.request(v, f"{URL_ORIG}/debug/license"),
+                lambda v=v: requests.request(v, f"{URL_RECON}/debug/license"),
+                val_debug_verb
+            )
+
+        # Case J.2: /debug/license 7 Verbs when -debug is disabled (all 404 Not found)
+        def val_debug_nodebug(ro, rr):
+            status_match = (ro.status_code == rr.status_code == 404)
+            ctype_match = (ro.headers.get("Content-Type") == rr.headers.get("Content-Type") == "text/plain; charset=utf-8")
+            body_match = (ro.text == rr.text)
+            return (status_match and ctype_match and body_match), f"404 mismatch: orig=({ro.status_code},{repr(ro.text)}), recon=({rr.status_code},{repr(rr.text)})"
+
+        for v in ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"]:
+            run_test(
+                f"LICENSE-HTTP-DEBUG-NODEBUG-{v}",
+                f"/debug/license verb {v} rejection without -debug flag (404 Not found)",
+                lambda v=v: requests.request(v, f"{URL_ORIG_NODEBUG}/debug/license"),
+                lambda v=v: requests.request(v, f"{URL_RECON_NODEBUG}/debug/license"),
+                val_debug_nodebug
+            )
+
+        # Case K: Activation JSON Edge Cases (10 cases)
+        edge_cases = [
+            ("EDGE-NULL", "null", 400, "application/json", {"error": "授权码格式错误"}),
+            ("EDGE-ARRAY", "[]", 400, "text/plain; charset=utf-8", "Invalid JSON payload\n"),
+            ("EDGE-STRING", '"string"', 400, "text/plain; charset=utf-8", "Invalid JSON payload\n"),
+            ("EDGE-LIC-NULL", '{"license":null}', 400, "application/json", {"error": "授权码格式错误"}),
+            ("EDGE-LIC-INT", '{"license":123}', 400, "text/plain; charset=utf-8", "Invalid JSON payload\n"),
+            ("EDGE-LIC-BOOL", '{"license":false}', 400, "text/plain; charset=utf-8", "Invalid JSON payload\n"),
+            ("EDGE-LIC-ARRAY", '{"license":[]}', 400, "text/plain; charset=utf-8", "Invalid JSON payload\n"),
+            ("EDGE-LIC-OBJ", '{"license":{}}', 400, "text/plain; charset=utf-8", "Invalid JSON payload\n"),
+            ("EDGE-EMPTY-EXTRA", '{"license":"","extra":1}', 400, "application/json", {"error": "授权码格式错误"}),
+            ("EDGE-INVALID-EXTRA", '{"license":"INVALID","extra":1}', 400, "application/json", {"error": "授权码格式错误"})
+        ]
+
+        def make_val_edge(expected_body):
+            def val_edge(ro, rr):
+                if isinstance(expected_body, dict):
+                    return (ro.json() == rr.json() == expected_body), f"Edge JSON mismatch: orig={ro.json()}, recon={rr.json()}"
+                else:
+                    return (ro.text == rr.text == expected_body), f"Edge text mismatch: orig={repr(ro.text)}, recon={repr(rr.text)}"
+            return val_edge
+
+        for eid, payload, exp_code, exp_ctype, exp_body in edge_cases:
+            run_test(
+                f"LICENSE-HTTP-ACT-{eid}",
+                f"/api/activate JSON edge case {eid} payload: {payload}",
+                lambda payload=payload: requests.post(f"{URL_ORIG}/api/activate", data=payload, headers={"Content-Type": "application/json"}),
+                lambda payload=payload: requests.post(f"{URL_RECON}/api/activate", data=payload, headers={"Content-Type": "application/json"}),
+                make_val_edge(exp_body)
+            )
+
+        # Case B: Cryptographic Rejection Error Strings Parity (4 cases)
+        crypto_rejections = [
+            ("CRYPTO-NO-DOT", "INVALIDNODOTKEY", "授权码格式错误"),
+            ("CRYPTO-BAD-BASE64", "!!!notbase64.123456", "非法的 Base64 编码"),
+            ("CRYPTO-BAD-HEX", base64.b64encode(b'{}').decode() + ".not_hex_chars", "数字签名格式无效"),
+            (
+                "CRYPTO-BAD-SIG",
+                base64.b64encode(b'{"machine_id":"8AD9-A7EF-87FB-E780"}').decode() + "." + "00"*64,
+                "授权数字签名校验失败，可能已被篡改"
+            )
+        ]
+
+        def make_val_crypto(expected_err):
+            def val_crypto(ro, rr):
+                jo = ro.json()
+                jr = rr.json()
+                return (jo == jr == {"error": expected_err}), f"Crypto error mismatch: orig={jo}, recon={jr}, want={expected_err}"
+            return val_crypto
+
+        for cid, key, exp_err in crypto_rejections:
+            run_test(
+                f"LICENSE-HTTP-{cid}",
+                f"/api/activate cryptographic pipeline error parity: {exp_err}",
+                lambda key=key: requests.post(f"{URL_ORIG}/api/activate", json={"license": key}),
+                lambda key=key: requests.post(f"{URL_RECON}/api/activate", json={"license": key}),
+                make_val_crypto(exp_err)
+            )
+
+        # Case F: Startup File Matrix Differential Verification (6 cases)
+        startup_cases = [
+            ("STARTUP-01-NO-FILE", None),
+            ("STARTUP-02-EMPTY", ""),
+            ("STARTUP-03-WHITESPACE", "   \n\t  \n"),
+            ("STARTUP-04-INVALID-TEXT", "this-is-not-a-valid-license"),
+            ("STARTUP-05-MALFORMED-B64", "notbase64.123456"),
+            ("STARTUP-06-BAD-SIGNATURE", base64.b64encode(b'{"machine_id":"8AD9-A7EF-87FB-E780"}').decode() + "." + "00"*64)
+        ]
+
+        matrix_path = ROOT / "evidence" / "go_signaling" / "license" / "LICENSE_STARTUP_FILE_MATRIX.json"
+        assert matrix_path.exists(), "LICENSE_STARTUP_FILE_MATRIX.json must exist"
+        sm_data = json.loads(matrix_path.read_text(encoding="utf-8"))["cases"]
+
+        def run_live_startup_recon(content):
+            t_recon = ROOT / "scratch" / "test_startup_recon_tmp"
+            if t_recon.exists():
+                shutil.rmtree(t_recon, ignore_errors=True)
+            t_recon.mkdir(parents=True, exist_ok=True)
+            (t_recon / "users.json").write_text("{}", encoding="utf-8")
+            (t_recon / "device_tags.json").write_text(json.dumps({"tags":[],"deviceTags":{}}), encoding="utf-8")
+            if content is not None:
+                (t_recon / "license.txt").write_text(content, encoding="utf-8")
+            p = get_free_port()
+            proc = subprocess.Popen([str(EXE_RECON), f"-port={p}", f"-data={t_recon}", "-debug"],
+                                    cwd=str(t_recon), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(1.0)
+            try:
+                res = requests.get(f"http://127.0.0.1:{p}/api/license_status")
+            finally:
+                proc.terminate()
+                try:
+                    proc.wait(timeout=2)
+                except:
+                    proc.kill()
+            return res
+
+        class OracleMockResponse:
+            def __init__(self, c):
+                self.status_code = c["license_status_http_code"]
+                self.headers = {"Content-Type": "application/json"}
+                self._c = c
+            def json(self):
+                return {
+                    "license_source": self._c["license_source"],
+                    "status": self._c["status"],
+                    "activated": self._c["activated"],
+                    "error_msg": self._c["error_msg"]
+                }
+
+        for idx, (sid, lic_content) in enumerate(startup_cases):
+            expected_case = sm_data[idx]
+            def val_startup(ro, rr):
+                jo = ro.json()
+                jr = rr.json()
+                match = (
+                    rr.status_code == 200 and
+                    jr.get("license_source") == jo.get("license_source") == "built-in" and
+                    jr.get("status") == jo.get("status") == "valid" and
+                    jr.get("activated") == jo.get("activated") is False and
+                    jr.get("error_msg") == jo.get("error_msg") == ""
+                )
+                return match, f"Startup mismatch: recon={jr}, orig={jo}"
+
+            run_test(
+                f"LICENSE-HTTP-{sid}",
+                f"Startup license.txt handling: {expected_case['name']} falls back to built-in promo",
+                lambda c=expected_case: OracleMockResponse(c),
+                lambda content=lic_content: run_live_startup_recon(content),
+                val_startup
+            )
+
     finally:
         print("\n[*] Shutting down server instances...")
         for s in servers:
@@ -486,7 +712,7 @@ def main():
         "passed": pass_count,
         "failed": total_count - pass_count,
         "all_passed": test_run_success and (pass_count == total_count),
-        "excluded_unknowns": ["UNKNOWN_REMOTE_SUCCESS"],
+        "excluded_unknowns": ["UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS"],
         "results": results
     }
 

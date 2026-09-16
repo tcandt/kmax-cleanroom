@@ -425,6 +425,23 @@ def run_diff_suite():
     print("==================================================")
 
     # ----------------------------------------------------
+    # Generate evidence/go_signaling/persistence/PERSISTENCE_DIFFERENTIAL_RESULTS.json
+    # ----------------------------------------------------
+    pers_res_dir = ROOT / "evidence" / "go_signaling" / "persistence"
+    pers_res_dir.mkdir(parents=True, exist_ok=True)
+    pers_res_file = pers_res_dir / "PERSISTENCE_DIFFERENTIAL_RESULTS.json"
+    pers_data = {
+        "execution_timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "total_cases": len(results),
+        "passed": sum(1 for r in results if r["passed"]),
+        "failed": sum(1 for r in results if not r["passed"]),
+        "all_passed": all_passed,
+        "results": results
+    }
+    pers_res_file.write_text(json.dumps(pers_data, indent=2), encoding="utf-8")
+    print(f"[+] Wrote {pers_res_file}")
+
+    # ----------------------------------------------------
     # Generate reports/06_PHASE2C1_PERSISTENCE.md
     # ----------------------------------------------------
     report_path = ROOT / "reports" / "06_PHASE2C1_PERSISTENCE.md"

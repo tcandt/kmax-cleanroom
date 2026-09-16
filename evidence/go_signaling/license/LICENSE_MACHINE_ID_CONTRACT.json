@@ -1,0 +1,50 @@
+{
+  "contract_name": "LICENSE_MACHINE_ID_CONTRACT",
+  "function_symbol": "main.ZbJsqTIiz3ML",
+  "function_va": "0x732ec0",
+  "size_bytes": 3456,
+  "algorithm_specification": {
+    "step_1_system_uuid": {
+      "candidate_files": [
+        "/sys/class/dmi/id/product_uuid",
+        "/etc/machine-id",
+        "/var/lib/dbus/machine-id"
+      ],
+      "selection_rule": "First accessible, non-empty, trimmed file content",
+      "instruction_evidence": "0x732ed0-0x733020"
+    },
+    "step_2_network_interfaces": {
+      "discovery_call": "net.Interfaces() (0x733075)",
+      "filtering_rules": [
+        "Must NOT have FlagLoopback bit set (flags & 4 == 0)",
+        "Hardware address length must be > 0",
+        "Interface name lowercased must NOT start with any of 13 prefixes: utun, tun, tap, docker, veth, br-, bridge, awdl, llw, p2p, gif, stf, vlan"
+      ],
+      "mac_normalization": "net.HardwareAddr.String() (standard colon-separated lowercase hex)",
+      "ordering": "sort.Strings(macs) (lexicographical sort)",
+      "aggregation": "strings.Join(macs, ',')"
+    },
+    "step_3_cpu_cores": {
+      "format": "fmt.Sprintf('cores:%d', runtime.NumCPU())",
+      "instruction_evidence": "0x733470-0x7334b0"
+    },
+    "step_4_fallback": {
+      "value": "FALLBACK_CLOUDPHONE_ID",
+      "condition": "Triggered if all gathered parts are empty"
+    },
+    "step_5_hashing_and_formatting": {
+      "separator": "|",
+      "hash_function": "crypto/sha256.Sum256",
+      "intermediate_encoding": "fmt.Sprintf('%x', sum) (lowercase hex)",
+      "byte_selection": "First 16 hex characters (hexStr[0:16])",
+      "partition_format": "%s-%s-%s-%s (4 groups of 4 characters)",
+      "casing": "strings.ToUpper"
+    }
+  },
+  "host_parity_verification": {
+    "original_machine_id": "8AD9-A7EF-87FB-E780",
+    "reconstructed_machine_id": "8AD9-A7EF-87FB-E780",
+    "character_for_character_match": true,
+    "confidence": "HIGH"
+  }
+}

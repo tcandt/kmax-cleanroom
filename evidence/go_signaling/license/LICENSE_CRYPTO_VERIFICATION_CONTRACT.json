@@ -1,0 +1,76 @@
+{
+  "contract_name": "LICENSE_CRYPTO_VERIFICATION_CONTRACT",
+  "verification_scope": "LOCAL_OFFLINE_CRYPTOGRAPHIC_VERIFICATION",
+  "unresolved_success_classification": "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS",
+  "pipeline": [
+    {
+      "step": 1,
+      "name": "INPUT_TRIM_AND_SPLIT",
+      "function": "main.PmtRXo",
+      "instruction_evidence": "0x733c62: call strings.TrimSpace, 0x733c80: call strings.Split(s, '.'), 0x733c85: cmp rbx, 2",
+      "condition": "Split by '.' must yield exactly 2 parts",
+      "on_failure_error": "授权码格式错误",
+      "confidence": "HIGH"
+    },
+    {
+      "step": 2,
+      "name": "PAYLOAD_BASE64_DECODE",
+      "function": "main.PmtRXo",
+      "instruction_evidence": "0x733cb8: call base64.StdEncoding.DecodeString",
+      "callee": "wjHLB1mM.(*D3PydMQ).DecodeString (0x52cc60)",
+      "target_input": "parts[0]",
+      "on_failure_error": "非法的 Base64 编码",
+      "confidence": "HIGH"
+    },
+    {
+      "step": 3,
+      "name": "SIGNATURE_HEX_DECODE",
+      "function": "main.PmtRXo",
+      "instruction_evidence": "0x733ceb: call hex.DecodeString, 0x733cf5: cmp rbx, 0x40",
+      "callee": "JB6QiNUPy.FHtoqY9aNjK (0x52d5e0)",
+      "target_input": "parts[1]",
+      "expected_length_bytes": 64,
+      "on_failure_error": "数字签名格式无效",
+      "confidence": "HIGH"
+    },
+    {
+      "step": 4,
+      "name": "ED25519_SIGNATURE_VERIFICATION",
+      "function": "main.PmtRXo",
+      "instruction_evidence": "0x733e20: call ETQ5mBYyCQ.HER71Q, 0x733e25: test rax, rax, 0x733e28: jne error",
+      "callee": "ETQ5mBYyCQ.HER71Q (0x52ae40, crypto/ed25519.VerifyWithOptions)",
+      "public_key_source": "Embedded 32-byte constant deobfuscated via XOR 0x5a (0x733cfc-0x733dd5)",
+      "signed_message": "Raw payload bytes returned by Step 2 base64 decode",
+      "signature": "64 bytes returned by Step 3 hex decode",
+      "on_failure_error": "授权数字签名校验失败，可能已被篡改",
+      "confidence": "HIGH"
+    },
+    {
+      "step": 5,
+      "name": "CLAIMS_JSON_UNMARSHAL",
+      "function": "main.PmtRXo",
+      "instruction_evidence": "0x733e2e: lea rax, [0x7ed2a0] (struct descriptor), 0x733e60: call json.Unmarshal",
+      "callee": "JOaOfPm.OPQrPOkar (0x52db00)",
+      "struct_descriptor_va": "0x7ed2a0",
+      "struct_size_bytes": 56,
+      "fields": [
+        {"name": "FLdrjU", "json_tag": "machine_id", "type": "string", "offset": 0},
+        {"name": "FzadFNPQCB", "json_tag": "max_devices", "type": "int", "offset": 16},
+        {"name": "TF9svpC2ha", "json_tag": "expires_at", "type": "string", "offset": 24},
+        {"name": "M6ofLo6ey", "json_tag": "customer", "type": "string", "offset": 40}
+      ],
+      "on_failure_error": "无效的授权声明内容",
+      "confidence": "HIGH"
+    },
+    {
+      "step": 6,
+      "name": "HARDWARE_MACHINE_ID_BINDING",
+      "function": "main.PmtRXo",
+      "instruction_evidence": "0x733e6e: call main.ZbJsqTIiz3ML, 0x733ea0: call runtime.memequal",
+      "callee": "main.ZbJsqTIiz3ML (0x732ec0)",
+      "condition": "claims.MachineID == hostMachineID",
+      "on_failure_error_format": "机器码不匹配: 授权绑定 %s, 当前系统为 %s",
+      "confidence": "HIGH"
+    }
+  ]
+}

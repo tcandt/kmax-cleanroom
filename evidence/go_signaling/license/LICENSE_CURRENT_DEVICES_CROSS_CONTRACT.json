@@ -1,0 +1,56 @@
+{
+  "contract_name": "LICENSE_CURRENT_DEVICES_CROSS_CONTRACT",
+  "disassembly_evidence": {
+    "caller": "main.J_5lH4w6CU (0x735400) at 0x735a88",
+    "counting_function": "main.fWkBbskiJi (0x749d60)",
+    "registry_iteration": "runtime.mapIterStart (0x749e20), runtime.mapIterNext (0x749e2e)",
+    "entry_struct_descriptor": "main.AoIDVQHamcx at 0x805760 (128 bytes)",
+    "target_field_offset": "0x35 (Field 6: Ihq7ZEVc, bool)",
+    "target_field_semantic": "Device.Online",
+    "counting_instructions": [
+      "0x749e42: mov rdx, qword ptr [rsp + 0x50] (entry pointer)",
+      "0x749e47: mov rdx, qword ptr [rdx]",
+      "0x749e7c: movzx ecx, byte ptr [rdx + 0x35] (load Online bool)",
+      "0x749e80: lea rsi, [rax + 1]",
+      "0x749e90: test rcx, rcx",
+      "0x749e93: cmovne rax, rsi (increment count iff Online == true)"
+    ]
+  },
+  "proven_counting_rule": "ONLINE_DEVICES_ONLY",
+  "state_matrix": [
+    {
+      "scenario": "ZERO_REGISTERED_DEVICES",
+      "registered_total": 0,
+      "online_count": 0,
+      "offline_count": 0,
+      "expected_current_devices": 0
+    },
+    {
+      "scenario": "SINGLE_ONLINE_DEVICE",
+      "registered_total": 1,
+      "online_count": 1,
+      "offline_count": 0,
+      "expected_current_devices": 1
+    },
+    {
+      "scenario": "SINGLE_OFFLINE_DEVICE",
+      "registered_total": 1,
+      "online_count": 0,
+      "offline_count": 1,
+      "expected_current_devices": 0
+    },
+    {
+      "scenario": "MIXED_ONLINE_OFFLINE_DEVICES",
+      "registered_total": 3,
+      "online_count": 2,
+      "offline_count": 1,
+      "expected_current_devices": 2
+    }
+  ],
+  "adapter_implementation": {
+    "package": "cloudphone-signaling/pkg/devices",
+    "method": "(*Registry).GetDeviceCount() int",
+    "parity": "EXACT_SEMANTIC_MATCH"
+  },
+  "confidence": "HIGH"
+}

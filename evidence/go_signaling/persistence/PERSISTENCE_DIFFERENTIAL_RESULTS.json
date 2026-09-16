@@ -1,0 +1,89 @@
+{
+  "execution_timestamp": "2026-09-16T09:49:36Z",
+  "total_cases": 8,
+  "passed": 8,
+  "failed": 0,
+  "all_passed": true,
+  "results": [
+    {
+      "test_id": "TC-DIFF-01",
+      "name": "First-Run Directory Structure",
+      "result_class": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "orig_evidence": "Files/dirs created: {'device_tags.json': 'file', 'downloads': 'dir', 'snapshots': 'dir', 'users.json': 'file'} (shares.json absent)",
+      "recon_evidence": "Files/dirs created: {'device_tags.json': 'file', 'downloads': 'dir', 'snapshots': 'dir', 'users.json': 'file'} (shares.json absent)",
+      "comparison": "Both eagerly create exactly {users.json (file), device_tags.json (file), downloads/ (dir), snapshots/ (dir)} and lazily defer shares.json",
+      "detail": "Structure: {'device_tags.json': 'file', 'downloads': 'dir', 'snapshots': 'dir', 'users.json': 'file'} (shares.json correctly absent in both)"
+    },
+    {
+      "test_id": "TC-DIFF-02",
+      "name": "users.json Admin Schema & Defaults",
+      "result_class": "NORMALIZED_EXACT_MATCH",
+      "passed": true,
+      "orig_evidence": "Admin keys (11): ['assigned_devices', 'expires_at', 'forbid_audio', 'forbid_bitrate', 'forbid_fps', 'forbid_resolution', 'note', 'password', 'role', 'salt', 'username'], role='admin', assigned=['*'], expires='0001-01-01T00:00:00Z'",
+      "recon_evidence": "Admin keys (11): ['assigned_devices', 'expires_at', 'forbid_audio', 'forbid_bitrate', 'forbid_fps', 'forbid_resolution', 'note', 'password', 'role', 'salt', 'username'], role='admin', assigned=['*'], expires='0001-01-01T00:00:00Z'",
+      "comparison": "Normalized exact match on all 11 schema keys, default admin roles, assigned devices wildcard, and timestamps",
+      "detail": "Keys (11): ['assigned_devices', 'expires_at', 'forbid_audio', 'forbid_bitrate', 'forbid_fps', 'forbid_resolution', 'note', 'password', 'role', 'salt', 'username']"
+    },
+    {
+      "test_id": "TC-DIFF-03",
+      "name": "Admin Password Hash Algorithm",
+      "result_class": "NORMALIZED_EXACT_MATCH",
+      "passed": true,
+      "orig_evidence": "pwd=SHA256('admin123' + salt), salt_len=32",
+      "recon_evidence": "pwd=SHA256('admin123' + salt), salt_len=32",
+      "comparison": "Both derive default admin credentials as SHA256('admin123' + salt) with 16-byte cryptographically secure random salt",
+      "detail": "SHA256('admin123'+salt) verified for both (salt lengths: 32/32)"
+    },
+    {
+      "test_id": "TC-DIFF-04",
+      "name": "device_tags.json Schema & Defaults",
+      "result_class": "BIT_EXACT_MATCH",
+      "passed": true,
+      "orig_evidence": "Raw bytes (36B): b'{\\n  \"tags\": [],\\n  \"deviceTags\": {}\\n}'",
+      "recon_evidence": "Raw bytes (36B): b'{\\n  \"tags\": [],\\n  \"deviceTags\": {}\\n}'",
+      "comparison": "Raw read_bytes() is 100% byte-for-byte identical across original and reconstructed first-run payloads",
+      "detail": "Byte-exact match verified (36 bytes): {'tags': [], 'deviceTags': {}}"
+    },
+    {
+      "test_id": "TC-DIFF-05",
+      "name": "Malformed JSON Recovery Semantics",
+      "result_class": "SEMANTIC_MATCH",
+      "passed": true,
+      "orig_evidence": "Original: logged '[Auth] Failed to parse users file' and reset users.json with admin/admin123",
+      "recon_evidence": "Reconstructed: logged '[Auth] Failed to parse users file' and reset users.json with admin/admin123",
+      "comparison": "Both runtimes detect corrupted users.json, catch unmarshal error, log verbatim diagnostic, and rewrite fresh default admin account",
+      "detail": "Both original and reconstructed detect corrupt JSON, emit verbatim log diagnostics, and rewrite default admin account"
+    },
+    {
+      "test_id": "TC-DIFF-06",
+      "name": "Unknown Field Lifecycle Parity",
+      "result_class": "SEMANTIC_MATCH",
+      "passed": true,
+      "orig_evidence": "Original: unknown fields tolerated on load; dropped on /api/admin/users/update_note save; 11 known fields preserved; note updated",
+      "recon_evidence": "Reconstructed: unknown fields tolerated on load; dropped on save-user; 11 known fields preserved; note updated",
+      "comparison": "Both runtimes accept unmodeled fields on read-only load; both drop unmodeled fields upon struct save while preserving all known fields and mutations",
+      "detail": "Full lifecycle verified on BOTH runtimes: load tolerance + save drops unknown + known fields preserved + mutation applied"
+    },
+    {
+      "test_id": "TC-DIFF-07",
+      "name": "POSIX Permission Bits Parity",
+      "result_class": "STATIC_AND_DYNAMIC_PARITY",
+      "passed": true,
+      "orig_evidence": "STATIC_CONFIRMED: disassembly VAs 0x737666 (0600), 0x737f15 (0644), 0x739cd9 (0600)",
+      "recon_evidence": "DYNAMIC_LINUX_CONFIRMED: WSL stat modes: users=600, tags=644, shares=600",
+      "comparison": "Static Linux AMD64 callsite disassembly matched with real Linux WSL stat(2) runtime modes",
+      "detail": "users=0600, device_tags=0644, shares=0600 (WSL verified: {'device_tags.json': '644', 'downloads': '755', 'shares.json': '600', 'snapshots': '755', 'users.json': '600'})"
+    },
+    {
+      "test_id": "TC-DIFF-08",
+      "name": "Atomic Save Rename Semantics",
+      "result_class": "STATIC_AND_DYNAMIC_PARITY",
+      "passed": true,
+      "orig_evidence": "STATIC_CONFIRMED: disassembly VA 0x739cb5 ('%s.tmp') -> 0x739cd9 (os.WriteFile) -> 0x739e12 (os.Rename)",
+      "recon_evidence": "RUNTIME_AND_SOURCE_CONFIRMED: shares.json written, .tmp cleaned (True), verified AST tmpPath+os.Rename",
+      "comparison": "Both write temporary file with .tmp suffix before atomic swap to final path via os.Rename",
+      "detail": "shares.json written atomically via .tmp temp file and os.Rename; .tmp cleaned up"
+    }
+  ]
+}

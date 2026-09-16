@@ -1,0 +1,69 @@
+{
+  "contract_name": "LICENSE_PUBLIC_VERIFIER_EVIDENCE",
+  "policy": {
+    "zero_keygen": true,
+    "zero_private_key_recovery": true,
+    "zero_signature_forgery": true,
+    "zero_validation_bypass": true,
+    "classification": "PUBLIC_KEY_EVIDENCE_ONLY"
+  },
+  "cryptographic_algorithm": "Ed25519",
+  "standard_reference": "RFC 8032 / Edwards-curve Digital Signature Algorithm (Ed25519)",
+  "key_parameters": {
+    "key_type": "ed25519.PublicKey",
+    "key_length_bytes": 32,
+    "signature_length_bytes": 64,
+    "hex_encoded_key": "7317bed38cc0d96bd5ff35c48fc57822083757823ebac181e4ad0b08e460e820",
+    "base64_encoded_key": "cxe+04zA2WvV/zXEj8V4Igg3V4I+usGB5K0LCORg6CA=",
+    "sha256_fingerprint": "4ec41f373e3d920fb155df761a8cd47b453659a8aeba799f46818ac3575dd91c"
+  },
+  "binary_location": {
+    "function_symbol": "main.PmtRXo",
+    "function_va": "0x733c40",
+    "embedded_instructions_va_range": "0x733cfc-0x733d38",
+    "obfuscation_type": "BYTEWISE_XOR_CONST",
+    "xor_key_byte": "0x5a",
+    "deobfuscation_loop_va_range": "0x733dbf-0x733dd5",
+    "raw_embedded_qwords": [
+      "0x31839ad689e44d29",
+      "0x78229fd59e6fa58f",
+      "0xdb9be064d80d6d52",
+      "0x7ab23abe5251f7be"
+    ]
+  },
+  "verification_callee": {
+    "symbol": "ETQ5mBYyCQ.HER71Q",
+    "va": "0x52ae40",
+    "standard_mapping": "crypto/ed25519.VerifyWithOptions",
+    "sub_callees": [
+      "crypto/ed25519/internal/edwards25519 (kh_3A_Ia.*)"
+    ]
+  },
+  "xref_call_chain": [
+    {
+      "step": 1,
+      "symbol": "main.jcraNgV8Jg",
+      "role": "HTTP Activation Handler (/api/activate)",
+      "va": "0x74b6c0"
+    },
+    {
+      "step": 2,
+      "symbol": "main.ODSX7KW",
+      "role": "License Activation State Manager & File Persister",
+      "va": "0x7347a0"
+    },
+    {
+      "step": 3,
+      "symbol": "main.PmtRXo",
+      "role": "License Format & Cryptographic Signature Verifier",
+      "va": "0x733c40"
+    },
+    {
+      "step": 4,
+      "symbol": "ETQ5mBYyCQ.HER71Q",
+      "role": "Ed25519 Signature Verification",
+      "va": "0x52ae40"
+    }
+  ],
+  "confidence": "HIGH"
+}

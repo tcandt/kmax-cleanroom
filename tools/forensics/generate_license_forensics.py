@@ -182,18 +182,105 @@ def generate_license_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
     act_str_off, = struct.unpack('<i', elf_bytes[act_off+40:act_off+44])
     act_type_name, _ = parse_go_name(elf_bytes, sections, sections['.rodata']['addr'] + act_str_off)
 
-    # B. Discover Global Metadata Variables in .data from main.LvbcDRl_uhc4 and main.J_5lH4w6CU
-    def read_elf_str(data_va, len_va):
-        off_d = va_to_offset(data_va, sections)
-        off_l = va_to_offset(len_va, sections)
-        ptr, = struct.unpack('<Q', elf_bytes[off_d:off_d+8])
-        l, = struct.unpack('<Q', elf_bytes[off_l:off_l+8])
-        off_s = va_to_offset(ptr, sections)
-        return elf_bytes[off_s:off_s+l].decode('utf-8', errors='ignore')
+    # B. Discover Status Helper and Global Metadata Variables from binary dataflow
+    fmap_by_va = {int(f["va"], 16): f["symbol_name"] for f in fm_list}
 
-    # Globals at 0xbeed90 and 0xbeeda0
-    initial_expires_at = read_elf_str(0xbeed90, 0xbeed98)
-    license_file_name = read_elf_str(0xbeeda0, 0xbeeda8)
+    # Derive common status helper from /api/license_status and /debug/license callees
+    stat_entry = next(r for r in route_family["routes"] if r["pattern"] == "/api/license_status")
+    dbg_entry = next(r for r in route_family["routes"] if r["pattern"] == "/debug/license")
+    stat_callees = set(stat_entry.get("callees", []))
+    dbg_callees = set(dbg_entry.get("callees", []))
+    common_status_helpers = [c for c in (stat_callees & dbg_callees) if c.startswith("main.")]
+    assert len(common_status_helpers) > 0, "Could not discover common status helper"
+    status_helper_sym = common_status_helpers[0]
+    sh_meta = fm_by_sym[status_helper_sym]
+    sh_va = int(sh_meta["va"], 16)
+    sh_code_off = va_to_offset(sh_va, sections)
+    sh_code = elf_bytes[sh_code_off:sh_code_off+sh_meta["size_bytes"]]
+
+    derived_map_descriptor = None
+    derived_map_size = 0
+    derived_expiry_va = None
+
+    def read_elf_str_at_ptr(ptr_va):
+        off = va_to_offset(ptr_va, sections)
+        if off is None or off + 16 > len(elf_bytes):
+            return ""
+        str_ptr, str_len = struct.unpack("<QQ", elf_bytes[off:off+16])
+        if str_len > 1024 or str_len <= 0:
+            return ""
+        s_off = va_to_offset(str_ptr, sections)
+        if s_off is None or s_off + str_len > len(elf_bytes):
+            return ""
+        return elf_bytes[s_off:s_off+str_len].decode("utf-8", errors="ignore")
+
+    sh_insns = list(md.disasm(sh_code, sh_va))
+    for idx, i in enumerate(sh_insns):
+        target = int(i.op_str, 16) if i.op_str.startswith("0x") else 0
+        sym = fmap_by_va.get(target, "")
+        if "makemap" in sym:
+            for k in range(idx-1, max(0, idx-5), -1):
+                if sh_insns[k].mnemonic == "lea" and "rax" in sh_insns[k].op_str:
+                    for op in sh_insns[k].operands:
+                        if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
+                            derived_map_descriptor = sh_insns[k].address + sh_insns[k].size + op.mem.disp
+                if sh_insns[k].mnemonic == "mov" and "ebx" in sh_insns[k].op_str:
+                    derived_map_size = int(sh_insns[k].op_str.split(",")[-1].strip(), 16)
+        if "Wc1aPNtYX0T" in sym or "time.Parse" in sym or "Year" in sym:
+            for k in range(idx-1, max(0, idx-8), -1):
+                if "rip" in sh_insns[k].op_str and ("rcx" in sh_insns[k].op_str or "rax" in sh_insns[k].op_str):
+                    for op in sh_insns[k].operands:
+                        if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
+                            t = sh_insns[k].address + sh_insns[k].size + op.mem.disp
+                            s = read_elf_str_at_ptr(t)
+                            if len(s) == 10 and "-" in s:
+                                derived_expiry_va = t
+                                initial_expires_at = s
+                                break
+
+    # Derive persistence filename global from main.ODSX7KW
+    act_callees = [c for c in act_meta.get("callees", []) if c.startswith("main.")]
+    ods_sym = act_callees[0]
+    ods_meta = fm_by_sym[ods_sym]
+    ods_va = int(ods_meta["va"], 16)
+    ods_code_off = va_to_offset(ods_va, sections)
+    ods_code = elf_bytes[ods_code_off:ods_code_off+ods_meta["size_bytes"]]
+
+    derived_filename_va = None
+    ods_insns = list(md.disasm(ods_code, ods_va))
+    for idx, i in enumerate(ods_insns):
+        target = int(i.op_str, 16) if i.op_str.startswith("0x") else 0
+        sym = fmap_by_va.get(target, "")
+        if "ZkONNWV" in sym or "WriteFile" in sym:
+            for k in range(idx-1, max(0, idx-10), -1):
+                if ods_insns[k].mnemonic == "mov" and "rdx" in ods_insns[k].op_str and "rip" in ods_insns[k].op_str:
+                    for op in ods_insns[k].operands:
+                        if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
+                            derived_filename_va = ods_insns[k].address + ods_insns[k].size + op.mem.disp
+                            license_file_name = read_elf_str_at_ptr(derived_filename_va)
+                            break
+
+    # Derive Ed25519 public key from main.PmtRXo
+    pmt_callees = [c for c in ods_meta.get("callees", []) if c.startswith("main.")]
+    pmt_sym = pmt_callees[0]
+    pmt_meta = fm_by_sym[pmt_sym]
+    pmt_va = int(pmt_meta["va"], 16)
+    pmt_code_off = va_to_offset(pmt_va, sections)
+    pmt_code = elf_bytes[pmt_code_off:pmt_code_off+pmt_meta["size_bytes"]]
+
+    qwords = []
+    xor_key = 0x5a
+    for i in md.disasm(pmt_code, pmt_va):
+        if i.mnemonic == "movabs" and "rdx" in i.op_str:
+            val = int(i.op_str.split(",")[-1].strip(), 16)
+            qwords.append(val)
+        if i.mnemonic == "xor" and "0x" in i.op_str:
+            xor_key = int(i.op_str.split(",")[-1].strip(), 16)
+
+    raw_key_bytes = bytearray()
+    for q in qwords:
+        raw_key_bytes.extend(struct.pack("<Q", q))
+    derived_public_key_bytes = bytes([b ^ xor_key for b in raw_key_bytes])
 
     type_evidence = {
         "classification": "DIRECT_TYPE_AND_GLOBAL_RECOVERY",
@@ -201,13 +288,14 @@ def generate_license_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
             "activate_handler_symbol": act_meta["handler_symbol"],
             "activate_handler_va": hex(act_va_int),
             "status_handler_symbol": "main.xdGI1n",
-            "status_helper_symbol": "main.J_5lH4w6CU"
+            "status_helper_symbol": status_helper_sym
         },
         "machine_derivation": {
             "activation_struct_source": f"disasm({act_meta['handler_symbol']}) -> KindStruct LEA operand ({hex(derived_act_struct_va)})",
-            "status_response_source": "disasm(main.J_5lH4w6CU) -> KindMap (0x7bf940) runtime map construction with 13 keys",
-            "persistence_file_source": f".data RIP global load ({hex(0xbeeda0)}) -> '{license_file_name}'",
-            "initial_expires_at_source": f".data RIP global load ({hex(0xbeed90)}) -> '{initial_expires_at}'"
+            "status_response_source": f"disasm({status_helper_sym}) -> KindMap ({hex(derived_map_descriptor)}) runtime map construction with {derived_map_size} keys",
+            "persistence_file_source": f".data RIP global load ({hex(derived_filename_va)}) -> '{license_file_name}'",
+            "initial_expires_at_source": f".data RIP global load ({hex(derived_expiry_va)}) -> '{initial_expires_at}'",
+            "public_key_source": f"disasm({pmt_sym}) -> 4 movabs XOR 0x{xor_key:02x} -> {derived_public_key_bytes.hex()}"
         },
         "activation_payload_struct": {
             "descriptor_va": hex(derived_act_struct_va),
@@ -229,9 +317,9 @@ def generate_license_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
         },
         "status_response_descriptor": {
             "runtime_type": "map[string]interface{}",
-            "descriptor_va": "0x7bf940",
-            "allocated_size": 13,
-            "keys_count": 13
+            "descriptor_va": hex(derived_map_descriptor),
+            "allocated_size": derived_map_size,
+            "keys_count": derived_map_size
         },
         "error_response_descriptor": {
             "runtime_type": "map[string]string",
@@ -417,7 +505,7 @@ def generate_license_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
                 }
             },
             "success_rule": {
-                "condition": "Cryptographically valid digital signature matching machine ID (UNKNOWN_REMOTE_SUCCESS)",
+                "condition": "Cryptographically valid digital signature matching machine ID (UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS)",
                 "status_code": 200,
                 "content_type": "application/json",
                 "body": "{\"status\":\"success\",\"message\":\"激活码更新成功\"}\n"
@@ -454,7 +542,7 @@ def generate_license_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
             ],
             "outbound_http_calls_in_activation_callgraph": 0,
             "external_server_dependencies": [],
-            "remote_activation_success_status": "UNKNOWN_REMOTE_SUCCESS",
+            "remote_activation_success_status": "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS",
             "cleanroom_policy": [
                 "Zero synthetic traffic sent to real remote licensing servers",
                 "Zero forged license keys or signatures",
