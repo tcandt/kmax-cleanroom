@@ -9,6 +9,7 @@
   "machine_derivation": {
     "activation_struct_source": "disasm(main.jcraNgV8Jg) -> KindStruct LEA operand (0x7bd580)",
     "status_response_source": "disasm(main.J_5lH4w6CU) -> KindMap (0x7bf940) runtime map construction with 13 keys",
+    "map_string_string_descriptor_source": "disasm(main.jcraNgV8Jg) -> KindMap LEA operand (0x7c0340)",
     "persistence_file_source": ".data RIP global load (0xbeeda0) -> 'license.txt'",
     "initial_expires_at_source": ".data RIP global load (0xbeed90) -> '2026-11-01'",
     "public_key_source": "disasm(main.PmtRXo) -> 4 movabs XOR 0x5a -> 7317bed38cc0d96bd5ff35c48fc57822083757823ebac181e4ad0b08e460e820"
@@ -58,5 +59,19 @@
     "initial_promo": true,
     "default_max_devices": 20,
     "default_post_promo_max_devices": 10
+  },
+  "binary_static_recovered": {
+    "license_filename": "license.txt",
+    "license_filename_va": "0xbeeda0",
+    "initial_expires_at": "2026-11-01",
+    "initial_expires_at_va": "0xbeed90",
+    "default_max_devices": 20,
+    "default_post_promo_max_devices": 10
+  },
+  "dynamic_oracle_observed": {
+    "initial_license_source": "built-in",
+    "initial_status": "valid",
+    "initial_promo": true,
+    "evidence_endpoint": "/api/license_status (GET baseline)"
   }
 }

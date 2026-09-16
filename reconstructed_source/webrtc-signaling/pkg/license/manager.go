@@ -13,6 +13,7 @@
 package license
 
 import (
+	"crypto"
 	"crypto/ed25519"
 	"crypto/sha256"
 	"encoding/base64"
@@ -43,12 +44,12 @@ var embeddedPublicKey = ed25519.PublicKey([]byte{
 })
 
 // licenseClaims represents the JSON payload structure embedded in the base64 part of the license token.
-// Type descriptor recovered from VA 0x7ed2a0 (56 bytes, 4 fields).
+// Statically recovered from main.PmtRXo unmarshaling target descriptor 0x7ed2a0 (size 56 bytes).
 type licenseClaims struct {
-	MachineID  string `json:"machine_id"`
-	MaxDevices int    `json:"max_devices"`
-	ExpiresAt  string `json:"expires_at"`
-	Customer   string `json:"customer"`
+	MachineID  string `json:"machine_id"` // offset 0 (16B) - FLdrjU
+	MaxDevices int    `json:"max_devices"`// offset 16 (8B) - FzadFNPQCB
+	ExpiresAt  string `json:"expires_at"` // offset 24 (16B) - TF9svpC2ha
+	Customer   string `json:"customer"`   // offset 40 (16B) - M6ofLo6ey
 }
 
 // Manager manages license state, built-in promotional entitlements,
@@ -68,6 +69,7 @@ type Manager struct {
 	postPromoMaxDevices int
 	promo               bool
 	status              string
+	rawLicenseKey       string // Recovered from global at 0xc06f78 (main.ODSX7KW)
 }
 
 // CLEANROOM-PROVENANCE:
@@ -97,70 +99,70 @@ func NewManager(dataDir string) *Manager {
 	return mgr
 }
 
+// InterfaceInfo captures network interface metadata required for hardware fingerprinting.
+type InterfaceInfo struct {
+	Name         string
+	HardwareAddr string
+	Flags        net.Flags
+}
+
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
 // Binary Symbol: main.ZbJsqTIiz3ML
 // VA: 0x732ec0
-// Size: 3456 bytes
-// Mapping Scope: BEHAVIOR_SLICE
 // Evidence: LICENSE_MACHINE_ID_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
-// Purpose: Computes deterministic hardware machine fingerprint formatted as XXXX-XXXX-XXXX-XXXX
+// Purpose: Filters out loopback, empty MACs, and virtual/tunnel interfaces, then sorts ascending
 // Confidence: HIGH
-func (m *Manager) generateMachineID() string {
-	var parts []string
-
-	// 1. UUID / Machine ID files (product_uuid, machine-id, dbus machine-id)
-	for _, p := range []string{"/sys/class/dmi/id/product_uuid", "/etc/machine-id", "/var/lib/dbus/machine-id"} {
-		data, err := os.ReadFile(p)
-		if err == nil {
-			s := strings.TrimSpace(string(data))
-			if s != "" {
-				parts = append(parts, s)
+func filterAndSortMACs(ifaces []InterfaceInfo) []string {
+	var macs []string
+	ignored := []string{
+		"utun", "tun", "tap", "docker", "veth",
+		"br-", "bridge", "awdl", "llw", "p2p",
+		"gif", "stf", "vlan",
+	}
+	for _, iface := range ifaces {
+		if iface.Flags&net.FlagLoopback != 0 {
+			continue
+		}
+		mac := iface.HardwareAddr
+		if mac == "" {
+			continue
+		}
+		lowerName := strings.ToLower(iface.Name)
+		skip := false
+		for _, ig := range ignored {
+			if strings.HasPrefix(lowerName, ig) {
+				skip = true
 				break
 			}
 		}
+		if skip {
+			continue
+		}
+		macs = append(macs, mac)
 	}
+	sort.Strings(macs)
+	return macs
+}
 
-	// 2. Network interfaces
-	ifaces, err := net.Interfaces()
-	if err == nil {
-		var macs []string
-		ignored := []string{
-			"utun", "tun", "tap", "docker", "veth",
-			"br-", "bridge", "awdl", "llw", "p2p",
-			"gif", "stf", "vlan",
-		}
-		for _, iface := range ifaces {
-			// Skip loopback (bit 2 of flags: FlagLoopback = 4)
-			if iface.Flags&net.FlagLoopback != 0 {
-				continue
-			}
-			mac := iface.HardwareAddr.String()
-			if mac == "" {
-				continue
-			}
-			lowerName := strings.ToLower(iface.Name)
-			skip := false
-			for _, ig := range ignored {
-				if strings.HasPrefix(lowerName, ig) {
-					skip = true
-					break
-				}
-			}
-			if skip {
-				continue
-			}
-			macs = append(macs, mac)
-		}
-		sort.Strings(macs)
-		if len(macs) > 0 {
-			parts = append(parts, strings.Join(macs, ","))
-		}
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.ZbJsqTIiz3ML
+// VA: 0x732ec0
+// Evidence: LICENSE_MACHINE_ID_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
+// Purpose: Deterministically combines UUID/machine-id, filtered MAC list, and CPU cores into XXXX-XXXX-XXXX-XXXX
+// Confidence: HIGH
+func deriveMachineIDFromParts(uuid string, macs []string, numCPU int) string {
+	var parts []string
+	if uuid != "" {
+		parts = append(parts, uuid)
 	}
-
-	// 3. Cores
-	parts = append(parts, fmt.Sprintf("cores:%d", runtime.NumCPU()))
-
+	if len(macs) > 0 {
+		parts = append(parts, strings.Join(macs, ","))
+	}
+	if numCPU > 0 {
+		parts = append(parts, fmt.Sprintf("cores:%d", numCPU))
+	}
 	if len(parts) == 0 {
 		parts = append(parts, "FALLBACK_CLOUDPHONE_ID")
 	}
@@ -171,6 +173,48 @@ func (m *Manager) generateMachineID() string {
 
 	res := fmt.Sprintf("%s-%s-%s-%s", hexStr[0:4], hexStr[4:8], hexStr[8:12], hexStr[12:16])
 	return strings.ToUpper(res)
+}
+
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BINARY
+// Binary Symbol: main.ZbJsqTIiz3ML
+// VA: 0x732ec0
+// Size: 3456 bytes
+// Mapping Scope: BEHAVIOR_SLICE
+// Evidence: LICENSE_MACHINE_ID_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
+// Purpose: Computes deterministic hardware machine fingerprint formatted as XXXX-XXXX-XXXX-XXXX
+// Confidence: HIGH
+func (m *Manager) generateMachineID() string {
+	var uuid string
+
+	// 1. UUID / Machine ID files (product_uuid, machine-id, dbus machine-id)
+	for _, p := range []string{"/sys/class/dmi/id/product_uuid", "/etc/machine-id", "/var/lib/dbus/machine-id"} {
+		data, err := os.ReadFile(p)
+		if err == nil {
+			s := strings.TrimSpace(string(data))
+			if s != "" {
+				uuid = s
+				break
+			}
+		}
+	}
+
+	// 2. Network interfaces
+	var ifaceInfos []InterfaceInfo
+	ifaces, err := net.Interfaces()
+	if err == nil {
+		for _, iface := range ifaces {
+			ifaceInfos = append(ifaceInfos, InterfaceInfo{
+				Name:         iface.Name,
+				HardwareAddr: iface.HardwareAddr.String(),
+				Flags:        iface.Flags,
+			})
+		}
+	}
+	macs := filterAndSortMACs(ifaceInfos)
+
+	// 3. Cores & formatting
+	return deriveMachineIDFromParts(uuid, macs, runtime.NumCPU())
 }
 
 // CLEANROOM-PROVENANCE:
@@ -240,8 +284,13 @@ func (m *Manager) verifyLicense(key string) (*licenseClaims, error) {
 		return nil, errors.New("数字签名格式无效")
 	}
 
-	// Verify cryptographic signature against embedded public key
-	if !ed25519.Verify(embeddedPublicKey, payloadBytes, sigBytes) {
+	// Verify cryptographic signature against embedded public key using exact options
+	// Statically proven from main.PmtRXo (0x733dd7-0x733df4): Options struct has Hash = 0, Context = ""
+	opts := &ed25519.Options{
+		Hash:    crypto.Hash(0),
+		Context: "",
+	}
+	if err := ed25519.VerifyWithOptions(embeddedPublicKey, payloadBytes, sigBytes, opts); err != nil {
 		return nil, errors.New("授权数字签名校验失败，可能已被篡改")
 	}
 
@@ -261,8 +310,8 @@ func (m *Manager) verifyLicense(key string) (*licenseClaims, error) {
 // Classification: RECONSTRUCTED_FROM_BINARY
 // Binary Symbol: main.ODSX7KW
 // VA: 0x7347a0
-// Evidence: LICENSE_PERSISTENCE_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json
-// Purpose: Updates manager state upon successful cryptographic verification
+// Evidence: LICENSE_PERSISTENCE_CONTRACT.json, LICENSE_VALIDATION_FUNCTION_SLICES.json, LICENSE_SUCCESS_PATH_STATIC_CONTRACT.json
+// Purpose: Updates manager state upon successful cryptographic verification, preserving raw key at global 0xc06f78
 // Confidence: HIGH
 func (m *Manager) applyValidLicense(claims *licenseClaims, rawKey string) {
 	m.activated = true
@@ -270,6 +319,7 @@ func (m *Manager) applyValidLicense(claims *licenseClaims, rawKey string) {
 	m.expiresAt = claims.ExpiresAt
 	m.maxDevices = claims.MaxDevices
 	m.licenseSource = "license-file"
+	m.rawLicenseKey = strings.TrimSpace(rawKey)
 	m.errorMsg = ""
 
 	// Evaluate expiration
@@ -298,17 +348,17 @@ func (m *Manager) applyValidLicense(claims *licenseClaims, rawKey string) {
 // Size: 960 bytes
 // Mapping Scope: BEHAVIOR_SLICE
 // Evidence: LICENSE_SUCCESS_PATH_STATIC_CONTRACT.json, LICENSE_ACTIVATION_REJECTION_CONTRACT.json
-// Purpose: Validates incoming license key, persists to license.txt (mode 0644) on success, or returns original rejection
+// Purpose: Validates incoming license key cryptographically before acquiring mutex, persists to license.txt (mode 0644) on success, or returns original rejection
 // Confidence: HIGH
 func (m *Manager) Activate(licenseKey string) error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
 	claims, err := m.verifyLicense(licenseKey)
 	if err != nil {
-		// Rejection does NOT mutate in-memory state or disk
+		// Rejection does NOT mutate in-memory state or disk, and does not block concurrent readers
 		return err
 	}
+
+	m.mu.Lock()
+	defer m.mu.Unlock()
 
 	// Persist to license.txt with mode 0644 (0x1a4)
 	if m.filePath != "" {

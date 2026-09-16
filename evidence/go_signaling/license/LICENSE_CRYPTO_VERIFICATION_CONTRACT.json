@@ -39,6 +39,21 @@
       "function": "main.PmtRXo",
       "instruction_evidence": "0x733e20: call ETQ5mBYyCQ.HER71Q, 0x733e25: test rax, rax, 0x733e28: jne error",
       "callee": "ETQ5mBYyCQ.HER71Q (0x52ae40, crypto/ed25519.VerifyWithOptions)",
+      "options_equivalence": {
+        "status": "PURE_ED25519_EQUIVALENT",
+        "options_struct_size_bytes": 24,
+        "hash_offset_0_bytes": 8,
+        "hash_value": 0,
+        "context_offset_8_bytes": 16,
+        "context_value": "",
+        "disassembly_evidence": [
+          "0x733dd7: movups xmmword ptr [rsp + 0xb0], xmm15 (zeros 16 bytes for Context string)",
+          "0x733de0: mov qword ptr [rsp + 0xa8], 0 (zeros 8 bytes for Hash crypto.Hash(0))",
+          "0x733dec: lea rdx, [rsp + 0xa8] (pointer to &Options{Hash: 0, Context: ''})",
+          "0x733df4: mov qword ptr [rsp], rdx (passes options pointer as argument)"
+        ],
+        "proof": "RFC 8032 pure Ed25519 verification without pre-hash (Hash=0) and without context (Context=''), exactly matched by ed25519.VerifyWithOptions in cleanroom manager.go"
+      },
       "public_key_source": "Embedded 32-byte constant deobfuscated via XOR 0x5a (0x733cfc-0x733dd5)",
       "signed_message": "Raw payload bytes returned by Step 2 base64 decode",
       "signature": "64 bytes returned by Step 3 hex decode",

@@ -1,5 +1,5 @@
 {
-  "execution_timestamp": "2026-09-16T09:51:10.070990+00:00",
+  "execution_timestamp": "2026-09-16T10:39:45.982418+00:00",
   "total_cases": 61,
   "passed": 61,
   "failed": 0,
@@ -270,7 +270,7 @@
     },
     {
       "case_id": "LICENSE-HTTP-MACHINE-ID-EXACT",
-      "description": "/api/license_status exact character-for-character machine_id parity (8AD9-A7EF-87FB-E780)",
+      "description": "/api/license_status exact same-host character-for-character machine_id parity",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
@@ -280,7 +280,7 @@
     },
     {
       "case_id": "LICENSE-HTTP-HEAD-CLEN-STATUS",
-      "description": "/api/license_status HEAD retains Content-Length=277 with zero body bytes",
+      "description": "/api/license_status HEAD retains Content-Length matching GET body with zero wire body bytes",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
@@ -290,7 +290,7 @@
     },
     {
       "case_id": "LICENSE-HTTP-HEAD-CLEN-DEBUG",
-      "description": "/debug/license HEAD retains Content-Length=277 with zero body bytes",
+      "description": "/debug/license HEAD retains Content-Length matching GET body with zero wire body bytes",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,

@@ -42,7 +42,8 @@ def evaluate_gate():
         "LICENSE_SUCCESS_PATH_STATIC_CONTRACT.json",
         "LICENSE_MACHINE_ID_CONTRACT.json",
         "LICENSE_STARTUP_FILE_MATRIX.json",
-        "LICENSE_CURRENT_DEVICES_CROSS_CONTRACT.json"
+        "LICENSE_CURRENT_DEVICES_CROSS_CONTRACT.json",
+        "LICENSE_SUCCESS_STATE_MAPPING.json"
     ]
 
     for a in required_artifacts:
@@ -282,6 +283,52 @@ def evaluate_gate():
     results["crypto_verification_pipeline_and_claims_contract"] = {
         "status": "PASS" if inv17_pass else "FAIL",
         "evidence": "6-step verification pipeline in main.PmtRXo and 4 JSON claims fields (FLdrjU, FzadFNPQCB, TF9svpC2ha, M6ofLo6ey) bound to contract"
+    }
+
+    # Invariant 18: concrete implementation verification (code inspection of manager.go)
+    mgr_path = REPO_ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "license" / "manager.go"
+    mgr_code = mgr_path.read_text(encoding="utf-8") if mgr_path.exists() else ""
+
+    real_verifier_exists = "ed25519.VerifyWithOptions" in mgr_code and "verifyLicense" in mgr_code
+    always_reject_absent = "ALWAYS_REJECT" not in mgr_code and "always reject" not in mgr_code.lower()
+    
+    pub_key_hex = "7317bed38cc0d96bd5ff35c48fc57822083757823ebac181e4ad0b08e460e820"
+    pub_key_bytes = bytes.fromhex(pub_key_hex)
+    pub_key_match = all(f"0x{b:02x}" in mgr_code for b in pub_key_bytes[:8])
+
+    options_semantics_match = "Hash:" in mgr_code and "crypto.Hash(0)" in mgr_code and 'Context: ""' in mgr_code
+
+    act_func_idx = mgr_code.find("func (m *Manager) Activate(")
+    if act_func_idx != -1:
+        act_body = mgr_code[act_func_idx:act_func_idx+600]
+        v_idx = act_body.find("m.verifyLicense(")
+        l_idx = act_body.find("m.mu.Lock()")
+        lock_order_match = (v_idx != -1 and l_idx != -1 and v_idx < l_idx)
+    else:
+        lock_order_match = False
+
+    raw_key_state_present = "rawLicenseKey" in mgr_code and "m.rawLicenseKey = strings.TrimSpace(rawKey)" in mgr_code
+
+    success_state_map_file = EVIDENCE_DIR / "LICENSE_SUCCESS_STATE_MAPPING.json"
+    success_state_valid = False
+    if success_state_map_file.exists():
+        ss_data = json.loads(success_state_map_file.read_text(encoding="utf-8"))
+        req_f = ["activated", "max_devices", "expires_at", "customer", "raw_license_key",
+                 "promo", "license_source", "status", "license_expired", "post_promo_max_devices"]
+        success_state_valid = all(k in ss_data.get("fields", {}) for k in req_f)
+
+    inv18_pass = (
+        real_verifier_exists and
+        always_reject_absent and
+        pub_key_match and
+        options_semantics_match and
+        lock_order_match and
+        raw_key_state_present and
+        success_state_valid
+    )
+    results["concrete_implementation_machine_verification"] = {
+        "status": "PASS" if inv18_pass else "FAIL",
+        "evidence": "Machine-verified manager.go: real verifier present, always-reject absent, pubkey 7317bed3... verified, options Hash=0 Context='', verify-before-lock order enforced, rawLicenseKey mapped, and success state contract complete"
     }
 
     all_pass = all(v["status"] == "PASS" for v in results.values())

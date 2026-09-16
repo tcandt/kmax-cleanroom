@@ -3,12 +3,52 @@ package license
 import (
 	"encoding/base64"
 	"encoding/hex"
+	"net"
 	"os"
 	"path/filepath"
+	"regexp"
+	"sync"
 	"testing"
 )
 
-func TestMachineIDExact(t *testing.T) {
+func TestDeriveMachineIDControlled(t *testing.T) {
+	// Controlled inputs verifying interface filtering, MAC sorting, UUID selection, and formatting
+	ifaces := []InterfaceInfo{
+		{Name: "lo", HardwareAddr: "00:00:00:00:00:00", Flags: net.FlagLoopback},
+		{Name: "docker0", HardwareAddr: "02:42:1a:2b:3c:4d", Flags: net.FlagUp},
+		{Name: "tun0", HardwareAddr: "00:11:22:33:44:55", Flags: net.FlagUp},
+		{Name: "eth1", HardwareAddr: "52:54:00:12:34:56", Flags: net.FlagUp},
+		{Name: "eth0", HardwareAddr: "00:11:22:33:44:55", Flags: net.FlagUp},
+		{Name: "veth_xyz", HardwareAddr: "0a:1b:2c:3d:4e:5f", Flags: net.FlagUp},
+	}
+
+	filteredMACs := filterAndSortMACs(ifaces)
+	expectedMACs := []string{"00:11:22:33:44:55", "52:54:00:12:34:56"}
+	if len(filteredMACs) != len(expectedMACs) {
+		t.Fatalf("expected %d MACs, got %d: %v", len(expectedMACs), len(filteredMACs), filteredMACs)
+	}
+	for i, m := range expectedMACs {
+		if filteredMACs[i] != m {
+			t.Errorf("MAC index %d mismatch: got %s, want %s", i, filteredMACs[i], m)
+		}
+	}
+
+	// Test deterministic derivation from parts
+	mid := deriveMachineIDFromParts("test-uuid-1234", filteredMACs, 4)
+	expectedMID := "ED5C-35D0-6087-44A2"
+	if mid != expectedMID {
+		t.Errorf("Controlled machine ID mismatch: got %s, want %s", mid, expectedMID)
+	}
+
+	// Test fallback derivation when parts are empty
+	fallbackMID := deriveMachineIDFromParts("", nil, 0)
+	expectedFallback := "33A1-1E0C-C09E-646B"
+	if fallbackMID != expectedFallback {
+		t.Errorf("Fallback machine ID mismatch: got %s, want %s", fallbackMID, expectedFallback)
+	}
+}
+
+func TestHostMachineIDFormat(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "lic_test_*")
 	if err != nil {
 		t.Fatal(err)
@@ -17,8 +57,56 @@ func TestMachineIDExact(t *testing.T) {
 
 	mgr := NewManager(tmpDir)
 	mid := mgr.GetMachineID()
-	if mid != "8AD9-A7EF-87FB-E780" {
-		t.Errorf("Machine ID mismatch: got %s, expected 8AD9-A7EF-87FB-E780", mid)
+	if len(mid) != 19 {
+		t.Fatalf("machine ID length mismatch: got %d (val %q), want 19", len(mid), mid)
+	}
+
+	matched, err := regexp.MatchString(`^[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}$`, mid)
+	if err != nil || !matched {
+		t.Errorf("machine ID does not match 4x4 hex uppercase pattern: %s", mid)
+	}
+}
+
+func TestActivateLockOrderConcurrency(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "lic_test_*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	mgr := NewManager(tmpDir)
+
+	// Invariant: Failed activations do not acquire the lock or block concurrent status queries
+	const concurrency = 20
+	var wg sync.WaitGroup
+	wg.Add(concurrency * 2)
+
+	for i := 0; i < concurrency; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			badKey := "invalid.key.payload"
+			if err := mgr.Activate(badKey); err == nil {
+				t.Errorf("expected activation failure on invalid key")
+			}
+		}(i)
+
+		go func(idx int) {
+			defer wg.Done()
+			status := mgr.GetStatus(idx)
+			if status.Activated {
+				t.Errorf("expected activated=false during concurrent invalid activation")
+			}
+			if status.Status != "valid" {
+				t.Errorf("expected status=valid promo default, got %s", status.Status)
+			}
+		}(i)
+	}
+
+	wg.Wait()
+
+	finalStatus := mgr.GetStatus(0)
+	if finalStatus.Activated {
+		t.Errorf("final state mutated: activated must remain false")
 	}
 }
 

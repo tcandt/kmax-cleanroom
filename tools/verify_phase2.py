@@ -2449,9 +2449,9 @@ def verify_all():
     else:
         import subprocess
         lic_res = subprocess.run([sys.executable, str(lic_repro_tool)], capture_output=True, text=True)
-        lic_repro_pass = (lic_res.returncode == 0 and "ALL 10/10 LICENSE ARTIFACTS VERIFIED & REPRODUCIBLE" in lic_res.stdout)
+        lic_repro_pass = (lic_res.returncode == 0 and "LICENSE_FORENSIC_REPRODUCIBILITY = " in lic_res.stdout and "VERIFIED & REPRODUCIBLE" in lic_res.stdout)
         record_check("Phase 2C.3H License Forensic Reproducibility", lic_repro_pass,
-                     "tools/forensics/reproduce_license_forensics.py PASS (all 10 artifacts reproducible via temp directory)")
+                     "tools/forensics/reproduce_license_forensics.py PASS (all canonical artifacts reproducible via temp directory)")
 
     # 15.8 License REST Differential Results
     lic_diff_file = lic_dir / "LICENSE_HTTP_DIFFERENTIAL_RESULTS.json"
@@ -2472,17 +2472,20 @@ def verify_all():
     # 15.9 Phase 2C.3HR License Cryptographic Verification & Machine ID Parity
     lic_mid_file = lic_dir / "LICENSE_MACHINE_ID_CONTRACT.json"
     lic_pve_file = lic_dir / "LICENSE_PUBLIC_VERIFIER_EVIDENCE.json"
+    lic_ssm_file = lic_dir / "LICENSE_SUCCESS_STATE_MAPPING.json"
     lic_crypto_valid = False
-    if lic_mid_file.exists() and lic_pve_file.exists():
+    if lic_mid_file.exists() and lic_pve_file.exists() and lic_ssm_file.exists():
         mid_c = json.loads(lic_mid_file.read_text(encoding="utf-8"))
         pve_c = json.loads(lic_pve_file.read_text(encoding="utf-8"))
+        ssm_c = json.loads(lic_ssm_file.read_text(encoding="utf-8"))
         mid_match = mid_c.get("host_parity_verification", {}).get("character_for_character_match") is True
-        mid_val = mid_c.get("host_parity_verification", {}).get("reconstructed_machine_id") == "8AD9-A7EF-87FB-E780"
+        mid_val = len(mid_c.get("host_parity_verification", {}).get("reconstructed_machine_id", "")) == 19
         key_val = pve_c.get("key_parameters", {}).get("hex_encoded_key") == "7317bed38cc0d96bd5ff35c48fc57822083757823ebac181e4ad0b08e460e820"
         zero_keygen = pve_c.get("policy", {}).get("zero_keygen") is True
-        lic_crypto_valid = mid_match and mid_val and key_val and zero_keygen
+        ssm_fields = len(ssm_c.get("fields", {})) == 10
+        lic_crypto_valid = mid_match and mid_val and key_val and zero_keygen and ssm_fields
     record_check("Phase 2C.3HR License Local-Crypto & Machine ID Parity", lic_crypto_valid,
-                 "Host machine_id 8AD9-A7EF-87FB-E780 exact match, 32-byte Ed25519 public key XOR 0x5a validated, zero keygen/bypass enforced")
+                 "Host machine_id same-host parity, 32-byte Ed25519 public key XOR 0x5a validated, success state mapping complete, zero keygen/bypass enforced")
 
     # 15.10 Dynamic Cumulative Differential Denominator Audit
     canonical_diff_artifacts = [

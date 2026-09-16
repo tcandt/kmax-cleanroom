@@ -35,6 +35,12 @@
     "symbol": "ETQ5mBYyCQ.HER71Q",
     "va": "0x52ae40",
     "standard_mapping": "crypto/ed25519.VerifyWithOptions",
+    "options_parameters": {
+      "status": "PURE_ED25519_EQUIVALENT",
+      "hash_crypto_id": 0,
+      "context_string": "",
+      "static_va_instructions": "0x733dd7-0x733df4"
+    },
     "sub_callees": [
       "crypto/ed25519/internal/edwards25519 (kh_3A_Ia.*)"
     ]

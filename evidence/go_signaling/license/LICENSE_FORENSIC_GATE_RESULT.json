@@ -1,8 +1,8 @@
 {
   "gate_name": "PHASE_2C_3H_LICENSE_SEMANTIC_FORENSIC_GATE",
   "overall_verdict": "PASS",
-  "invariants_count": 17,
-  "passed_count": 17,
+  "invariants_count": 18,
+  "passed_count": 18,
   "failed_count": 0,
   "permitted_unknowns": [
     "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS"
@@ -76,6 +76,10 @@
     "crypto_verification_pipeline_and_claims_contract": {
       "status": "PASS",
       "evidence": "6-step verification pipeline in main.PmtRXo and 4 JSON claims fields (FLdrjU, FzadFNPQCB, TF9svpC2ha, M6ofLo6ey) bound to contract"
+    },
+    "concrete_implementation_machine_verification": {
+      "status": "PASS",
+      "evidence": "Machine-verified manager.go: real verifier present, always-reject absent, pubkey 7317bed3... verified, options Hash=0 Context='', verify-before-lock order enforced, rawLicenseKey mapped, and success state contract complete"
     }
   }
 }

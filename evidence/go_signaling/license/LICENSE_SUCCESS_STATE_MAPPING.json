@@ -1,0 +1,82 @@
+{
+  "contract_name": "LICENSE_SUCCESS_STATE_MAPPING",
+  "scope": "SUCCESS_PATH_MEMORY_STATE_DISPOSITION",
+  "confidence": "HIGH",
+  "policy": {
+    "zero_keygen": true,
+    "zero_bypass": true,
+    "unresolved_success_classification": "UNOBSERVED_LOCAL_VALID_SIGNATURE_SUCCESS"
+  },
+  "fields": {
+    "activated": {
+      "disposition": "DIRECTLY_MUTATED",
+      "original_va": "0xc29509",
+      "instruction": "0x734930: mov byte ptr [rip + 0x4f4bd2], 1",
+      "state_transition": "false -> true",
+      "reconstructed_mapping": "m.activated = true"
+    },
+    "max_devices": {
+      "disposition": "DIRECTLY_MUTATED",
+      "original_va": "0xbb0260",
+      "instruction": "0x734940: mov qword ptr [rip + 0x47b919], rdx",
+      "state_transition": "20 -> claims.MaxDevices",
+      "reconstructed_mapping": "m.maxDevices = claims.MaxDevices"
+    },
+    "expires_at": {
+      "disposition": "DIRECTLY_MUTATED",
+      "original_va": "0xbeed98",
+      "instruction": "0x73494f: mov qword ptr [rip + 0x4ba442], rdx; 0x734972: mov qword ptr [rip + 0x4ba417], rsi",
+      "state_transition": "'2026-11-01' -> claims.ExpiresAt",
+      "reconstructed_mapping": "m.expiresAt = claims.ExpiresAt"
+    },
+    "customer": {
+      "disposition": "DIRECTLY_MUTATED",
+      "original_va": "0xc06f80",
+      "instruction": "0x734981: mov qword ptr [rip + 0x4d2600], rdx; 0x7349a4: mov qword ptr [rip + 0x4d25d5], rcx",
+      "state_transition": "'' -> claims.Customer",
+      "reconstructed_mapping": "m.customer = claims.Customer"
+    },
+    "raw_license_key": {
+      "disposition": "DIRECTLY_MUTATED",
+      "original_va": "0xc06f78",
+      "instruction": "0x7349c5: mov qword ptr [rip + 0x4d25ac], rbx; 0x7349ec: mov qword ptr [rip + 0x4d257d], rax",
+      "state_transition": "'' -> strings.TrimSpace(rawKey)",
+      "reconstructed_mapping": "m.rawLicenseKey = strings.TrimSpace(rawKey)"
+    },
+    "promo": {
+      "disposition": "UNCHANGED",
+      "original_va": "0xc29508",
+      "instruction": "Retains initial promotional boolean flag; not modified in main.ODSX7KW",
+      "state_transition": "true -> true",
+      "reconstructed_mapping": "m.promo remains true"
+    },
+    "license_source": {
+      "disposition": "GENERATED_RECONSTRUCTION",
+      "original_va": "0x735400 (derived in status builder: activated == true => 'license-file')",
+      "instruction": "Dispatched dynamically in main.J_5lH4w6CU based on activated state flag",
+      "state_transition": "'built-in' -> 'license-file'",
+      "reconstructed_mapping": "m.licenseSource = 'license-file'"
+    },
+    "status": {
+      "disposition": "DERIVED_BY_HELPER",
+      "original_va": "0x734e00 (main.mt4utQs)",
+      "instruction": "0x734ace: call main.mt4utQs (evaluates expires_at vs current date)",
+      "state_transition": "'valid' or 'expired' computed from claims.ExpiresAt",
+      "reconstructed_mapping": "m.status = evaluated based on claims.ExpiresAt vs UTC midnight"
+    },
+    "license_expired": {
+      "disposition": "DERIVED_BY_HELPER",
+      "original_va": "0x734e00 (main.mt4utQs)",
+      "instruction": "0x734ace: call main.mt4utQs (evaluates expires_at vs current date)",
+      "state_transition": "false or true computed from claims.ExpiresAt",
+      "reconstructed_mapping": "m.licenseExpired = expMidnight.Before(nowMidnight)"
+    },
+    "post_promo_max_devices": {
+      "disposition": "UNCHANGED",
+      "original_va": "0x8b92c0",
+      "instruction": "Read-only literal constant (10); unaffected by activation",
+      "state_transition": "10 -> 10",
+      "reconstructed_mapping": "m.postPromoMaxDevices remains 10"
+    }
+  }
+}

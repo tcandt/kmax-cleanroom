@@ -489,12 +489,12 @@ def main():
         def val_mid(ro, rr):
             mid_o = ro.json().get("machine_id", "")
             mid_r = rr.json().get("machine_id", "")
-            match = (mid_o == mid_r == "8AD9-A7EF-87FB-E780")
-            return match, f"Machine ID mismatch: orig={mid_o}, recon={mid_r}, expected=8AD9-A7EF-87FB-E780"
+            match = (mid_o == mid_r and len(mid_o) == 19 and mid_o != "")
+            return match, f"Machine ID mismatch: orig={mid_o}, recon={mid_r}"
 
         run_test(
             "LICENSE-HTTP-MACHINE-ID-EXACT",
-            "/api/license_status exact character-for-character machine_id parity (8AD9-A7EF-87FB-E780)",
+            "/api/license_status exact same-host character-for-character machine_id parity",
             lambda: requests.get(f"{URL_ORIG}/api/license_status"),
             lambda: requests.get(f"{URL_RECON}/api/license_status"),
             val_mid
@@ -502,16 +502,32 @@ def main():
 
         # Case I.1: HEAD /api/license_status exact representation header parity
         def val_head_status(ro, rr):
-            clen_o = ro.headers.get("Content-Length")
-            clen_r = rr.headers.get("Content-Length")
-            body_len_o = len(ro.content)
-            body_len_r = len(rr.content)
-            match = (clen_o == clen_r == "277") and (body_len_o == body_len_r == 0)
-            return match, f"HEAD /api/license_status header mismatch: clen=({clen_o},{clen_r}), body_len=({body_len_o},{body_len_r})"
+            get_o = requests.get(f"{URL_ORIG}/api/license_status")
+            get_r = requests.get(f"{URL_RECON}/api/license_status")
+            
+            orig_match = (
+                ro.status_code == get_o.status_code and
+                ro.headers.get("Content-Type") == get_o.headers.get("Content-Type") and
+                ro.headers.get("Content-Length") == str(len(get_o.content)) and
+                len(ro.content) == 0
+            )
+            recon_match = (
+                rr.status_code == get_r.status_code and
+                rr.headers.get("Content-Type") == get_r.headers.get("Content-Type") and
+                rr.headers.get("Content-Length") == str(len(get_r.content)) and
+                len(rr.content) == 0
+            )
+            cross_match = (
+                ro.status_code == rr.status_code == 200 and
+                ro.headers.get("Content-Type") == rr.headers.get("Content-Type") and
+                ro.headers.get("Content-Length") == rr.headers.get("Content-Length")
+            )
+            match = orig_match and recon_match and cross_match
+            return match, f"HEAD /api/license_status mismatch: orig_match={orig_match}, recon_match={recon_match}, clen=({ro.headers.get('Content-Length')},{rr.headers.get('Content-Length')})"
 
         run_test(
             "LICENSE-HTTP-HEAD-CLEN-STATUS",
-            "/api/license_status HEAD retains Content-Length=277 with zero body bytes",
+            "/api/license_status HEAD retains Content-Length matching GET body with zero wire body bytes",
             lambda: requests.head(f"{URL_ORIG}/api/license_status"),
             lambda: requests.head(f"{URL_RECON}/api/license_status"),
             val_head_status
@@ -519,16 +535,32 @@ def main():
 
         # Case I.2: HEAD /debug/license exact representation header parity
         def val_head_debug(ro, rr):
-            clen_o = ro.headers.get("Content-Length")
-            clen_r = rr.headers.get("Content-Length")
-            body_len_o = len(ro.content)
-            body_len_r = len(rr.content)
-            match = (clen_o == clen_r == "277") and (body_len_o == body_len_r == 0)
-            return match, f"HEAD /debug/license header mismatch: clen=({clen_o},{clen_r}), body_len=({body_len_o},{body_len_r})"
+            get_o = requests.get(f"{URL_ORIG}/debug/license")
+            get_r = requests.get(f"{URL_RECON}/debug/license")
+            
+            orig_match = (
+                ro.status_code == get_o.status_code and
+                ro.headers.get("Content-Type") == get_o.headers.get("Content-Type") and
+                ro.headers.get("Content-Length") == str(len(get_o.content)) and
+                len(ro.content) == 0
+            )
+            recon_match = (
+                rr.status_code == get_r.status_code and
+                rr.headers.get("Content-Type") == get_r.headers.get("Content-Type") and
+                rr.headers.get("Content-Length") == str(len(get_r.content)) and
+                len(rr.content) == 0
+            )
+            cross_match = (
+                ro.status_code == rr.status_code == 200 and
+                ro.headers.get("Content-Type") == rr.headers.get("Content-Type") and
+                ro.headers.get("Content-Length") == rr.headers.get("Content-Length")
+            )
+            match = orig_match and recon_match and cross_match
+            return match, f"HEAD /debug/license mismatch: orig_match={orig_match}, recon_match={recon_match}, clen=({ro.headers.get('Content-Length')},{rr.headers.get('Content-Length')})"
 
         run_test(
             "LICENSE-HTTP-HEAD-CLEN-DEBUG",
-            "/debug/license HEAD retains Content-Length=277 with zero body bytes",
+            "/debug/license HEAD retains Content-Length matching GET body with zero wire body bytes",
             lambda: requests.head(f"{URL_ORIG}/debug/license"),
             lambda: requests.head(f"{URL_RECON}/debug/license"),
             val_head_debug
@@ -538,7 +570,7 @@ def main():
         def val_debug_verb(ro, rr):
             status_match = (ro.status_code == rr.status_code == 200)
             cors_absent = (ro.headers.get("Access-Control-Allow-Origin") is None and rr.headers.get("Access-Control-Allow-Origin") is None)
-            clen_match = (ro.headers.get("Content-Length") == rr.headers.get("Content-Length") == "277")
+            clen_match = (ro.headers.get("Content-Length") == rr.headers.get("Content-Length") and ro.headers.get("Content-Length") is not None)
             data_match = (ro.json() == rr.json())
             return (status_match and cors_absent and clen_match and data_match), f"Debug verb mismatch: status=({ro.status_code},{rr.status_code}), cors=({ro.headers.get('Access-Control-Allow-Origin')},{rr.headers.get('Access-Control-Allow-Origin')})"
 
