@@ -1,0 +1,61 @@
+{
+  "gate_name": "PHASE_2C_3H_LICENSE_SEMANTIC_FORENSIC_GATE",
+  "overall_verdict": "PASS",
+  "invariants_count": 12,
+  "passed_count": 12,
+  "failed_count": 0,
+  "permitted_unknowns": [
+    "UNKNOWN_REMOTE_SUCCESS"
+  ],
+  "source_reconstruction_permitted": true,
+  "invariants": {
+    "all_3_routes_bind_to_ROUTE_HANDLER_MAP": {
+      "status": "PASS",
+      "evidence": "All 3 routes (/api/activate, /api/license_status, /debug/license) match ROUTE_HANDLER_MAP exactly"
+    },
+    "handler_boundaries_bind_to_FUNCTION_MAP": {
+      "status": "PASS",
+      "evidence": "Handler symbols main.jcraNgV8Jg, main.xdGI1n, and main.yyDyfaokeO bound to FUNCTION_MAP VAs and sizes"
+    },
+    "7_verb_observations_from_isolated_oracle_runs": {
+      "status": "PASS",
+      "evidence": "7 HTTP verbs probed against isolated oracle instance across all 3 routes"
+    },
+    "auth_matrix_from_isolated_oracle_runs": {
+      "status": "PASS",
+      "evidence": "Auth probes confirm /api/license_status is public, /debug/license is debug-gated, /api/activate validates payload unauthenticated"
+    },
+    "request_status_DTO_fields_derive_from_descriptors": {
+      "status": "PASS",
+      "evidence": "Activation payload struct recovered from 0x7bd580 (json:license), status map from 0x7bf940 (13 keys), globals from 0xbeed90/0xbeeda0"
+    },
+    "no_DTO_field_hypothesis_only_in_contract": {
+      "status": "PASS",
+      "evidence": "All 13 fields in LICENSE_STATUS_CONTRACT.json backed by runtime Capstone map construction and live oracle response"
+    },
+    "persistence_claims_have_machine_evidence": {
+      "status": "PASS",
+      "evidence": "Static RIP string 0xbeeda0 (license.txt), instruction 0x73487a (call os.WriteFile with 0644), and startup load in main.LvbcDRl_uhc4"
+    },
+    "helper_callees_reached_through_callgraph_edges": {
+      "status": "PASS",
+      "evidence": "Callgraph trace: main.jcraNgV8Jg -> main.ODSX7KW -> main.PmtRXo / main.mt4utQs; main.xdGI1n -> main.J_5lH4w6CU -> main.ZbJsqTIiz3ML"
+    },
+    "network_dependency_contains_zero_synthetic_live_traffic": {
+      "status": "PASS",
+      "evidence": "Callgraph audit proves 0 outbound HTTP calls; activation is entirely local cryptographic signature verification"
+    },
+    "failed_activation_isolated_state_evidence": {
+      "status": "PASS",
+      "evidence": "Disk and memory before/after snapshots prove failed activation does not mutate state or create license.txt"
+    },
+    "UNKNOWN_REMOTE_SUCCESS_remains_excluded": {
+      "status": "PASS",
+      "evidence": "Remote success classified as UNKNOWN_REMOTE_SUCCESS and excluded from required differential denominator"
+    },
+    "zero_bypass_zero_keygen_invariant": {
+      "status": "PASS",
+      "evidence": "Cleanroom policy strictly mandates zero bypass, zero keygen, zero signature forgery; rejection logic genuinely preserved"
+    }
+  }
+}

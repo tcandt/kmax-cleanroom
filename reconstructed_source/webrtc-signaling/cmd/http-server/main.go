@@ -16,6 +16,7 @@ import (
 
 	"cloudphone-signaling/pkg/auth"
 	"cloudphone-signaling/pkg/httpapi"
+	"cloudphone-signaling/pkg/license"
 	"cloudphone-signaling/pkg/session"
 	"cloudphone-signaling/pkg/storage"
 )
@@ -25,7 +26,7 @@ import (
 // Mapping Scope: GENERATED_BUILD_FUNCTION
 // Original Function Mapping: NONE
 // Purpose: Main entrypoint for launching reconstructed HTTP server in differential testing
-// Source Behavior: Initializes storage, session, auth, and httpapi.Server; binds to port
+// Source Behavior: Initializes storage, session, auth, license, and httpapi.Server; binds to port
 // Confidence: HIGH
 func main() {
 	port := flag.Int("port", 29991, "Port to listen on")
@@ -36,7 +37,7 @@ func main() {
 	stunServerFlag := flag.String("stun_server", "stun:stun.l.google.com:19302", "Deprecated STUN server fallback")
 	_ = flag.Bool("tls", false, "Enable TLS (accepted for CLI parity)")
 	_ = flag.String("assets", "./assets", "Assets directory (accepted for CLI parity)")
-	_ = flag.Bool("debug", false, "Enable debug mode (accepted for CLI parity)")
+	debug := flag.Bool("debug", false, "Enable debug mode")
 	flag.Parse()
 
 	usersPath := filepath.Join(*dataDir, "users.json")
@@ -71,6 +72,10 @@ func main() {
 	server.SetShortcutsStore(shortcutsStore)
 	server.SetICEServers(httpapi.ParseICEServers(*iceServersFlag, *stunServerFlag))
 	server.SetListeningPort(fmt.Sprintf("%d", *port))
+	server.SetDebug(*debug)
+
+	licenseMgr := license.NewManager(*dataDir)
+	server.SetLicenseManager(licenseMgr)
 
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	log.Printf("[HTTP] Reconstructed server listening on %s", addr)

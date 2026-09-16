@@ -383,7 +383,7 @@ func ParseICEServers(iceFlag string, stunFlag string) []types.ICEServer {
 				continue
 			}
 			lower := strings.ToLower(p)
-			if strings.HasPrefix(lower, "turn:") || strings.HasPrefix(lower, "turns:") {
+			if strings.HasPrefix(lower, "turn:") {
 				colonIdx := strings.Index(p, ":")
 				scheme := p[:colonIdx+1]
 				rest := p[colonIdx+1:]

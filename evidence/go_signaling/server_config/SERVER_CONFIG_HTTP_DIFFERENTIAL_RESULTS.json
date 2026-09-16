@@ -1,7 +1,7 @@
 {
-  "execution_timestamp": "2026-09-16T07:17:22.241485+00:00",
-  "total_cases": 53,
-  "passed": 53,
+  "execution_timestamp": "2026-09-16T08:42:29.388496+00:00",
+  "total_cases": 55,
+  "passed": 55,
   "failed": 0,
   "all_passed": true,
   "results": [
@@ -278,7 +278,7 @@
         "recon_status": 200,
         "orig_content_type": "application/json",
         "recon_content_type": "application/json",
-        "error": "Address mismatch: orig={'code': 0, 'data': {'addresses': ['127.0.0.1:55714', '[fd7a:115c:a1e0::b34:c72d]:55714', '100.81.199.44:55714', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55714', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55714', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55714', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55714', '192.168.1.163:55714', '172.22.224.1:55714', '172.29.64.1:55714'], 'current': '127.0.0.1:55714'}}, recon={'code': 0, 'data': {'addresses': ['127.0.0.1:55715', '[fd7a:115c:a1e0::b34:c72d]:55715', '100.81.199.44:55715', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55715', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55715', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55715', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55715', '192.168.1.163:55715', '172.22.224.1:55715', '172.29.64.1:55715'], 'current': '127.0.0.1:55715'}}"
+        "error": "Address mismatch: orig={'code': 0, 'data': {'addresses': ['127.0.0.1:4487', '[fd7a:115c:a1e0::b34:c72d]:4487', '100.81.199.44:4487', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:4487', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:4487', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:4487', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:4487', '192.168.1.163:4487', '172.22.224.1:4487', '172.29.64.1:4487'], 'current': '127.0.0.1:4487'}}, recon={'code': 0, 'data': {'addresses': ['127.0.0.1:4488', '[fd7a:115c:a1e0::b34:c72d]:4488', '100.81.199.44:4488', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:4488', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:4488', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:4488', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:4488', '192.168.1.163:4488', '172.22.224.1:4488', '172.29.64.1:4488'], 'current': '127.0.0.1:4488'}}"
       }
     },
     {
@@ -302,7 +302,7 @@
         "recon_status": 200,
         "orig_content_type": "application/json",
         "recon_content_type": "application/json",
-        "error": "Host without port mismatch: orig={'code': 0, 'data': {'addresses': ['custom-domain.org', '[fd7a:115c:a1e0::b34:c72d]:55714', '100.81.199.44:55714', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55714', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55714', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55714', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55714', '192.168.1.163:55714', '172.22.224.1:55714', '172.29.64.1:55714'], 'current': 'custom-domain.org'}}, recon={'code': 0, 'data': {'addresses': ['custom-domain.org', '[fd7a:115c:a1e0::b34:c72d]:55715', '100.81.199.44:55715', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:55715', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:55715', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:55715', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:55715', '192.168.1.163:55715', '172.22.224.1:55715', '172.29.64.1:55715'], 'current': 'custom-domain.org'}}"
+        "error": "Host without port mismatch: orig={'code': 0, 'data': {'addresses': ['custom-domain.org', '[fd7a:115c:a1e0::b34:c72d]:4487', '100.81.199.44:4487', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:4487', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:4487', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:4487', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:4487', '192.168.1.163:4487', '172.22.224.1:4487', '172.29.64.1:4487'], 'current': 'custom-domain.org'}}, recon={'code': 0, 'data': {'addresses': ['custom-domain.org', '[fd7a:115c:a1e0::b34:c72d]:4488', '100.81.199.44:4488', '[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:4488', '[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:4488', '[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:4488', '[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:4488', '192.168.1.163:4488', '172.22.224.1:4488', '172.29.64.1:4488'], 'current': 'custom-domain.org'}}"
       }
     },
     {
@@ -639,6 +639,30 @@
         "orig_content_type": "application/json",
         "recon_content_type": "application/json",
         "error": ""
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-23",
+      "description": "/api/version exact deterministic string and key parity (fails if 1 char differs)",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "Exact version mismatch: orig={'build_time': '2026-09-07T09:58:25Z', 'git_commit': '2693ef1', 'version': 'v0.3.6'}, recon={'build_time': '2026-09-07T09:58:25Z', 'git_commit': '2693ef1', 'version': 'v0.3.6'}"
+      }
+    },
+    {
+      "case_id": "SERVER-CONFIG-24",
+      "description": "Isolated -stun_server fallback parity when -ice_servers is omitted",
+      "status": "PASS",
+      "details": {
+        "orig_status": 200,
+        "recon_status": 200,
+        "orig_content_type": "application/json",
+        "recon_content_type": "application/json",
+        "error": "STUN fallback mismatch: orig=[{'urls': ['stun:fallback.test.org:3478']}], recon=[{'urls': ['stun:fallback.test.org:3478']}]"
       }
     }
   ]

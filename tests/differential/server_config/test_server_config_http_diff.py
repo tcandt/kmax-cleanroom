@@ -578,6 +578,56 @@ def main():
             lambda: requests.post(f"{URL_ORIG_NA}/api/default_settings", json={"na": True}),
             lambda: requests.post(f"{URL_RECON_NA}/api/default_settings", json={"na": True})
         )
+        # Case 23: /api/version Character-Exact Deterministic String Parity
+        def val_23(ro, rr):
+            jo = ro.json()
+            jr = rr.json()
+            exact_v = (jo.get("version") == jr.get("version")) and (len(jo.get("version", "")) > 0)
+            exact_c = (jo.get("git_commit") == jr.get("git_commit")) and (len(jo.get("git_commit", "")) > 0)
+            exact_t = (jo.get("build_time") == jr.get("build_time")) and (len(jo.get("build_time", "")) > 0)
+            exact_keys = set(jo.keys()) == {"version", "git_commit", "build_time"} and set(jr.keys()) == {"version", "git_commit", "build_time"}
+            match = exact_v and exact_c and exact_t and exact_keys
+            return match, f"Exact version mismatch: orig={jo}, recon={jr}"
+        run_test(
+            "SERVER-CONFIG-23",
+            "/api/version exact deterministic string and key parity (fails if 1 char differs)",
+            lambda: requests.get(f"{URL_ORIG}/api/version"),
+            lambda: requests.get(f"{URL_RECON}/api/version"),
+            val_23
+        )
+
+        # Case 24: Isolated -stun_server Fallback Parity
+        port_o_stun = get_free_port()
+        port_r_stun = get_free_port()
+        dir_o_stun = ROOT / "scratch" / "server_config_diff_orig_stun"
+        dir_r_stun = ROOT / "scratch" / "server_config_diff_recon_stun"
+        if dir_o_stun.exists(): shutil.rmtree(dir_o_stun, ignore_errors=True)
+        if dir_r_stun.exists(): shutil.rmtree(dir_r_stun, ignore_errors=True)
+        dir_o_stun.mkdir(parents=True, exist_ok=True)
+        dir_r_stun.mkdir(parents=True, exist_ok=True)
+
+        s_o_stun = ServerProcess([str(EXE_ORIG), "-tls=false", f"-port={port_o_stun}", f"-data={dir_o_stun}", f"-assets={ASSETS}", "-no-auth", "-stun_server=stun:fallback.test.org:3478", "-debug"], dir_o_stun)
+        s_r_stun = ServerProcess([str(EXE_RECON), f"-port={port_r_stun}", f"-data={dir_r_stun}", "-no-auth", "-stun_server=stun:fallback.test.org:3478"], dir_r_stun)
+        s_o_stun.start()
+        s_r_stun.start()
+        time.sleep(2.0)
+
+        try:
+            def val_24(ro, rr):
+                jo = ro.json()
+                jr = rr.json()
+                match = (jo == jr) and (len(jo) == 1) and (jo[0]["urls"] == ["stun:fallback.test.org:3478"])
+                return match, f"STUN fallback mismatch: orig={jo}, recon={jr}"
+            run_test(
+                "SERVER-CONFIG-24",
+                "Isolated -stun_server fallback parity when -ice_servers is omitted",
+                lambda: requests.get(f"http://127.0.0.1:{port_o_stun}/api/ice_servers"),
+                lambda: requests.get(f"http://127.0.0.1:{port_r_stun}/api/ice_servers"),
+                val_24
+            )
+        finally:
+            s_o_stun.stop()
+            s_r_stun.stop()
 
     finally:
         print("\n[*] Shutting down server instances...")

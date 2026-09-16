@@ -213,3 +213,24 @@ func (r *Registry) Clear() {
 
 	r.devices = make(map[string]*types.DeviceEntry)
 }
+
+// CLEANROOM-PROVENANCE:
+// Classification: GENERATED_ADAPTER
+// Mapping Scope: GENERATED_ADAPTER
+// Original Function Mapping: NONE
+// Purpose: Returns the total count of registered online devices
+// Confidence: HIGH
+func (r *Registry) GetDeviceCount() int {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	count := 0
+	for _, entry := range r.devices {
+		entry.Mu.RLock()
+		if entry.Online {
+			count++
+		}
+		entry.Mu.RUnlock()
+	}
+	return count
+}

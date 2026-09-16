@@ -32,23 +32,31 @@
       ]
     }
   },
+  "external_address_flag_classification": {
+    "flag_name": "-external-addr",
+    "accepted_by_binary": false,
+    "probe_exit_code": 1,
+    "probe_stderr": "flag provided but not defined: -external-addr",
+    "classification": "REST_EFFECT_NONE",
+    "notes": "Flag is not defined in signaling binary flag set. Has zero effect on /api/server/addresses. Deferred to transport/agent phase if applicable."
+  },
   "observed_samples": {
     "standard_loopback_host": {
       "code": 0,
       "data": {
         "addresses": [
-          "127.0.0.1:59635",
-          "[fd7a:115c:a1e0::b34:c72d]:59635",
-          "100.81.199.44:59635",
-          "[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:59635",
-          "[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:59635",
-          "[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:59635",
-          "[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:59635",
-          "192.168.1.163:59635",
-          "172.22.224.1:59635",
-          "172.29.64.1:59635"
+          "127.0.0.1:34505",
+          "[fd7a:115c:a1e0::b34:c72d]:34505",
+          "100.81.199.44:34505",
+          "[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:34505",
+          "[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:34505",
+          "[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:34505",
+          "[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:34505",
+          "192.168.1.163:34505",
+          "172.22.224.1:34505",
+          "172.29.64.1:34505"
         ],
-        "current": "127.0.0.1:59635"
+        "current": "127.0.0.1:34505"
       }
     },
     "custom_host_with_port": {
@@ -74,15 +82,15 @@
       "data": {
         "addresses": [
           "my-domain.net",
-          "[fd7a:115c:a1e0::b34:c72d]:59635",
-          "100.81.199.44:59635",
-          "[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:59635",
-          "[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:59635",
-          "[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:59635",
-          "[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:59635",
-          "192.168.1.163:59635",
-          "172.22.224.1:59635",
-          "172.29.64.1:59635"
+          "[fd7a:115c:a1e0::b34:c72d]:34505",
+          "100.81.199.44:34505",
+          "[2402:800:629e:7fd1:320:5ff7:acbe:c41f]:34505",
+          "[fdea:e111:ce6b:0:1b86:3b9d:84b0:62f7]:34505",
+          "[2402:800:629e:7fd1:2147:c93d:b5be:4d05]:34505",
+          "[fdea:e111:ce6b:0:2147:c93d:b5be:4d05]:34505",
+          "192.168.1.163:34505",
+          "172.22.224.1:34505",
+          "172.29.64.1:34505"
         ],
         "current": "my-domain.net"
       }

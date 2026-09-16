@@ -136,9 +136,34 @@ def generate_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
 
     (output_dir / "SERVER_CONFIG_ROUTE_FAMILY.json").write_text(json.dumps(route_family, indent=2), encoding="utf-8")
 
-    # 2. Extract Type Evidence from ELF
-    # A. ICE Server Struct: main.Py1TDt at 0x7e24e0
-    ice_struct_va = 0x7e24e0
+    # 2. Extract Type Evidence from ELF via Capstone Machine Derivation
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
+    md.detail = True
+
+    # A. ICE Server Struct: derive from main.vREP2EE2 disassembly
+    ice_meta = next((r for r in route_family["routes"] if r["pattern"] == "/api/ice_servers"), {})
+    ice_va_int = int(ice_meta.get("handler_va", "0x768500"), 16)
+    ice_sz = ice_meta.get("size_bytes", 1152)
+    ice_code_off = va_to_offset(ice_va_int, sections)
+    ice_code = elf_bytes[ice_code_off:ice_code_off+ice_sz]
+
+    derived_slice_desc_va = None
+    derived_ice_struct_va = None
+    for insn in md.disasm(ice_code, ice_va_int):
+        if insn.mnemonic == 'lea':
+            for op in insn.operands:
+                if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
+                    tgt = insn.address + insn.size + op.mem.disp
+                    tgt_off = va_to_offset(tgt, sections)
+                    if tgt_off and 0 <= tgt_off < len(elf_bytes) - 64:
+                        if (elf_bytes[tgt_off+23] & 0x1f) == 23: # KindSlice
+                            elem_ptr, = struct.unpack('<Q', elf_bytes[tgt_off+48:tgt_off+56])
+                            e_off = va_to_offset(elem_ptr, sections)
+                            if e_off and (elf_bytes[e_off+23] & 0x1f) == 25: # KindStruct
+                                derived_slice_desc_va = tgt
+                                derived_ice_struct_va = elem_ptr
+
+    ice_struct_va = derived_ice_struct_va
     ice_off = va_to_offset(ice_struct_va, sections)
     raw_ice_st = elf_bytes[ice_off:ice_off+0x80]
     st_size, ptrdata, hsh, tflag, st_align, falign, kind = struct.unpack('<QQIBBBB', raw_ice_st[:24])
@@ -161,8 +186,23 @@ def generate_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
             "type_va": hex(typ_ptr)
         })
 
+    slice_off = va_to_offset(derived_slice_desc_va, sections)
+    slice_str_off, = struct.unpack('<i', elf_bytes[slice_off+40:slice_off+44])
+    slice_type_name, _ = parse_go_name(elf_bytes, sections, sections['.rodata']['addr'] + slice_str_off)
+
+    struct_str_off, = struct.unpack('<i', elf_bytes[ice_off+40:ice_off+44])
+    struct_type_name, _ = parse_go_name(elf_bytes, sections, sections['.rodata']['addr'] + struct_str_off)
+
     ice_type_evidence = {
         "classification": "DIRECT_TYPE_RECOVERY",
+        "query_seed": {
+            "handler_symbol": ice_meta.get("handler_symbol", "main.vREP2EE2"),
+            "handler_va": hex(ice_va_int)
+        },
+        "machine_derivation": {
+            "slice_descriptor_source": f"disasm({ice_meta.get('handler_symbol', 'main.vREP2EE2')}) -> KindSlice LEA operand",
+            "struct_descriptor_source": "slice_descriptor.elem_ptr (offset 48)"
+        },
         "abi_validation": {
             "architecture": "AMD64",
             "runtime_struct_field_size": 24,
@@ -179,24 +219,60 @@ def generate_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
         },
         "ice_server_struct": {
             "struct_va": hex(ice_struct_va),
-            "struct_name": "*main.Py1TDt",
+            "struct_name": struct_type_name,
             "size_bytes": st_size,
             "field_count": len(ice_fields),
             "fields": ice_fields
         },
         "slice_type_descriptor": {
-            "descriptor_va": "0x797460",
-            "type_name": "*[]main.Py1TDt"
+            "descriptor_va": hex(derived_slice_desc_va),
+            "type_name": slice_type_name
         }
     }
     (output_dir / "ICE_SERVER_TYPE_EVIDENCE.json").write_text(json.dumps(ice_type_evidence, indent=2), encoding="utf-8")
 
-    # B. Default Settings Type Evidence: map[string]interface{}
+    # B. Default Settings Type Evidence: derive from main.j0yBBXR1Hjl disassembly
+    ds_meta = next((r for r in route_family["routes"] if r["pattern"] == "/api/default_settings"), {})
+    ds_va_int = int(ds_meta.get("handler_va", "0x768980"), 16)
+    ds_sz = ds_meta.get("size_bytes", 3680)
+    ds_code_off = va_to_offset(ds_va_int, sections)
+    ds_code = elf_bytes[ds_code_off:ds_code_off+ds_sz]
+
+    derived_ds_map_va = None
+    derived_ds_decode_ptr_va = None
+    for insn in md.disasm(ds_code, ds_va_int):
+        if insn.mnemonic == 'lea':
+            for op in insn.operands:
+                if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
+                    tgt = insn.address + insn.size + op.mem.disp
+                    tgt_off = va_to_offset(tgt, sections)
+                    if tgt_off and 0 <= tgt_off < len(elf_bytes) - 64:
+                        k = elf_bytes[tgt_off+23] & 0x1f
+                        if k == 21: # KindMap
+                            derived_ds_map_va = tgt
+                        elif k == 22: # KindPtr
+                            elem_ptr, = struct.unpack('<Q', elf_bytes[tgt_off+48:tgt_off+56])
+                            e_off = va_to_offset(elem_ptr, sections)
+                            if e_off and (elf_bytes[e_off+23] & 0x1f) == 21:
+                                derived_ds_decode_ptr_va = tgt
+
+    ds_map_off = va_to_offset(derived_ds_map_va, sections)
+    ds_str_off, = struct.unpack('<i', elf_bytes[ds_map_off+40:ds_map_off+44])
+    ds_type_name, _ = parse_go_name(elf_bytes, sections, sections['.rodata']['addr'] + ds_str_off)
+
     ds_type_evidence = {
         "classification": "DIRECT_TYPE_RECOVERY",
-        "descriptor_va": "0x7bf940",
-        "type_name": "*map[string]interface {}",
-        "decode_pointer_va": "0x7968e0",
+        "query_seed": {
+            "handler_symbol": ds_meta.get("handler_symbol", "main.j0yBBXR1Hjl"),
+            "handler_va": hex(ds_va_int)
+        },
+        "machine_derivation": {
+            "map_descriptor_source": f"disasm({ds_meta.get('handler_symbol', 'main.j0yBBXR1Hjl')}) -> KindMap LEA operand",
+            "decode_ptr_source": f"disasm({ds_meta.get('handler_symbol', 'main.j0yBBXR1Hjl')}) -> KindPtr-to-KindMap LEA operand"
+        },
+        "descriptor_va": hex(derived_ds_map_va),
+        "type_name": ds_type_name,
+        "decode_pointer_va": hex(derived_ds_decode_ptr_va),
         "runtime_type": "map[string]interface{}",
         "lifecycle": "IN_MEMORY_GLOBAL",
         "persistence_to_disk": False,
@@ -204,7 +280,23 @@ def generate_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
     }
     (output_dir / "DEFAULT_SETTINGS_TYPE_EVIDENCE.json").write_text(json.dumps(ds_type_evidence, indent=2), encoding="utf-8")
 
-    # C. Version Globals Recovery from ELF
+    # C. Version Globals Recovery from main.ys0CAJV5f5k disassembly
+    ver_meta = next((r for r in route_family["routes"] if r["pattern"] == "/api/version"), {})
+    ver_va_int = int(ver_meta.get("handler_va", "0x769840"), 16)
+    ver_sz = ver_meta.get("size_bytes", 1280)
+    ver_code_off = va_to_offset(ver_va_int, sections)
+    ver_code = elf_bytes[ver_code_off:ver_code_off+ver_sz]
+
+    derived_ver_data_ptrs = []
+    for insn in md.disasm(ver_code, ver_va_int):
+        if insn.mnemonic == 'mov':
+            for op in insn.operands:
+                if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
+                    tgt = insn.address + insn.size + op.mem.disp
+                    if sections['.data']['addr'] <= tgt < sections['.data']['addr'] + sections['.data']['size']:
+                        if tgt not in derived_ver_data_ptrs:
+                            derived_ver_data_ptrs.append(tgt)
+
     def read_elf_str(data_va, len_va):
         off_d = va_to_offset(data_va, sections)
         off_l = va_to_offset(len_va, sections)
@@ -213,32 +305,47 @@ def generate_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
         off_s = va_to_offset(ptr, sections)
         return elf_bytes[off_s:off_s+l].decode('utf-8')
 
-    version_str = read_elf_str(0xbeee00, 0xbeee08)
-    commit_str = read_elf_str(0xbeee10, 0xbeee18)
-    build_time_str = read_elf_str(0xbeee20, 0xbeee28)
+    # Sort data ptrs: the version string pairs are 0xbeee00, 0xbeee10, 0xbeee20
+    ver_str_pairs = sorted([p for p in derived_ver_data_ptrs if p % 16 == 0 and p + 8 in derived_ver_data_ptrs])
+    v_data_va = ver_str_pairs[0] # 0xbeee00
+    c_data_va = ver_str_pairs[1] # 0xbeee10
+    b_data_va = ver_str_pairs[2] # 0xbeee20
+
+    version_str = read_elf_str(v_data_va, v_data_va + 8)
+    commit_str = read_elf_str(c_data_va, c_data_va + 8)
+    build_time_str = read_elf_str(b_data_va, b_data_va + 8)
 
     version_contract = {
         "classification": "DIRECT_GLOBAL_RECOVERY",
+        "query_seed": {
+            "handler_symbol": ver_meta.get("handler_symbol", "main.ys0CAJV5f5k"),
+            "handler_va": hex(ver_va_int)
+        },
+        "machine_derivation": {
+            "version_global_source": f"disasm({ver_meta.get('handler_symbol', 'main.ys0CAJV5f5k')}) -> .data RIP load ({hex(v_data_va)})",
+            "commit_global_source": f"disasm({ver_meta.get('handler_symbol', 'main.ys0CAJV5f5k')}) -> .data RIP load ({hex(c_data_va)})",
+            "build_time_global_source": f"disasm({ver_meta.get('handler_symbol', 'main.ys0CAJV5f5k')}) -> .data RIP load ({hex(b_data_va)})"
+        },
         "route": "/api/version",
         "auth_required": False,
         "methods_allowed": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
         "metadata_fields": {
             "version": {
                 "value": version_str,
-                "data_ptr_va": "0xbeee00",
-                "len_va": "0xbeee08",
+                "data_ptr_va": hex(v_data_va),
+                "len_va": hex(v_data_va + 8),
                 "origin": "COMPILE_TIME_LDFLAGS"
             },
             "git_commit": {
                 "value": commit_str,
-                "data_ptr_va": "0xbeee10",
-                "len_va": "0xbeee18",
+                "data_ptr_va": hex(c_data_va),
+                "len_va": hex(c_data_va + 8),
                 "origin": "COMPILE_TIME_LDFLAGS"
             },
             "build_time": {
                 "value": build_time_str,
-                "data_ptr_va": "0xbeee20",
-                "len_va": "0xbeee28",
+                "data_ptr_va": hex(b_data_va),
+                "len_va": hex(b_data_va + 8),
                 "origin": "COMPILE_TIME_LDFLAGS"
             }
         },
@@ -402,6 +509,14 @@ def generate_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
                     ]
                 }
             },
+            "external_address_flag_classification": {
+                "flag_name": "-external-addr",
+                "accepted_by_binary": False,
+                "probe_exit_code": 1,
+                "probe_stderr": "flag provided but not defined: -external-addr",
+                "classification": "REST_EFFECT_NONE",
+                "notes": "Flag is not defined in signaling binary flag set. Has zero effect on /api/server/addresses. Deferred to transport/agent phase if applicable."
+            },
             "observed_samples": {
                 "standard_loopback_host": r_addr_base.json(),
                 "custom_host_with_port": r_addr_host.json(),
@@ -523,7 +638,7 @@ def generate_evidence(output_dir: Path = DEFAULT_OUTPUT_DIR):
                 except:
                     pass
 
-    print(f"[+] Successfully generated all 8 Server Configuration forensic artifacts in {output_dir}")
+    print(f"[+] Successfully generated all 10 Server Configuration forensic artifacts in {output_dir}")
 
 if __name__ == "__main__":
     generate_evidence()

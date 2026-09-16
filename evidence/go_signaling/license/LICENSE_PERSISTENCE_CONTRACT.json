@@ -1,0 +1,15 @@
+{
+  "persistence_file": "license.txt",
+  "storage_directory": "Configured data directory (-data flag)",
+  "file_mode": "0644",
+  "os_function": "os.WriteFile",
+  "load_point": "Daemon initialization in main.LvbcDRl_uhc4 (0x733fe0)",
+  "save_point": "Successful activation in main.ODSX7KW (0x73487a)",
+  "failure_logging": "[License] 写入本地授权文件失败：%v",
+  "lifecycle_invariants": [
+    "license.txt is NOT created on fresh startup",
+    "license.txt is NOT created on rejected activation attempts",
+    "license.txt is only written upon cryptographically validated activation",
+    "When license.txt does not exist, server operates in built-in promotional mode"
+  ]
+}

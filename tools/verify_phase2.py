@@ -212,14 +212,15 @@ def verify_all():
         "webrtc-signaling/cmd/auth-tool/",
         "webrtc-signaling/pkg/httpapi/",
         "webrtc-signaling/pkg/devices/",
+        "webrtc-signaling/pkg/license/",
         "webrtc-signaling/cmd/http-server/"
     )
     disallowed_files = []
     forbidden_symbols_found = []
 
-    # Check for premature networking, webrtc stack, websocket, license, non-auth endpoints
+    # Check for premature networking, webrtc stack, websocket, transport endpoints
     FORBIDDEN_IMPORTS_AND_SYMBOLS = [
-        '"github.com/pion/webrtc', "NewPeerConnection(", "CheckLicense(",
+        '"github.com/pion/webrtc', "NewPeerConnection(",
         "/register_agent", "/connect_client", '"gorilla/websocket"', '"nhooyr.io/websocket"'
     ]
 
@@ -2104,10 +2105,14 @@ def verify_all():
             fields[0].get("offset") == 0 and fields[0].get("size_bytes") == 16 and
             fields[1].get("offset") == 16 and fields[1].get("size_bytes") == 16 and
             fields[0].get("offset") + fields[0].get("size_bytes") <= fields[1].get("offset") and
-            fields[1].get("offset") + fields[1].get("size_bytes") <= sc_s.get("size_bytes")
+            fields[1].get("offset") + fields[1].get("size_bytes") <= sc_s.get("size_bytes") and
+            sc_map.get("map_type_name") == "*map[string][]main.KXuCJAAi60" and
+            sc_map.get("key_type_name") == "*string" and
+            sc_map.get("value_type_name") == "*[]main.KXuCJAAi60" and
+            sc_map.get("storage_global_va") is not None
         )
         record_check("Phase 2C.3F Shortcuts Type Evidence", type_valid,
-                     "Shortcut struct (0x7d70c0, 32B, non-overlapping offsets 0 & 16) & map descriptor recovered from ELF")
+                     "Shortcut struct (0x7d70c0, 32B, non-overlapping) & storage map (map[string][]Shortcut) recovered from ELF")
 
     # 13.4 Shortcuts Operation Contracts
     sc_ops_file = sc_dir / "SHORTCUT_OPERATION_CONTRACTS.json"
@@ -2219,9 +2224,6 @@ def verify_all():
         "github.com/pion/webrtc",
         "nhooyr.io/websocket",
         "gorilla/websocket",
-        "/api/activate",
-        "/api/license_status",
-        "/debug/license",
         "/register_agent",
         "/connect_client",
         "/api/files",
@@ -2237,7 +2239,7 @@ def verify_all():
                 found_forbidden.append((str(gp.name), tok))
     scope_guard_valid = len(found_forbidden) == 0
     record_check("Phase 2C.3F Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
-                 f"0 production WebSocket/WebRTC packages, 0 License/Tasks/Files ({len(found_forbidden)} violations)")
+                 f"0 production WebSocket/WebRTC packages, 0 Tasks/Files/Transports ({len(found_forbidden)} violations)")
 
     # 14. Phase 2C.3G Server Configuration REST Route Family Auditing
     sc_dir = ROOT / "evidence" / "go_signaling" / "server_config"
@@ -2330,9 +2332,184 @@ def verify_all():
     else:
         import subprocess
         sc_res = subprocess.run([sys.executable, str(sc_repro_tool)], capture_output=True, text=True)
-        sc_repro_pass = (sc_res.returncode == 0 and "ALL 8/8 SERVER CONFIGURATION ARTIFACTS VERIFIED & REPRODUCIBLE" in sc_res.stdout)
+        sc_repro_pass = (sc_res.returncode == 0 and "ALL 10/10 SERVER CONFIGURATION ARTIFACTS VERIFIED & REPRODUCIBLE" in sc_res.stdout)
         record_check("Phase 2C.3G Server Config Forensic Reproducibility", sc_repro_pass,
-                     "tools/forensics/reproduce_server_config_forensics.py PASS (all 8 artifacts reproducible via temp directory)")
+                     "tools/forensics/reproduce_server_config_forensics.py PASS (all 10 artifacts reproducible via temp directory)")
+
+    # =========================================================================
+    # 15. Phase 2C.3H License & Entitlement REST Reconstruction Invariants
+    # =========================================================================
+    lic_dir = ROOT / "evidence" / "go_signaling" / "license"
+
+    # 15.1 License Forensic Evidence Integrity (10/10 artifacts)
+    lic_req_files = [
+        "LICENSE_ROUTE_FAMILY.json",
+        "LICENSE_ROUTE_METHOD_MATRIX.json",
+        "LICENSE_AUTH_MATRIX.json",
+        "LICENSE_TYPE_EVIDENCE.json",
+        "LICENSE_STATUS_CONTRACT.json",
+        "LICENSE_ACTIVATION_REJECTION_CONTRACT.json",
+        "LICENSE_PERSISTENCE_CONTRACT.json",
+        "LICENSE_VALIDATION_FUNCTION_SLICES.json",
+        "LICENSE_NETWORK_DEPENDENCY.json",
+        "LICENSE_FAILED_ACTIVATION_STATE_MATRIX.json"
+    ]
+    lic_files_exist = all((lic_dir / f).exists() for f in lic_req_files)
+    record_check("Phase 2C.3H License Forensic Evidence Integrity", lic_files_exist,
+                 "All 10 required License evidence files present in evidence/go_signaling/license/")
+
+    # 15.2 License Semantic Forensic Success Gate Result
+    lic_gate_file = lic_dir / "LICENSE_FORENSIC_GATE_RESULT.json"
+    lic_gate_valid = False
+    if lic_gate_file.exists():
+        lg_data = json.loads(lic_gate_file.read_text(encoding="utf-8"))
+        lic_gate_valid = (
+            lg_data.get("overall_verdict") == "PASS" and
+            lg_data.get("invariants_count", lg_data.get("invariants_evaluated")) == 12 and
+            lg_data.get("passed_count") == 12 and
+            lg_data.get("failed_count") == 0
+        )
+    record_check("Phase 2C.3H License Semantic Forensic Gate Result", lic_gate_valid,
+                 "LICENSE_FORENSIC_GATE_RESULT.json evaluated 12/12 invariants PASS prior to source reconstruction")
+
+    # 15.3 License Route Family
+    lic_rf_file = lic_dir / "LICENSE_ROUTE_FAMILY.json"
+    lic_rf_valid = False
+    if lic_rf_file.exists():
+        lic_rf_data = json.loads(lic_rf_file.read_text(encoding="utf-8"))
+        routes = {r["pattern"]: r["handler_symbol"] for r in lic_rf_data.get("routes", [])}
+        lic_rf_valid = (
+            routes.get("/api/activate") == "main.jcraNgV8Jg" and
+            routes.get("/api/license_status") == "main.xdGI1n" and
+            routes.get("/debug/license") == "main.yyDyfaokeO"
+        )
+    record_check("Phase 2C.3H License Route Family", lic_rf_valid,
+                 "All 3 license routes bound to exact binary symbols in ROUTE_HANDLER_MAP")
+
+    # 15.4 License Type Evidence & Payload Contract
+    lic_type_file = lic_dir / "LICENSE_TYPE_EVIDENCE.json"
+    lic_type_valid = False
+    if lic_type_file.exists():
+        lt = json.loads(lic_type_file.read_text(encoding="utf-8"))
+        st = lt.get("activation_payload_struct", {})
+        fields = st.get("fields", [])
+        lic_type_valid = (
+            st.get("descriptor_va") == "0x7bd580" and
+            len(fields) == 1 and
+            fields[0].get("name") == "GJjLo4tZRb" and
+            fields[0].get("tag") == 'json:"license"' and
+            lt.get("machine_derivation", {}).get("initial_expires_at_source", "").endswith("'2026-11-01'") and
+            lt.get("machine_derivation", {}).get("persistence_file_source", "").endswith("'license.txt'")
+        )
+    record_check("Phase 2C.3H License Type Evidence & Payload Contract", lic_type_valid,
+                 "Activation struct (0x7bd580 tag json:license) and built-in promo globals (2026-11-01, license.txt) validated")
+
+    # 15.5 License Method & Auth Matrices
+    lic_mm_file = lic_dir / "LICENSE_ROUTE_METHOD_MATRIX.json"
+    lic_am_file = lic_dir / "LICENSE_AUTH_MATRIX.json"
+    lic_matrix_valid = False
+    if lic_mm_file.exists() and lic_am_file.exists():
+        mm = json.loads(lic_mm_file.read_text(encoding="utf-8"))
+        am = json.loads(lic_am_file.read_text(encoding="utf-8"))
+        all_verbs_present = all(len(mm.get(r, {})) == 7 for r in ["/api/activate", "/api/license_status", "/debug/license"])
+        stat_public = am.get("/api/license_status", {}).get("MISSING_TOKEN", {}).get("status_code") == 200
+        debug_gated = am.get("/debug/license", {}).get("NO_DEBUG_MODE", {}).get("status_code") == 404
+        lic_matrix_valid = all_verbs_present and stat_public and debug_gated
+    record_check("Phase 2C.3H License Method & Auth Matrices", lic_matrix_valid,
+                 "7 verbs across 3 routes; public unauthenticated access and -debug gating confirmed")
+
+    # 15.6 Cleanroom Source Provenance
+    lic_src_types = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "types" / "license.go"
+    lic_src_mgr = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "license" / "manager.go"
+    lic_src_hnd = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "httpapi" / "license_handlers.go"
+    src_valid = False
+    if lic_src_types.exists() and lic_src_mgr.exists() and lic_src_hnd.exists():
+        prov_patterns = ["CLEANROOM-PROVENANCE:", "// Cleanroom Reconstructed"]
+        src_valid = (
+            any(p in lic_src_types.read_text(encoding="utf-8") for p in prov_patterns) and
+            any(p in lic_src_mgr.read_text(encoding="utf-8") for p in prov_patterns) and
+            any(p in lic_src_hnd.read_text(encoding="utf-8") for p in prov_patterns)
+        )
+    record_check("Phase 2C.3H Cleanroom License Source Provenance", src_valid,
+                 "pkg/types/license.go, pkg/license/manager.go, pkg/httpapi/license_handlers.go audited")
+
+    # 15.7 License Forensic Reproducibility Tool
+    lic_repro_tool = ROOT / "tools" / "forensics" / "reproduce_license_forensics.py"
+    if not lic_repro_tool.exists():
+        record_check("Phase 2C.3H License Forensic Reproducibility", False, "reproduce_license_forensics.py missing")
+    else:
+        import subprocess
+        lic_res = subprocess.run([sys.executable, str(lic_repro_tool)], capture_output=True, text=True)
+        lic_repro_pass = (lic_res.returncode == 0 and "ALL 10/10 LICENSE ARTIFACTS VERIFIED & REPRODUCIBLE" in lic_res.stdout)
+        record_check("Phase 2C.3H License Forensic Reproducibility", lic_repro_pass,
+                     "tools/forensics/reproduce_license_forensics.py PASS (all 10 artifacts reproducible via temp directory)")
+
+    # 15.8 License REST Differential Results
+    lic_diff_file = lic_dir / "LICENSE_HTTP_DIFFERENTIAL_RESULTS.json"
+    lic_diff_valid = False
+    lic_diff_data = {}
+    if lic_diff_file.exists():
+        lic_diff_data = json.loads(lic_diff_file.read_text(encoding="utf-8"))
+        lic_diff_valid = (
+            lic_diff_data.get("all_passed") is True and
+            lic_diff_data.get("passed") == lic_diff_data.get("total_cases") and
+            lic_diff_data.get("total_cases", 0) >= 20 and
+            "UNKNOWN_REMOTE_SUCCESS" in lic_diff_data.get("excluded_unknowns", [])
+        )
+    record_check("Phase 2C.3H License REST Differential Results", lic_diff_valid,
+                 f"IMPLEMENTED_LICENSE_CONTRACT_DIFFERENTIAL_PASS_RATE = {lic_diff_data.get('passed', 0)}/{lic_diff_data.get('total_cases', 0)} (all cases PASS, UNKNOWN_REMOTE_SUCCESS excluded)")
+
+    # 15.9 Dynamic Cumulative Differential Denominator Audit
+    canonical_diff_artifacts = [
+        ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "http" / "AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "devices" / "DEVICE_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "users" / "USER_ADMIN_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "tags" / "TAG_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "shares" / "SHARE_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "shortcuts" / "SHORTCUT_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "server_config" / "SERVER_CONFIG_HTTP_DIFFERENTIAL_RESULTS.json",
+        ROOT / "evidence" / "go_signaling" / "license" / "LICENSE_HTTP_DIFFERENTIAL_RESULTS.json",
+    ]
+
+    def extract_diff_counts(path):
+        d = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(d, list):
+            p = sum(1 for x in d if x.get("passed") is True or x.get("status") == "PASS")
+            t = len(d)
+            return p, t
+        elif isinstance(d, dict):
+            if "summary" in d and "passed" in d["summary"] and "total" in d["summary"]:
+                return d["summary"]["passed"], d["summary"]["total"]
+            if "metadata" in d and "passed_cases" in d["metadata"] and "total_cases" in d["metadata"]:
+                return d["metadata"]["passed_cases"], d["metadata"]["total_cases"]
+            if "passed" in d and "total_cases" in d:
+                return d["passed"], d["total_cases"]
+            if "results" in d:
+                p = sum(1 for x in d["results"] if x.get("passed") is True or x.get("status") == "PASS")
+                t = len(d["results"])
+                return p, t
+        raise ValueError(f"Unknown structure in {path}")
+
+    cumulative_passed = 0
+    cumulative_total = 0
+    diff_audit_ok = True
+    diff_details = []
+    for f in canonical_diff_artifacts:
+        if not f.exists():
+            diff_audit_ok = False
+            diff_details.append(f"{f.name}: MISSING")
+            continue
+        p, t = extract_diff_counts(f)
+        cumulative_passed += p
+        cumulative_total += t
+        if p != t or t == 0:
+            diff_audit_ok = False
+        diff_details.append(f"{f.name}: {p}/{t}")
+
+    diff_audit_ok = diff_audit_ok and (cumulative_passed == cumulative_total) and (cumulative_total > 0)
+    record_check("Dynamic Cumulative Differential Denominator Audit", diff_audit_ok,
+                 f"CUMULATIVE_PASS_RATE = {cumulative_passed}/{cumulative_total} (100% across all {len(canonical_diff_artifacts)} canonical suites)")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

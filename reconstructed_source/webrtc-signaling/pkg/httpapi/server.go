@@ -13,6 +13,7 @@ import (
 
 	"cloudphone-signaling/pkg/auth"
 	"cloudphone-signaling/pkg/devices"
+	"cloudphone-signaling/pkg/license"
 	"cloudphone-signaling/pkg/storage"
 	"cloudphone-signaling/pkg/types"
 )
@@ -35,6 +36,12 @@ type Server struct {
 	defaultSettings   map[string]interface{}
 	versionInfo       types.VersionInfo
 	listeningPort     string
+
+	// License & Entitlement state (Phase 2C.3H)
+	licenseMu  sync.RWMutex
+	licenseMgr *license.Manager
+	debugMu    sync.RWMutex
+	debug      bool
 }
 
 // CLEANROOM-PROVENANCE:
@@ -66,6 +73,7 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 			GitCommit: "2693ef1",
 			Version:   "v0.3.6",
 		},
+		licenseMgr: license.NewManager(""),
 	}
 
 	// Register auth routes matching original binary
@@ -111,6 +119,11 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 	s.mux.HandleFunc("/api/default_settings", s.HandleDefaultSettings)
 	s.mux.HandleFunc("/api/ice_servers", s.HandleICEServers)
 	s.mux.HandleFunc("/api/version", s.HandleVersion)
+
+	// Register license & entitlement routes matching original binary (Phase 2C.3H)
+	s.mux.HandleFunc("/api/activate", s.HandleActivate)
+	s.mux.HandleFunc("/api/license_status", s.HandleLicenseStatus)
+	s.mux.HandleFunc("/debug/license", s.HandleDebugLicense)
 
 	// Register differential test fixture endpoints
 	s.mux.HandleFunc("/_test/register_device", s.HandleTestRegisterDevice)

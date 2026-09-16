@@ -33,10 +33,15 @@
     ]
   },
   "storage_map": {
-    "descriptor_va": "0x7c0340",
-    "type_name": "*map[string]string",
-    "kind": "0x35 (pointer to map)",
-    "key_type": "string (username)",
-    "value_type": "[]main.KXuCJAAi60 ([]Shortcut)"
+    "storage_global_va": "0xc06920",
+    "descriptor_va": "0x7bfc40",
+    "map_type_name": "*map[string][]main.KXuCJAAi60",
+    "key_type_va": "0x79e2c0",
+    "key_type_name": "*string",
+    "value_type_va": "0x796ca0",
+    "value_type_name": "*[]main.KXuCJAAi60",
+    "slice_elem_type_va": "0x7d70c0",
+    "shortcut_struct_va": "0x7d70c0",
+    "machine_derivation": "business_handler RIP-relative KindMap search -> mapType key is string -> mapType elem is KindSlice -> slice elem is KindStruct matching Shortcut struct"
   }
 }

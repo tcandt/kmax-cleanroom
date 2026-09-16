@@ -1,0 +1,91 @@
+{
+  "family_name": "LICENSE_AND_ENTITLEMENT_REST",
+  "description": "Family of 3 license activation, entitlement status, and diagnostic REST endpoints",
+  "routes": [
+    {
+      "pattern": "/api/activate",
+      "semantic_role": "LICENSE_ACTIVATION_HANDLER",
+      "registration_call_va": "0x7659b8",
+      "handler_va": "0x74b6c0",
+      "handler_symbol": "main.jcraNgV8Jg",
+      "size_bytes": 2208,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.gcWriteBarrier1",
+        "JOaOfPm.(*PFVf3KWTUcg).Decode",
+        "main.ODSX7KW",
+        "runtime.makemap_small",
+        "JOaOfPm.(*Za4F248ANZ7).Encode"
+      ],
+      "referenced_strings": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Headers",
+        "Content-Type, AuthorizationTarget username is required",
+        "Access-Control-Allow-Methods",
+        "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+        "Method not allowed",
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+        "Invalid JSON payload",
+        "status"
+      ]
+    },
+    {
+      "pattern": "/api/license_status",
+      "semantic_role": "LICENSE_STATUS_DISPATCHER",
+      "registration_call_va": "0x7659d0",
+      "handler_va": "0x74c220",
+      "handler_symbol": "main.xdGI1n",
+      "size_bytes": 1056,
+      "callees": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.J_5lH4w6CU",
+        "JOaOfPm.(*Za4F248ANZ7).Encode",
+        "runtime.typeAssert",
+        "runtime.morestack_noctxt"
+      ],
+      "referenced_strings": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Headers",
+        "Content-Type, AuthorizationTarget username is required",
+        "Access-Control-Allow-Methods",
+        "GET, OPTIONSUnauthorizedforbid_audiomessage_typestop_preview",
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte"
+      ]
+    },
+    {
+      "pattern": "/debug/license",
+      "semantic_role": "LICENSE_DEBUG_DISPATCHER",
+      "registration_call_va": "0x7659e8",
+      "handler_va": "0x74bf60",
+      "handler_symbol": "main.yyDyfaokeO",
+      "size_bytes": 704,
+      "callees": [
+        "qaJ6F8.AHChVLQ6",
+        "Y0caeZ_zze.AFewevPD9",
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.J_5lH4w6CU",
+        "JOaOfPm.(*Za4F248ANZ7).Encode",
+        "runtime.typeAssert",
+        "runtime.morestack_noctxt"
+      ],
+      "referenced_strings": [
+        "Forbidden",
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+        "Not found"
+      ]
+    }
+  ]
+}

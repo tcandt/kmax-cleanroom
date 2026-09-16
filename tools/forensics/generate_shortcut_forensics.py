@@ -139,7 +139,12 @@ def generate_evidence(output_dir: Path):
     saver_va = None
     saver_sym = None
     derived_map_type_va = None
+    derived_map_key_va = None
+    derived_map_val_va = None
+    derived_slice_elem_va = None
+    derived_storage_global_va = None
     derived_decode_ptr_va = None
+    last_bss_global = None
 
     for insn in md.disasm(b_code, b_va_int):
         if insn.mnemonic == 'call':
@@ -152,15 +157,27 @@ def generate_evidence(output_dir: Path):
                     saver_sym = sym
             except:
                 pass
-        elif insn.mnemonic == 'lea':
+        else:
             for op in insn.operands:
                 if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
                     tgt = insn.address + insn.size + op.mem.disp
                     tgt_off = va_to_offset(tgt, sections)
                     if tgt_off and 0 <= tgt_off < len(elf_bytes) - 64:
+                        if sections['.bss']['addr'] <= tgt < sections['.bss']['addr'] + sections['.bss']['size']:
+                            last_bss_global = tgt
                         kind_5bit = elf_bytes[tgt_off+23] & 0x1f
                         if kind_5bit == 21: # KindMap
-                            derived_map_type_va = tgt
+                            key_ptr, elem_ptr = struct.unpack('<QQ', elf_bytes[tgt_off+48:tgt_off+64])
+                            off_e = va_to_offset(elem_ptr, sections)
+                            if off_e and 0 <= off_e < len(elf_bytes) - 64 and (elf_bytes[off_e+23] & 0x1f) == 23:
+                                se_ptr, = struct.unpack('<Q', elf_bytes[off_e+48:off_e+56])
+                                off_se = va_to_offset(se_ptr, sections)
+                                if off_se and 0 <= off_se < len(elf_bytes) - 64 and (elf_bytes[off_se+23] & 0x1f) == 25:
+                                    derived_map_type_va = tgt
+                                    derived_map_key_va = key_ptr
+                                    derived_map_val_va = elem_ptr
+                                    derived_slice_elem_va = se_ptr
+                                    derived_storage_global_va = last_bss_global
                         elif kind_5bit == 22: # KindPtr
                             elem = struct.unpack('<Q', elf_bytes[tgt_off+48:tgt_off+56])[0]
                             elem_off = va_to_offset(elem, sections)
@@ -277,6 +294,14 @@ def generate_evidence(output_dir: Path):
     map_str_off, = struct.unpack('<i', elf_bytes[off_map+40:off_map+44])
     map_type_name, _ = parse_go_name(elf_bytes, sections, sections['.rodata']['addr'] + map_str_off)
 
+    off_key = va_to_offset(derived_map_key_va, sections)
+    key_str_off, = struct.unpack('<i', elf_bytes[off_key+40:off_key+44])
+    key_type_name, _ = parse_go_name(elf_bytes, sections, sections['.rodata']['addr'] + key_str_off)
+
+    off_val = va_to_offset(derived_map_val_va, sections)
+    val_str_off, = struct.unpack('<i', elf_bytes[off_val+40:off_val+44])
+    val_type_name, _ = parse_go_name(elf_bytes, sections, sections['.rodata']['addr'] + val_str_off)
+
     type_evidence = {
         "classification": "DIRECT_TYPE_RECOVERY",
         "abi_validation": {
@@ -295,11 +320,16 @@ def generate_evidence(output_dir: Path):
             "fields": fields
         },
         "storage_map": {
+            "storage_global_va": hex(derived_storage_global_va) if derived_storage_global_va else None,
             "descriptor_va": hex(derived_map_type_va),
-            "type_name": map_type_name,
-            "kind": "0x35 (pointer to map)",
-            "key_type": "string (username)",
-            "value_type": "[]main.KXuCJAAi60 ([]Shortcut)"
+            "map_type_name": map_type_name,
+            "key_type_va": hex(derived_map_key_va),
+            "key_type_name": key_type_name,
+            "value_type_va": hex(derived_map_val_va),
+            "value_type_name": val_type_name,
+            "slice_elem_type_va": hex(derived_slice_elem_va),
+            "shortcut_struct_va": hex(struct_type_va),
+            "machine_derivation": "business_handler RIP-relative KindMap search -> mapType key is string -> mapType elem is KindSlice -> slice elem is KindStruct matching Shortcut struct"
         }
     }
     (output_dir / "SHORTCUT_TYPE_EVIDENCE.json").write_text(json.dumps(type_evidence, indent=2), encoding="utf-8")

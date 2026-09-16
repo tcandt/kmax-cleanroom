@@ -1,0 +1,272 @@
+{
+  "execution_timestamp": "2026-09-16T09:04:53.380959+00:00",
+  "total_cases": 26,
+  "passed": 26,
+  "failed": 0,
+  "all_passed": true,
+  "excluded_unknowns": [
+    "UNKNOWN_REMOTE_SUCCESS"
+  ],
+  "results": [
+    {
+      "case_id": "LICENSE-HTTP-01",
+      "description": "/api/license_status baseline unactivated entitlement parity (13 keys, built-in promo)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-02",
+      "description": "/debug/license status baseline parity when -debug is enabled (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-03",
+      "description": "/debug/license returns 404 Not found when -debug flag is omitted",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-04",
+      "description": "/api/license_status public access without auth token (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-05",
+      "description": "/api/license_status public access with invalid Bearer token (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-06",
+      "description": "/api/license_status normal user access parity (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-07",
+      "description": "/api/license_status -no-auth mode access parity (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-08",
+      "description": "/api/license_status OPTIONS CORS preflight headers parity",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": null,
+      "recon_content_type": null,
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-09",
+      "description": "/api/license_status HEAD request parity (200 OK, empty wire body)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-10-POST",
+      "description": "/api/license_status permissive verb POST parity (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-10-PUT",
+      "description": "/api/license_status permissive verb PUT parity (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-10-PATCH",
+      "description": "/api/license_status permissive verb PATCH parity (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-10-DELETE",
+      "description": "/api/license_status permissive verb DELETE parity (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-11-GET",
+      "description": "/api/activate method GET rejection parity (405 Method not allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-11-PUT",
+      "description": "/api/activate method PUT rejection parity (405 Method not allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-11-PATCH",
+      "description": "/api/activate method PATCH rejection parity (405 Method not allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-11-DELETE",
+      "description": "/api/activate method DELETE rejection parity (405 Method not allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-11-HEAD",
+      "description": "/api/activate method HEAD rejection parity (405 Method not allowed)",
+      "status": "PASS",
+      "orig_status": 405,
+      "recon_status": 405,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-12",
+      "description": "/api/activate OPTIONS CORS preflight headers parity",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": null,
+      "recon_content_type": null,
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-13",
+      "description": "/api/activate empty POST body rejection parity (400 Invalid JSON payload)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-14",
+      "description": "/api/activate malformed JSON body rejection parity (400 Invalid JSON payload)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-15",
+      "description": "/api/activate empty JSON object rejection parity (400 授权码格式错误)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-16",
+      "description": "/api/activate empty license string rejection parity (400 授权码格式错误)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-17",
+      "description": "/api/activate invalid synthetic license key rejection parity (400 授权码格式错误)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-18",
+      "description": "/api/activate state idempotency after failed activation (no disk mutation, built-in mode retained)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "LICENSE-HTTP-19",
+      "description": "/api/activate validates payload without requiring auth token (does not return 401)",
+      "status": "PASS",
+      "orig_status": 400,
+      "recon_status": 400,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    }
+  ]
+}

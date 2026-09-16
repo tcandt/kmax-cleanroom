@@ -1,0 +1,64 @@
+{
+  "route": "/api/activate",
+  "method": "POST",
+  "auth_required": false,
+  "input_payload_format": "JSON object with 'license' string field",
+  "rejection_rules": {
+    "BODY_DECODE_FAILURE": {
+      "condition": "Empty request body or invalid JSON syntax",
+      "status_code": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "body": "Invalid JSON payload\n"
+    },
+    "LICENSE_VALIDATION_FAILURE": {
+      "condition": "Valid JSON but invalid, empty, or unverified license key",
+      "status_code": 400,
+      "content_type": "application/json",
+      "body": "{\"error\":\"授权码格式错误\"}\n"
+    }
+  },
+  "success_rule": {
+    "condition": "Cryptographically valid digital signature matching machine ID (UNKNOWN_REMOTE_SUCCESS)",
+    "status_code": 200,
+    "content_type": "application/json",
+    "body": "{\"status\":\"success\",\"message\":\"激活码更新成功\"}\n"
+  },
+  "observed_rejection_probes": {
+    "empty_body": {
+      "status_code": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": "21",
+      "body": "Invalid JSON payload\n"
+    },
+    "malformed_json": {
+      "status_code": 400,
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": "21",
+      "body": "Invalid JSON payload\n"
+    },
+    "empty_json_object": {
+      "status_code": 400,
+      "content_type": "application/json",
+      "content_length": "34",
+      "body": "{\"error\":\"授权码格式错误\"}\n"
+    },
+    "empty_license_field": {
+      "status_code": 400,
+      "content_type": "application/json",
+      "content_length": "34",
+      "body": "{\"error\":\"授权码格式错误\"}\n"
+    },
+    "invalid_synthetic_key": {
+      "status_code": 400,
+      "content_type": "application/json",
+      "content_length": "34",
+      "body": "{\"error\":\"授权码格式错误\"}\n"
+    },
+    "wrong_key_field_name": {
+      "status_code": 400,
+      "content_type": "application/json",
+      "content_length": "34",
+      "body": "{\"error\":\"授权码格式错误\"}\n"
+    }
+  }
+}

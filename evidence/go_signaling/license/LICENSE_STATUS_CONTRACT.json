@@ -1,0 +1,101 @@
+{
+  "route": "/api/license_status",
+  "debug_route": "/debug/license",
+  "auth_required": false,
+  "response_type": "application/json",
+  "field_count": 13,
+  "fields": {
+    "activated": {
+      "type": "bool",
+      "initial_value": false,
+      "description": "Whether a commercial license key is currently activated"
+    },
+    "current_devices": {
+      "type": "int",
+      "initial_value": 0,
+      "description": "Count of actively connected online devices"
+    },
+    "customer": {
+      "type": "string",
+      "initial_value": "",
+      "description": "Customer identifier from activated license"
+    },
+    "days_remaining": {
+      "type": "int",
+      "initial_value": 46,
+      "description": "Calculated days from current time until expires_at"
+    },
+    "error_msg": {
+      "type": "string",
+      "initial_value": "",
+      "description": "License error message if expired or invalid"
+    },
+    "expires_at": {
+      "type": "string",
+      "initial_value": "2026-11-01",
+      "format": "2006-01-02",
+      "description": "Expiration date string"
+    },
+    "license_expired": {
+      "type": "bool",
+      "initial_value": false,
+      "description": "Whether the expiration date has passed"
+    },
+    "license_source": {
+      "type": "string",
+      "initial_value": "built-in",
+      "description": "Origin of license: built-in or license-file"
+    },
+    "machine_id": {
+      "type": "string",
+      "initial_value": "8AD9-A7EF-87FB-E780",
+      "description": "Hardware system fingerprint"
+    },
+    "max_devices": {
+      "type": "int",
+      "initial_value": 20,
+      "description": "Maximum allowed registered devices under license"
+    },
+    "post_promo_max_devices": {
+      "type": "int",
+      "initial_value": 10,
+      "description": "Device limit after promotional period"
+    },
+    "promo": {
+      "type": "bool",
+      "initial_value": true,
+      "description": "Whether promotional entitlement is currently active"
+    },
+    "status": {
+      "type": "string",
+      "initial_value": "valid",
+      "description": "License validation status: valid or expired"
+    }
+  },
+  "debug_license_behavior": {
+    "requires_debug_flag": true,
+    "when_debug_enabled": {
+      "status_code": 200,
+      "body_identical_to_license_status": true
+    },
+    "when_debug_disabled": {
+      "status_code": 404,
+      "body": "Not found\n"
+    }
+  },
+  "observed_baseline_sample": {
+    "activated": false,
+    "current_devices": 0,
+    "customer": "",
+    "days_remaining": 46,
+    "error_msg": "",
+    "expires_at": "2026-11-01",
+    "license_expired": false,
+    "license_source": "built-in",
+    "machine_id": "8AD9-A7EF-87FB-E780",
+    "max_devices": 20,
+    "post_promo_max_devices": 10,
+    "promo": true,
+    "status": "valid"
+  }
+}

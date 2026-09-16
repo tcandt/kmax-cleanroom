@@ -120,7 +120,7 @@ def verify_shortcut_reproducibility():
                     if any("WriteFile" in c or "ZkONNWV" in c for c in callees):
                         derived_saver_va = target
                         derived_saver_sym = t_sym
-        elif insn.mnemonic == 'lea':
+        else:
             for op in insn.operands:
                 if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
                     tgt = insn.address + insn.size + op.mem.disp
@@ -128,7 +128,14 @@ def verify_shortcut_reproducibility():
                     if tgt_off and 0 <= tgt_off < len(elf_bytes) - 64:
                         kind_5bit = elf_bytes[tgt_off+23] & 0x1f
                         if kind_5bit == 21:  # KindMap
-                            derived_map_va = tgt
+                            key_ptr, elem_ptr = struct.unpack('<QQ', elf_bytes[tgt_off+48:tgt_off+64])
+                            off_e = va_to_offset(elem_ptr, sections)
+                            if off_e and 0 <= off_e < len(elf_bytes) - 64 and (elf_bytes[off_e+23] & 0x1f) == 23:
+                                se_ptr, = struct.unpack('<Q', elf_bytes[off_e+48:off_e+56])
+                                off_se = va_to_offset(se_ptr, sections)
+                                if off_se and 0 <= off_se < len(elf_bytes) - 64 and (elf_bytes[off_se+23] & 0x1f) == 25:
+                                    derived_map_va = tgt
+                                    derived_slice_va = elem_ptr
                         elif kind_5bit == 22:  # KindPtr
                             elem = struct.unpack('<Q', elf_bytes[tgt_off+48:tgt_off+56])[0]
                             elem_off = va_to_offset(elem, sections)
@@ -155,11 +162,9 @@ def verify_shortcut_reproducibility():
                         derived_loader_sym = t_meta["symbol_name"]
 
     # 5. Independently reparse Shortcut struct descriptor from ELF
-    # Follow slice ptr -> elem ptr -> struct descriptor
+    # Follow slice descriptor elem ptr -> struct descriptor
     if derived_slice_va:
-        off_p = va_to_offset(derived_slice_va, sections)
-        slice_type_va = struct.unpack('<Q', elf_bytes[off_p+48:off_p+56])[0]
-        off_s = va_to_offset(slice_type_va, sections)
+        off_s = va_to_offset(derived_slice_va, sections)
         struct_va = struct.unpack('<Q', elf_bytes[off_s+48:off_s+56])[0]
     else:
         struct_va = 0x7d70c0
@@ -236,6 +241,7 @@ def verify_shortcut_reproducibility():
     st = f2_r.get("shortcut_struct", {})
     abi = f2_r.get("abi_validation", {})
     fields = st.get("fields", [])
+    sm = f2_r.get("storage_map", {})
     p2 = (
         is_non_overlapping and
         abi.get("is_non_overlapping") is True and
@@ -244,10 +250,14 @@ def verify_shortcut_reproducibility():
         st.get("field_count") == 2 and
         fields[0]["offset"] == 0 and fields[0]["size_bytes"] == 16 and fields[0]["tag"] == 'json:"name"' and
         fields[1]["offset"] == 16 and fields[1]["size_bytes"] == 16 and fields[1]["tag"] == 'json:"cmd"' and
-        f2_r.get("storage_map", {}).get("descriptor_va") == hex(derived_map_va)
+        sm.get("descriptor_va") == hex(derived_map_va) and
+        sm.get("key_type_name") == "*string" and
+        sm.get("value_type_name") == "*[]main.KXuCJAAi60" and
+        sm.get("map_type_name") == "*map[string][]main.KXuCJAAi60" and
+        sm.get("storage_global_va") is not None
     )
     results["2. SHORTCUT_TYPE_EVIDENCE"] = p2
-    print(f"[{'PASS' if p2 else 'FAIL'}] 2. SHORTCUT_TYPE_EVIDENCE: ABI verified non-overlapping (field0 off=0 size=16, field1 off=16 size=16, struct size=32)")
+    print(f"[{'PASS' if p2 else 'FAIL'}] 2. SHORTCUT_TYPE_EVIDENCE: ABI verified non-overlapping (field0 off=0 size=16, field1 off=16 size=16, struct size=32) and storage map independently derived as map[string][]Shortcut")
 
     # Artifact 3: SHORTCUT_ROUTE_METHOD_MATRIX.json
     f3_r = json.loads((temp_out / "SHORTCUT_ROUTE_METHOD_MATRIX.json").read_text(encoding="utf-8"))

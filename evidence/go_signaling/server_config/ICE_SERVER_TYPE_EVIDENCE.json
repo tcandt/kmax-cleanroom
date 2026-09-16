@@ -1,5 +1,13 @@
 {
   "classification": "DIRECT_TYPE_RECOVERY",
+  "query_seed": {
+    "handler_symbol": "main.vREP2EE2",
+    "handler_va": "0x768500"
+  },
+  "machine_derivation": {
+    "slice_descriptor_source": "disasm(main.vREP2EE2) -> KindSlice LEA operand",
+    "struct_descriptor_source": "slice_descriptor.elem_ptr (offset 48)"
+  },
   "abi_validation": {
     "architecture": "AMD64",
     "runtime_struct_field_size": 24,

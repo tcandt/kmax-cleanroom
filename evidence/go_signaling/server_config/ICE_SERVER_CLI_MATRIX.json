@@ -1,0 +1,243 @@
+[
+  {
+    "test_id": "ICE-CLI-01",
+    "name": "no_flags",
+    "flags": [],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:stun.l.google.com:19302"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-02",
+    "name": "single_stun",
+    "flags": [
+      "-ice_servers=stun:stun.l.google.com:19302"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:stun.l.google.com:19302"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-03",
+    "name": "multiple_stun",
+    "flags": [
+      "-ice_servers=stun:stun1.l.google.com:19302,stun:stun2.l.google.com:19302"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:stun1.l.google.com:19302"
+        ]
+      },
+      {
+        "urls": [
+          "stun:stun2.l.google.com:19302"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-04",
+    "name": "turn_user_pass",
+    "flags": [
+      "-ice_servers=turn:alice:secret123@turn.example.com:3478"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "turn:turn.example.com:3478"
+        ],
+        "username": "alice",
+        "credential": "secret123"
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-05",
+    "name": "mixed_stun_turn",
+    "flags": [
+      "-ice_servers=stun:stun.example.com:19302,turn:bob:pw456@turn.example.com:3478"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:stun.example.com:19302"
+        ]
+      },
+      {
+        "urls": [
+          "turn:turn.example.com:3478"
+        ],
+        "username": "bob",
+        "credential": "pw456"
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-06",
+    "name": "surrounding_whitespace",
+    "flags": [
+      "-ice_servers= stun:stun1.example.com:19302 , turn:u:p@turn.example.com:3478 "
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:stun1.example.com:19302"
+        ]
+      },
+      {
+        "urls": [
+          "turn:turn.example.com:3478"
+        ],
+        "username": "u",
+        "credential": "p"
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-07",
+    "name": "empty_ice_servers",
+    "flags": [
+      "-ice_servers="
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:stun.l.google.com:19302"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-08",
+    "name": "malformed_turn",
+    "flags": [
+      "-ice_servers=turn:malformed_no_at_symbol"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "turn:malformed_no_at_symbol"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-09",
+    "name": "custom_stun_server",
+    "flags": [
+      "-stun_server=stun:custom.stun.org:3478"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:custom.stun.org:3478"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-10",
+    "name": "both_ice_and_stun",
+    "flags": [
+      "-ice_servers=stun:primary.org:19302",
+      "-stun_server=stun:fallback.org:19302"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:primary.org:19302"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-11",
+    "name": "turns_scheme",
+    "flags": [
+      "-ice_servers=turns:alice:sec@turns.example.com:5349"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "turns:alice:sec@turns.example.com:5349"
+        ]
+      }
+    ],
+    "error_message": null
+  },
+  {
+    "test_id": "ICE-CLI-12",
+    "name": "empty_comma_elements",
+    "flags": [
+      "-ice_servers=stun:a.org:19302,,stun:b.org:19302"
+    ],
+    "startup_success": true,
+    "exit_code": null,
+    "http_status": 200,
+    "response_json": [
+      {
+        "urls": [
+          "stun:a.org:19302"
+        ]
+      },
+      {
+        "urls": [
+          "stun:b.org:19302"
+        ]
+      }
+    ],
+    "error_message": null
+  }
+]

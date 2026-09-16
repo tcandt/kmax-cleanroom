@@ -1,0 +1,61 @@
+{
+  "classification": "DIRECT_TYPE_AND_GLOBAL_RECOVERY",
+  "query_seed": {
+    "activate_handler_symbol": "main.jcraNgV8Jg",
+    "activate_handler_va": "0x74b6c0",
+    "status_handler_symbol": "main.xdGI1n",
+    "status_helper_symbol": "main.J_5lH4w6CU"
+  },
+  "machine_derivation": {
+    "activation_struct_source": "disasm(main.jcraNgV8Jg) -> KindStruct LEA operand (0x7bd580)",
+    "status_response_source": "disasm(main.J_5lH4w6CU) -> KindMap (0x7bf940) runtime map construction with 13 keys",
+    "persistence_file_source": ".data RIP global load (0xbeeda0) -> 'license.txt'",
+    "initial_expires_at_source": ".data RIP global load (0xbeed90) -> '2026-11-01'"
+  },
+  "activation_payload_struct": {
+    "descriptor_va": "0x7bd580",
+    "type_name": "*struct { GJjLo4tZRb string \"json:\\\"license\\\"\" }",
+    "size_bytes": 16,
+    "field_count": 1,
+    "fields": [
+      {
+        "field_index": 0,
+        "name": "GJjLo4tZRb",
+        "tag": "json:\"license\"",
+        "json_key": "license",
+        "offset": 0,
+        "size_bytes": 16,
+        "type_va": "0x79e2c0",
+        "type_name": "string"
+      }
+    ]
+  },
+  "status_response_descriptor": {
+    "runtime_type": "map[string]interface{}",
+    "descriptor_va": "0x7bf940",
+    "allocated_size": 13,
+    "keys_count": 13
+  },
+  "error_response_descriptor": {
+    "runtime_type": "map[string]string",
+    "descriptor_va": "0x7c0340",
+    "error_field": "error"
+  },
+  "success_response_descriptor": {
+    "runtime_type": "map[string]string",
+    "descriptor_va": "0x7c0340",
+    "status_field": "status",
+    "status_value": "success",
+    "message_field": "message",
+    "message_value": "\u6fc0\u6d3b\u7801\u66f4\u65b0\u6210\u529f"
+  },
+  "compile_time_globals": {
+    "license_filename": "license.txt",
+    "initial_expires_at": "2026-11-01",
+    "initial_license_source": "built-in",
+    "initial_status": "valid",
+    "initial_promo": true,
+    "default_max_devices": 20,
+    "default_post_promo_max_devices": 10
+  }
+}

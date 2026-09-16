@@ -1,5 +1,14 @@
 {
   "classification": "DIRECT_GLOBAL_RECOVERY",
+  "query_seed": {
+    "handler_symbol": "main.ys0CAJV5f5k",
+    "handler_va": "0x769840"
+  },
+  "machine_derivation": {
+    "version_global_source": "disasm(main.ys0CAJV5f5k) -> .data RIP load (0xbeee00)",
+    "commit_global_source": "disasm(main.ys0CAJV5f5k) -> .data RIP load (0xbeee10)",
+    "build_time_global_source": "disasm(main.ys0CAJV5f5k) -> .data RIP load (0xbeee20)"
+  },
   "route": "/api/version",
   "auth_required": false,
   "methods_allowed": [

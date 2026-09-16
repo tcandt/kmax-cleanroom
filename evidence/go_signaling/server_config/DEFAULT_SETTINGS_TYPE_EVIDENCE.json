@@ -1,5 +1,13 @@
 {
   "classification": "DIRECT_TYPE_RECOVERY",
+  "query_seed": {
+    "handler_symbol": "main.j0yBBXR1Hjl",
+    "handler_va": "0x768980"
+  },
+  "machine_derivation": {
+    "map_descriptor_source": "disasm(main.j0yBBXR1Hjl) -> KindMap LEA operand",
+    "decode_ptr_source": "disasm(main.j0yBBXR1Hjl) -> KindPtr-to-KindMap LEA operand"
+  },
   "descriptor_va": "0x7bf940",
   "type_name": "*map[string]interface {}",
   "decode_pointer_va": "0x7968e0",

@@ -1,0 +1,49 @@
+{
+  "test_description": "Verify disk and memory state isolation across failed activation attempts",
+  "disk_files_before": [
+    "device_tags.json",
+    "downloads",
+    "snapshots",
+    "users.json"
+  ],
+  "disk_files_after": [
+    "device_tags.json",
+    "downloads",
+    "snapshots",
+    "users.json"
+  ],
+  "disk_state_mutated": false,
+  "license_txt_created": false,
+  "memory_status_before": {
+    "activated": false,
+    "current_devices": 0,
+    "customer": "",
+    "days_remaining": 46,
+    "error_msg": "",
+    "expires_at": "2026-11-01",
+    "license_expired": false,
+    "license_source": "built-in",
+    "machine_id": "8AD9-A7EF-87FB-E780",
+    "max_devices": 20,
+    "post_promo_max_devices": 10,
+    "promo": true,
+    "status": "valid"
+  },
+  "memory_status_after": {
+    "activated": false,
+    "current_devices": 0,
+    "customer": "",
+    "days_remaining": 46,
+    "error_msg": "",
+    "expires_at": "2026-11-01",
+    "license_expired": false,
+    "license_source": "built-in",
+    "machine_id": "8AD9-A7EF-87FB-E780",
+    "max_devices": 20,
+    "post_promo_max_devices": 10,
+    "promo": true,
+    "status": "valid"
+  },
+  "memory_state_mutated": false,
+  "verdict": "DOES_NOT_MUTATE_STATE"
+}
