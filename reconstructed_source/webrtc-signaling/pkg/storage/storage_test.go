@@ -185,8 +185,11 @@ func TestTagsStoreLifecycle(t *testing.T) {
 	}
 
 	// Update configuration
-	cfg.Tags = []string{"office", "testing"}
-	cfg.DeviceTags["dev_1"] = []string{"office"}
+	cfg.Tags = []types.Tag{
+		{ID: "t1", Name: "office", Color: "#ff0000"},
+		{ID: "t2", Name: "testing", Color: "#00ff00"},
+	}
+	cfg.DeviceTags["dev_1"] = []string{"t1"}
 	if err := store.SetConfig(cfg); err != nil {
 		t.Fatalf("SetConfig failed: %v", err)
 	}
@@ -197,7 +200,7 @@ func TestTagsStoreLifecycle(t *testing.T) {
 		t.Fatalf("reload failed: %v", err)
 	}
 	cfg2 := store2.GetConfig()
-	if len(cfg2.Tags) != 2 || cfg2.DeviceTags["dev_1"][0] != "office" {
+	if len(cfg2.Tags) != 2 || cfg2.DeviceTags["dev_1"][0] != "t1" {
 		t.Errorf("persisted config mismatch: %v", cfg2)
 	}
 }

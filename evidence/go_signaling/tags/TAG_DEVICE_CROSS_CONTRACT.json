@@ -1,0 +1,7 @@
+{
+  "device_endpoint": "/devices",
+  "device_dto_has_tags": false,
+  "tags_endpoint_isolation": "Tags are maintained strictly in device_tags.json and exposed via /api/tags without modifying DeviceDTO fields on /devices.",
+  "devices_status": 200,
+  "devices_body_sample": "[]\n"
+}

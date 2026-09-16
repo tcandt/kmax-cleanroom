@@ -3,7 +3,7 @@
     "case_id": "BEARER_CANONICAL",
     "description": "Canonical 'Bearer <token>' format",
     "headers": {
-      "Authorization": "Bearer e4653893271af635b73732e26984802435aa8ba50666c6148ac020b215af0650"
+      "Authorization": "Bearer ed47500ea17c469520f69c168da34f2ad2b67fbb8da512e19df89b9e4ac5e3d6"
     },
     "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
@@ -18,7 +18,7 @@
     "case_id": "BEARER_LOWERCASE",
     "description": "All-lowercase 'bearer <token>' format",
     "headers": {
-      "Authorization": "bearer e4653893271af635b73732e26984802435aa8ba50666c6148ac020b215af0650"
+      "Authorization": "bearer ed47500ea17c469520f69c168da34f2ad2b67fbb8da512e19df89b9e4ac5e3d6"
     },
     "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
@@ -33,7 +33,7 @@
     "case_id": "BEARER_UPPERCASE",
     "description": "All-uppercase 'BEARER <token>' format",
     "headers": {
-      "Authorization": "BEARER e4653893271af635b73732e26984802435aa8ba50666c6148ac020b215af0650"
+      "Authorization": "BEARER ed47500ea17c469520f69c168da34f2ad2b67fbb8da512e19df89b9e4ac5e3d6"
     },
     "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
@@ -48,7 +48,7 @@
     "case_id": "BEARER_MIXED_CASE",
     "description": "Mixed-case 'bEaReR <token>' format",
     "headers": {
-      "Authorization": "bEaReR e4653893271af635b73732e26984802435aa8ba50666c6148ac020b215af0650"
+      "Authorization": "bEaReR ed47500ea17c469520f69c168da34f2ad2b67fbb8da512e19df89b9e4ac5e3d6"
     },
     "token_tested_type": "VALID_ORIGINAL_TOKEN",
     "status_code": 200,
@@ -63,7 +63,7 @@
     "case_id": "WRONG_SCHEME_BASIC",
     "description": "Basic auth scheme with token value",
     "headers": {
-      "Authorization": "Basic e4653893271af635b73732e26984802435aa8ba50666c6148ac020b215af0650"
+      "Authorization": "Basic ed47500ea17c469520f69c168da34f2ad2b67fbb8da512e19df89b9e4ac5e3d6"
     },
     "token_tested_type": "VALID_ORIGINAL_TOKEN_WITH_WRONG_SCHEME",
     "status_code": 401,

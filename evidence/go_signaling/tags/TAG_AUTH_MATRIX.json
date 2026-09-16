@@ -1,0 +1,16 @@
+{
+  "GET": {
+    "ADMIN": 200,
+    "NORMAL_USER": 200,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 200
+  },
+  "POST": {
+    "ADMIN": 200,
+    "NORMAL_USER": 200,
+    "MISSING_TOKEN": 401,
+    "INVALID_TOKEN": 401,
+    "NO_AUTH_MODE": 200
+  }
+}

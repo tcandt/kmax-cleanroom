@@ -24,21 +24,22 @@ from tools.forensics.generate_user_admin_forensics import (
     DEFAULT_OUTPUT_DIR
 )
 
+import hashlib
+
 def normalize_dynamic_data(data):
     """
-    Recursively normalizes ONLY ephemeral dynamic values:
+    Field-aware normalization for ephemeral dynamic values ONLY:
     - RFC3339 timestamps
-    - 64-char hex session tokens
-    - Ports
-    Does NOT normalize:
-    - HTTP status codes, JSON schemas, routes, verbs, roles, salt lengths, auth outcomes.
+    - Explicit session tokens (token, admin_token, normal_token, Bearer auth)
+    - Ephemeral ports
+    Does NOT blanket normalize 64-hex strings (preserves body_sha256 and password hashes).
     """
     if isinstance(data, dict):
         norm = {}
         for k, v in data.items():
             if k in ["first_seen", "last_seen", "timestamp", "generated_at"]:
                 norm[k] = "<NORMALIZED_TIMESTAMP>"
-            elif k in ["token", "admin_token", "normal_token"] and isinstance(v, str) and len(v) == 64:
+            elif k in ["token", "admin_token", "normal_token"] and isinstance(v, str):
                 norm[k] = "<NORMALIZED_TOKEN>"
             elif k in ["port", "url"]:
                 norm[k] = re.sub(r':\d+', ':<PORT>', str(v)) if v is not None else v
@@ -48,8 +49,10 @@ def normalize_dynamic_data(data):
     elif isinstance(data, list):
         return [normalize_dynamic_data(item) for item in data]
     elif isinstance(data, str):
+        # Normalize dynamic ISO8601/RFC3339 timestamps
         data = re.sub(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})', '<NORMALIZED_TIMESTAMP>', data)
-        data = re.sub(r'[0-9a-fA-F]{64}', '<NORMALIZED_TOKEN>', data)
+        # Normalize Bearer tokens only when explicitly preceded by Bearer scheme
+        data = re.sub(r'(?i)Bearer\s+[0-9a-fA-F]{64}', 'Bearer <NORMALIZED_TOKEN>', data)
         return data
     return data
 
@@ -113,7 +116,20 @@ def verify_reproducibility():
     slice_match = (f_sl_committed == f_sl_reproduced)
     print(f"[{'PASS' if slice_match else 'FAIL'}] USER_FUNCTION_SLICE_REPRODUCIBLE: {slice_match}")
 
-    # 6. Dynamic Oracle Contract Reproduction Check (Normalized)
+    # 6. Verify Password Hash / Salt Mathematical Invariant on Created User
+    scratch_users = REPO_ROOT / "scratch" / "gen_user_admin_forensics" / "users.json"
+    pwd_invariant_pass = False
+    if scratch_users.exists():
+        u_data = json.loads(scratch_users.read_text(encoding="utf-8"))
+        min_u = u_data.get("created_min", {})
+        salt = min_u.get("salt", "")
+        pwd_hash = min_u.get("password", "")
+        # created_min had password reset to "brandnewpassword" in contract probe step
+        expected_hash = hashlib.sha256(("brandnewpassword" + salt).encode("utf-8")).hexdigest()
+        pwd_invariant_pass = (pwd_hash == expected_hash and len(salt) == 32 and len(pwd_hash) == 64)
+    print(f"[{'PASS' if pwd_invariant_pass else 'FAIL'}] USER_PASSWORD_HASH_INVARIANT_VERIFIED: {pwd_invariant_pass}")
+
+    # 7. Dynamic Oracle Contract Reproduction Check (Normalized)
     dynamic_files = [
         "USER_ADMIN_ROUTE_METHOD_MATRIX.json",
         "USER_ADMIN_READ_CONTRACT.json",
@@ -136,7 +152,7 @@ def verify_reproducibility():
     oracle_pass = all(oracle_matches)
     print(f"[{'PASS' if oracle_pass else 'FAIL'}] USER_DYNAMIC_ORACLE_CONTRACT_REPRODUCIBLE: {oracle_pass}")
 
-    overall = type_pass and route_match and slice_match and oracle_pass
+    overall = type_pass and route_match and slice_match and pwd_invariant_pass and oracle_pass
     print("--------------------------------------------------")
     print(f"OVERALL REPRODUCIBILITY: {'PASS' if overall else 'FAIL'}")
     print("==================================================")

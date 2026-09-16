@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "generator": "generate_tag_forensics.py",
+    "target_binary": "webrtc-signaling (Linux AMD64 SHA256: 6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3)",
+    "classification": "DIRECT_TYPE_RECOVERY"
+  },
+  "types": {
+    "Tag": {
+      "descriptor_va": "0x7e25a0",
+      "size_bytes": 48,
+      "field_count": 3,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "OiUUD95Txsp",
+          "tag": "json:\"id\"",
+          "offset": 0,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 1,
+          "name": "Dg29KwTdmRj",
+          "tag": "json:\"name\"",
+          "offset": 16,
+          "type_va": "0x79e2c0"
+        },
+        {
+          "field_index": 2,
+          "name": "GEdLDBMX7a",
+          "tag": "json:\"color\"",
+          "offset": 32,
+          "type_va": "0x79e2c0"
+        }
+      ],
+      "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+    },
+    "DeviceTagsConfig": {
+      "descriptor_va": "0x7d6f80",
+      "size_bytes": 32,
+      "field_count": 2,
+      "fields": [
+        {
+          "field_index": 0,
+          "name": "XXa7tmdabkeQ",
+          "tag": "json:\"tags\"",
+          "offset": 0,
+          "type_va": "0x7969a0"
+        },
+        {
+          "field_index": 1,
+          "name": "UPhYaOm",
+          "tag": "json:\"deviceTags\"",
+          "offset": 24,
+          "type_va": "0x7bf9c0"
+        }
+      ],
+      "classification": "TYPE_DESCRIPTOR_CONFIRMED"
+    }
+  }
+}

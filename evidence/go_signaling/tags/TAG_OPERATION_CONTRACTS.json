@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "classification_rule": "Only CONFIRMED_OPERATION may be reconstructed. NOT_PRESENT operations must not be implemented.",
+    "target_route": "/api/tags"
+  },
+  "candidate_operations": [
+    {
+      "operation": "list tags",
+      "classification": "CONFIRMED_OPERATION",
+      "http_method": "GET",
+      "route": "/api/tags",
+      "evidence": "GET /api/tags returns HTTP 200 with schema {\"tags\": [...], \"deviceTags\": {...}}. Handled by main.bFT5Enmzua (0x769d40).",
+      "reconstructed": true
+    },
+    {
+      "operation": "create/add tag",
+      "classification": "CONFIRMED_OPERATION",
+      "http_method": "POST",
+      "route": "/api/tags",
+      "evidence": "Discrete endpoint /api/tags/add is NOT_PRESENT (404). Handled declaratively via POST /api/tags by including tag in tags array. Handled by main.k7fAFNISQp_m (0x76a4c0).",
+      "reconstructed": true
+    },
+    {
+      "operation": "update/rename tag",
+      "classification": "CONFIRMED_OPERATION",
+      "http_method": "POST",
+      "route": "/api/tags",
+      "evidence": "Discrete endpoint /api/tags/update is NOT_PRESENT (404). Handled declaratively via POST /api/tags by providing existing tag id with updated name/color. Handled by main.k7fAFNISQp_m (0x76a4c0).",
+      "reconstructed": true
+    },
+    {
+      "operation": "delete tag",
+      "classification": "CONFIRMED_OPERATION",
+      "http_method": "POST",
+      "route": "/api/tags",
+      "evidence": "Discrete endpoint /api/tags/delete and DELETE method are NOT_PRESENT for deletion (DELETE returns GET response). Handled declaratively by admin via POST /api/tags by omitting tag from tags array.",
+      "reconstructed": true
+    },
+    {
+      "operation": "assign tag(s) to device",
+      "classification": "CONFIRMED_OPERATION",
+      "http_method": "POST",
+      "route": "/api/tags",
+      "evidence": "Discrete endpoint /api/tags/assign is NOT_PRESENT (404). Handled declaratively via POST /api/tags by setting deviceTags[dev_id] = [tag_ids]. Enforces user device authorization via main.pVOasuBli (0x73d8a0).",
+      "reconstructed": true
+    },
+    {
+      "operation": "remove tag(s) from device",
+      "classification": "CONFIRMED_OPERATION",
+      "http_method": "POST",
+      "route": "/api/tags",
+      "evidence": "Discrete endpoint /api/tags/remove is NOT_PRESENT (404). Handled declaratively via POST /api/tags by passing deviceTags[dev_id] = []. Enforces user device authorization.",
+      "reconstructed": true
+    }
+  ],
+  "rejected_discrete_endpoints": [
+    {
+      "route": "/api/tags/add",
+      "method": "POST",
+      "status": 404,
+      "classification": "NOT_PRESENT"
+    },
+    {
+      "route": "/api/tags/delete",
+      "method": "POST",
+      "status": 404,
+      "classification": "NOT_PRESENT"
+    },
+    {
+      "route": "/api/tags/update",
+      "method": "POST",
+      "status": 404,
+      "classification": "NOT_PRESENT"
+    },
+    {
+      "route": "/api/tags/assign",
+      "method": "POST",
+      "status": 404,
+      "classification": "NOT_PRESENT"
+    },
+    {
+      "route": "/api/tags/remove",
+      "method": "POST",
+      "status": 404,
+      "classification": "NOT_PRESENT"
+    },
+    {
+      "route": "/api/tag",
+      "method": "GET",
+      "status": 404,
+      "classification": "NOT_PRESENT"
+    },
+    {
+      "route": "/api/tag",
+      "method": "POST",
+      "status": 404,
+      "classification": "NOT_PRESENT"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "/api/tags": {
+    "GET": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes_len": 181,
+      "body_sha256": "ce8dea3e79632a1e4e36d80691bdec639b1dbf768455fac17ad79b85e5c00a5b",
+      "body_sample": "{\"tags\":[{\"id\":\"t-init-1\",\"name\":\"Production\",\"color\":\"#ff0000\"},{\"id\":\"t-init-2"
+    },
+    "POST": {
+      "status": 400,
+      "location": null,
+      "content_type": "text/plain; charset=utf-8",
+      "cors_origin": "*",
+      "cors_methods": "POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes_len": 13,
+      "body_sha256": "1ef70cf98a5904ab8938b8d3b10c3d05e7beb03d8eb42381f736058910d579cc",
+      "body_sample": "Invalid JSON "
+    },
+    "PUT": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes_len": 181,
+      "body_sha256": "ce8dea3e79632a1e4e36d80691bdec639b1dbf768455fac17ad79b85e5c00a5b",
+      "body_sample": "{\"tags\":[{\"id\":\"t-init-1\",\"name\":\"Production\",\"color\":\"#ff0000\"},{\"id\":\"t-init-2"
+    },
+    "PATCH": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes_len": 181,
+      "body_sha256": "ce8dea3e79632a1e4e36d80691bdec639b1dbf768455fac17ad79b85e5c00a5b",
+      "body_sample": "{\"tags\":[{\"id\":\"t-init-1\",\"name\":\"Production\",\"color\":\"#ff0000\"},{\"id\":\"t-init-2"
+    },
+    "DELETE": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes_len": 181,
+      "body_sha256": "ce8dea3e79632a1e4e36d80691bdec639b1dbf768455fac17ad79b85e5c00a5b",
+      "body_sample": "{\"tags\":[{\"id\":\"t-init-1\",\"name\":\"Production\",\"color\":\"#ff0000\"},{\"id\":\"t-init-2"
+    },
+    "HEAD": {
+      "status": 200,
+      "location": null,
+      "content_type": "application/json",
+      "cors_origin": "*",
+      "cors_methods": "GET, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    },
+    "OPTIONS": {
+      "status": 200,
+      "location": null,
+      "content_type": null,
+      "cors_origin": "*",
+      "cors_methods": "GET, POST, OPTIONS",
+      "cors_headers": "Content-Type, Authorization",
+      "body_bytes_len": 0,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "body_sample": ""
+    }
+  }
+}

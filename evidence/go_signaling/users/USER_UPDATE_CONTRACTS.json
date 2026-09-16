@@ -48,7 +48,7 @@
   "update_permissions": {
     "success": {
       "status": 200,
-      "body": "{\"code\":0,\"data\":{\"expires_at\":\"2026-09-16T10:38:59.952383+07:00\",\"forbid_audio\":true,\"forbid_bitrate\":true,\"forbid_fps\":false,\"forbid_resolution\":false,\"settings\":null,\"username\":\"created_min\"},\"msg\":\"success\"}\n"
+      "body": "{\"code\":0,\"data\":{\"expires_at\":\"2026-09-16T11:13:56.9797013+07:00\",\"forbid_audio\":true,\"forbid_bitrate\":true,\"forbid_fps\":false,\"forbid_resolution\":false,\"settings\":null,\"username\":\"created_min\"},\"msg\":\"success\"}\n"
     },
     "unknown_user": {
       "status": 404,

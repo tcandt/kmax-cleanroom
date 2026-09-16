@@ -85,3 +85,14 @@ The Phase 2C.3C Users & Admin REST differential test suite executed **30 automat
   - Unit tests (`go test ./...`): **PASS**
   - Provenance audit (`verify_reconstructed_provenance.py`): **88/88 functions PASS**
   - Master verifier (`verify_phase2.py`): **PASS**
+
+---
+
+## 5. Addendum: Documented Intentional Bugfix Divergences
+
+| Divergence ID | Route | Classification | Original Behavior | Cleanroom Reconstructed Behavior | Target Verification Test |
+|---|---|---|---|---|---|
+| `DIVERGENCE-USER-01` | `/api/admin/users/rename` | `INTENTIONAL_BUGFIX_DIVERGENCE` | Deadlock / Permanent Hang (recursive RWMutex acquisition: write lock at `0x741630` in `main.sGuPXW2D`, read lock at `0x73752a` in `saveUsers`) | Clean lock handling without self-deadlock, HTTP 200 `{"status":"success"}\n`, persists to `users.json` | `USER-DIVERGENCE-01` (bounded differential timeout) |
+
+> [!NOTE]
+> As governed by cleanroom protocol, `USER-DIVERGENCE-01` is classified as a bounded divergence test confirming that the original server hangs until timeout while the reconstructed server completes successfully with exact schema and persistence parity. The primary differential pass rate denominator remains **30/30** for standard wire parity test cases.

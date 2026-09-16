@@ -1,4 +1,4 @@
-# Report 13R: Phase 2C.3BR Device Registry Contract & Evidence Closure
+# Report 13: Phase 2C.3B Device Registry & REST Differential Verification
 
 ## 1. Executive Summary
 

@@ -529,6 +529,50 @@ def run_suite():
             return (pass_same and pass_unk and pass_conf, {"same_status": ro_same.status_code, "unk_status": ro_unk.status_code, "conf_status": ro_conf.status_code})
         execute_test("USER-HTTP-30", "Rename User Endpoint Contract", t_30)
 
+        # USER-DIVERGENCE-01: Bounded Verification of Intentional Bugfix Divergence (Cross-User Rename Deadlock)
+        divergence_results = []
+        def t_div_01():
+            # Create user on both sides for rename
+            requests.post(f"{URL_ORIG}/api/admin/users/create", headers=h_ao, json={"username": "user_div_target", "password": "pwd"})
+            requests.post(f"{URL_RECON}/api/admin/users/create", headers=h_ar, json={"username": "user_div_target", "password": "pwd"})
+
+            # Original server cross-user rename deadlock probe (bounded strict timeout: 1.0s)
+            orig_timed_out = False
+            try:
+                requests.post(f"{URL_ORIG}/api/admin/users/rename", headers=h_ao, json={"old_username": "user_div_target", "new_username": "user_div_renamed"}, timeout=1.0)
+            except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout):
+                orig_timed_out = True
+
+            # Reconstructed server cross-user rename completes cleanly
+            rr = requests.post(f"{URL_RECON}/api/admin/users/rename", headers=h_ar, json={"old_username": "user_div_target", "new_username": "user_div_renamed"}, timeout=2.0)
+            recon_success = (rr.status_code == 200 and rr.json().get("status") == "success")
+
+            # Verify reconstructed disk persistence
+            f_r = json.loads((DIFF_TMP_RECON / "users.json").read_text(encoding="utf-8"))
+            recon_persisted = ("user_div_renamed" in f_r and "user_div_target" not in f_r)
+
+            passed = orig_timed_out and recon_success and recon_persisted
+            return (passed, {
+                "original_behavior": "TIMEOUT / SELF_DEADLOCK (verified)",
+                "reconstructed_behavior": "SUCCESSFUL_RENAME (status 200, persisted)",
+                "classification": "INTENTIONAL_BUGFIX_DIVERGENCE"
+            })
+
+        print("\n--- Bounded Intentional Divergence Verification ---")
+        t0 = time.perf_counter()
+        d_passed, d_details = t_div_01()
+        dur = (time.perf_counter() - t0) * 1000
+        d_status = "PASS" if d_passed else "FAIL"
+        print(f"  [{d_status}] USER-DIVERGENCE-01: Cross-User Rename Intentional Bugfix ({dur:.2f}ms)")
+        divergence_results.append({
+            "test_id": "USER-DIVERGENCE-01",
+            "name": "Cross-User Rename Intentional Bugfix",
+            "classification": "INTENTIONAL_BUGFIX_DIVERGENCE",
+            "status": d_status,
+            "duration_ms": round(dur, 2),
+            "details": d_details
+        })
+
     finally:
         for p in procs:
             p.kill()
@@ -545,9 +589,11 @@ def run_suite():
             "total_executed": total_tests,
             "passed": pass_count,
             "failed": total_tests - pass_count,
-            "metric": f"IMPLEMENTED_USER_ADMIN_CONTRACT_DIFFERENTIAL_PASS_RATE = {pass_rate_str}"
+            "metric": f"IMPLEMENTED_USER_ADMIN_CONTRACT_DIFFERENTIAL_PASS_RATE = {pass_rate_str}",
+            "intentional_divergences_count": len(divergence_results)
         },
-        "results": results
+        "results": results,
+        "divergences": divergence_results
     }
 
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)

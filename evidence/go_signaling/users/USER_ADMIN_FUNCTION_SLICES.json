@@ -3,7 +3,36 @@
     "route": "/api/admin/users",
     "handler_symbol": "main.eiuBQux8",
     "handler_va": "0x741ec0",
-    "instruction_count": 131,
+    "whole_function_boundary": {
+      "start_va": "0x741ec0",
+      "size_bytes": 4576,
+      "end_va": "0x7430a0"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "runtime.rand",
+      "runtime.mapIterStart"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "GET, OPTIONSUnauthorizedforbid_audiomessage_typestop_preview",
+      "Forbidden",
+      "Unauthorized",
+      "username",
+      "role",
+      "assigned_devices"
+    ],
+    "instruction_count": 886,
     "assembly_preview": [
       "0x741ec0: lea r12, [rsp - 0x510]",
       "0x741ec8: cmp r12, qword ptr [r14 + 0x10]",
@@ -36,7 +65,36 @@
     "route": "/api/admin/users/create",
     "handler_symbol": "main.zrTQTiT",
     "handler_va": "0x744140",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x744140",
+      "size_bytes": 2784,
+      "end_va": "0x744c20"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "dGxLbta0.UxZa5e4P"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Forbidden",
+      "Unauthorized",
+      "Username and password are required",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte"
+    ],
+    "instruction_count": 527,
     "assembly_preview": [
       "0x744140: lea r12, [rsp - 0x158]",
       "0x744148: cmp r12, qword ptr [r14 + 0x10]",
@@ -69,7 +127,36 @@
     "route": "/api/admin/users/delete",
     "handler_symbol": "main._Wcin_o",
     "handler_va": "0x745ba0",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x745ba0",
+      "size_bytes": 2368,
+      "end_va": "0x7464e0"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "dGxLbta0.UxZa5e4P"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Forbidden",
+      "Unauthorized",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "User not found"
+    ],
+    "instruction_count": 473,
     "assembly_preview": [
       "0x745ba0: lea r12, [rsp - 0x118]",
       "0x745ba8: cmp r12, qword ptr [r14 + 0x10]",
@@ -102,7 +189,36 @@
     "route": "/api/admin/users/update",
     "handler_symbol": "main.m3nYlgst",
     "handler_va": "0x744c20",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x744c20",
+      "size_bytes": 3968,
+      "end_va": "0x745ba0"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "runtime.gcWriteBarrier1"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Forbidden",
+      "Unauthorized",
+      "Forbidden: admin accounts cannot be restricted",
+      "User not found",
+      "username is required"
+    ],
+    "instruction_count": 761,
     "assembly_preview": [
       "0x744c20: lea r12, [rsp - 0x258]",
       "0x744c28: cmp r12, qword ptr [r14 + 0x10]",
@@ -135,7 +251,36 @@
     "route": "/api/admin/users/update_note",
     "handler_symbol": "main.daDbGP",
     "handler_va": "0x7464e0",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x7464e0",
+      "size_bytes": 2464,
+      "end_va": "0x746e80"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "dGxLbta0.UxZa5e4P"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Forbidden",
+      "Unauthorized",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "User not found"
+    ],
+    "instruction_count": 484,
     "assembly_preview": [
       "0x7464e0: lea r12, [rsp - 0x1b0]",
       "0x7464e8: cmp r12, qword ptr [r14 + 0x10]",
@@ -168,7 +313,36 @@
     "route": "/api/admin/users/reset_password",
     "handler_symbol": "main.rmHttgOpxTKh",
     "handler_va": "0x746e80",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x746e80",
+      "size_bytes": 2560,
+      "end_va": "0x747880"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "dGxLbta0.UxZa5e4P"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Forbidden",
+      "Unauthorized",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "User not found"
+    ],
+    "instruction_count": 491,
     "assembly_preview": [
       "0x746e80: lea r12, [rsp - 0x1d0]",
       "0x746e88: cmp r12, qword ptr [r14 + 0x10]",
@@ -201,7 +375,36 @@
     "route": "/api/admin/users/rename",
     "handler_symbol": "main.sGuPXW2D",
     "handler_va": "0x740f40",
-    "instruction_count": 135,
+    "whole_function_boundary": {
+      "start_va": "0x740f40",
+      "size_bytes": 3776,
+      "end_va": "0x741e00"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "runtime.gcWriteBarrier1"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Method not allowed",
+      "Forbidden",
+      "Unauthorized",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte"
+    ],
+    "instruction_count": 731,
     "assembly_preview": [
       "0x740f40: lea r12, [rsp - 0x2a0]",
       "0x740f48: cmp r12, qword ptr [r14 + 0x10]",
@@ -234,7 +437,36 @@
     "route": "/api/admin/users/kick",
     "handler_symbol": "main.eIddSiN_g",
     "handler_va": "0x747880",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x747880",
+      "size_bytes": 1984,
+      "end_va": "0x748040"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "dGxLbta0.UxZa5e4P"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Forbidden",
+      "Unauthorized",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "Username is required"
+    ],
+    "instruction_count": 403,
     "assembly_preview": [
       "0x747880: lea r12, [rsp - 0x100]",
       "0x747888: cmp r12, qword ptr [r14 + 0x10]",
@@ -267,7 +499,36 @@
     "route": "/api/admin/assign",
     "handler_symbol": "main.as5uExtX",
     "handler_va": "0x7432a0",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x7432a0",
+      "size_bytes": 2464,
+      "end_va": "0x743c40"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "sync.wC1Ayu5",
+      "runtime.mapaccess1",
+      "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+      "Y0caeZ_zze.AFewevPD9",
+      "dGxLbta0.UxZa5e4P"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Forbidden",
+      "Unauthorized",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "User not found"
+    ],
+    "instruction_count": 486,
     "assembly_preview": [
       "0x7432a0: lea r12, [rsp - 0x1b0]",
       "0x7432a8: cmp r12, qword ptr [r14 + 0x10]",
@@ -300,7 +561,33 @@
     "route": "/api/register",
     "handler_symbol": "main.ajyljXiIN8",
     "handler_va": "0x73e7c0",
-    "instruction_count": 132,
+    "whole_function_boundary": {
+      "start_va": "0x73e7c0",
+      "size_bytes": 1152,
+      "end_va": "0x73ec40"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "runtime.makemap_small",
+      "runtime.gcWriteBarrier1",
+      "JOaOfPm.(*Za4F248ANZ7).Encode",
+      "runtime.typeAssert",
+      "runtime.morestack_noctxt"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+      "error"
+    ],
+    "instruction_count": 240,
     "assembly_preview": [
       "0x73e7c0: lea r12, [rsp - 0x48]",
       "0x73e7c5: cmp r12, qword ptr [r14 + 0x10]",
@@ -333,7 +620,36 @@
     "route": "/api/user/ai-config",
     "handler_symbol": "main.jc6UOob61gVD",
     "handler_va": "0x73ffc0",
-    "instruction_count": 129,
+    "whole_function_boundary": {
+      "start_va": "0x73ffc0",
+      "size_bytes": 2432,
+      "end_va": "0x740940"
+    },
+    "machine_call_facts": [
+      "ikG9yFZB.Iw0ORK5lLe",
+      "runtime.newobject",
+      "runtime.mapassign_faststr",
+      "runtime.gcWriteBarrier2",
+      "main.lYKp_Iuf",
+      "Y0caeZ_zze.AFewevPD9",
+      "runtime.gcWriteBarrier1",
+      "JOaOfPm.(*PFVf3KWTUcg).Decode",
+      "main.fEGeGc6aNpH",
+      "sync.(*D2KbQ7Jm).Lock"
+    ],
+    "string_xrefs": [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Content-Type, AuthorizationTarget username is required",
+      "Access-Control-Allow-Methods",
+      "POST, OPTIONSCache-Control/api/devices/Access deniedstart_pr",
+      "Method not allowed",
+      "Unauthorized",
+      "[Auth] AI Config updated for user: %sDevice is online, disco",
+      "Content-Type",
+      "application/jsonapplication/gzip0123456789abcdefsnapshotInte"
+    ],
+    "instruction_count": 466,
     "assembly_preview": [
       "0x73ffc0: lea r12, [rsp - 0x1f0]",
       "0x73ffc8: cmp r12, qword ptr [r14 + 0x10]",

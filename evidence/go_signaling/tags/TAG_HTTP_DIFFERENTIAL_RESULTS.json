@@ -1,0 +1,481 @@
+{
+  "metadata": {
+    "title": "Phase 2C.3D Device Tags REST Differential Results",
+    "executed_at": "2026-09-16T02:31:32.818976+00:00",
+    "target_route": "/api/tags",
+    "total_executed": 20,
+    "passed": 20,
+    "failed": 0,
+    "metric": "IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20"
+  },
+  "results": [
+    {
+      "test_id": "TAG-HTTP-01",
+      "test_name": "Baseline List Tags & Device Mappings",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "json": {
+          "tags": [
+            {
+              "id": "tag-base-1",
+              "name": "Production",
+              "color": "#ff0000"
+            },
+            {
+              "id": "tag-base-2",
+              "name": "Staging",
+              "color": "#00ff00"
+            }
+          ],
+          "deviceTags": {
+            "dev-alpha-001": [
+              "tag-base-1"
+            ],
+            "dev-beta-002": [
+              "tag-base-2"
+            ]
+          }
+        }
+      },
+      "reconstructed": {
+        "status": 200,
+        "json": {
+          "tags": [
+            {
+              "id": "tag-base-1",
+              "name": "Production",
+              "color": "#ff0000"
+            },
+            {
+              "id": "tag-base-2",
+              "name": "Staging",
+              "color": "#00ff00"
+            }
+          ],
+          "deviceTags": {
+            "dev-alpha-001": [
+              "tag-base-1"
+            ],
+            "dev-beta-002": [
+              "tag-base-2"
+            ]
+          }
+        }
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-02",
+      "test_name": "Missing Token Rejection on GET",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-03",
+      "test_name": "Invalid Token Rejection on GET",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-04",
+      "test_name": "Missing Token Rejection on POST",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-05",
+      "test_name": "Invalid Token Rejection on POST",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-06",
+      "test_name": "Normal User GET Allowed",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "json": {
+          "tags": [
+            {
+              "id": "tag-base-1",
+              "name": "Production",
+              "color": "#ff0000"
+            },
+            {
+              "id": "tag-base-2",
+              "name": "Staging",
+              "color": "#00ff00"
+            }
+          ],
+          "deviceTags": {
+            "dev-alpha-001": [
+              "tag-base-1"
+            ],
+            "dev-beta-002": [
+              "tag-base-2"
+            ]
+          }
+        }
+      },
+      "reconstructed": {
+        "status": 200,
+        "json": {
+          "tags": [
+            {
+              "id": "tag-base-1",
+              "name": "Production",
+              "color": "#ff0000"
+            },
+            {
+              "id": "tag-base-2",
+              "name": "Staging",
+              "color": "#00ff00"
+            }
+          ],
+          "deviceTags": {
+            "dev-alpha-001": [
+              "tag-base-1"
+            ],
+            "dev-beta-002": [
+              "tag-base-2"
+            ]
+          }
+        }
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-07",
+      "test_name": "Admin Full State Update & Persistence",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "disk": {
+          "tags": [
+            {
+              "id": "tag-a-1",
+              "name": "Tier 1",
+              "color": "#112233"
+            },
+            {
+              "id": "tag-a-2",
+              "name": "Tier 2",
+              "color": "#445566"
+            }
+          ],
+          "deviceTags": {
+            "dev-alpha-001": [
+              "tag-a-1"
+            ],
+            "dev-beta-002": [
+              "tag-a-1",
+              "tag-a-2"
+            ]
+          }
+        }
+      },
+      "reconstructed": {
+        "status": 200,
+        "disk": {
+          "tags": [
+            {
+              "id": "tag-a-1",
+              "name": "Tier 1",
+              "color": "#112233"
+            },
+            {
+              "id": "tag-a-2",
+              "name": "Tier 2",
+              "color": "#445566"
+            }
+          ],
+          "deviceTags": {
+            "dev-alpha-001": [
+              "tag-a-1"
+            ],
+            "dev-beta-002": [
+              "tag-a-1",
+              "tag-a-2"
+            ]
+          }
+        }
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-08",
+      "test_name": "Non-Admin Scoped Device Mutation",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "deviceTags": {
+          "dev-alpha-001": [
+            "tag-a-2"
+          ],
+          "dev-beta-002": [
+            "tag-a-1",
+            "tag-a-2"
+          ]
+        }
+      },
+      "reconstructed": {
+        "status": 200,
+        "deviceTags": {
+          "dev-alpha-001": [
+            "tag-a-2"
+          ],
+          "dev-beta-002": [
+            "tag-a-1",
+            "tag-a-2"
+          ]
+        }
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-09",
+      "test_name": "Non-Admin Tag Append Merge",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "tags_count": 3
+      },
+      "reconstructed": {
+        "status": 200,
+        "tags_count": 3
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-10",
+      "test_name": "Non-Admin In-Place Tag Update",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "updated": {
+          "id": "tag-user-new",
+          "name": "User Custom Renamed",
+          "color": "#000000"
+        }
+      },
+      "reconstructed": {
+        "status": 200,
+        "updated": {
+          "id": "tag-user-new",
+          "name": "User Custom Renamed",
+          "color": "#000000"
+        }
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-11",
+      "test_name": "Empty Body Rejection on POST",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "reconstructed": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-12",
+      "test_name": "Invalid JSON Syntax Rejection on POST",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "reconstructed": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-13",
+      "test_name": "Empty JSON Object Acceptance",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "body": "{\"status\":\"success\"}\n"
+      },
+      "reconstructed": {
+        "status": 200,
+        "body": "{\"status\":\"success\"}\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-14",
+      "test_name": "Non-POST Verbs Routed to GET",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "put": 200,
+        "del": 200
+      },
+      "reconstructed": {
+        "put": 200,
+        "del": 200
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-15",
+      "test_name": "HEAD Method Behavior",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "len": 0
+      },
+      "reconstructed": {
+        "status": 200,
+        "len": 0
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-16",
+      "test_name": "OPTIONS CORS Preflight",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "cors": "*"
+      },
+      "reconstructed": {
+        "status": 200,
+        "cors": "*"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-17",
+      "test_name": "No-Auth Mode Bypass",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "get": 200,
+        "post": 200
+      },
+      "reconstructed": {
+        "get": 200,
+        "post": 200
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-18",
+      "test_name": "Persistence Formatting & Direct Write",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "raw_sample": "{\n  \"tags\": [],\n  \"deviceTags\": {}\n}"
+      },
+      "reconstructed": {
+        "raw_sample": "{\n  \"tags\": [],\n  \"deviceTags\": {}\n}"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-19",
+      "test_name": "Candidate Sub-Routes NOT_PRESENT (404)",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "all_404": true
+      },
+      "reconstructed": {
+        "all_404": true
+      },
+      "details": ""
+    },
+    {
+      "test_id": "TAG-HTTP-20",
+      "test_name": "Cross-Contract Isolation With /devices",
+      "classification": "BIT_EXACT_MATCH",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "body": "[]\n"
+      },
+      "reconstructed": {
+        "status": 200,
+        "body": "[]\n"
+      },
+      "details": ""
+    }
+  ]
+}

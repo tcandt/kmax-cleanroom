@@ -1531,22 +1531,51 @@ def verify_all():
     # 10. Phase 2C.3C Users & Admin REST Reconstruction Audit
     usr_dir = ROOT / "evidence" / "go_signaling" / "users"
 
-    # 10.1 Users/Admin Route Family
+    # 10.1 Users/Admin Route Family & Cross-Map Invariant
     u_fam_file = usr_dir / "USER_ADMIN_ROUTE_FAMILY.json"
-    if not u_fam_file.exists():
-        record_check("Phase 2C.3C Users/Admin Route Family", False, "USER_ADMIN_ROUTE_FAMILY.json missing")
+    route_map_file = ROOT / "evidence" / "go_signaling" / "ROUTE_HANDLER_MAP.json"
+    u_div_file = usr_dir / "USER_INTENTIONAL_DIVERGENCES.json"
+    if not u_fam_file.exists() or not route_map_file.exists() or not u_div_file.exists():
+        record_check("Phase 2C.3C Users/Admin Route Family & Provenance", False, "USER_ADMIN_ROUTE_FAMILY.json, ROUTE_HANDLER_MAP.json, or USER_INTENTIONAL_DIVERGENCES.json missing")
     else:
         u_fam = json.loads(u_fam_file.read_text(encoding="utf-8"))
-        u_routes = {r["route"] for r in u_fam.get("routes", [])}
+        r_map = json.loads(route_map_file.read_text(encoding="utf-8"))
+        u_div = json.loads(u_div_file.read_text(encoding="utf-8"))
+        
+        r_map_by_pattern = {r["pattern"]: r for r in r_map.get("routes", [])}
+        u_routes_entries = u_fam.get("routes", [])
+        u_routes = {r["route"] for r in u_routes_entries}
         expected_u_routes = {
             "/api/admin/users", "/api/admin/users/create", "/api/admin/users/delete",
             "/api/admin/users/update", "/api/admin/users/update_note", "/api/admin/users/reset_password",
             "/api/admin/users/rename", "/api/admin/users/kick", "/api/admin/assign",
             "/api/register", "/api/user/ai-config"
         }
-        u_fam_valid = (expected_u_routes == u_routes and len(u_fam.get("routes", [])) == 11)
-        record_check("Phase 2C.3C Users/Admin Route Family", u_fam_valid,
-                     f"11 confirmed routes: 8 admin management, 1 list, 1 public register, 1 user ai-config ({len(u_routes)} routes)")
+        
+        # Verify machine derivation from ROUTE_HANDLER_MAP
+        crossmap_valid = True
+        for r_entry in u_routes_entries:
+            pat = r_entry["route"]
+            m = r_map_by_pattern.get(pat)
+            if not m:
+                crossmap_valid = False
+                break
+            if r_entry["registration_call_va"] != m["call_va"] or \
+               r_entry["handler_va"] != m["handler_va"] or \
+               r_entry["handler_symbol"] != m["handler_symbol"]:
+                crossmap_valid = False
+                break
+        
+        divergence_valid = (
+            u_div.get("metadata", {}).get("divergence_count") == 1 and
+            len(u_div.get("divergences", [])) == 1 and
+            u_div["divergences"][0]["divergence_id"] == "DIVERGENCE-USER-01" and
+            u_div["divergences"][0]["classification"] == "INTENTIONAL_BUGFIX_DIVERGENCE"
+        )
+        
+        u_fam_valid = (expected_u_routes == u_routes and len(u_routes_entries) == 11 and crossmap_valid and divergence_valid)
+        record_check("Phase 2C.3C Users/Admin Route Family & Provenance", u_fam_valid,
+                     f"11 confirmed routes derived from ROUTE_HANDLER_MAP (call VA, handler VA, symbol validated), 1 intentional divergence documented")
 
     # 10.2 Users/Admin 7-Verb Method Matrix
     u_mat_file = usr_dir / "USER_ADMIN_ROUTE_METHOD_MATRIX.json"
@@ -1677,6 +1706,159 @@ def verify_all():
         u_repro_pass = (u_res.returncode == 0 and "OVERALL REPRODUCIBILITY: PASS" in u_res.stdout)
         record_check("Phase 2C.3C Users/Admin Forensic Reproducibility", u_repro_pass,
                      "tools/forensics/reproduce_user_admin_forensics.py PASS (all 10 artifacts reproducible via temp directory)")
+
+    # 11. Phase 2C.3D Device Tags REST Reconstruction Audit
+    tag_dir = ROOT / "evidence" / "go_signaling" / "tags"
+
+    # 11.1 Tags Route Family & Cross-Map Invariant
+    t_fam_file = tag_dir / "TAG_ROUTE_FAMILY.json"
+    if not t_fam_file.exists():
+        record_check("Phase 2C.3D Tags Route Family & Provenance", False, "TAG_ROUTE_FAMILY.json missing")
+    else:
+        t_fam = json.loads(t_fam_file.read_text(encoding="utf-8"))
+        t_routes = t_fam.get("routes", [])
+        t_entry = t_routes[0] if t_routes else {}
+        m_tag = r_map_by_pattern.get("/api/tags", {})
+        callees = t_entry.get("direct_project_callees", [])
+        callee_syms = {c.get("symbol") for c in callees}
+        expected_callees = {"main.bFT5Enmzua", "main.k7fAFNISQp_m", "main.rCajRnfJZ", "main.pVOasuBli", "main.gevbuZQhJ"}
+        t_fam_valid = (
+            len(t_routes) == 1 and
+            t_entry.get("route") == "/api/tags" and
+            t_entry.get("registration_call_va") == m_tag.get("call_va") == "0x76596c" and
+            t_entry.get("handler_va") == m_tag.get("handler_va") == "0x76d200" and
+            t_entry.get("handler_symbol") == m_tag.get("handler_symbol") == "main.main.func2" and
+            expected_callees.issubset(callee_syms)
+        )
+        record_check("Phase 2C.3D Tags Route Family & Provenance", t_fam_valid,
+                     f"/api/tags derived from ROUTE_HANDLER_MAP (call VA 0x76596c, handler 0x76d200, 5 direct callees mapped)")
+
+    # 11.2 Tags 7-Verb Method Matrix
+    t_mat_file = tag_dir / "TAG_ROUTE_METHOD_MATRIX.json"
+    if not t_mat_file.exists():
+        record_check("Phase 2C.3D Tags Method Matrix", False, "TAG_ROUTE_METHOD_MATRIX.json missing")
+    else:
+        t_mat = json.loads(t_mat_file.read_text(encoding="utf-8"))
+        tags_verbs = t_mat.get("/api/tags", {})
+        t_mat_valid = (
+            len(tags_verbs) == 7 and
+            tags_verbs["GET"]["status"] == 200 and
+            tags_verbs["POST"]["status"] == 400 and
+            tags_verbs["PUT"]["status"] == 200 and
+            tags_verbs["PATCH"]["status"] == 200 and
+            tags_verbs["DELETE"]["status"] == 200 and
+            tags_verbs["HEAD"]["status"] == 200 and
+            tags_verbs["OPTIONS"]["status"] == 200 and
+            tags_verbs["GET"]["cors_origin"] == "*"
+        )
+        record_check("Phase 2C.3D Tags Method Matrix", t_mat_valid,
+                     "7 verbs probed: GET/PUT/PATCH/DELETE/HEAD 200, POST 400 empty body, OPTIONS 200 CORS headers")
+
+    # 11.3 Tags Type Evidence
+    t_type_file = tag_dir / "TAG_TYPE_EVIDENCE.json"
+    if not t_type_file.exists():
+        record_check("Phase 2C.3D Tags Type Evidence", False, "TAG_TYPE_EVIDENCE.json missing")
+    else:
+        t_type = json.loads(t_type_file.read_text(encoding="utf-8")).get("types", {})
+        tag_s = t_type.get("Tag", {})
+        cfg_s = t_type.get("DeviceTagsConfig", {})
+        t_type_valid = (
+            tag_s.get("size_bytes") == 48 and
+            tag_s.get("field_count") == 3 and
+            cfg_s.get("size_bytes") == 32 and
+            cfg_s.get("field_count") == 2
+        )
+        record_check("Phase 2C.3D Tags Type Evidence", t_type_valid,
+                     "Tag struct (0x7e25a0, 48B, 3 fields: id, name, color) and DeviceTagsConfig (0x7d6f80, 32B, 2 fields)")
+
+    # 11.4 Tags Candidate Operations Classification
+    t_ops_file = tag_dir / "TAG_OPERATION_CONTRACTS.json"
+    if not t_ops_file.exists():
+        record_check("Phase 2C.3D Tags Operations Contract", False, "TAG_OPERATION_CONTRACTS.json missing")
+    else:
+        t_ops = json.loads(t_ops_file.read_text(encoding="utf-8"))
+        cand_ops = t_ops.get("candidate_operations", [])
+        rej_ops = t_ops.get("rejected_discrete_endpoints", [])
+        all_cand_confirmed = all(c.get("classification") == "CONFIRMED_OPERATION" for c in cand_ops)
+        all_rej_not_present = all(r.get("classification") == "NOT_PRESENT" for r in rej_ops)
+        t_ops_valid = (len(cand_ops) == 6 and all_cand_confirmed and len(rej_ops) == 7 and all_rej_not_present)
+        record_check("Phase 2C.3D Tags Operations Contract", t_ops_valid,
+                     "Candidate operations formally classified: 6 CONFIRMED_OPERATION via /api/tags, 7 discrete sub-routes NOT_PRESENT (404)")
+
+    # 11.5 Tags Storage & Persistence Contract
+    t_pers_file = tag_dir / "TAG_PERSISTENCE_CONTRACT.json"
+    if not t_pers_file.exists():
+        record_check("Phase 2C.3D Tags Persistence Contract", False, "TAG_PERSISTENCE_CONTRACT.json missing")
+    else:
+        t_pers = json.loads(t_pers_file.read_text(encoding="utf-8"))
+        pers_valid = (
+            t_pers.get("file_name") == "device_tags.json" and
+            t_pers.get("file_mode") == "0644" and
+            t_pers.get("write_mechanism") == "DIRECT_OS_WRITE_FILE" and
+            t_pers.get("atomic_tmp_rename") is False and
+            "2 spaces" in t_pers.get("json_format", {}).get("indentation", "")
+        )
+        record_check("Phase 2C.3D Tags Persistence Contract", pers_valid,
+                     "Direct os.WriteFile, mode 0644 (0x1a4), NO atomic .tmp rename, 2-space json.MarshalIndent")
+
+    # 11.6 Tags Authorization Matrix
+    t_auth_file = tag_dir / "TAG_AUTH_MATRIX.json"
+    if not t_auth_file.exists():
+        record_check("Phase 2C.3D Tags Auth Matrix", False, "TAG_AUTH_MATRIX.json missing")
+    else:
+        t_auth = json.loads(t_auth_file.read_text(encoding="utf-8"))
+        auth_valid = (
+            t_auth.get("GET", {}).get("ADMIN") == 200 and
+            t_auth.get("GET", {}).get("NORMAL_USER") == 200 and
+            t_auth.get("GET", {}).get("MISSING_TOKEN") == 401 and
+            t_auth.get("GET", {}).get("NO_AUTH_MODE") == 200 and
+            t_auth.get("POST", {}).get("ADMIN") == 200 and
+            t_auth.get("POST", {}).get("NORMAL_USER") == 200 and
+            t_auth.get("POST", {}).get("MISSING_TOKEN") == 401
+        )
+        record_check("Phase 2C.3D Tags Auth Matrix", auth_valid,
+                     "GET: Admin/User 200, 401 missing; POST: Admin/User 200 (role-aware mutation), 401 missing, No-Auth mode bypass")
+
+    # 11.7 Tags Handler Forensic Slices
+    t_sl_file = tag_dir / "TAG_HTTP_FUNCTION_SLICES.json"
+    if not t_sl_file.exists():
+        record_check("Phase 2C.3D Tags Function Slices", False, "TAG_HTTP_FUNCTION_SLICES.json missing")
+    else:
+        t_sl = json.loads(t_sl_file.read_text(encoding="utf-8"))
+        t_slices_valid = (len(t_sl) == 6 and all(s.get("instruction_count", 0) > 0 for s in t_sl))
+        record_check("Phase 2C.3D Tags Function Slices", t_slices_valid,
+                     f"6 functions disassembled with machine Capstone instruction slices ({len(t_sl)} slices)")
+
+    # 11.8 Tags REST Differential Results (TAG-HTTP-01 to TAG-HTTP-20)
+    t_diff_file = tag_dir / "TAG_HTTP_DIFFERENTIAL_RESULTS.json"
+    if not t_diff_file.exists():
+        record_check("Phase 2C.3D Tags REST Differential Results", False, "TAG_HTTP_DIFFERENTIAL_RESULTS.json missing")
+    else:
+        t_diff = json.loads(t_diff_file.read_text(encoding="utf-8"))
+        t_results = t_diff.get("results", [])
+        t_meta = t_diff.get("metadata", {})
+        t_cases = {r.get("test_id") for r in t_results}
+        expected_t_cases = {f"TAG-HTTP-{i:02d}" for i in range(1, 21)}
+        t_diff_valid = (
+            t_meta.get("total_executed") == 20 and
+            t_meta.get("passed") == 20 and
+            t_cases == expected_t_cases and
+            all(r.get("status") == "PASS" for r in t_results) and
+            "IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20" in t_meta.get("metric", "")
+        )
+        record_check("Phase 2C.3D Tags REST Differential Results", t_diff_valid,
+                     "IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20 (all 20 cases PASS)")
+
+    # 11.9 Tags Forensic Reproducibility Tool
+    t_repro_tool = ROOT / "tools" / "forensics" / "reproduce_tag_forensics.py"
+    if not t_repro_tool.exists():
+        record_check("Phase 2C.3D Tags Forensic Reproducibility", False, "reproduce_tag_forensics.py missing")
+    else:
+        import subprocess
+        t_res = subprocess.run([sys.executable, str(t_repro_tool)], capture_output=True, text=True)
+        t_repro_pass = (t_res.returncode == 0 and "OVERALL REPRODUCIBILITY: PASS" in t_res.stdout)
+        record_check("Phase 2C.3D Tags Forensic Reproducibility", t_repro_pass,
+                     "tools/forensics/reproduce_tag_forensics.py PASS (all 8 artifacts reproducible via temp directory)")
 
     # 9.10 Cleanroom Scope & Provenance Isolation Guard
     recon_dir = ROOT / "reconstructed_source" / "webrtc-signaling"

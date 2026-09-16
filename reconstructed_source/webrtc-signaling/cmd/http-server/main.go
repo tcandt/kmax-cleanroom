@@ -40,9 +40,16 @@ func main() {
 		log.Fatalf("Failed to initialize users store: %v", err)
 	}
 
+	tagsPath := filepath.Join(*dataDir, "device_tags.json")
+	tagsStore := storage.NewTagsStore(tagsPath)
+	if err := tagsStore.LoadOrCreate(); err != nil {
+		log.Printf("Failed to initialize tags store: %v", err)
+	}
+
 	sm := session.NewSessionManager(session.RealClock{})
 	authenticator := auth.NewAuthenticator(usersStore, sm, *noAuth)
 	server := httpapi.NewServer(authenticator, *noAuth)
+	server.SetTagsStore(tagsStore)
 
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	log.Printf("[HTTP] Reconstructed server listening on %s", addr)

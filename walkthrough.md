@@ -437,5 +437,65 @@ In Phase 2C.3BR, all 7 identified hold/remediation items were rigorously address
 | `USER-HTTP-30` | Rename User Endpoint Contract | `BIT_EXACT_MATCH` | **PASS** | Same-name 200, unknown 404, conflict 409; deadlock bug resolved |
 
 Metric: **`IMPLEMENTED_USER_ADMIN_CONTRACT_DIFFERENTIAL_PASS_RATE = 30/30`**
+Intentional Divergence: **`DIVERGENCE-USER-01`** (Cross-User Rename deadlock bugfix verified via `USER-DIVERGENCE-01`).
+
+---
+
+# Phase 2C.3D: Device Tags REST Reconstruction (`/api/tags`)
+
+## 1. Overview & Forensic Gate Pass
+
+- **Pre-Flight Refinements A–D Completed**:
+  - Derived all 11 Users/Admin routes dynamically from [ROUTE_HANDLER_MAP.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/ROUTE_HANDLER_MAP.json) with call VA, handler VA, and symbol validation.
+  - Documented `DIVERGENCE-USER-01` in [USER_INTENTIONAL_DIVERGENCES.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/users/USER_INTENTIONAL_DIVERGENCES.json) and verified deadlock bugfix in `USER-DIVERGENCE-01` while preserving the 30/30 denominator.
+  - Replaced fixed instruction windows with dynamic function boundary lookup from [FUNCTION_MAP.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/FUNCTION_MAP.json).
+  - Verified SHA256 password hash mathematical invariant check in `reproduce_user_admin_forensics.py`.
+- **Forensic Discovery on `/api/tags`**:
+  - Route registration: `/api/tags` registered at call VA `0x76596c` to `main.main.func2` (VA `0x76d200`, size: 704 bytes).
+  - Wrapper & Direct Project Callees:
+    - `main.main.func2` (`0x76d200`): Injects CORS headers (`Access-Control-Allow-Origin: *`), routes `OPTIONS` immediately (200), routes `POST` to `main.k7fAFNISQp_m`, and routes all other HTTP verbs (`GET`, `PUT`, `DELETE`, `PATCH`, `HEAD`) to `main.bFT5Enmzua`.
+    - `main.bFT5Enmzua` (`0x769d40`, size: 1632 bytes): Read handler. Authenticates caller, emits 401 on missing/invalid token, returns `{"tags": [...], "deviceTags": {...}}`.
+    - `main.k7fAFNISQp_m` (`0x76a4c0`, size: 5056 bytes): Write handler. Authenticates caller, decodes body into `types.DeviceTagsConfig`. Admin role (`admin`) performs full state replacement; non-admin (`user`) performs scoped tag merge (in-place update + append) and scoped device assignment mutation filtered by user's assigned devices via `main.pVOasuBli` (`0x73d8a0`). Persists via `main.rCajRnfJZ` (`0x737da0`).
+    - `main.rCajRnfJZ` (`0x737da0`, size: 608 bytes): Direct `os.WriteFile` with `O_WRONLY|O_CREATE|O_TRUNC` (`0x241`) and mode `0644` (`0x1a4`). **NO atomic `.tmp` rename**.
+    - `main.w3H7BXxDC` (`0x737880`, size: 928 bytes): Reads `device_tags.json` on startup, falls back to `{"tags": [], "deviceTags": {}}` and logs `[Tags] Initialized device_tags.json with empty list`.
+- **Candidate Operations Formally Evaluated**:
+  - Evaluated 6 candidate operations: all 6 confirmed on `/api/tags` (`CONFIRMED_OPERATION`).
+  - Probed 7 discrete sub-routes (`/api/tags/add`, `/api/tags/delete`, `/api/tags/update`, `/api/tags/assign`, `/api/tags/remove`, `GET /api/tag`, `POST /api/tag`): all confirmed `NOT_PRESENT` (404 Not Found).
+- **Type Descriptors Recovered from Binary ELF**:
+  - `Tag`: structType descriptor at `0x7e25a0` (48 bytes, 3 fields: `id`, `name`, `color`).
+  - `DeviceTagsConfig`: structType descriptor at `0x7d6f80` (32 bytes, 2 fields: `tags`, `deviceTags`).
+
+## 2. Differential Test Results Matrix (20/20 PASS)
+
+| Test ID | Test Name | Classification | Result | Notes |
+|---|---|---|---|---|
+| `TAG-HTTP-01` | Baseline List Tags & Device Mappings | `BIT_EXACT_MATCH` | **PASS** | 200 OK, `{"tags":[],"deviceTags":{}}` matching original |
+| `TAG-HTTP-02` | Missing Token Rejection on GET | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized with exact body `Unauthorized\n` |
+| `TAG-HTTP-03` | Invalid Token Rejection on GET | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized with exact body `Unauthorized\n` |
+| `TAG-HTTP-04` | Missing Token Rejection on POST | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized with exact body `Unauthorized\n` |
+| `TAG-HTTP-05` | Invalid Token Rejection on POST | `BIT_EXACT_MATCH` | **PASS** | 401 Unauthorized with exact body `Unauthorized\n` |
+| `TAG-HTTP-06` | Normal User GET Allowed | `BIT_EXACT_MATCH` | **PASS** | Normal authenticated user can read tags configuration |
+| `TAG-HTTP-07` | Admin Full State Update & Persistence | `BIT_EXACT_MATCH` | **PASS** | Full replacement of tags list and device mappings, 200 `{"status":"success"}\n` |
+| `TAG-HTTP-08` | Non-Admin Scoped Device Mutation | `BIT_EXACT_MATCH` | **PASS** | Non-admin can only mutate assigned devices; unassigned ignored |
+| `TAG-HTTP-09` | Non-Admin Tag Append Merge | `STRUCTURAL_EXACT_MATCH` | **PASS** | New tags appended without destroying existing tag list |
+| `TAG-HTTP-10` | Non-Admin In-Place Tag Update | `STRUCTURAL_EXACT_MATCH` | **PASS** | Existing tags matching ID updated in-place |
+| `TAG-HTTP-11` | Empty Body Rejection on POST | `BIT_EXACT_MATCH` | **PASS** | 400 Bad Request with exact body `Invalid JSON\n` |
+| `TAG-HTTP-12` | Invalid JSON Syntax Rejection on POST | `BIT_EXACT_MATCH` | **PASS** | 400 Bad Request with exact body `Invalid JSON\n` |
+| `TAG-HTTP-13` | Empty JSON Object Acceptance | `BIT_EXACT_MATCH` | **PASS** | `{}` accepted, returns 200 `{"status":"success"}\n` |
+| `TAG-HTTP-14` | Non-POST Verbs Routed to GET | `BIT_EXACT_MATCH` | **PASS** | `PUT`, `DELETE`, `PATCH` routed to GET handler |
+| `TAG-HTTP-15` | HEAD Method Behavior | `BIT_EXACT_MATCH` | **PASS** | 200 OK with 0 body bytes and Content-Type: application/json |
+| `TAG-HTTP-16` | OPTIONS CORS Preflight | `BIT_EXACT_MATCH` | **PASS** | 200 OK with Access-Control-Allow-Origin: * and methods |
+| `TAG-HTTP-17` | No-Auth Mode Bypass | `BIT_EXACT_MATCH` | **PASS** | No-auth server mode bypasses authentication on `/api/tags` |
+| `TAG-HTTP-18` | Persistence Formatting & Direct Write | `BIT_EXACT_MATCH` | **PASS** | Direct `os.WriteFile`, mode 0644, 2-space indentation |
+| `TAG-HTTP-19` | Candidate Sub-Routes NOT_PRESENT (404) | `BIT_EXACT_MATCH` | **PASS** | All 7 probed sub-routes confirm 404 NOT_PRESENT |
+| `TAG-HTTP-20` | Cross-Contract Isolation With /devices | `BIT_EXACT_MATCH` | **PASS** | Tags operations do not mutate device registry or online status |
+
+Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
+
+## 3. Master Verification Audit
+
+- `python tools/verify_phase2.py`: **`OVERALL AUDIT VERDICT: PASS`** across all 11 sections.
+- Reconstructed function provenance: 94 functions audited, 0 missing headers, 0 missing metadata fields.
+
 
 

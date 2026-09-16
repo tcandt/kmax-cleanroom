@@ -1,11 +1,13 @@
 {
   "metadata": {
     "generator": "generate_user_admin_forensics.py",
-    "source_evidence": "ROUTE_HANDLER_MAP.json + capstone disassembly"
+    "source_evidence": "ROUTE_HANDLER_MAP.json (machine-derived dataflow)",
+    "derived_from": "evidence/go_signaling/ROUTE_HANDLER_MAP.json"
   },
   "routes": [
     {
       "route": "/api/admin/users",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765a78",
       "handler_symbol": "main.eiuBQux8",
       "handler_va": "0x741ec0",
@@ -24,6 +26,7 @@
     },
     {
       "route": "/api/admin/users/create",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765ac0",
       "handler_symbol": "main.zrTQTiT",
       "handler_va": "0x744140",
@@ -37,6 +40,7 @@
     },
     {
       "route": "/api/admin/users/delete",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765ad8",
       "handler_symbol": "main._Wcin_o",
       "handler_va": "0x745ba0",
@@ -50,6 +54,7 @@
     },
     {
       "route": "/api/admin/users/update",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765b08",
       "handler_symbol": "main.m3nYlgst",
       "handler_va": "0x744c20",
@@ -63,6 +68,7 @@
     },
     {
       "route": "/api/admin/users/update_note",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765af0",
       "handler_symbol": "main.daDbGP",
       "handler_va": "0x7464e0",
@@ -76,6 +82,7 @@
     },
     {
       "route": "/api/admin/users/reset_password",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765b20",
       "handler_symbol": "main.rmHttgOpxTKh",
       "handler_va": "0x746e80",
@@ -89,6 +96,7 @@
     },
     {
       "route": "/api/admin/users/rename",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765a90",
       "handler_symbol": "main.sGuPXW2D",
       "handler_va": "0x740f40",
@@ -102,6 +110,7 @@
     },
     {
       "route": "/api/admin/users/kick",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765b38",
       "handler_symbol": "main.eIddSiN_g",
       "handler_va": "0x747880",
@@ -115,6 +124,7 @@
     },
     {
       "route": "/api/admin/assign",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765aa8",
       "handler_symbol": "main.as5uExtX",
       "handler_va": "0x7432a0",
@@ -128,6 +138,7 @@
     },
     {
       "route": "/api/register",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765a18",
       "handler_symbol": "main.ajyljXiIN8",
       "handler_va": "0x73e7c0",
@@ -141,6 +152,7 @@
     },
     {
       "route": "/api/user/ai-config",
+      "registration_type": "HandleFunc",
       "registration_call_va": "0x765a48",
       "handler_symbol": "main.jc6UOob61gVD",
       "handler_va": "0x73ffc0",

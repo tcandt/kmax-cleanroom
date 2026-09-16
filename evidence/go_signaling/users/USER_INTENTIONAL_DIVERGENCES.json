@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "module": "users/admin",
+    "divergence_count": 1,
+    "classification_rule": "Fixes fatal server self-deadlock while maintaining full HTTP REST mutation contract."
+  },
+  "divergences": [
+    {
+      "divergence_id": "DIVERGENCE-USER-01",
+      "route": "/api/admin/users/rename",
+      "classification": "INTENTIONAL_BUGFIX_DIVERGENCE",
+      "input": {
+        "old_username": "user_divergence_target",
+        "new_username": "user_divergence_renamed"
+      },
+      "original_behavior": "TIMEOUT / SELF_DEADLOCK",
+      "reconstructed_behavior": "SUCCESSFUL_RENAME",
+      "binary_evidence": "In main.sGuPXW2D (VA 0x740f40), cross-user rename acquires write lock usersLock.Lock() at 0x741630, updates in-memory users map, and calls saveUsers() (0x737500). Inside saveUsers(), instruction 0x73752a attempts to acquire read lock usersLock.RLock() on the non-reentrant sync.RWMutex. Because write lock is held by the same goroutine, this triggers a permanent self-deadlock. Reconstructed UsersStore.RenameUser() releases/manages locks without recursive acquisition before saving.",
+      "reason": "Prevent signaling server permanent hang and denial-of-service on valid administrative cross-user rename requests while preserving exact REST API wire contract.",
+      "verification_test": "USER-DIVERGENCE-01"
+    }
+  ]
+}

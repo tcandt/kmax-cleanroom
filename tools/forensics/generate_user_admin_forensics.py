@@ -183,124 +183,63 @@ def generate_evidence(output_dir: Path):
     }
     (output_dir / "USER_TYPE_EVIDENCE.json").write_text(json.dumps(user_type_evidence, indent=2), encoding="utf-8")
 
-    # 2. Discovered Route Family
+    # 2. Discovered Route Family (Dynamically derived from ROUTE_HANDLER_MAP.json)
+    route_map_path = REPO_ROOT / "evidence" / "go_signaling" / "ROUTE_HANDLER_MAP.json"
+    route_map_data = json.loads(route_map_path.read_text(encoding="utf-8"))
+
+    target_routes = [
+        "/api/admin/users",
+        "/api/admin/users/create",
+        "/api/admin/users/delete",
+        "/api/admin/users/update",
+        "/api/admin/users/update_note",
+        "/api/admin/users/reset_password",
+        "/api/admin/users/rename",
+        "/api/admin/users/kick",
+        "/api/admin/assign",
+        "/api/register",
+        "/api/user/ai-config"
+    ]
+
+    semantic_annotations = {
+        "/api/admin/users": {"role": "LIST_USERS", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]},
+        "/api/admin/users/create": {"role": "CREATE_USER", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/admin/users/delete": {"role": "DELETE_USER", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/admin/users/update": {"role": "UPDATE_USER_PERMISSIONS_AND_EXPIRY", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/admin/users/update_note": {"role": "UPDATE_USER_NOTE", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/admin/users/reset_password": {"role": "RESET_USER_PASSWORD", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/admin/users/rename": {"role": "RENAME_USER", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/admin/users/kick": {"role": "KICK_USER_DEVICE", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/admin/assign": {"role": "ASSIGN_USER_DEVICES", "auth": "ADMIN_ROLE_TOKEN", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/register": {"role": "PUBLIC_REGISTRATION", "auth": "NONE", "allowed_methods": ["POST", "OPTIONS"]},
+        "/api/user/ai-config": {"role": "USER_AI_CONFIG", "auth": "AUTHENTICATED_USER", "allowed_methods": ["POST", "OPTIONS"]}
+    }
+
+    discovered_routes = []
+    for r_pat in target_routes:
+        match = next((r for r in route_map_data["routes"] if r["pattern"] == r_pat), None)
+        if not match:
+            raise RuntimeError(f"Required route {r_pat} not found in ROUTE_HANDLER_MAP.json")
+        meta = semantic_annotations.get(r_pat, {})
+        discovered_routes.append({
+            "route": match["pattern"],
+            "registration_type": match.get("registration_type", "HandleFunc"),
+            "registration_call_va": match["call_va"],
+            "handler_symbol": match["handler_symbol"],
+            "handler_va": match["handler_va"],
+            "candidate_semantic_role": meta.get("role", "UNKNOWN"),
+            "auth_requirement": meta.get("auth", "UNKNOWN"),
+            "allowed_methods": meta.get("allowed_methods", ["POST", "OPTIONS"]),
+            "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
+        })
+
     route_family = {
         "metadata": {
             "generator": "generate_user_admin_forensics.py",
-            "source_evidence": "ROUTE_HANDLER_MAP.json + capstone disassembly"
+            "source_evidence": "ROUTE_HANDLER_MAP.json (machine-derived dataflow)",
+            "derived_from": "evidence/go_signaling/ROUTE_HANDLER_MAP.json"
         },
-        "routes": [
-            {
-                "route": "/api/admin/users",
-                "registration_call_va": "0x765a78",
-                "handler_symbol": "main.eiuBQux8",
-                "handler_va": "0x741ec0",
-                "candidate_semantic_role": "LIST_USERS",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/users/create",
-                "registration_call_va": "0x765ac0",
-                "handler_symbol": "main.zrTQTiT",
-                "handler_va": "0x744140",
-                "candidate_semantic_role": "CREATE_USER",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/users/delete",
-                "registration_call_va": "0x765ad8",
-                "handler_symbol": "main._Wcin_o",
-                "handler_va": "0x745ba0",
-                "candidate_semantic_role": "DELETE_USER",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/users/update",
-                "registration_call_va": "0x765b08",
-                "handler_symbol": "main.m3nYlgst",
-                "handler_va": "0x744c20",
-                "candidate_semantic_role": "UPDATE_USER_PERMISSIONS_AND_EXPIRY",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/users/update_note",
-                "registration_call_va": "0x765af0",
-                "handler_symbol": "main.daDbGP",
-                "handler_va": "0x7464e0",
-                "candidate_semantic_role": "UPDATE_USER_NOTE",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/users/reset_password",
-                "registration_call_va": "0x765b20",
-                "handler_symbol": "main.rmHttgOpxTKh",
-                "handler_va": "0x746e80",
-                "candidate_semantic_role": "RESET_USER_PASSWORD",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/users/rename",
-                "registration_call_va": "0x765a90",
-                "handler_symbol": "main.sGuPXW2D",
-                "handler_va": "0x740f40",
-                "candidate_semantic_role": "RENAME_USER",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/users/kick",
-                "registration_call_va": "0x765b38",
-                "handler_symbol": "main.eIddSiN_g",
-                "handler_va": "0x747880",
-                "candidate_semantic_role": "KICK_USER_DEVICE",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/admin/assign",
-                "registration_call_va": "0x765aa8",
-                "handler_symbol": "main.as5uExtX",
-                "handler_va": "0x7432a0",
-                "candidate_semantic_role": "ASSIGN_USER_DEVICES",
-                "auth_requirement": "ADMIN_ROLE_TOKEN",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/register",
-                "registration_call_va": "0x765a18",
-                "handler_symbol": "main.ajyljXiIN8",
-                "handler_va": "0x73e7c0",
-                "candidate_semantic_role": "PUBLIC_REGISTRATION",
-                "auth_requirement": "NONE",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            },
-            {
-                "route": "/api/user/ai-config",
-                "registration_call_va": "0x765a48",
-                "handler_symbol": "main.jc6UOob61gVD",
-                "handler_va": "0x73ffc0",
-                "candidate_semantic_role": "USER_AI_CONFIG",
-                "auth_requirement": "AUTHENTICATED_USER",
-                "allowed_methods": ["POST", "OPTIONS"],
-                "confirmation_level": "DYNAMIC_PROBE_CONFIRMED"
-            }
-        ]
+        "routes": discovered_routes
     }
     (output_dir / "USER_ADMIN_ROUTE_FAMILY.json").write_text(json.dumps(route_family, indent=2), encoding="utf-8")
 
@@ -595,24 +534,36 @@ def generate_evidence(output_dir: Path):
             }
         (output_dir / "USER_ADMIN_AUTH_MATRIX.json").write_text(json.dumps(auth_matrix, indent=2), encoding="utf-8")
 
-        # 11. Function Slices (Capstone Disassembly)
+        # 11. Function Slices (Capstone Disassembly of Whole Function Extents from FUNCTION_MAP)
+        function_map_path = REPO_ROOT / "evidence" / "go_signaling" / "FUNCTION_MAP.json"
+        function_map_data = {f["symbol_name"]: f for f in json.loads(function_map_path.read_text(encoding="utf-8"))}
+
         md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
         function_slices = []
         for r_entry in route_family["routes"]:
+            sym = r_entry["handler_symbol"]
+            f_meta = function_map_data.get(sym)
             h_va = int(r_entry["handler_va"], 16)
+            size = f_meta["size_bytes"] if f_meta else 0x300
             off = va_to_offset(h_va, sections)
             if off is None:
                 continue
-            code = elf_bytes[off:off+0x300]
+            code = elf_bytes[off:off+size]
             insns = []
             for ins in md.disasm(code, h_va):
                 insns.append(f"0x{ins.address:x}: {ins.mnemonic} {ins.op_str}")
-                if ins.mnemonic == "ret" and ins.address > h_va + 0x100:
-                    break
+
             function_slices.append({
                 "route": r_entry["route"],
-                "handler_symbol": r_entry["handler_symbol"],
+                "handler_symbol": sym,
                 "handler_va": r_entry["handler_va"],
+                "whole_function_boundary": {
+                    "start_va": hex(h_va),
+                    "size_bytes": size,
+                    "end_va": hex(h_va + size)
+                },
+                "machine_call_facts": f_meta.get("callees", []) if f_meta else [],
+                "string_xrefs": f_meta.get("referenced_strings", []) if f_meta else [],
                 "instruction_count": len(insns),
                 "assembly_preview": insns[:25]
             })

@@ -12,6 +12,7 @@ import (
 
 	"cloudphone-signaling/pkg/auth"
 	"cloudphone-signaling/pkg/devices"
+	"cloudphone-signaling/pkg/storage"
 )
 
 // Server encapsulates the HTTP handler router and associated auth/session/device services.
@@ -20,6 +21,7 @@ type Server struct {
 	auth      *auth.Authenticator
 	noAuth    bool
 	deviceReg *devices.Registry
+	tagsStore *storage.TagsStore
 }
 
 // CLEANROOM-PROVENANCE:
@@ -66,6 +68,9 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 	s.mux.HandleFunc("/api/admin/assign", s.HandleAdminAssign)
 	s.mux.HandleFunc("/api/register", s.HandleRegister)
 	s.mux.HandleFunc("/api/user/ai-config", s.HandleUserAIConfig)
+
+	// Register device tags route matching original binary
+	s.mux.HandleFunc("/api/tags", s.HandleTags)
 
 	// Register differential test fixture endpoints
 	s.mux.HandleFunc("/_test/register_device", s.HandleTestRegisterDevice)

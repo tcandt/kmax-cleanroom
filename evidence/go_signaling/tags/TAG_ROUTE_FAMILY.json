@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "generator": "generate_tag_forensics.py",
+    "source_evidence": "ROUTE_HANDLER_MAP.json (machine-derived dataflow)",
+    "derived_from": "evidence/go_signaling/ROUTE_HANDLER_MAP.json"
+  },
+  "routes": [
+    {
+      "route": "/api/tags",
+      "registration_type": "HandleFunc",
+      "registration_call_va": "0x76596c",
+      "closure_va": "0x8484e0",
+      "handler_symbol": "main.main.func2",
+      "handler_va": "0x76d200",
+      "candidate_semantic_role": "DEVICE_TAGGING_AND_ORGANIZATION",
+      "auth_requirement": "SESSION_TOKEN (ROLE_AWARE_MUTATION)",
+      "allowed_methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "HEAD",
+        "OPTIONS"
+      ],
+      "confirmation_level": "DYNAMIC_PROBE_CONFIRMED",
+      "direct_project_callees": [
+        {
+          "symbol": "main.bFT5Enmzua",
+          "va": "0x769d40",
+          "size_bytes": 1632,
+          "role": "GET_TAGS_HANDLER"
+        },
+        {
+          "symbol": "main.k7fAFNISQp_m",
+          "va": "0x76a4c0",
+          "size_bytes": 5056,
+          "role": "POST_TAGS_HANDLER"
+        },
+        {
+          "symbol": "main.rCajRnfJZ",
+          "va": "0x737da0",
+          "size_bytes": 608,
+          "role": "SAVE_DEVICE_TAGS_PERSISTENCE"
+        },
+        {
+          "symbol": "main.pVOasuBli",
+          "va": "0x73d8a0",
+          "size_bytes": 1120,
+          "role": "DEVICE_AUTH_CHECK"
+        },
+        {
+          "symbol": "main.gevbuZQhJ",
+          "va": "0x76ba00",
+          "size_bytes": 1216,
+          "role": "BUILD_TAGS_RESPONSE"
+        }
+      ]
+    }
+  ]
+}
