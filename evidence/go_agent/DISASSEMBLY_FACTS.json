@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "title": "Agent Binary Disassembly Facts",
+    "description": "Machine-verifiable control flow and xref facts derived directly from binary disassembly.",
+    "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+    "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+    "total_facts": 5
+  },
+  "facts": [
+    {
+      "fact_id": "AGENT-DCF-001",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+      "function_va": "0x53c730",
+      "instruction_ranges": [
+        {
+          "start_va": "0x53e540",
+          "end_va": "0x53e5bc"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x53e57c",
+          "string": "input-channel"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x53e588",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
+        }
+      ],
+      "semantic_claim": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "AGENT-DCF-002",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+      "function_va": "0x53c730",
+      "instruction_ranges": [
+        {
+          "start_va": "0x53e5dc",
+          "end_va": "0x53e650"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x53e604",
+          "string": "clipboard-channel"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x53e610",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
+        }
+      ],
+      "semantic_claim": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "AGENT-DCF-003",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+      "function_va": "0x53c730",
+      "instruction_ranges": [
+        {
+          "start_va": "0x53e700",
+          "end_va": "0x53e748"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x53e734",
+          "string": "camera-channel"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x53e740",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel"
+        }
+      ],
+      "semantic_claim": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "AGENT-DCF-004",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+      "function_va": "0x53c730",
+      "instruction_ranges": [
+        {
+          "start_va": "0x53e7d0",
+          "end_va": "0x53e820"
+        }
+      ],
+      "string_xrefs": [],
+      "direct_calls": [
+        {
+          "va": "0x53e818",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).OnDataChannel"
+        }
+      ],
+      "semantic_claim": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
+      "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "AGENT-DCF-005",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "function_symbol": "main.init",
+      "function_va": "0x5152f0",
+      "instruction_ranges": [
+        {
+          "start_va": "0x5152f0",
+          "end_va": "0x515ad0"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x51530c",
+          "string": "signaling"
+        },
+        {
+          "va": "0x515354",
+          "string": "id"
+        },
+        {
+          "va": "0x51539c",
+          "string": "external-addr"
+        },
+        {
+          "va": "0x5153e4",
+          "string": "webrtc-port"
+        },
+        {
+          "va": "0x515428",
+          "string": "jar"
+        },
+        {
+          "va": "0x51567c",
+          "string": "root"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x51532c",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515374",
+          "target_symbol": "aFaUKV.CMNJxRQ7"
+        },
+        {
+          "va": "0x515400",
+          "target_symbol": "aFaUKV.A1a3KwX"
+        },
+        {
+          "va": "0x51567c",
+          "target_symbol": "aFaUKV.RTCObKURJKV"
+        }
+      ],
+      "semantic_claim": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
+      "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags.",
+      "confidence": "HIGH"
+    }
+  ]
+}

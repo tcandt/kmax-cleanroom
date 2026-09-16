@@ -1,0 +1,889 @@
+{
+  "metadata": {
+    "title": "Agent CLI Flag Static Registration Evidence",
+    "description": "Exhaustive static registration evidence recovered from main.init in canonical ARM64 binary cloudphone-agent.",
+    "canonical_artifact": {
+      "path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4"
+    },
+    "total_registered_flags": 28
+  },
+  "flags": [
+    {
+      "flag_name": "-signaling",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a1e6c",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51532c",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "localhost:8443",
+      "destination_reference": ".bss:0xd38548",
+      "environment_fallback": "CP_AGENT_SIGNALING",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d2b0",
+          "dest_va": "0xd38548",
+          "instruction": "ldr x2, [x27, #0x548]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51e440",
+          "dest_va": "0xd38548",
+          "instruction": "ldr x2, [x27, #0x548]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-id",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69bfb0",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515374",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "",
+      "destination_reference": ".bss:0xd38550",
+      "environment_fallback": "CP_AGENT_ID",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d2f4",
+          "dest_va": "0xd38550",
+          "instruction": "ldr x2, [x27, #0x550]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51e0a4",
+          "dest_va": "0xd38550",
+          "instruction": "ldr x6, [x27, #0x550]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-external-addr",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a8492",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5153bc",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "",
+      "destination_reference": ".bss:0xd38558",
+      "environment_fallback": "CP_AGENT_EXTERNAL_ADDR",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d338",
+          "dest_va": "0xd38558",
+          "instruction": "ldr x2, [x27, #0x558]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51e0c8",
+          "dest_va": "0xd38558",
+          "instruction": "ldr x8, [x27, #0x558]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-webrtc-port",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a5722",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515400",
+      "flag_api_symbol": "aFaUKV.A1a3KwX",
+      "argument_type": "int",
+      "default_value": 50000,
+      "destination_reference": ".bss:0xd38560",
+      "environment_fallback": "CP_AGENT_WEBRTC_PORT",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d37c",
+          "dest_va": "0xd38560",
+          "instruction": "ldr x2, [x27, #0x560]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51e360",
+          "dest_va": "0xd38560",
+          "instruction": "ldr x1, [x27, #0x560]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51eaf8",
+          "dest_va": "0xd38560",
+          "instruction": "ldr x5, [x27, #0x560]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-jar",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69c334",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51544c",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "/data/local/tmp/libsys_core.so",
+      "destination_reference": ".bss:0xd38568",
+      "environment_fallback": "CP_AGENT_JAR",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d394",
+          "dest_va": "0xd38568",
+          "instruction": "ldr x3, [x27, #0x568]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51d7cc",
+          "dest_va": "0xd38568",
+          "instruction": "ldr x3, [x27, #0x568]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51d7fc",
+          "dest_va": "0xd38568",
+          "instruction": "ldr x2, [x27, #0x568]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51d880",
+          "dest_va": "0xd38568",
+          "instruction": "ldr x2, [x27, #0x568]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51d8ac",
+          "dest_va": "0xd38568",
+          "instruction": "ldr x2, [x27, #0x568]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51da68",
+          "dest_va": "0xd38568",
+          "instruction": "ldr x4, [x27, #0x568]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ea94",
+          "dest_va": "0xd38568",
+          "instruction": "ldr x5, [x27, #0x568]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-resolution",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a39bb",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515498",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "1080x1920",
+      "destination_reference": ".bss:0xd38570",
+      "environment_fallback": "CP_AGENT_RESOLUTION",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d3d8",
+          "dest_va": "0xd38570",
+          "instruction": "ldr x2, [x27, #0x570]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51e058",
+          "dest_va": "0xd38570",
+          "instruction": "ldr x6, [x27, #0x570]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-bitrate",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69efeb",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5154e0",
+      "flag_api_symbol": "aFaUKV.A1a3KwX",
+      "argument_type": "int",
+      "default_value": 2304,
+      "destination_reference": ".bss:0xd38578",
+      "environment_fallback": "CP_AGENT_BITRATE",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d41c",
+          "dest_va": "0xd38578",
+          "instruction": "ldr x2, [x27, #0x578]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51eb08",
+          "dest_va": "0xd38578",
+          "instruction": "ldr x5, [x27, #0x578]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-max-size",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a0503",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515524",
+      "flag_api_symbol": "aFaUKV.A1a3KwX",
+      "argument_type": "int",
+      "default_value": 0,
+      "destination_reference": ".bss:0xd38580",
+      "environment_fallback": "CP_AGENT_MAX_SIZE",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d434",
+          "dest_va": "0xd38580",
+          "instruction": "ldr x2, [x27, #0x580]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51eb2c",
+          "dest_va": "0xd38580",
+          "instruction": "ldr x5, [x27, #0x580]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-max-fps",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69eff2",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515568",
+      "flag_api_symbol": "aFaUKV.A1a3KwX",
+      "argument_type": "int",
+      "default_value": 0,
+      "destination_reference": ".bss:0xd38588",
+      "environment_fallback": "CP_AGENT_MAX_FPS",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d44c",
+          "dest_va": "0xd38588",
+          "instruction": "ldr x2, [x27, #0x588]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51eb3c",
+          "dest_va": "0xd38588",
+          "instruction": "ldr x5, [x27, #0x588]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-video-codec-options",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6ae077",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5155b0",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "",
+      "destination_reference": ".bss:0xd38590",
+      "environment_fallback": "CP_AGENT_VIDEO_CODEC_OPTIONS",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d464",
+          "dest_va": "0xd38590",
+          "instruction": "ldr x3, [x27, #0x590]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51eb4c",
+          "dest_va": "0xd38590",
+          "instruction": "ldr x5, [x27, #0x590]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-snapshot-interval",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6ac076",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5155f4",
+      "flag_api_symbol": "aFaUKV.A1a3KwX",
+      "argument_type": "int",
+      "default_value": 10,
+      "destination_reference": ".bss:0xd38598",
+      "environment_fallback": "CP_AGENT_SNAPSHOT_INTERVAL",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d4a8",
+          "dest_va": "0xd38598",
+          "instruction": "ldr x2, [x27, #0x598]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51eb78",
+          "dest_va": "0xd38598",
+          "instruction": "ldr x5, [x27, #0x598]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-snapshot-via-ws",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6aa120",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515638",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "argument_type": "bool",
+      "default_value": false,
+      "destination_reference": ".bss:0xd385a0",
+      "environment_fallback": null,
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51eb88",
+          "dest_va": "0xd385a0",
+          "instruction": "ldr x5, [x27, #0x5a0]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-root",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69c7ed",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51567c",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "argument_type": "bool",
+      "default_value": false,
+      "destination_reference": ".bss:0xd385a8",
+      "environment_fallback": "CP_AGENT_ROOT",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d4c0",
+          "dest_va": "0xd385a8",
+          "instruction": "ldr x2, [x27, #0x5a8]"
+        },
+        {
+          "symbol": "main.(*JJffa1S1Zv6).abCsHT4G3",
+          "va": "0x531834",
+          "dest_va": "0xd385a8",
+          "instruction": "ldr x6, [x27, #0x5a8]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-bwe",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69c337",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5156c8",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "true",
+      "destination_reference": ".bss:0xd385b0",
+      "environment_fallback": "CP_AGENT_BWE",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d4d8",
+          "dest_va": "0xd385b0",
+          "instruction": "ldr x3, [x27, #0x5b0]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51e9fc",
+          "dest_va": "0xd385b0",
+          "instruction": "ldr x2, [x27, #0x5b0]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-audio",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69cdac",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51570c",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "argument_type": "bool",
+      "default_value": false,
+      "destination_reference": ".bss:0xd385b8",
+      "environment_fallback": "CP_AGENT_AUDIO",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d51c",
+          "dest_va": "0xd385b8",
+          "instruction": "ldr x2, [x27, #0x5b8]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ebd4",
+          "dest_va": "0xd385b8",
+          "instruction": "ldr x5, [x27, #0x5b8]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-ice-servers",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a572d",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515758",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "stun:stun.l.google.com:19302",
+      "destination_reference": ".bss:0xd385c0",
+      "environment_fallback": "CP_AGENT_ICE_SERVERS",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d534",
+          "dest_va": "0xd385c0",
+          "instruction": "ldr x3, [x27, #0x5c0]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51dc74",
+          "dest_va": "0xd385c0",
+          "instruction": "ldr x2, [x27, #0x5c0]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-upnp",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69c7f5",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51579c",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "argument_type": "bool",
+      "default_value": false,
+      "destination_reference": ".bss:0xd385c8",
+      "environment_fallback": "CP_AGENT_UPNP",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d578",
+          "dest_va": "0xd385c8",
+          "instruction": "ldr x2, [x27, #0x5c8]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51e344",
+          "dest_va": "0xd385c8",
+          "instruction": "ldr x5, [x27, #0x5c8]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-debug",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x69cdb1",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5157e0",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "argument_type": "bool",
+      "default_value": false,
+      "destination_reference": ".bss:0xd385d0",
+      "environment_fallback": "CP_AGENT_DEBUG",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d590",
+          "dest_va": "0xd385d0",
+          "instruction": "ldr x2, [x27, #0x5d0]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ec18",
+          "dest_va": "0xd385d0",
+          "instruction": "ldr x6, [x27, #0x5d0]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-camera-addr",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a5738",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51582c",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "127.0.0.1:9001",
+      "destination_reference": ".bss:0xd385d8",
+      "environment_fallback": "CP_AGENT_CAMERA_ADDR",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d5a8",
+          "dest_va": "0xd385d8",
+          "instruction": "ldr x3, [x27, #0x5d8]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ee04",
+          "dest_va": "0xd385d8",
+          "instruction": "ldr x7, [x27, #0x5d8]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-force-camera",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a74c8",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515870",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "argument_type": "bool",
+      "default_value": false,
+      "destination_reference": ".bss:0xd385e0",
+      "environment_fallback": "CP_AGENT_FORCE_CAMERA",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d5ec",
+          "dest_va": "0xd385e0",
+          "instruction": "ldr x2, [x27, #0x5e0]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ee80",
+          "dest_va": "0xd385e0",
+          "instruction": "ldr x4, [x27, #0x5e0]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ef30",
+          "dest_va": "0xd385e0",
+          "instruction": "ldr x4, [x27, #0x5e0]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-video-source",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a74d4",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5158bc",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "display",
+      "destination_reference": ".bss:0xd385e8",
+      "environment_fallback": "CP_AGENT_VIDEO_SOURCE",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d604",
+          "dest_va": "0xd385e8",
+          "instruction": "ldr x3, [x27, #0x5e8]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ec5c",
+          "dest_va": "0xd385e8",
+          "instruction": "ldr x6, [x27, #0x5e8]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-camera-facing",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a849f",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515908",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "back",
+      "destination_reference": ".bss:0xd385f0",
+      "environment_fallback": "CP_AGENT_CAMERA_FACING",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d648",
+          "dest_va": "0xd385f0",
+          "instruction": "ldr x2, [x27, #0x5f0]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ec88",
+          "dest_va": "0xd385f0",
+          "instruction": "ldr x6, [x27, #0x5f0]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-camera-id",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a1e7e",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515950",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "",
+      "destination_reference": ".bss:0xd385f8",
+      "environment_fallback": "CP_AGENT_CAMERA_ID",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d68c",
+          "dest_va": "0xd385f8",
+          "instruction": "ldr x2, [x27, #0x5f8]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ecb4",
+          "dest_va": "0xd385f8",
+          "instruction": "ldr x6, [x27, #0x5f8]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-camera-size",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a5743",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515998",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "",
+      "destination_reference": ".bss:0xd38600",
+      "environment_fallback": "CP_AGENT_CAMERA_SIZE",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d6d0",
+          "dest_va": "0xd38600",
+          "instruction": "ldr x2, [x27, #0x600]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ece0",
+          "dest_va": "0xd38600",
+          "instruction": "ldr x6, [x27, #0x600]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-camera-fps",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a39c5",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5159dc",
+      "flag_api_symbol": "aFaUKV.A1a3KwX",
+      "argument_type": "int",
+      "default_value": 0,
+      "destination_reference": ".bss:0xd38608",
+      "environment_fallback": "CP_AGENT_CAMERA_FPS",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d714",
+          "dest_va": "0xd38608",
+          "instruction": "ldr x2, [x27, #0x608]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ed0c",
+          "dest_va": "0xd38608",
+          "instruction": "ldr x6, [x27, #0x608]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-camera-high-speed",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6ac087",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515a20",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "argument_type": "bool",
+      "default_value": false,
+      "destination_reference": ".bss:0xd38610",
+      "environment_fallback": "CP_AGENT_CAMERA_HIGH_SPEED",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d72c",
+          "dest_va": "0xd38610",
+          "instruction": "ldr x2, [x27, #0x610]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ed1c",
+          "dest_va": "0xd38610",
+          "instruction": "ldr x6, [x27, #0x610]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-camera-ar",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a1e87",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515a68",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "",
+      "destination_reference": ".bss:0xd38618",
+      "environment_fallback": "CP_AGENT_CAMERA_AR",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d744",
+          "dest_va": "0xd38618",
+          "instruction": "ldr x3, [x27, #0x618]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51ed2c",
+          "dest_va": "0xd38618",
+          "instruction": "ldr x6, [x27, #0x618]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    },
+    {
+      "flag_name": "-expires-at",
+      "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "flag_name_string_offset": "0x6a39cf",
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515ab4",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "argument_type": "string",
+      "default_value": "2026-11-01",
+      "destination_reference": ".bss:0xd38620",
+      "environment_fallback": "CP_AGENT_EXPIRES_AT",
+      "downstream_xrefs": [
+        {
+          "symbol": "main.main",
+          "va": "0x51d788",
+          "dest_va": "0xd38620",
+          "instruction": "ldr x2, [x27, #0x620]"
+        },
+        {
+          "symbol": "main.main",
+          "va": "0x51da9c",
+          "dest_va": "0xd38620",
+          "instruction": "ldr x2, [x27, #0x620]"
+        }
+      ],
+      "classification": "SEMANTIC_XREF_CONFIRMED",
+      "confidence": "HIGH"
+    }
+  ]
+}

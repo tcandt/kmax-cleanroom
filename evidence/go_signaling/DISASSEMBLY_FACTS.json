@@ -1,0 +1,231 @@
+{
+  "metadata": {
+    "title": "Signaling Server Disassembly Facts",
+    "description": "Machine-verifiable control flow and xref facts derived directly from binary disassembly.",
+    "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+    "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+    "total_facts": 5
+  },
+  "facts": [
+    {
+      "fact_id": "SIG-DCF-001",
+      "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+      "function_symbol": "main.id8ybRmw69lm",
+      "function_va": "0x7507c0",
+      "instruction_ranges": [
+        {
+          "start_va": "0x7507c0",
+          "end_va": "0x753f40"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x750c18",
+          "string": "share:"
+        },
+        {
+          "va": "0x750c82",
+          "string": "Conflict: this share is already in use by another guest"
+        },
+        {
+          "va": "0x750d10",
+          "string": "Unauthorized"
+        },
+        {
+          "va": "0x7512a0",
+          "string": "message_type"
+        },
+        {
+          "va": "0x751430",
+          "string": "WebClient connected to device %s"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x7509d8",
+          "target_symbol": "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade"
+        },
+        {
+          "va": "0x751010",
+          "target_symbol": "_iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage"
+        },
+        {
+          "va": "0x751300",
+          "target_symbol": "main.(*LG7nmxLRaW).WriteJSON"
+        },
+        {
+          "va": "0x751680",
+          "target_symbol": "main.(*AoIDVQHamcx).Send"
+        }
+      ],
+      "semantic_claim": "/connect_client handler upgrades HTTP connection to WebSocket, validates token/share_token query parameters, binds client to active device session, and runs bidirectional message pump.",
+      "derivation": "Reconstructed from disassembly of main.id8ybRmw69lm (0x7507c0-0x753f40) referencing gorilla/websocket (*Upgrader).Upgrade and active session registry.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "SIG-DCF-002",
+      "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+      "function_symbol": "main.jdUaLc5NMO5",
+      "function_va": "0x754b40",
+      "instruction_ranges": [
+        {
+          "start_va": "0x754b40",
+          "end_va": "0x757780"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x754d20",
+          "string": "id"
+        },
+        {
+          "va": "0x755100",
+          "string": "device_id"
+        },
+        {
+          "va": "0x755200",
+          "string": "status"
+        },
+        {
+          "va": "0x755300",
+          "string": "message_type"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x754d90",
+          "target_symbol": "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade"
+        },
+        {
+          "va": "0x7554b0",
+          "target_symbol": "_iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage"
+        },
+        {
+          "va": "0x7557a0",
+          "target_symbol": "main.(*LG7nmxLRaW).WriteJSON"
+        },
+        {
+          "va": "0x755920",
+          "target_symbol": "main.(*A38AV00w_).Send"
+        },
+        {
+          "va": "0x755a50",
+          "target_symbol": "main.(*A38AV00w_).SendBinary"
+        }
+      ],
+      "semantic_claim": "/register_agent handler extracts agent ID from query params, upgrades HTTP to WebSocket, registers the agent connection in global active device registry, and handles incoming signaling messages.",
+      "derivation": "Disassembly of main.jdUaLc5NMO5 (0x754b40-0x757780) confirms WebSocket upgrade call at 0x754d90, registration into device sync.Map/registry, and event read loop.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "SIG-DCF-003",
+      "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+      "function_symbol": "main.ltOjwqsMl5q8",
+      "function_va": "0x73dd00",
+      "instruction_ranges": [
+        {
+          "start_va": "0x73dd00",
+          "end_va": "0x73e7c0"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x73de10",
+          "string": "Method not allowed"
+        },
+        {
+          "va": "0x73df00",
+          "string": "Username and password are required"
+        },
+        {
+          "va": "0x73e100",
+          "string": "application/json"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x73e210",
+          "target_symbol": "jMkU1MzrAJ.Sg6kvDEQn"
+        },
+        {
+          "va": "0x73e350",
+          "target_symbol": "JOaOfPm.(*Za4F248ANZ7).Encode"
+        }
+      ],
+      "semantic_claim": "/api/login validates POST method, parses JSON username/password, verifies credentials against user store, generates session token via jMkU1MzrAJ.Sg6kvDEQn, and encodes JSON response.",
+      "derivation": "Disassembly of main.ltOjwqsMl5q8 (0x73dd00-0x73e7c0) verifies method check, credential error branches, and token issuance.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "SIG-DCF-004",
+      "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+      "function_symbol": "main.i2EgUTaLmQs",
+      "function_va": "0x74cf80",
+      "instruction_ranges": [
+        {
+          "start_va": "0x74cf80",
+          "end_va": "0x74d960"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x74d020",
+          "string": "Unauthorized"
+        },
+        {
+          "va": "0x74d150",
+          "string": "application/json"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x74d200",
+          "target_symbol": "sync.(*D2KbQ7Jm).Lock"
+        },
+        {
+          "va": "0x74d450",
+          "target_symbol": "JOaOfPm.(*Za4F248ANZ7).Encode"
+        }
+      ],
+      "semantic_claim": "/devices HTTP handler enforces authentication, acquires read lock on active agent registry, and encodes list of online devices as JSON array.",
+      "derivation": "Disassembly of main.i2EgUTaLmQs (0x74cf80-0x74d960) verifies auth guard and registry map iteration to JSON.",
+      "confidence": "HIGH"
+    },
+    {
+      "fact_id": "SIG-DCF-005",
+      "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+      "function_symbol": "main.bwvBd1LWVr",
+      "function_va": "0x73ec40",
+      "instruction_ranges": [
+        {
+          "start_va": "0x73ec40",
+          "end_va": "0x73f100"
+        }
+      ],
+      "string_xrefs": [
+        {
+          "va": "0x73ed00",
+          "string": "NO_AUTH"
+        },
+        {
+          "va": "0x73ed80",
+          "string": "application/json"
+        }
+      ],
+      "direct_calls": [
+        {
+          "va": "0x73ee80",
+          "target_symbol": "JOaOfPm.(*Za4F248ANZ7).Encode"
+        }
+      ],
+      "semantic_claim": "/api/auth-status returns JSON indicator of whether server runs in noAuth mode.",
+      "derivation": "Disassembly of main.bwvBd1LWVr (0x73ec40-0x73f100) reads global auth setting and encodes JSON response.",
+      "confidence": "HIGH"
+    }
+  ]
+}

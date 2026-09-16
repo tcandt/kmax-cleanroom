@@ -1,35 +1,42 @@
 {
   "metadata": {
     "title": "Reference to Binary Granular Multi-Evidence Crossmap",
-    "description": "Cross-verification of public reference intelligence against granular binary static and dynamic evidence classes. Every evidence item consumes underlying forensic and oracle artifacts.",
-    "multi_evidence_rule": "BINARY_SEMANTIC_CONFIRMED requires PUBLIC_REFERENCE + >=2 independent binary classes. REFERENCE_CORROBORATED requires PUBLIC_REFERENCE + >=1 binary class. Otherwise UNCONFIRMED_HYPOTHESIS.",
-    "total_items": 27,
+    "description": "Cross-verification of public reference intelligence against granular binary static and dynamic evidence classes. Every evidence item references resolvable underlying forensic and oracle artifacts.",
+    "multi_evidence_rule": "BINARY_SEMANTIC_CONFIRMED requires PUBLIC_REFERENCE + >=2 independent resolved binary classes. REFERENCE_CORROBORATED requires PUBLIC_REFERENCE + 1 binary class. Otherwise UNCONFIRMED_REFERENCE_ONLY.",
+    "total_items": 28,
     "binary_semantic_confirmed_items": 25,
-    "reference_corroborated_items": 0,
+    "reference_corroborated_items": 1,
     "unconfirmed_items": 2
   },
   "mappings": [
     {
       "reference_item": "/connect_client",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:78",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:78-83",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/connect_client', closure_va: 0x848478, handler: main.id8ybRmw69lm @ 0x7507c0)",
         "BINARY_STRING: Literal string '/connect_client' present at file offset 0x426723 (count: 1) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Handler main.id8ybRmw69lm upgrades HTTP to WebSocket, parses token/share_token query parameters",
-        "DYNAMIC_ORACLE: GET returned 400; auth_matrix NO_AUTH returned 401"
+        "DISASSEMBLY_CONTROL_FLOW: /connect_client handler upgrades HTTP connection to WebSocket, validates token/share_token query parameters, binds client to active device session, and runs bidirectional message pump.",
+        "DYNAMIC_ORACLE: GET: status=400; NO_AUTH: status=401"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 78",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 78,
+          "line_end": 83,
+          "observed_text_hash": "96b7cd6dce2d058455b6f0c0be71f00c67b277a6ca3e0ec06ea454fd1f29d9a9",
+          "selector": "lines 78-83",
           "file_offset": null,
           "va": null,
-          "observed_value": "let wsUrl = `${wsProtocol}//${location.host}/connect_client?token=${encodeURIComponent(token)}`"
+          "observed_value": "let wsUrl = `${wsProtocol}//${location.host}/connect_client?token=${encodeURIComponent(token)}`\n    if (shareTokenParam) {\n      wsUrl = `${wsProtocol}//${location.host}/connect_client?share_token=..."
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -56,13 +63,16 @@
         },
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.id8ybRmw69lm",
+          "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "SIG-DCF-001",
+          "function_symbol": "main.id8ybRmw69lm",
+          "function_va": "0x7507c0",
           "file_offset": null,
           "va": "0x7507c0",
-          "observed_value": "Handler main.id8ybRmw69lm upgrades HTTP to WebSocket, parses token/share_token query parameters"
+          "observed_value": "/connect_client handler upgrades HTTP connection to WebSocket, validates token/share_token query parameters, binds client to active device session, and runs bidirectional message pump.",
+          "derivation": "Reconstructed from disassembly of main.id8ybRmw69lm (0x7507c0-0x753f40) referencing gorilla/websocket (*Upgrader).Upgrade and active session registry."
         },
         {
           "evidence_class": "DYNAMIC_ORACLE",
@@ -72,7 +82,7 @@
           "selector": "/connect_client",
           "file_offset": null,
           "va": null,
-          "observed_value": "GET returned 400; auth_matrix NO_AUTH returned 401"
+          "observed_value": "GET: status=400; NO_AUTH: status=401"
         }
       ],
       "evidence_classes": [
@@ -87,23 +97,30 @@
     {
       "reference_item": "/register_agent",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65",
+      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/register_agent', closure_va: 0x8484b0, handler: main.jdUaLc5NMO5 @ 0x754b40)",
         "BINARY_STRING: Literal string '/register_agent' present at file offset 0x426714 (count: 1) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Handler main.jdUaLc5NMO5 upgrades HTTP to WebSocket, validates agent id, registers into global session map"
+        "DISASSEMBLY_CONTROL_FLOW: /register_agent handler extracts agent ID from query params, upgrades HTTP to WebSocket, registers the agent connection in global active device registry, and handles incoming signaling messages."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-          "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
+          "artifact_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
           "evidence_file": "agent-deploy.md",
-          "selector": "line 65",
+          "source_path": "docs/agent-deploy.md",
+          "source_commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+          "source_git_blob_sha": "cdd44cf77c95a1597c03906448f0ae0843688546",
+          "source_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
+          "line_start": 65,
+          "line_end": 75,
+          "observed_text_hash": "c6d729ced767bbf160d3e82bb74c108750e8fdcfbd779dfbaa87fc0f31acd608",
+          "selector": "lines 65-75",
           "file_offset": null,
           "va": null,
-          "observed_value": "Agent deployment documentation specifies upstream signaling registration endpoint /register_agent"
+          "observed_value": "adb connect 127.0.0.1:5555\n   adb -s 127.0.0.1:5555 push cloudphone-agent-amd64 /data/local/tmp/cloudphone-agent\n   adb -s 127.0.0.1:5555 push libsys_core.so /data/local/tmp/\n   ```\n3. **\u9488\u5bf9\u6027\u542f\u52a8\u6307\u5b9a\u7aef\u53e3*..."
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -130,13 +147,16 @@
         },
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.jdUaLc5NMO5",
+          "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "SIG-DCF-002",
+          "function_symbol": "main.jdUaLc5NMO5",
+          "function_va": "0x754b40",
           "file_offset": null,
           "va": "0x754b40",
-          "observed_value": "Handler main.jdUaLc5NMO5 upgrades HTTP to WebSocket, validates agent id, registers into global session map"
+          "observed_value": "/register_agent handler extracts agent ID from query params, upgrades HTTP to WebSocket, registers the agent connection in global active device registry, and handles incoming signaling messages.",
+          "derivation": "Disassembly of main.jdUaLc5NMO5 (0x754b40-0x757780) confirms WebSocket upgrade call at 0x754d90, registration into device sync.Map/registry, and event read loop."
         }
       ],
       "evidence_classes": [
@@ -150,24 +170,31 @@
     {
       "reference_item": "/api/login",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:20",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:20-25",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/api/login', closure_va: 0x8484c8, handler: main.ltOjwqsMl5q8 @ 0x73dd00)",
         "BINARY_STRING: Literal string '/api/login' present at file offset 0x4222b9 (count: 1) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Handler main.ltOjwqsMl5q8 decodes credentials, calls token generator main.d2SHxnu, writes session to memory map",
-        "DYNAMIC_ORACLE: HTTP-01: valid credentials -> 200 OK (schema: 4 keys, 64-hex token); HTTP-02: invalid password -> 401 Unauthorized ('Invalid username or password\\n'); HTTP-03: missing credentials -> 400 Bad Request ('Username and password are required\\n')"
+        "DISASSEMBLY_CONTROL_FLOW: /api/login validates POST method, parses JSON username/password, verifies credentials against user store, generates session token via jMkU1MzrAJ.Sg6kvDEQn, and encodes JSON response.",
+        "DYNAMIC_ORACLE: HTTP-01: status=200; HTTP-02: status=401; HTTP-03: status=400"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-          "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "artifact_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
           "evidence_file": "auth.js",
-          "selector": "line 20",
+          "source_path": "web-app/src/stores/auth.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "source_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
+          "line_start": 20,
+          "line_end": 25,
+          "observed_text_hash": "92a65066cf30c4ff6632eede1c9749735c0560c2401440cf2ca33a47750efa4e",
+          "selector": "lines 20-25",
           "file_offset": null,
           "va": null,
-          "observed_value": "const response = await fetch('/api/login', { method: 'POST', body: JSON.stringify(credentials) })"
+          "observed_value": "const response = await fetch('/api/login', {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json'\n        },\n        body: JSON.stringify({ username: user, passwo..."
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -194,13 +221,16 @@
         },
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.ltOjwqsMl5q8",
+          "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "SIG-DCF-003",
+          "function_symbol": "main.ltOjwqsMl5q8",
+          "function_va": "0x73dd00",
           "file_offset": null,
           "va": "0x73dd00",
-          "observed_value": "Handler main.ltOjwqsMl5q8 decodes credentials, calls token generator main.d2SHxnu, writes session to memory map"
+          "observed_value": "/api/login validates POST method, parses JSON username/password, verifies credentials against user store, generates session token via jMkU1MzrAJ.Sg6kvDEQn, and encodes JSON response.",
+          "derivation": "Disassembly of main.ltOjwqsMl5q8 (0x73dd00-0x73e7c0) verifies method check, credential error branches, and token issuance."
         },
         {
           "evidence_class": "DYNAMIC_ORACLE",
@@ -210,7 +240,7 @@
           "selector": "HTTP-01,HTTP-02,HTTP-03",
           "file_offset": null,
           "va": null,
-          "observed_value": "HTTP-01: valid credentials -> 200 OK (schema: 4 keys, 64-hex token); HTTP-02: invalid password -> 401 Unauthorized ('Invalid username or password\\n'); HTTP-03: missing credentials -> 400 Bad Request ('Username and password are required\\n')"
+          "observed_value": "HTTP-01: status=200; HTTP-02: status=401; HTTP-03: status=400"
         }
       ],
       "evidence_classes": [
@@ -225,24 +255,31 @@
     {
       "reference_item": "/devices",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:233",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:233-237",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/devices', closure_va: 0x848468, handler: main.i2EgUTaLmQs @ 0x74cf80)",
         "BINARY_STRING: Literal string '/devices' present at file offset 0x348f1a (count: 3) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Handler main.i2EgUTaLmQs serializes registered agent inventory to JSON array",
-        "DYNAMIC_ORACLE: GET returned 200 (schema: json_array); auth_matrix VALID_USER_TOKEN returned 200"
+        "DISASSEMBLY_CONTROL_FLOW: /devices HTTP handler enforces authentication, acquires read lock on active agent registry, and encodes list of online devices as JSON array.",
+        "DYNAMIC_ORACLE: GET: status=200; VALID_USER_TOKEN: status=200"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/devices.js",
-          "artifact_sha256": "42867285c44074de0b5cab05d32742f03267609a",
+          "artifact_sha256": "e13d7bec85da11f65bdc0a6556210c05127bddbe211a31e880921c16a34a73b5",
           "evidence_file": "devices.js",
-          "selector": "line 233",
+          "source_path": "web-app/src/stores/devices.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "42867285c44074de0b5cab05d32742f03267609a",
+          "source_sha256": "e13d7bec85da11f65bdc0a6556210c05127bddbe211a31e880921c16a34a73b5",
+          "line_start": 233,
+          "line_end": 237,
+          "observed_text_hash": "eedf2007373ac33bfed494dd57ca48d5fddc24a57b56ffde8735207cc1eacb4b",
+          "selector": "lines 233-237",
           "file_offset": null,
           "va": null,
-          "observed_value": "const res = await fetch('/devices')"
+          "observed_value": "const res = await fetch('/devices')\n      const data = await res.json()\n      \n      if (Array.isArray(data)) {\n        const deviceList = data.map(item => {"
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -269,13 +306,16 @@
         },
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.i2EgUTaLmQs",
+          "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "SIG-DCF-004",
+          "function_symbol": "main.i2EgUTaLmQs",
+          "function_va": "0x74cf80",
           "file_offset": null,
           "va": "0x74cf80",
-          "observed_value": "Handler main.i2EgUTaLmQs serializes registered agent inventory to JSON array"
+          "observed_value": "/devices HTTP handler enforces authentication, acquires read lock on active agent registry, and encodes list of online devices as JSON array.",
+          "derivation": "Disassembly of main.i2EgUTaLmQs (0x74cf80-0x74d960) verifies auth guard and registry map iteration to JSON."
         },
         {
           "evidence_class": "DYNAMIC_ORACLE",
@@ -285,7 +325,7 @@
           "selector": "/devices",
           "file_offset": null,
           "va": null,
-          "observed_value": "GET returned 200 (schema: json_array); auth_matrix VALID_USER_TOKEN returned 200"
+          "observed_value": "GET: status=200; VALID_USER_TOKEN: status=200"
         }
       ],
       "evidence_classes": [
@@ -300,23 +340,30 @@
     {
       "reference_item": "/api/tags",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/tags.js:98",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/tags.js:98-103",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/api/tags', closure_va: 0x8484e0, handler: main.main.func2 @ 0x76d200)",
         "BINARY_STRING: Literal string '/api/tags' present at file offset 0x421081 (count: 5) in webrtc-signaling .rodata",
-        "DYNAMIC_ORACLE: GET returned 200 (schema: json_object); auth_matrix VALID_USER_TOKEN returned 200"
+        "DYNAMIC_ORACLE: GET: status=200; VALID_USER_TOKEN: status=200"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/tags.js",
-          "artifact_sha256": "1146339c52c1ff69dc691d6c9f5f03718a0ef1b8",
+          "artifact_sha256": "8c598b314902b1ab119ff16c1a18c7aaa9f4ac9b067a7423a3bdd99052a2d62f",
           "evidence_file": "tags.js",
-          "selector": "line 98",
+          "source_path": "web-app/src/stores/tags.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "1146339c52c1ff69dc691d6c9f5f03718a0ef1b8",
+          "source_sha256": "8c598b314902b1ab119ff16c1a18c7aaa9f4ac9b067a7423a3bdd99052a2d62f",
+          "line_start": 98,
+          "line_end": 103,
+          "observed_text_hash": "c286e983e82d0145cec6177eea4dd3692763e03e3a6b7cf1daafa43911397d44",
+          "selector": "lines 98-103",
           "file_offset": null,
           "va": null,
-          "observed_value": "const res = await fetch('/api/tags', { method: 'GET' })"
+          "observed_value": "const res = await fetch('/api/tags', {\n        headers: {\n          'Authorization': token ? `Bearer ${token}` : ''\n        }\n      })\n      if (res.ok) {"
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -349,7 +396,7 @@
           "selector": "/api/tags",
           "file_offset": null,
           "va": null,
-          "observed_value": "GET returned 200 (schema: json_object); auth_matrix VALID_USER_TOKEN returned 200"
+          "observed_value": "GET: status=200; VALID_USER_TOKEN: status=200"
         }
       ],
       "evidence_classes": [
@@ -363,23 +410,30 @@
     {
       "reference_item": "/api/share/create",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:795",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:795-800",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/api/share/create', closure_va: 0x848438, handler: main.cYYycnP3 @ 0x75c240)",
         "BINARY_STRING: Literal string '/api/share/create' present at file offset 0x427f91 (count: 1) in webrtc-signaling .rodata",
-        "DYNAMIC_ORACLE: GET returned 405; auth_matrix NO_AUTH returned 401"
+        "DYNAMIC_ORACLE: GET: status=405; NO_AUTH: status=401"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/devices.js",
-          "artifact_sha256": "42867285c44074de0b5cab05d32742f03267609a",
+          "artifact_sha256": "e13d7bec85da11f65bdc0a6556210c05127bddbe211a31e880921c16a34a73b5",
           "evidence_file": "devices.js",
-          "selector": "line 795",
+          "source_path": "web-app/src/stores/devices.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "42867285c44074de0b5cab05d32742f03267609a",
+          "source_sha256": "e13d7bec85da11f65bdc0a6556210c05127bddbe211a31e880921c16a34a73b5",
+          "line_start": 795,
+          "line_end": 800,
+          "observed_text_hash": "d46e5c04b4cbe7877c11a0705ffee4cedd567797943e703d19e1623b9c5dccbc",
+          "selector": "lines 795-800",
           "file_offset": null,
           "va": null,
-          "observed_value": "Device management actions invoke device share management endpoints"
+          "observed_value": "const res = await fetch(`/api/devices/${encodeURIComponent(deviceId)}`, {\n      method: 'DELETE',\n      headers: { 'Authorization': 'Bearer ' + token }\n    })\n    if (!res.ok) {\n      const text = ..."
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -412,7 +466,7 @@
           "selector": "/api/share/create",
           "file_offset": null,
           "va": null,
-          "observed_value": "GET returned 405; auth_matrix NO_AUTH returned 401"
+          "observed_value": "GET: status=405; NO_AUTH: status=401"
         }
       ],
       "evidence_classes": [
@@ -426,23 +480,30 @@
     {
       "reference_item": "/api/admin/users",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:11",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:11-15",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/api/admin/users', closure_va: 0x848458, handler: main.eiuBQux8 @ 0x741ec0)",
         "BINARY_STRING: Literal string '/api/admin/users' present at file offset 0x427369 (count: 8) in webrtc-signaling .rodata",
-        "DYNAMIC_ORACLE: GET returned 200; auth_matrix NO_AUTH returned 401"
+        "DYNAMIC_ORACLE: GET: status=200; NO_AUTH: status=401"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-          "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "artifact_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
           "evidence_file": "auth.js",
-          "selector": "line 11",
+          "source_path": "web-app/src/stores/auth.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "source_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
+          "line_start": 11,
+          "line_end": 15,
+          "observed_text_hash": "4dd0f3bb9392439a93dd07a0a6c73e10caf473f4798d13215d94d088e677a13a",
+          "selector": "lines 11-15",
           "file_offset": null,
           "va": null,
-          "observed_value": "Admin user management references user list retrieval"
+          "observed_value": "// \u5f53\u524d\u7528\u6237\u7684\u8bbe\u7f6e\u7ba1\u63a7\u7b56\u7565\uff08/api/me \u4e0b\u53d1\uff0cnull = \u672a\u52a0\u8f7d\uff09\uff1a\n  // { forbid_bitrate, forbid_fps, forbid_resolution, forbid_audio, settings, expires_at }\n  const userPolicy = ref(null)\n\n  const isLoggedIn = computed(() =>..."
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -475,7 +536,7 @@
           "selector": "/api/admin/users",
           "file_offset": null,
           "va": null,
-          "observed_value": "GET returned 200; auth_matrix NO_AUTH returned 401"
+          "observed_value": "GET: status=200; NO_AUTH: status=401"
         }
       ],
       "evidence_classes": [
@@ -489,23 +550,30 @@
     {
       "reference_item": "/api/logout",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:75",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:75-80",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/api/logout', closure_va: 0x848420, handler: main.bjWkHiittd @ 0x7409a0)",
         "BINARY_STRING: Literal string '/api/logout' present at file offset 0x42355b (count: 1) in webrtc-signaling .rodata",
-        "DYNAMIC_ORACLE: HTTP-06: Session revocation returns 200 OK"
+        "DYNAMIC_ORACLE: HTTP-06: status=200"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-          "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "artifact_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
           "evidence_file": "auth.js",
-          "selector": "line 75",
+          "source_path": "web-app/src/stores/auth.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "source_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
+          "line_start": 75,
+          "line_end": 80,
+          "observed_text_hash": "db373d12cd49a41f28a40ab6c4b40e7f8575f7bc96f6cd613a65f7c456081679",
+          "selector": "lines 75-80",
           "file_offset": null,
           "va": null,
-          "observed_value": "await fetch('/api/logout', { method: 'POST' })"
+          "observed_value": "await fetch('/api/logout', {\n          method: 'POST'\n        })\n      }\n    } catch (error) {\n      console.error('Logout error:', error)"
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -538,7 +606,7 @@
           "selector": "HTTP-06",
           "file_offset": null,
           "va": null,
-          "observed_value": "HTTP-06: Session revocation returns 200 OK"
+          "observed_value": "HTTP-06: status=200"
         }
       ],
       "evidence_classes": [
@@ -552,23 +620,31 @@
     {
       "reference_item": "/api/auth-status",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:98",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:98-102",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/api/auth-status', closure_va: 0x848430, handler: main.bwvBd1LWVr @ 0x73ec40)",
         "BINARY_STRING: Literal string '/api/auth-status' present at file offset 0x427359 (count: 1) in webrtc-signaling .rodata",
-        "DYNAMIC_ORACLE: HTTP-07: Returns 200 OK with noAuth status"
+        "DISASSEMBLY_CONTROL_FLOW: /api/auth-status returns JSON indicator of whether server runs in noAuth mode.",
+        "DYNAMIC_ORACLE: HTTP-07: status=200"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-          "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "artifact_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
           "evidence_file": "auth.js",
-          "selector": "line 98",
+          "source_path": "web-app/src/stores/auth.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "source_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
+          "line_start": 98,
+          "line_end": 102,
+          "observed_text_hash": "9c7e5da13ab9161130c1cd4285f5853cce89c88e2908e13232e2aa5396d6e4ff",
+          "selector": "lines 98-102",
           "file_offset": null,
           "va": null,
-          "observed_value": "const res = await fetch('/api/auth-status')"
+          "observed_value": "const res = await fetch('/api/auth-status')\n      if (res.ok) {\n        const data = await res.json()\n        if (data.noAuth) {\n          noAuthMode.value = true"
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -594,6 +670,19 @@
           "observed_value": "Literal string '/api/auth-status' present at file offset 0x427359 (count: 1) in webrtc-signaling .rodata"
         },
         {
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "18076e80242f2517d6e6daf8732520952d9f7ad9843932f6b6b729c0b0b89b5b",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "SIG-DCF-005",
+          "function_symbol": "main.bwvBd1LWVr",
+          "function_va": "0x73ec40",
+          "file_offset": null,
+          "va": "0x73ec40",
+          "observed_value": "/api/auth-status returns JSON indicator of whether server runs in noAuth mode.",
+          "derivation": "Disassembly of main.bwvBd1LWVr (0x73ec40-0x73f100) reads global auth setting and encodes JSON response."
+        },
+        {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "evidence/go_signaling/http/AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
           "artifact_sha256": "bb4a0db0dea42b6eb5ffb817334eee45b7d9a98fa7b53d943143f10fd1955f70",
@@ -601,11 +690,12 @@
           "selector": "HTTP-07",
           "file_offset": null,
           "va": null,
-          "observed_value": "HTTP-07: Returns 200 OK with noAuth status"
+          "observed_value": "HTTP-07: status=200"
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
+        "DISASSEMBLY_CONTROL_FLOW",
         "DYNAMIC_ORACLE",
         "PUBLIC_REFERENCE",
         "ROUTE_REGISTRATION"
@@ -615,23 +705,30 @@
     {
       "reference_item": "/api/me",
       "category": "TRANSPORT_ROUTE",
-      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:116",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:116-120",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "ROUTE_REGISTRATION: HandleFunc('/api/me', closure_va: 0x848460, handler: main.gJ0OHScnGnWZ @ 0x73f100)",
         "BINARY_STRING: Literal string '/api/me' present at file offset 0x41e9eb (count: 1) in webrtc-signaling .rodata",
-        "DYNAMIC_ORACLE: HTTP-08: Authenticated request returns 200 OK user profile"
+        "DYNAMIC_ORACLE: HTTP-08: status=200"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-          "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "artifact_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
           "evidence_file": "auth.js",
-          "selector": "line 116",
+          "source_path": "web-app/src/stores/auth.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
+          "source_sha256": "f056487d9da38a12ed6403d3031b469983a708405697bf08f996a8fedae36e8c",
+          "line_start": 116,
+          "line_end": 120,
+          "observed_text_hash": "bdd6838185c2d061ffe3e8ffd5f90cf2bbf79b2715982f71d498e658fa8a8443",
+          "selector": "lines 116-120",
           "file_offset": null,
           "va": null,
-          "observed_value": "const res = await fetch('/api/me', { headers: { Authorization: ... } })"
+          "observed_value": "const res = await fetch('/api/me', {\n        headers: {\n          'Authorization': `Bearer ${token.value}`\n        }\n      })"
         },
         {
           "evidence_class": "ROUTE_REGISTRATION",
@@ -664,7 +761,7 @@
           "selector": "HTTP-08",
           "file_offset": null,
           "va": null,
-          "observed_value": "HTTP-08: Authenticated request returns 200 OK user profile"
+          "observed_value": "HTTP-08: status=200"
         }
       ],
       "evidence_classes": [
@@ -678,22 +775,29 @@
     {
       "reference_item": "message_type: forward",
       "category": "WEBSOCKET_MESSAGE",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:140",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:140-145",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'forward' present at file offset 0x41e9c1 (count: 5) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Dispatcher in main.main.func1 unmarshals target_device_id and forwards payload"
+        "BINARY_XREF: Caller main.id8ybRmw69lm (0x7507c0) invokes main.(*LG7nmxLRaW).WriteJSON in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 140",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 140,
+          "line_end": 145,
+          "observed_text_hash": "65995565177e9a26012e661b2a9668b429fd14565acbe1aafa2944a6b0bdc257",
+          "selector": "lines 140-145",
           "file_offset": null,
           "va": null,
-          "observed_value": "ws.send(JSON.stringify({ message_type: 'forward', device_id, payload }))"
+          "observed_value": "sendForward(offerPayload)\n        break\n      case 'device_info':\n        handleDeviceInfo(msg.device_info)\n        break\n      case 'device_msg':"
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -706,19 +810,22 @@
           "observed_value": "Literal string 'forward' present at file offset 0x41e9c1 (count: 5) in webrtc-signaling .rodata"
         },
         {
-          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.main.func1",
+          "evidence_class": "BINARY_XREF",
+          "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
+          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x7507c0 -> main.(*LG7nmxLRaW).WriteJSON",
+          "caller_symbol": "main.id8ybRmw69lm",
+          "caller_va": "0x7507c0",
+          "target_symbol": "main.(*LG7nmxLRaW).WriteJSON",
           "file_offset": null,
-          "va": "0x76ce00",
-          "observed_value": "Dispatcher in main.main.func1 unmarshals target_device_id and forwards payload"
+          "va": "0x7507c0",
+          "observed_value": "Caller main.id8ybRmw69lm (0x7507c0) invokes main.(*LG7nmxLRaW).WriteJSON in direct callgraph"
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "DISASSEMBLY_CONTROL_FLOW",
+        "BINARY_XREF",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -726,22 +833,29 @@
     {
       "reference_item": "message_type: command",
       "category": "WEBSOCKET_MESSAGE",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:271",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:271-275",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'command' present at file offset 0x355f91 (count: 8) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Signaling relays command packet to registered agent socket"
+        "BINARY_XREF: Caller main.jdUaLc5NMO5 (0x754b40) invokes main.(*A38AV00w_).Send in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 271",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 271,
+          "line_end": 275,
+          "observed_text_hash": "998f6def2072f1dbff311d5e3a20e0bf0ddae8442a7d69aa3ba35e6dc80f1715",
+          "selector": "lines 271-275",
           "file_offset": null,
           "va": null,
-          "observed_value": "ws.send(JSON.stringify({ message_type: 'command', request_id, command }))"
+          "observed_value": "ws.send(JSON.stringify({\n        message_type: 'command',\n        device_id: deviceId,\n        request_id: requestId,\n        command: command"
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -754,19 +868,22 @@
           "observed_value": "Literal string 'command' present at file offset 0x355f91 (count: 8) in webrtc-signaling .rodata"
         },
         {
-          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.main.func1",
+          "evidence_class": "BINARY_XREF",
+          "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
+          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x754b40 -> main.(*A38AV00w_).Send",
+          "caller_symbol": "main.jdUaLc5NMO5",
+          "caller_va": "0x754b40",
+          "target_symbol": "main.(*A38AV00w_).Send",
           "file_offset": null,
-          "va": "0x76ce00",
-          "observed_value": "Signaling relays command packet to registered agent socket"
+          "va": "0x754b40",
+          "observed_value": "Caller main.jdUaLc5NMO5 (0x754b40) invokes main.(*A38AV00w_).Send in direct callgraph"
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "DISASSEMBLY_CONTROL_FLOW",
+        "BINARY_XREF",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -774,22 +891,29 @@
     {
       "reference_item": "message_type: inject_data",
       "category": "WEBSOCKET_MESSAGE",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:254",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:254-258",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'inject_data' present at file offset 0x423519 (count: 1) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Dispatches input/clipboard injection to agent socket"
+        "BINARY_XREF: Caller main.id8ybRmw69lm (0x7507c0) invokes _iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 254",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 254,
+          "line_end": 258,
+          "observed_text_hash": "e9b3710dfdf2a0ee1be18cffd92187a11d50bac7ed25d2d5bec38c143bb2a956",
+          "selector": "lines 254-258",
           "file_offset": null,
           "va": null,
-          "observed_value": "ws.send(JSON.stringify({ message_type: 'inject_data', device_id, data }))"
+          "observed_value": "message_type: 'inject_data',\n        device_id: deviceId,\n        channel: channel,\n        payload: payload\n      }"
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -802,19 +926,22 @@
           "observed_value": "Literal string 'inject_data' present at file offset 0x423519 (count: 1) in webrtc-signaling .rodata"
         },
         {
-          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.main.func1",
+          "evidence_class": "BINARY_XREF",
+          "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
+          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x7507c0 -> _iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage",
+          "caller_symbol": "main.id8ybRmw69lm",
+          "caller_va": "0x7507c0",
+          "target_symbol": "_iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage",
           "file_offset": null,
-          "va": "0x76ce00",
-          "observed_value": "Dispatches input/clipboard injection to agent socket"
+          "va": "0x7507c0",
+          "observed_value": "Caller main.id8ybRmw69lm (0x7507c0) invokes _iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage in direct callgraph"
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "DISASSEMBLY_CONTROL_FLOW",
+        "BINARY_XREF",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -822,23 +949,29 @@
     {
       "reference_item": "message_type: config",
       "category": "WEBSOCKET_MESSAGE",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:126",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:126-130",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'config' present at file offset 0x389d18 (count: 10) in webrtc-signaling .rodata",
-        "BINARY_STRING: Literal string 'ice_servers' present at file offset 0x42347f (count: 3) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Sends STUN/TURN server configuration list to connecting browser client"
+        "BINARY_XREF: Caller main.id8ybRmw69lm (0x7507c0) invokes main.(*LG7nmxLRaW).WriteJSON in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 126",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 126,
+          "line_end": 130,
+          "observed_text_hash": "5e6ba4de28ad2677eaab773ca705ca73f93d990f5bc3a623027d4f5c5f4e1f1e",
+          "selector": "lines 126-130",
           "file_offset": null,
           "va": null,
-          "observed_value": "case 'config': initPeerConnection(msg.ice_servers)"
+          "observed_value": "case 'config':\n        status.value = 'waiting_offer'\n        if (msg.ice_servers && msg.ice_servers.length > 0) {\n          iceServers = msg.ice_servers\n          debugLog('[WebRTC] ICE Servers up..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -851,29 +984,22 @@
           "observed_value": "Literal string 'config' present at file offset 0x389d18 (count: 10) in webrtc-signaling .rodata"
         },
         {
-          "evidence_class": "BINARY_STRING",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "ice_servers",
-          "file_offset": "0x42347f",
-          "va": null,
-          "observed_value": "Literal string 'ice_servers' present at file offset 0x42347f (count: 3) in webrtc-signaling .rodata"
-        },
-        {
-          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.main.func1",
+          "evidence_class": "BINARY_XREF",
+          "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
+          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x7507c0 -> main.(*LG7nmxLRaW).WriteJSON",
+          "caller_symbol": "main.id8ybRmw69lm",
+          "caller_va": "0x7507c0",
+          "target_symbol": "main.(*LG7nmxLRaW).WriteJSON",
           "file_offset": null,
-          "va": "0x76ce00",
-          "observed_value": "Sends STUN/TURN server configuration list to connecting browser client"
+          "va": "0x7507c0",
+          "observed_value": "Caller main.id8ybRmw69lm (0x7507c0) invokes main.(*LG7nmxLRaW).WriteJSON in direct callgraph"
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "DISASSEMBLY_CONTROL_FLOW",
+        "BINARY_XREF",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -881,22 +1007,29 @@
     {
       "reference_item": "message_type: device_msg",
       "category": "WEBSOCKET_MESSAGE",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:133",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:133-137",
       "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'device_msg' present at file offset 0x42227d (count: 1) in webrtc-signaling .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Relays agent payload packet to associated client session"
+        "BINARY_XREF: Caller main.id8ybRmw69lm (0x7507c0) invokes main.(*AoIDVQHamcx).Send in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 133",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 133,
+          "line_end": 137,
+          "observed_text_hash": "0c6389e39b56182c0fcafeb09fe375b74547eb687372144add06ea85cb157293",
+          "selector": "lines 133-137",
           "file_offset": null,
           "va": null,
-          "observed_value": "case 'device_msg': handleDeviceMessage(msg.payload)"
+          "observed_value": "const offerPayload = { \n          type: 'request-offer',\n          ip_preference: getOption('ipPreference', 'auto')\n        }\n        if (Object.keys(options).length > 0) {"
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -909,19 +1042,22 @@
           "observed_value": "Literal string 'device_msg' present at file offset 0x42227d (count: 1) in webrtc-signaling .rodata"
         },
         {
-          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-          "artifact_sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
-          "evidence_file": "webrtc-signaling",
-          "selector": "main.main.func1",
+          "evidence_class": "BINARY_XREF",
+          "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
+          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x7507c0 -> main.(*AoIDVQHamcx).Send",
+          "caller_symbol": "main.id8ybRmw69lm",
+          "caller_va": "0x7507c0",
+          "target_symbol": "main.(*AoIDVQHamcx).Send",
           "file_offset": null,
-          "va": "0x76ce00",
-          "observed_value": "Relays agent payload packet to associated client session"
+          "va": "0x7507c0",
+          "observed_value": "Caller main.id8ybRmw69lm (0x7507c0) invokes main.(*AoIDVQHamcx).Send in direct callgraph"
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "DISASSEMBLY_CONTROL_FLOW",
+        "BINARY_XREF",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -929,45 +1065,59 @@
     {
       "reference_item": "payload: request-offer",
       "category": "SIGNALING_PAYLOAD",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:134",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:134-138",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 134",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 134,
+          "line_end": 138,
+          "observed_text_hash": "b581e849aa6e1a0c9cb0e742e50a003ae5b4547bf6a30c05bca08539e4580568",
+          "selector": "lines 134-138",
           "file_offset": null,
           "va": null,
-          "observed_value": "payload: { type: 'request-offer', ip_preference: ... }"
+          "observed_value": "type: 'request-offer',\n          ip_preference: getOption('ipPreference', 'auto')\n        }\n        if (Object.keys(options).length > 0) {\n          offerPayload.scrcpy_options = options"
         }
       ],
       "evidence_classes": [
         "PUBLIC_REFERENCE"
       ],
-      "status": "UNCONFIRMED_HYPOTHESIS"
+      "status": "UNCONFIRMED_REFERENCE_ONLY"
     },
     {
       "reference_item": "payload: offer",
       "category": "SIGNALING_PAYLOAD",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:175",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:175-180",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'offer' present at file offset 0x574721 (count: 13) in cloudphone-agent .rodata",
-        "BINARY_XREF: Agent WebRTC stack generates SDP offer and transmits to browser client"
+        "BINARY_XREF: Caller main.(*JJffa1S1Zv6).iIhwd_WXInS (0x53c730) invokes IV04EXWpwj.(*VOMNaNery).CreateDataChannel in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 175",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 175,
+          "line_end": 180,
+          "observed_text_hash": "06e6ad06dbe8d2c5396886881a5166443c53213965352433d64fd7379b76cbb2",
+          "selector": "lines 175-180",
           "file_offset": null,
           "va": null,
-          "observed_value": "case 'offer': await handleRemoteOffer(payload.sdp)"
+          "observed_value": "case 'offer':\n      debugLog('[WebRTC] Received offer, length:', payload.sdp.length)\n      cameraSupport.value = payload.camera_support !== false\n      if (!cameraSupport.value) {\n        debugWarn..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -981,13 +1131,16 @@
         },
         {
           "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "offer_generation",
+          "artifact_path": "evidence/go_agent/CALLGRAPH.json",
+          "artifact_sha256": "3dc3039bc2d280c8bede4107f9f30994c476f0beb9291bd223233046d16f1c33",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x53c730 -> IV04EXWpwj.(*VOMNaNery).CreateDataChannel",
+          "caller_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "caller_va": "0x53c730",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).CreateDataChannel",
           "file_offset": null,
-          "va": "0x574720",
-          "observed_value": "Agent WebRTC stack generates SDP offer and transmits to browser client"
+          "va": "0x53c730",
+          "observed_value": "Caller main.(*JJffa1S1Zv6).iIhwd_WXInS (0x53c730) invokes IV04EXWpwj.(*VOMNaNery).CreateDataChannel in direct callgraph"
         }
       ],
       "evidence_classes": [
@@ -1000,22 +1153,29 @@
     {
       "reference_item": "payload: answer",
       "category": "SIGNALING_PAYLOAD",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:205",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:205-210",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'answer' present at file offset 0x570378 (count: 12) in cloudphone-agent .rodata",
-        "BINARY_XREF: Agent WebRTC stack handles answer and sets remote description"
+        "BINARY_XREF: Caller main.(*JJffa1S1Zv6).iIhwd_WXInS (0x53c730) invokes IV04EXWpwj.(*VOMNaNery).OnDataChannel in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 205",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 205,
+          "line_end": 210,
+          "observed_text_hash": "17a5036bcc55b82c2ea19358d002faa74ca0c96eccfe66b1e9ea7697e75fe1ad",
+          "selector": "lines 205-210",
           "file_offset": null,
           "va": null,
-          "observed_value": "payload: { type: 'answer', sdp: newAnswer.sdp }"
+          "observed_value": "// \u6d4f\u89c8\u5668\u6536\u96c6\u5230\u7684\u540e\u7eed ICE \u5019\u9009\u8005\u4f1a\u81ea\u52a8\u901a\u8fc7 pc.onicecandidate \u53d1\u9001\u7ed9\u5bf9\u7aef\u3002\n          sendAnswer()\n          status.value = 'connecting_webrtc'\n        })\n        .catch(e => {\n          error.value = 'SDP error: ' + e.mes..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1029,13 +1189,16 @@
         },
         {
           "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "answer_handling",
+          "artifact_path": "evidence/go_agent/CALLGRAPH.json",
+          "artifact_sha256": "3dc3039bc2d280c8bede4107f9f30994c476f0beb9291bd223233046d16f1c33",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x53c730 -> IV04EXWpwj.(*VOMNaNery).OnDataChannel",
+          "caller_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "caller_va": "0x53c730",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).OnDataChannel",
           "file_offset": null,
-          "va": "0x570370",
-          "observed_value": "Agent WebRTC stack handles answer and sets remote description"
+          "va": "0x53c730",
+          "observed_value": "Caller main.(*JJffa1S1Zv6).iIhwd_WXInS (0x53c730) invokes IV04EXWpwj.(*VOMNaNery).OnDataChannel in direct callgraph"
         }
       ],
       "evidence_classes": [
@@ -1048,22 +1211,29 @@
     {
       "reference_item": "payload: ice-candidate",
       "category": "SIGNALING_PAYLOAD",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215-220",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'candidate' present at file offset 0x56d522 (count: 75) in cloudphone-agent .rodata",
-        "BINARY_XREF: Agent WebRTC stack registers trickle ICE candidates into PeerConnection"
+        "BINARY_XREF: Caller main.(*JJffa1S1Zv6).iIhwd_WXInS (0x53c730) invokes IV04EXWpwj.(*VOMNaNery).OnDataChannel in direct callgraph"
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 215",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 215,
+          "line_end": 220,
+          "observed_text_hash": "e1332affb2b008942728a67c996464eb6a5f267e529ef1765fd502c35b7dc36e",
+          "selector": "lines 215-220",
           "file_offset": null,
           "va": null,
-          "observed_value": "payload: { type: 'ice-candidate', candidate: ... }"
+          "observed_value": "case 'ice-candidate':\n      if (pc && payload.candidate) {\n        const candStr = payload.candidate.candidate\n        remoteCandidates.push(candStr)\n        if (shouldKeepCandidate(candStr)) {\n   ..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1077,13 +1247,16 @@
         },
         {
           "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "candidate_handling",
+          "artifact_path": "evidence/go_agent/CALLGRAPH.json",
+          "artifact_sha256": "3dc3039bc2d280c8bede4107f9f30994c476f0beb9291bd223233046d16f1c33",
+          "evidence_file": "CALLGRAPH.json",
+          "selector": "0x53c730 -> IV04EXWpwj.(*VOMNaNery).OnDataChannel",
+          "caller_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "caller_va": "0x53c730",
+          "target_symbol": "IV04EXWpwj.(*VOMNaNery).OnDataChannel",
           "file_offset": null,
-          "va": "0x56d520",
-          "observed_value": "Agent WebRTC stack registers trickle ICE candidates into PeerConnection"
+          "va": "0x53c730",
+          "observed_value": "Caller main.(*JJffa1S1Zv6).iIhwd_WXInS (0x53c730) invokes IV04EXWpwj.(*VOMNaNery).OnDataChannel in direct callgraph"
         }
       ],
       "evidence_classes": [
@@ -1096,22 +1269,29 @@
     {
       "reference_item": "channel: input-channel",
       "category": "DATACHANNEL",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:752",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:750-755",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'input-channel' present at file offset 0x6a8548 (count: 1) in cloudphone-agent .rodata",
-        "BINARY_XREF: Agent creates DataChannel 'input-channel' and hooks touch/key event dispatcher"
+        "DISASSEMBLY_CONTROL_FLOW: Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 752",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 750,
+          "line_end": 755,
+          "observed_text_hash": "5b3e938cef48509138590532f16782496d72bd6856071a34642e02b3faa04217",
+          "selector": "lines 750-755",
           "file_offset": null,
           "va": null,
-          "observed_value": "case 'input-channel': inputChannel = channel"
+          "observed_value": "pc.ondatachannel = (evt) => {\n      debugLog('[WebRTC] Received DataChannel:', evt.channel.label)\n      if (evt.channel.label === 'input-channel') {\n        inputChannel = evt.channel\n        input..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1124,19 +1304,22 @@
           "observed_value": "Literal string 'input-channel' present at file offset 0x6a8548 (count: 1) in cloudphone-agent .rodata"
         },
         {
-          "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "input_channel_init",
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-001",
+          "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "function_va": "0x53c730",
           "file_offset": null,
-          "va": "0x6a8540",
-          "observed_value": "Agent creates DataChannel 'input-channel' and hooks touch/key event dispatcher"
+          "va": "0x53c730",
+          "observed_value": "Agent initializes input-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for receiving touch, scroll, keycode events.",
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e578-0x53e58c loads 'input-channel' from 0x6b8548 (len 13) and invokes CreateDataChannel at 0x4b95b0."
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "BINARY_XREF",
+        "DISASSEMBLY_CONTROL_FLOW",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -1144,22 +1327,29 @@
     {
       "reference_item": "channel: clipboard-channel",
       "category": "DATACHANNEL",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761-766",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'clipboard-channel' present at file offset 0x6ac175 (count: 1) in cloudphone-agent .rodata",
-        "BINARY_XREF: Agent creates channel and hooks Android clipboard synchronization service"
+        "DISASSEMBLY_CONTROL_FLOW: Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 761",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 761,
+          "line_end": 766,
+          "observed_text_hash": "bf37f44abe05060fdbf867ca1567a25945a89a7f6d1a7f7bb395d73a7cbf2223",
+          "selector": "lines 761-766",
           "file_offset": null,
           "va": null,
-          "observed_value": "case 'clipboard-channel': clipboardChannel = channel"
+          "observed_value": "} else if (evt.channel.label === 'clipboard-channel') {\n        clipboardChannel = evt.channel\n        clipboardChannel.onopen = () => {\n          debugLog('[DataChannel] clipboard-channel OPEN')\n ..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1172,19 +1362,22 @@
           "observed_value": "Literal string 'clipboard-channel' present at file offset 0x6ac175 (count: 1) in cloudphone-agent .rodata"
         },
         {
-          "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "clipboard_init",
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-002",
+          "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "function_va": "0x53c730",
           "file_offset": null,
-          "va": "0x6ac170",
-          "observed_value": "Agent creates channel and hooks Android clipboard synchronization service"
+          "va": "0x53c730",
+          "observed_value": "Agent initializes clipboard-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel with ordered=true for text clipboard synchronization.",
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e600-0x53e614 loads 'clipboard-channel' from 0x6bc175 (len 17) and invokes CreateDataChannel at 0x4b95b0."
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "BINARY_XREF",
+        "DISASSEMBLY_CONTROL_FLOW",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -1192,22 +1385,29 @@
     {
       "reference_item": "channel: camera-channel",
       "category": "DATACHANNEL",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787-792",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'camera-channel' present at file offset 0x6a93ba (count: 1) in cloudphone-agent .rodata",
-        "BINARY_XREF: Agent connects to virtual camera HAL injection socket"
+        "DISASSEMBLY_CONTROL_FLOW: Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 787",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 787,
+          "line_end": 792,
+          "observed_text_hash": "5e8090a3e0d6d85d14638dcdf6f0cc4f41fc73b8f85646e34c71c8b1636b8e07",
+          "selector": "lines 787-792",
           "file_offset": null,
           "va": null,
-          "observed_value": "case 'camera-channel': cameraChannel = channel"
+          "observed_value": "} else if (evt.channel.label === 'camera-channel') {\n        cameraChannel = evt.channel\n        cameraChannel.onopen = () => {\n          debugLog('[DataChannel] camera-channel OPEN')\n        }\n   ..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1220,19 +1420,22 @@
           "observed_value": "Literal string 'camera-channel' present at file offset 0x6a93ba (count: 1) in cloudphone-agent .rodata"
         },
         {
-          "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "camera_init",
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-003",
+          "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "function_va": "0x53c730",
           "file_offset": null,
-          "va": "0x6a93b0",
-          "observed_value": "Agent connects to virtual camera HAL injection socket"
+          "va": "0x53c730",
+          "observed_value": "Agent conditionally initializes camera-channel DataChannel via pion/webrtc PeerConnection.CreateDataChannel when camera support flag is active.",
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e730-0x53e744 loads 'camera-channel' from 0x6b93ba (len 14) and invokes CreateDataChannel at 0x4b95b0."
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "BINARY_XREF",
+        "DISASSEMBLY_CONTROL_FLOW",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -1240,45 +1443,75 @@
     {
       "reference_item": "channel: file-channel",
       "category": "DATACHANNEL",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:579",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:578-582",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-      "binary_evidence": [],
+      "binary_evidence": [
+        "DISASSEMBLY_CONTROL_FLOW: Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel)."
+      ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 579",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 578,
+          "line_end": 582,
+          "observed_text_hash": "d61b836a57b1584c50e639c9a5df9e215d0cf7751ea8e9852602a50b377c9e8c",
+          "selector": "lines 578-582",
           "file_offset": null,
           "va": null,
-          "observed_value": "pc.createDataChannel('file-channel', { ordered: true })"
+          "observed_value": "// \u521b\u5efa File \u901a\u9053 (\u4e3b\u52a8\u521b\u5efa)\n    fileChannel = pc.createDataChannel('file-channel', { ordered: true })\n    fileChannel.binaryType = 'arraybuffer'\n    setupFileChannel(fileChannel)"
+        },
+        {
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-004",
+          "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "function_va": "0x53c730",
+          "file_offset": null,
+          "va": "0x53c730",
+          "observed_value": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380."
         }
       ],
       "evidence_classes": [
+        "DISASSEMBLY_CONTROL_FLOW",
         "PUBLIC_REFERENCE"
       ],
-      "status": "UNCONFIRMED_HYPOTHESIS"
+      "status": "REFERENCE_CORROBORATED"
     },
     {
       "reference_item": "channel: ai-command-channel",
       "category": "DATACHANNEL",
-      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:304",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:303-307",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'ai-command-channel' present at file offset 0x6ad173 (count: 1) in cloudphone-agent .rodata",
-        "DISASSEMBLY_CONTROL_FLOW: Agent receives shell execution JSON and pipes command to /system/bin/sh"
+        "DISASSEMBLY_CONTROL_FLOW: Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel)."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-          "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "artifact_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
           "evidence_file": "useWebRTC.js",
-          "selector": "line 304",
+          "source_path": "web-app/src/composables/useWebRTC.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
+          "source_sha256": "28604c2f9e595944f3e51d52cf604b250ca9c95cce5c41a90a877cb7f71178f9",
+          "line_start": 303,
+          "line_end": 307,
+          "observed_text_hash": "7b3e9b07dc2b9823cac17dd8bae2e98ee586488b623a7b1056847119a48b09cb",
+          "selector": "lines 303-307",
           "file_offset": null,
           "va": null,
-          "observed_value": "pc.createDataChannel('ai-command-channel', { ordered: true })"
+          "observed_value": "debugLog('[AI-Command] Creating P2P command DataChannel...')\n    aiCommandChannel = pc.createDataChannel('ai-command-channel', { ordered: true })\n    aiCommandChannel.binaryType = 'arraybuffer'\n\n  ..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1292,13 +1525,16 @@
         },
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "ai_command_exec",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-004",
+          "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
+          "function_va": "0x53c730",
           "file_offset": null,
-          "va": "0x6ad170",
-          "observed_value": "Agent receives shell execution JSON and pipes command to /system/bin/sh"
+          "va": "0x53c730",
+          "observed_value": "Agent registers OnDataChannel callback closure (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210) to accept incoming channels initiated by frontend (e.g. adb-channel, file-channel).",
+          "derivation": "Disassembly of main.(*JJffa1S1Zv6).iIhwd_WXInS at 0x53e7e0-0x53e81c loads closure at 0x53f210 and passes to OnDataChannel at 0x4ad380."
         }
       ],
       "evidence_classes": [
@@ -1311,22 +1547,29 @@
     {
       "reference_item": "flag: -id",
       "category": "AGENT_CLI",
-      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65",
+      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string '-id' present at file offset 0x6a1e84 (count: 17) in cloudphone-agent .rodata",
-        "BINARY_XREF: Environment variable fallback CP_AGENT_ID confirmed at offset 0x6a5759"
+        "DISASSEMBLY_CONTROL_FLOW: main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-          "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
+          "artifact_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
           "evidence_file": "agent-deploy.md",
-          "selector": "line 65",
+          "source_path": "docs/agent-deploy.md",
+          "source_commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+          "source_git_blob_sha": "cdd44cf77c95a1597c03906448f0ae0843688546",
+          "source_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
+          "line_start": 65,
+          "line_end": 75,
+          "observed_text_hash": "c6d729ced767bbf160d3e82bb74c108750e8fdcfbd779dfbaa87fc0f31acd608",
+          "selector": "lines 65-75",
           "file_offset": null,
           "va": null,
-          "observed_value": "./cloudphone-agent -id vm-01 -signaling wss://SERVER:8443"
+          "observed_value": "adb connect 127.0.0.1:5555\n   adb -s 127.0.0.1:5555 push cloudphone-agent-amd64 /data/local/tmp/cloudphone-agent\n   adb -s 127.0.0.1:5555 push libsys_core.so /data/local/tmp/\n   ```\n3. **\u9488\u5bf9\u6027\u542f\u52a8\u6307\u5b9a\u7aef\u53e3*..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1339,19 +1582,22 @@
           "observed_value": "Literal string '-id' present at file offset 0x6a1e84 (count: 17) in cloudphone-agent .rodata"
         },
         {
-          "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "CP_AGENT_ID",
-          "file_offset": "0x6a5759",
-          "va": null,
-          "observed_value": "Environment variable fallback CP_AGENT_ID confirmed at offset 0x6a5759"
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-005",
+          "function_symbol": "main.init",
+          "function_va": "0x5152f0",
+          "file_offset": null,
+          "va": "0x5152f0",
+          "observed_value": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
+          "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags."
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "BINARY_XREF",
+        "DISASSEMBLY_CONTROL_FLOW",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -1359,22 +1605,29 @@
     {
       "reference_item": "flag: -signaling",
       "category": "AGENT_CLI",
-      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65",
+      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'signaling' present at file offset 0x6a1e6c (count: 10) in cloudphone-agent .rodata",
-        "BINARY_XREF: Passes signaling URL to WebSocket dialer routine"
+        "DISASSEMBLY_CONTROL_FLOW: main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-          "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
+          "artifact_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
           "evidence_file": "agent-deploy.md",
-          "selector": "line 65",
+          "source_path": "docs/agent-deploy.md",
+          "source_commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+          "source_git_blob_sha": "cdd44cf77c95a1597c03906448f0ae0843688546",
+          "source_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
+          "line_start": 65,
+          "line_end": 75,
+          "observed_text_hash": "c6d729ced767bbf160d3e82bb74c108750e8fdcfbd779dfbaa87fc0f31acd608",
+          "selector": "lines 65-75",
           "file_offset": null,
           "va": null,
-          "observed_value": "Flag -signaling passes WebSocket signaling server endpoint"
+          "observed_value": "adb connect 127.0.0.1:5555\n   adb -s 127.0.0.1:5555 push cloudphone-agent-amd64 /data/local/tmp/cloudphone-agent\n   adb -s 127.0.0.1:5555 push libsys_core.so /data/local/tmp/\n   ```\n3. **\u9488\u5bf9\u6027\u542f\u52a8\u6307\u5b9a\u7aef\u53e3*..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1387,19 +1640,22 @@
           "observed_value": "Literal string 'signaling' present at file offset 0x6a1e6c (count: 10) in cloudphone-agent .rodata"
         },
         {
-          "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "signaling_dialer",
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-005",
+          "function_symbol": "main.init",
+          "function_va": "0x5152f0",
           "file_offset": null,
-          "va": "0x6a1e60",
-          "observed_value": "Passes signaling URL to WebSocket dialer routine"
+          "va": "0x5152f0",
+          "observed_value": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
+          "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags."
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "BINARY_XREF",
+        "DISASSEMBLY_CONTROL_FLOW",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
@@ -1407,22 +1663,29 @@
     {
       "reference_item": "flag: -root",
       "category": "AGENT_CLI",
-      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:118",
+      "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
       "binary_target": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "binary_evidence": [
         "BINARY_STRING: Literal string 'root' present at file offset 0x5405fe (count: 25) in cloudphone-agent .rodata",
-        "BINARY_XREF: Environment variable fallback CP_AGENT_ROOT confirmed at offset 0x6a84ac"
+        "DISASSEMBLY_CONTROL_FLOW: main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main."
       ],
       "evidence_records": [
         {
           "evidence_class": "PUBLIC_REFERENCE",
           "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-          "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
+          "artifact_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
           "evidence_file": "agent-deploy.md",
-          "selector": "line 118",
+          "source_path": "docs/agent-deploy.md",
+          "source_commit_sha": "ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39",
+          "source_git_blob_sha": "cdd44cf77c95a1597c03906448f0ae0843688546",
+          "source_sha256": "ddf299e3a062b4b25a98d84e7e190ce9de689e5d29b4086122937f97ac519fa2",
+          "line_start": 65,
+          "line_end": 75,
+          "observed_text_hash": "c6d729ced767bbf160d3e82bb74c108750e8fdcfbd779dfbaa87fc0f31acd608",
+          "selector": "lines 65-75",
           "file_offset": null,
           "va": null,
-          "observed_value": "Flag -root enables root execution without persistent PC ADB"
+          "observed_value": "adb connect 127.0.0.1:5555\n   adb -s 127.0.0.1:5555 push cloudphone-agent-amd64 /data/local/tmp/cloudphone-agent\n   adb -s 127.0.0.1:5555 push libsys_core.so /data/local/tmp/\n   ```\n3. **\u9488\u5bf9\u6027\u542f\u52a8\u6307\u5b9a\u7aef\u53e3*..."
         },
         {
           "evidence_class": "BINARY_STRING",
@@ -1435,22 +1698,55 @@
           "observed_value": "Literal string 'root' present at file offset 0x5405fe (count: 25) in cloudphone-agent .rodata"
         },
         {
-          "evidence_class": "BINARY_XREF",
-          "artifact_path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
-          "artifact_sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
-          "evidence_file": "cloudphone-agent",
-          "selector": "CP_AGENT_ROOT",
-          "file_offset": "0x6a84ac",
-          "va": null,
-          "observed_value": "Environment variable fallback CP_AGENT_ROOT confirmed at offset 0x6a84ac"
+          "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+          "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
+          "artifact_sha256": "86498ba37e83c40175bf88556f54671b202d9dab9829e48bae6049356a013397",
+          "evidence_file": "DISASSEMBLY_FACTS.json",
+          "selector": "AGENT-DCF-005",
+          "function_symbol": "main.init",
+          "function_va": "0x5152f0",
+          "file_offset": null,
+          "va": "0x5152f0",
+          "observed_value": "main.init registers all 28 CLI flags into contiguous .bss globals (0xd38548-0xd38620) via obfuscated flag package aFaUKV, which are parsed in main.main.",
+          "derivation": "Disassembly of main.init at 0x5152f0-0x515ad0 establishes exact bl call VAs and .bss store offsets for flags."
         }
       ],
       "evidence_classes": [
         "BINARY_STRING",
-        "BINARY_XREF",
+        "DISASSEMBLY_CONTROL_FLOW",
         "PUBLIC_REFERENCE"
       ],
       "status": "BINARY_SEMANTIC_CONFIRMED"
+    },
+    {
+      "reference_item": "message_type: webrtc_failed",
+      "category": "WEBSOCKET_MESSAGE",
+      "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:728-735",
+      "binary_target": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "binary_evidence": [],
+      "evidence_records": [
+        {
+          "evidence_class": "PUBLIC_REFERENCE",
+          "artifact_path": "evidence/reference/raw/web-app/src/stores/devices.js",
+          "artifact_sha256": "e13d7bec85da11f65bdc0a6556210c05127bddbe211a31e880921c16a34a73b5",
+          "evidence_file": "devices.js",
+          "source_path": "web-app/src/stores/devices.js",
+          "source_commit_sha": "65567d777bccb11d2a6d93b6acc735478e880b5b",
+          "source_git_blob_sha": "42867285c44074de0b5cab05d32742f03267609a",
+          "source_sha256": "e13d7bec85da11f65bdc0a6556210c05127bddbe211a31e880921c16a34a73b5",
+          "line_start": 728,
+          "line_end": 735,
+          "observed_text_hash": "c9417bf6e68417f189d2ad3490107a99c07e23ee3fd7fb0da1e7b497e7a847d8",
+          "selector": "lines 728-735",
+          "file_offset": null,
+          "va": null,
+          "observed_value": "licenseErrorMsg.value = data.error_msg || ''\n    globalMachineID.value = data.machine_id || ''\n    licenseMaxDevices.value = data.max_devices || 50\n    licenseExpiresAt.value = data.expires_at || '..."
+        }
+      ],
+      "evidence_classes": [
+        "PUBLIC_REFERENCE"
+      ],
+      "status": "UNCONFIRMED_REFERENCE_ONLY"
     }
   ]
 }

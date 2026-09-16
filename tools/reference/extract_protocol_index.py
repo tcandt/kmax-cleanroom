@@ -17,10 +17,13 @@ def extract_protocol_index(output_dir=None):
         target_dir = Path(output_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1. Parse HTTP Endpoints from raw web-app files
-    discovered_endpoints = {}
+    # =========================================================================
+    # 1. PURE MACHINE EXTRACTION (AST / Regex over raw source files)
+    # =========================================================================
     web_app_dir = raw_dir / "web-app"
 
+    # A. Machine extraction of HTTP endpoints
+    discovered_endpoints = {}
     endpoint_regex = re.compile(r'[\'"`](/(?:api|connect_client|register_agent)[^\'"`\s?#]*)')
     
     for fpath in web_app_dir.rglob("*"):
@@ -40,40 +43,101 @@ def extract_protocol_index(output_dir=None):
                         "line": line_no
                     })
 
-    # 2. Parse WebSocket Messages
-    ws_client_messages = set()
-    ws_server_messages = set()
+    machine_endpoints = [
+        {
+            "endpoint": ep,
+            "occurrences_count": len(occs),
+            "occurrences": occs,
+            "classification": "MACHINE_OBSERVED"
+        }
+        for ep, occs in sorted(discovered_endpoints.items())
+    ]
 
-    # Search useWebRTC.js and devices.js for message_type
+    # B. Machine extraction of WebSocket Client-to-Server Message Types
     ws_send_regex = re.compile(r'message_type\s*[:=]\s*[\'"]([a-zA-Z0-9_\-]+)[\'"]')
+    client_msg_occurrences = {}
     for fpath in web_app_dir.rglob("*"):
         if fpath.suffix in (".js", ".vue"):
+            rel_path = fpath.relative_to(raw_dir).as_posix()
             content = fpath.read_text(encoding="utf-8", errors="ignore")
-            for m in ws_send_regex.findall(content):
-                ws_client_messages.add(m)
+            for line_no, line in enumerate(content.splitlines(), 1):
+                for m in ws_send_regex.findall(line):
+                    if m not in client_msg_occurrences:
+                        client_msg_occurrences[m] = []
+                    client_msg_occurrences[m].append({
+                        "file": rel_path,
+                        "line": line_no
+                    })
 
-    # Server to client messages received in onmessage switches
+    machine_client_msgs = [
+        {
+            "message_type": m,
+            "occurrences_count": len(occs),
+            "occurrences": occs,
+            "classification": "MACHINE_OBSERVED"
+        }
+        for m, occs in sorted(client_msg_occurrences.items())
+    ]
+
+    # C. Machine extraction of WebSocket Server-to-Client Message Types
     onmsg_regex = re.compile(r'(?:msg|data)\.message_type\s*===\s*[\'"]([a-zA-Z0-9_\-]+)[\'"]')
+    server_msg_occurrences = {}
     for fpath in web_app_dir.rglob("*"):
         if fpath.suffix in (".js", ".vue"):
+            rel_path = fpath.relative_to(raw_dir).as_posix()
             content = fpath.read_text(encoding="utf-8", errors="ignore")
-            for m in onmsg_regex.findall(content):
-                ws_server_messages.add(m)
+            for line_no, line in enumerate(content.splitlines(), 1):
+                for m in onmsg_regex.findall(line):
+                    if m not in server_msg_occurrences:
+                        server_msg_occurrences[m] = []
+                    server_msg_occurrences[m].append({
+                        "file": rel_path,
+                        "line": line_no
+                    })
 
-    # Explicitly cataloged server messages from switch branches
-    known_server_msgs = {"config", "device_msg", "device_online", "device_offline", "device_list", "command_result", "auth_error"}
-    ws_server_messages.update(known_server_msgs)
+    machine_server_msgs = [
+        {
+            "message_type": m,
+            "occurrences_count": len(occs),
+            "occurrences": occs,
+            "classification": "MACHINE_OBSERVED"
+        }
+        for m, occs in sorted(server_msg_occurrences.items())
+    ]
 
-    # 3. Parse forward payloads
+    # D. Machine extraction of Forward Payload Types
     fwd_payload_regex = re.compile(r'type\s*[:=]\s*[\'"](request-offer|offer|answer|ice-candidate|clipboard|camera)[\'"]')
-    fwd_payloads = set()
+    fwd_payload_occurrences = {}
     for fpath in web_app_dir.rglob("*"):
         if fpath.suffix in (".js", ".vue"):
+            rel_path = fpath.relative_to(raw_dir).as_posix()
             content = fpath.read_text(encoding="utf-8", errors="ignore")
-            for m in fwd_payload_regex.findall(content):
-                fwd_payloads.add(m)
+            for line_no, line in enumerate(content.splitlines(), 1):
+                for m in fwd_payload_regex.findall(line):
+                    if m not in fwd_payload_occurrences:
+                        fwd_payload_occurrences[m] = []
+                    fwd_payload_occurrences[m].append({
+                        "file": rel_path,
+                        "line": line_no
+                    })
 
-    # 4. Build Structured Protocol Index
+    machine_fwd_payloads = [
+        {
+            "payload_type": m,
+            "occurrences_count": len(occs),
+            "occurrences": occs,
+            "classification": "MACHINE_OBSERVED"
+        }
+        for m, occs in sorted(fwd_payload_occurrences.items())
+    ]
+
+    # =========================================================================
+    # 2. ANNOTATION TEMPLATES & PRESENTATION CATALOG (Explicitly Separated)
+    # =========================================================================
+    # These roles and definitions are semantic interpretations or documentation
+    # templates. They are classified as ANNOTATION_TEMPLATE and excluded from
+    # forensic binary confirmation counts.
+
     known_endpoint_roles = {
         "/api/login": ("POST", "Authentication: credentials login and session token issuance"),
         "/api/logout": ("ANY", "Authentication: session revocation"),
@@ -124,7 +188,8 @@ def extract_protocol_index(output_dir=None):
             "role": role,
             "source_evidence": first_ref,
             "occurrences_in_source": len(occurrences),
-            "classification": "SOURCE_REFERENCE_CANDIDATE"
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         })
 
     ws_c2s_definitions = [
@@ -132,43 +197,57 @@ def extract_protocol_index(output_dir=None):
             "message_type": "connect",
             "fields": { "message_type": "connect", "device_id": "string" },
             "description": "Sent by client immediately after WebSocket connection to target device session",
-            "source": "web-app/src/composables/useWebRTC.js:92"
+            "source": "web-app/src/composables/useWebRTC.js:92",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "forward",
             "fields": { "message_type": "forward", "device_id": "string", "payload": "object" },
             "description": "Wraps signaling payloads (request-offer, answer, ice-candidate) forwarded to Agent",
-            "source": "web-app/src/composables/useWebRTC.js:140"
+            "source": "web-app/src/composables/useWebRTC.js:140",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "command",
             "fields": { "message_type": "command", "device_id": "string", "request_id": "string", "command": "string" },
             "description": "Direct shell/command execution request forwarded to agent via signaling server",
-            "source": "web-app/src/composables/useWebRTC.js:271"
+            "source": "web-app/src/composables/useWebRTC.js:271",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "inject_data",
             "fields": { "message_type": "inject_data", "device_id": "string", "channel": "string", "data": "any" },
             "description": "WebSocket fallback for touch/clipboard when DataChannel is unavailable",
-            "source": "web-app/src/composables/useWebRTC.js:254"
+            "source": "web-app/src/composables/useWebRTC.js:254",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "group_control_event",
             "fields": { "message_type": "group_control_event", "device_ids": "array", "event": "object" },
             "description": "Multi-device synchronized control broadcast across multiple phone sessions",
-            "source": "web-app/src/stores/devices.js:583"
+            "source": "web-app/src/stores/devices.js:583",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "get_settings",
             "fields": { "message_type": "get_settings" },
             "description": "Requests global system settings from signaling server",
-            "source": "web-app/src/stores/devices.js:592"
+            "source": "web-app/src/stores/devices.js:592",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "webrtc_failed",
             "fields": { "message_type": "webrtc_failed", "device_id": "string" },
             "description": "Candidate message indicating WebRTC failure",
-            "source": "web-app/src/stores/devices.js"
+            "source": "web-app/src/stores/devices.js",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         }
     ]
 
@@ -177,43 +256,57 @@ def extract_protocol_index(output_dir=None):
             "message_type": "config",
             "fields": { "message_type": "config", "ice_servers": "array" },
             "description": "Provides STUN/TURN ICE server configuration to connecting client",
-            "source": "web-app/src/composables/useWebRTC.js:126"
+            "source": "web-app/src/composables/useWebRTC.js:126",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "device_msg",
             "fields": { "message_type": "device_msg", "device_id": "string", "payload": "object" },
             "description": "Delivers forwarded messages from Agent (offer, ice-candidate, clipboard, etc.)",
-            "source": "web-app/src/composables/useWebRTC.js:133"
+            "source": "web-app/src/composables/useWebRTC.js:133",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "device_online",
             "fields": { "message_type": "device_online", "device": "object" },
             "description": "Broadcasts that a device agent has connected and registered",
-            "source": "web-app/src/stores/devices.js:675"
+            "source": "web-app/src/stores/devices.js:675",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "device_offline",
             "fields": { "message_type": "device_offline", "device_id": "string" },
             "description": "Broadcasts that a device agent has disconnected",
-            "source": "web-app/src/stores/devices.js:680"
+            "source": "web-app/src/stores/devices.js:680",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "device_list",
             "fields": { "message_type": "device_list", "devices": "array" },
             "description": "Initial synchronization of all online devices on WebSocket connect",
-            "source": "web-app/src/stores/devices.js:670"
+            "source": "web-app/src/stores/devices.js:670",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "command_result",
             "fields": { "message_type": "command_result", "request_id": "string", "output": "string", "exit_code": "number" },
             "description": "Delivers asynchronous shell command execution output back to client",
-            "source": "web-app/src/composables/useWebRTC.js:148"
+            "source": "web-app/src/composables/useWebRTC.js:148",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "message_type": "auth_error",
             "fields": { "message_type": "auth_error", "error": "string" },
             "description": "Signals token expiration, invalid permissions, or session kick",
-            "source": "web-app/src/composables/useWebRTC.js:156"
+            "source": "web-app/src/composables/useWebRTC.js:156",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         }
     ]
 
@@ -223,54 +316,79 @@ def extract_protocol_index(output_dir=None):
             "direction": "Browser -> Signaling -> Agent",
             "fields": { "type": "request-offer", "ip_preference": "string", "scrcpy_options": "object" },
             "description": "Requests Agent to create a WebRTC PeerConnection, start scrcpy, and generate an SDP offer",
-            "source": "web-app/src/composables/useWebRTC.js:134"
+            "source": "web-app/src/composables/useWebRTC.js:134",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "type": "offer",
             "direction": "Agent -> Signaling -> Browser",
             "fields": { "type": "offer", "sdp": "string", "camera_support": "boolean" },
             "description": "Agent SDP offer containing video/audio media tracks and DataChannel attributes",
-            "source": "web-app/src/composables/useWebRTC.js:175"
+            "source": "web-app/src/composables/useWebRTC.js:175",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "type": "answer",
             "direction": "Browser -> Signaling -> Agent",
             "fields": { "type": "answer", "sdp": "string" },
             "description": "Browser SDP answer with munged bandwidth parameters and audio preferences",
-            "source": "web-app/src/composables/useWebRTC.js:205"
+            "source": "web-app/src/composables/useWebRTC.js:205",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "type": "ice-candidate",
             "direction": "Bi-directional (Browser <-> Agent)",
             "fields": { "type": "ice-candidate", "candidate": "string | object" },
             "description": "Trickle ICE candidate exchange for P2P UDP/TCP hole punching",
-            "source": "web-app/src/composables/useWebRTC.js:215"
+            "source": "web-app/src/composables/useWebRTC.js:215",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "type": "clipboard",
             "direction": "Bi-directional",
             "fields": { "type": "clipboard", "text": "string", "source": "string", "origin_client_id": "string" },
             "description": "Fallback clipboard payload when clipboard-channel is not established",
-            "source": "web-app/src/composables/useWebRTC.js:770"
+            "source": "web-app/src/composables/useWebRTC.js:770",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         },
         {
             "type": "camera",
             "direction": "Bi-directional",
             "fields": { "type": "camera", "action": "string" },
             "description": "Camera control signaling fallback",
-            "source": "web-app/src/composables/useWebRTC.js:800"
+            "source": "web-app/src/composables/useWebRTC.js:800",
+            "classification": "ANNOTATION_TEMPLATE",
+            "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
         }
     ]
 
     protocol_index = {
         "metadata": {
             "title": "Public Frontend Reference Protocol Index",
-            "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
+            "evidence_class": "REFERENCE_DERIVED",
             "source_repositories": [
                 "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
                 "hqw700/cloudphone-official (commit: ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39)"
             ],
-            "description": "Reference protocol index dynamically parsed from pinned public Git snapshots in evidence/reference/raw/. Every entry is a candidate until corroborated by binary evidence."
+            "description": "Reference protocol index separating pure machine extractions (MACHINE_OBSERVED) from human design annotations (ANNOTATION_TEMPLATE)."
+        },
+        "machine_extracted": {
+            "http_endpoints": machine_endpoints,
+            "websocket_client_messages": machine_client_msgs,
+            "websocket_server_messages": machine_server_msgs,
+            "forward_payloads": machine_fwd_payloads
+        },
+        "annotated_catalog": {
+            "description": "Human/design annotations explicitly excluded from forensic confirmation counts.",
+            "http_endpoints": http_endpoints_list,
+            "websocket_client_messages": ws_c2s_definitions,
+            "websocket_server_messages": ws_s2c_definitions,
+            "forward_payloads": fwd_payload_definitions
         },
         "transport_endpoints": {
             "websocket_signaling": [
@@ -283,7 +401,8 @@ def extract_protocol_index(output_dir=None):
                         "share_pwd": "Share link password (optional, if protected)"
                     },
                     "source_reference": "web-app/src/composables/useWebRTC.js:78-83, web-app/src/stores/devices.js:669",
-                    "classification": "SOURCE_REFERENCE_CANDIDATE"
+                    "classification": "ANNOTATION_TEMPLATE",
+                    "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
                 },
                 {
                     "path": "/register_agent",
@@ -292,7 +411,8 @@ def extract_protocol_index(output_dir=None):
                         "id": "Agent / device unique identifier (passed via -id CLI flag)"
                     },
                     "source_reference": "docs/agent-deploy.md",
-                    "classification": "SOURCE_REFERENCE_CANDIDATE"
+                    "classification": "ANNOTATION_TEMPLATE",
+                    "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
                 }
             ],
             "http_endpoints": http_endpoints_list
@@ -317,14 +437,17 @@ def extract_protocol_index(output_dir=None):
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("# Public Reference Protocol Index & Candidate Hypotheses\n\n")
         f.write("**Status**: GENERATED FROM IMMUTABLE LOCAL SNAPSHOTS (`evidence/reference/raw/`)\n")
-        f.write("**Classification**: `SOURCE_REFERENCE_CANDIDATE` (Subject to Binary Verification)\n\n")
-        f.write("## 1. Transport Endpoints Summary\n\n")
-        f.write(f"- **WebSocket Signaling**: {len(protocol_index['transport_endpoints']['websocket_signaling'])} endpoints (`/connect_client`, `/register_agent`)\n")
-        f.write(f"- **HTTP Endpoints**: {len(protocol_index['transport_endpoints']['http_endpoints'])} discovered endpoints across Auth, Devices, Admin, Share, Config, and System\n\n")
-        f.write("## 2. WebSocket Signaling Messages\n\n")
-        f.write(f"- **Client-to-Server**: {len(protocol_index['websocket_messages']['client_to_server'])} message types\n")
-        f.write(f"- **Server-to-Client**: {len(protocol_index['websocket_messages']['server_to_client'])} message types\n")
-        f.write(f"- **Signaling Forward Payloads**: {len(protocol_index['signaling_forward_payloads'])} payload types\n\n")
+        f.write("**Separation**: `MACHINE_OBSERVED` vs `ANNOTATION_TEMPLATE`\n\n")
+        f.write("## 1. Machine Extractions Summary\n\n")
+        f.write(f"- **Machine Observed Endpoints**: {len(machine_endpoints)} distinct endpoint literals\n")
+        f.write(f"- **Machine Client WS Message Types**: {len(machine_client_msgs)} extracted types\n")
+        f.write(f"- **Machine Server WS Message Types**: {len(machine_server_msgs)} extracted types\n")
+        f.write(f"- **Machine Forward Payloads**: {len(machine_fwd_payloads)} extracted payload types\n\n")
+        f.write("## 2. Annotation Templates (Excluded From Forensic Confirmation Counts)\n\n")
+        f.write(f"- **Annotated Endpoints**: {len(http_endpoints_list)} cataloged routes\n")
+        f.write(f"- **Annotated Client-to-Server WS**: {len(ws_c2s_definitions)} cataloged definitions\n")
+        f.write(f"- **Annotated Server-to-Client WS**: {len(ws_s2c_definitions)} cataloged definitions\n")
+        f.write(f"- **Annotated Forward Payloads**: {len(fwd_payload_definitions)} cataloged definitions\n\n")
         f.write("## 3. Strict Demo Mode Isolation\n\n")
         f.write(f"- Identified {len(protocol_index['demo_mock_routes'])} synthetic demo mock routes isolated from real production paths.\n")
 

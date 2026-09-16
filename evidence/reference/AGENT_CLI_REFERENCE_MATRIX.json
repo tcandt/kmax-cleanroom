@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "Agent CLI Reference & Binary Cross-Check Matrix",
-    "description": "Cross-verification of CLI flags dynamically scanned across canonical Android ARM64 and supplemental Linux AMD64 binaries and correlated with public documentation.",
+    "description": "Cross-verification of CLI flags dynamically verified via static registration calls in main.init and correlated with public documentation.",
     "canonical_artifact": {
       "path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
       "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4"
@@ -11,192 +11,221 @@
       "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16"
     },
     "evidence_classification_scheme": [
-      "STRING_PRESENT: Flag string scanned in binary .rodata; registration logic unproven",
-      "FLAG_REGISTRATION_CONFIRMED: Flag string verified with registration or invocation structure",
-      "SEMANTIC_XREF_CONFIRMED: Flag verified with downstream semantic handlers, environment fallback, or process execution",
-      "DYNAMIC_HELP_CONFIRMED: Verified via runtime help or CLI flag parsing execution"
+      "STRING_PRESENT: Flag string candidate in binary rodata; registration logic unproven",
+      "FLAG_REGISTRATION_CONFIRMED: Registration call statically verified in main.init",
+      "SEMANTIC_XREF_CONFIRMED: Flag verified with registration call and downstream xrefs in main.main or application methods"
     ]
   },
   "flags": [
     {
       "flag": "-id",
       "argument_type": "string",
+      "default_value": "",
       "documentation_role": "Unique device identifier assigned to the cloudphone instance (e.g. vm-01)",
       "documentation_source": "evidence/reference/raw/docs/agent-deploy.md",
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x1194fd, count: 1348)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x98ca6, count: 1357)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x69bfb0, registration_call: 0x515374)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515374",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd38550",
+      "environment_fallback": "CP_AGENT_ID",
+      "downstream_xrefs_count": 2,
       "evidence_level": "SEMANTIC_XREF_CONFIRMED",
-      "evidence_details": "Documented in agent-deploy.md; literal string found at offset 0x98ca6 (AMD64) and 0x1194fd (ARM64); environment variable fallback CP_AGENT_ID verified in binary .rodata.",
-      "canonical_file_offset": "0x1194fd",
-      "canonical_occurrence_count": 1348,
-      "supplemental_file_offset": "0x98ca6",
-      "supplemental_occurrence_count": 1357,
       "classification": "BINARY_SEMANTIC_CONFIRMED",
       "confidence": "HIGH"
     },
     {
       "flag": "-signaling",
       "argument_type": "string",
+      "default_value": "localhost:8443",
       "documentation_role": "WebSocket signaling server endpoint (e.g. wss://SERVER:8443)",
       "documentation_source": "evidence/reference/raw/docs/agent-deploy.md",
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a1e6c, count: 10)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x753ed9, count: 10)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a1e6c, registration_call: 0x51532c)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51532c",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd38548",
+      "environment_fallback": "CP_AGENT_SIGNALING",
+      "downstream_xrefs_count": 2,
       "evidence_level": "SEMANTIC_XREF_CONFIRMED",
-      "evidence_details": "Documented in agent-deploy.md; literal string found at offset 0x753ed9 (AMD64) and 0x6a1e6c (ARM64); network/process invocation xref confirmed.",
-      "canonical_file_offset": "0x6a1e6c",
-      "canonical_occurrence_count": 10,
-      "supplemental_file_offset": "0x753ed9",
-      "supplemental_occurrence_count": 10,
       "classification": "BINARY_SEMANTIC_CONFIRMED",
       "confidence": "HIGH"
     },
     {
       "flag": "-jar",
       "argument_type": "string",
+      "default_value": "/data/local/tmp/libsys_core.so",
       "documentation_role": "Path to the Android DEX/JAR helper library (libsys_core.so / classes.jar)",
       "documentation_source": "evidence/reference/raw/docs/agent-deploy.md",
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x552f44, count: 23)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x604f4d, count: 21)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x69c334, registration_call: 0x51544c)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51544c",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd38568",
+      "environment_fallback": "CP_AGENT_JAR",
+      "downstream_xrefs_count": 7,
       "evidence_level": "SEMANTIC_XREF_CONFIRMED",
-      "evidence_details": "Documented in agent-deploy.md; literal string found at offset 0x604f4d (AMD64) and 0x552f44 (ARM64); network/process invocation xref confirmed.",
-      "canonical_file_offset": "0x552f44",
-      "canonical_occurrence_count": 23,
-      "supplemental_file_offset": "0x604f4d",
-      "supplemental_occurrence_count": 21,
       "classification": "BINARY_SEMANTIC_CONFIRMED",
       "confidence": "HIGH"
     },
     {
       "flag": "-external-addr",
       "argument_type": "string",
+      "default_value": "",
       "documentation_role": "Publicly accessible IPv4/IPv6 address for WebRTC NAT traversal when containerized",
       "documentation_source": "evidence/reference/raw/docs/agent-deploy.md",
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a8492, count: 1)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x75a4f9, count: 1)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a8492, registration_call: 0x5153bc)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
-      "evidence_level": "FLAG_REGISTRATION_CONFIRMED",
-      "evidence_details": "Documented in agent-deploy.md; exact string found at offset 0x75a4f9 (AMD64) and 0x6a8492 (ARM64); adjacent to candidateType/transport settings.",
-      "canonical_file_offset": "0x6a8492",
-      "canonical_occurrence_count": 1,
-      "supplemental_file_offset": "0x75a4f9",
-      "supplemental_occurrence_count": 1,
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x5153bc",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd38558",
+      "environment_fallback": "CP_AGENT_EXTERNAL_ADDR",
+      "downstream_xrefs_count": 2,
+      "evidence_level": "SEMANTIC_XREF_CONFIRMED",
       "classification": "BINARY_SEMANTIC_CONFIRMED",
       "confidence": "HIGH"
     },
     {
       "flag": "-webrtc-port",
       "argument_type": "int",
+      "default_value": 50000,
       "documentation_role": "Dedicated UDP port allocated for WebRTC RTP media stream (e.g. 50001)",
       "documentation_source": "evidence/reference/raw/docs/agent-deploy.md",
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a5722, count: 1)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x75772c, count: 1)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a5722, registration_call: 0x515400)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
-      "evidence_level": "FLAG_REGISTRATION_CONFIRMED",
-      "evidence_details": "Documented in agent-deploy.md; exact string found at offset 0x75772c (AMD64) and 0x6a5722 (ARM64); adjacent to candidateType/transport settings.",
-      "canonical_file_offset": "0x6a5722",
-      "canonical_occurrence_count": 1,
-      "supplemental_file_offset": "0x75772c",
-      "supplemental_occurrence_count": 1,
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515400",
+      "flag_api_symbol": "aFaUKV.A1a3KwX",
+      "destination_reference": ".bss:0xd38560",
+      "environment_fallback": "CP_AGENT_WEBRTC_PORT",
+      "downstream_xrefs_count": 3,
+      "evidence_level": "SEMANTIC_XREF_CONFIRMED",
       "classification": "BINARY_SEMANTIC_CONFIRMED",
       "confidence": "HIGH"
     },
     {
       "flag": "-root",
-      "argument_type": "boolean",
+      "argument_type": "bool",
+      "default_value": false,
       "documentation_role": "Enables superuser/root execution mode on rooted devices without active PC ADB connection",
       "documentation_source": "evidence/reference/raw/docs/agent-deploy.md",
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x5405fe, count: 25)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x5f25fe, count: 25)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x69c7ed, registration_call: 0x51567c)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51567c",
+      "flag_api_symbol": "aFaUKV.RTCObKURJKV",
+      "destination_reference": ".bss:0xd385a8",
+      "environment_fallback": "CP_AGENT_ROOT",
+      "downstream_xrefs_count": 2,
       "evidence_level": "SEMANTIC_XREF_CONFIRMED",
-      "evidence_details": "Documented in agent-deploy.md; literal string found at offset 0x5f25fe (AMD64) and 0x5405fe (ARM64); environment variable fallback CP_AGENT_ROOT verified in binary .rodata.",
-      "canonical_file_offset": "0x5405fe",
-      "canonical_occurrence_count": 25,
-      "supplemental_file_offset": "0x5f25fe",
-      "supplemental_occurrence_count": 25,
       "classification": "BINARY_SEMANTIC_CONFIRMED",
       "confidence": "HIGH"
     },
     {
       "flag": "-camera-addr",
       "argument_type": "string",
+      "default_value": "127.0.0.1:9001",
       "documentation_role": "Camera injection streaming socket address (inferred from string presence)",
       "documentation_source": null,
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a5738, count: 1)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x757742, count: 1)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a5738, registration_call: 0x51582c)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
-      "evidence_level": "STRING_PRESENT",
-      "evidence_details": "Exact string located at offset 0x757742 (AMD64) and 0x6a5738 (ARM64) in .rodata. Not present in public documentation; semantic role inferred from name.",
-      "canonical_file_offset": "0x6a5738",
-      "canonical_occurrence_count": 1,
-      "supplemental_file_offset": "0x757742",
-      "supplemental_occurrence_count": 1,
-      "classification": "STATIC_STRING_DISCOVERED",
-      "confidence": "MEDIUM_INFERRED"
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x51582c",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd385d8",
+      "environment_fallback": "CP_AGENT_CAMERA_ADDR",
+      "downstream_xrefs_count": 2,
+      "evidence_level": "SEMANTIC_XREF_CONFIRMED",
+      "classification": "STATIC_REGISTRATION_RECOVERED",
+      "confidence": "HIGH"
     },
     {
       "flag": "-camera-size",
       "argument_type": "string",
+      "default_value": "",
       "documentation_role": "Configures camera virtual display frame resolution (inferred from string presence)",
       "documentation_source": null,
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a5743, count: 1)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x75774d, count: 1)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a5743, registration_call: 0x515998)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
-      "evidence_level": "STRING_PRESENT",
-      "evidence_details": "Exact string located at offset 0x75774d (AMD64) and 0x6a5743 (ARM64) in .rodata. Not present in public documentation; semantic role inferred from name.",
-      "canonical_file_offset": "0x6a5743",
-      "canonical_occurrence_count": 1,
-      "supplemental_file_offset": "0x75774d",
-      "supplemental_occurrence_count": 1,
-      "classification": "STATIC_STRING_DISCOVERED",
-      "confidence": "MEDIUM_INFERRED"
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515998",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd38600",
+      "environment_fallback": "CP_AGENT_CAMERA_SIZE",
+      "downstream_xrefs_count": 2,
+      "evidence_level": "SEMANTIC_XREF_CONFIRMED",
+      "classification": "STATIC_REGISTRATION_RECOVERED",
+      "confidence": "HIGH"
     },
     {
       "flag": "-camera-facing",
       "argument_type": "string",
+      "default_value": "back",
       "documentation_role": "Selects front or back camera sensor simulation for virtual injection (inferred from string presence)",
       "documentation_source": null,
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a849f, count: 1)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x75a506, count: 1)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a849f, registration_call: 0x515908)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
-      "evidence_level": "STRING_PRESENT",
-      "evidence_details": "Exact string located at offset 0x75a506 (AMD64) and 0x6a849f (ARM64) in .rodata. Not present in public documentation; semantic role inferred from name.",
-      "canonical_file_offset": "0x6a849f",
-      "canonical_occurrence_count": 1,
-      "supplemental_file_offset": "0x75a506",
-      "supplemental_occurrence_count": 1,
-      "classification": "STATIC_STRING_DISCOVERED",
-      "confidence": "MEDIUM_INFERRED"
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515908",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd385f0",
+      "environment_fallback": "CP_AGENT_CAMERA_FACING",
+      "downstream_xrefs_count": 2,
+      "evidence_level": "SEMANTIC_XREF_CONFIRMED",
+      "classification": "STATIC_REGISTRATION_RECOVERED",
+      "confidence": "HIGH"
     },
     {
       "flag": "-ice-servers",
       "argument_type": "string",
+      "default_value": "stun:stun.l.google.com:19302",
       "documentation_role": "Overrides default STUN/TURN server URLs passed from signaling server (inferred from string presence)",
       "documentation_source": null,
       "artifacts_inspected": [
-        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a572d, count: 1)",
-        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (offset: 0x757737, count: 1)"
+        "cloudphone-v0.3.6 (1)/android/cloudphone-agent (offset: 0x6a572d, registration_call: 0x515758)",
+        "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64 (supplemental binary)"
       ],
-      "evidence_level": "STRING_PRESENT",
-      "evidence_details": "Exact string located at offset 0x757737 (AMD64) and 0x6a572d (ARM64) in .rodata. Not present in public documentation; semantic role inferred from name.",
-      "canonical_file_offset": "0x6a572d",
-      "canonical_occurrence_count": 1,
-      "supplemental_file_offset": "0x757737",
-      "supplemental_occurrence_count": 1,
-      "classification": "STATIC_STRING_DISCOVERED",
-      "confidence": "MEDIUM_INFERRED"
+      "registration_function_symbol": "main.init",
+      "registration_function_va": "0x5152f0",
+      "registration_call_va": "0x515758",
+      "flag_api_symbol": "aFaUKV.CMNJxRQ7",
+      "destination_reference": ".bss:0xd385c0",
+      "environment_fallback": "CP_AGENT_ICE_SERVERS",
+      "downstream_xrefs_count": 2,
+      "evidence_level": "SEMANTIC_XREF_CONFIRMED",
+      "classification": "STATIC_REGISTRATION_RECOVERED",
+      "confidence": "HIGH"
     }
   ]
 }

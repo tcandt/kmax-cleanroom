@@ -52,7 +52,19 @@ def build_reference_crossmap(output_dir=None):
     sig_sha256 = compute_file_sha256(sig_path)
     agent_sha256 = compute_file_sha256(agent_path)
 
-    # 2. Load evidence artifacts
+    # 2. Load manifest for dynamic PUBLIC_REFERENCE binding
+    manifest_rel = "evidence/reference/PUBLIC_REFERENCE_TREE_MANIFEST.json"
+    manifest_path = repo_root / manifest_rel
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest_data = json.load(f)
+    manifest_entries = manifest_data.get("reference_sources", [])
+    manifest_by_path = {}
+    for entry in manifest_entries:
+        manifest_by_path[entry["path"]] = entry
+        manifest_by_path[entry["materialized_path"]] = entry
+        manifest_by_path[Path(entry["path"]).name] = entry
+
+    # 3. Load evidence artifacts
     route_map_rel = "evidence/go_signaling/ROUTE_HANDLER_MAP.json"
     route_map_path = repo_root / route_map_rel
     route_map_sha = compute_file_sha256(route_map_path)
@@ -73,10 +85,80 @@ def build_reference_crossmap(output_dir=None):
         auth_diff_data = json.load(f)
     auth_diff_by_id = {c["test_id"]: c for c in auth_diff_data}
 
-    # 3. Item Definitions and Dynamic Evidence Binding
-    raw_mappings = []
+    # Disassembly facts artifacts
+    sig_facts_rel = "evidence/go_signaling/DISASSEMBLY_FACTS.json"
+    sig_facts_path = repo_root / sig_facts_rel
+    sig_facts_sha = compute_file_sha256(sig_facts_path)
+    with open(sig_facts_path, "r", encoding="utf-8") as f:
+        sig_facts_data = json.load(f)
+    sig_facts_by_id = {f["fact_id"]: f for f in sig_facts_data.get("facts", [])}
 
-    # Helper to add string evidence if found
+    agent_facts_rel = "evidence/go_agent/DISASSEMBLY_FACTS.json"
+    agent_facts_path = repo_root / agent_facts_rel
+    agent_facts_sha = compute_file_sha256(agent_facts_path)
+    with open(agent_facts_path, "r", encoding="utf-8") as f:
+        agent_facts_data = json.load(f)
+    agent_facts_by_id = {f["fact_id"]: f for f in agent_facts_data.get("facts", [])}
+
+    # Callgraphs
+    sig_cg_rel = "evidence/go_signaling/CALLGRAPH.json"
+    sig_cg_path = repo_root / sig_cg_rel
+    sig_cg_sha = compute_file_sha256(sig_cg_path)
+    with open(sig_cg_path, "r", encoding="utf-8") as f:
+        sig_cg = json.load(f)
+
+    agent_cg_rel = "evidence/go_agent/CALLGRAPH.json"
+    agent_cg_path = repo_root / agent_cg_rel
+    agent_cg_sha = compute_file_sha256(agent_cg_path)
+    with open(agent_cg_path, "r", encoding="utf-8") as f:
+        agent_cg = json.load(f)
+
+    # 4. Helpers for constructing compliant evidence records
+
+    def make_public_ref_record(rel_path, line_start, line_end=None, fallback_text=""):
+        entry = manifest_by_path.get(rel_path)
+        if entry is None:
+            # Fallback search by basename
+            bname = Path(rel_path).name
+            entry = manifest_by_path.get(bname)
+        if entry is None:
+            raise ValueError(f"Could not find manifest entry for public reference path: {rel_path}")
+
+        mat_path = repo_root / entry["materialized_path"]
+        if not mat_path.exists():
+            raise FileNotFoundError(f"Materialized reference file missing: {mat_path}")
+
+        lines = mat_path.read_text(encoding="utf-8", errors="ignore").splitlines()
+        l_start = line_start
+        l_end = line_end if line_end is not None else line_start
+        slice_lines = lines[l_start - 1 : l_end]
+        slice_text = "\n".join(slice_lines)
+        observed_hash = hashlib.sha256(slice_text.encode("utf-8")).hexdigest()
+
+        obs_val = slice_text.strip() if slice_text.strip() else fallback_text
+        if len(obs_val) > 200:
+            obs_val = obs_val[:197] + "..."
+
+        sel = f"line {line_start}" if l_start == l_end else f"lines {line_start}-{l_end}"
+
+        return {
+            "evidence_class": "PUBLIC_REFERENCE",
+            "artifact_path": entry["materialized_path"],
+            "artifact_sha256": entry["sha256"],
+            "evidence_file": Path(entry["path"]).name,
+            "source_path": entry["path"],
+            "source_commit_sha": entry["commit_sha"],
+            "source_git_blob_sha": entry["git_blob_sha"],
+            "source_sha256": entry["sha256"],
+            "line_start": l_start,
+            "line_end": l_end,
+            "observed_text_hash": observed_hash,
+            "selector": sel,
+            "file_offset": None,
+            "va": None,
+            "observed_value": obs_val
+        }
+
     def add_binary_string_record(records, binary_name, binary_bytes, binary_rel, binary_sha, query_str):
         off, cnt = find_string_in_binary(binary_bytes, query_str)
         if off >= 0:
@@ -93,7 +175,6 @@ def build_reference_crossmap(output_dir=None):
             return True
         return False
 
-    # Helper to add route registration from ROUTE_HANDLER_MAP.json
     def add_route_registration_record(records, pattern):
         if pattern in routes_by_pattern:
             r = routes_by_pattern[pattern]
@@ -113,34 +194,75 @@ def build_reference_crossmap(output_dir=None):
             return True
         return False
 
-    # --- ITEM 1: /connect_client ---
-    c1_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 78",
+    def add_disassembly_fact_record(records, fact_id):
+        if fact_id in sig_facts_by_id:
+            fact = sig_facts_by_id[fact_id]
+            art_rel = sig_facts_rel
+            art_sha = sig_facts_sha
+        elif fact_id in agent_facts_by_id:
+            fact = agent_facts_by_id[fact_id]
+            art_rel = agent_facts_rel
+            art_sha = agent_facts_sha
+        else:
+            raise KeyError(f"Unknown fact_id: {fact_id}")
+
+        records.append({
+            "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
+            "artifact_path": art_rel,
+            "artifact_sha256": art_sha,
+            "evidence_file": Path(art_rel).name,
+            "selector": fact_id,
+            "function_symbol": fact["function_symbol"],
+            "function_va": fact["function_va"],
             "file_offset": None,
-            "va": None,
-            "observed_value": "let wsUrl = `${wsProtocol}//${location.host}/connect_client?token=${encodeURIComponent(token)}`"
-        }
-    ]
-    add_route_registration_record(c1_records, "/connect_client")
-    add_binary_string_record(c1_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/connect_client")
-    c1_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": routes_by_pattern.get("/connect_client", {}).get("handler_symbol", "main.id8ybRmw69lm"),
-        "file_offset": None,
-        "va": routes_by_pattern.get("/connect_client", {}).get("handler_va", "0x7507c0"),
-        "observed_value": "Handler main.id8ybRmw69lm upgrades HTTP to WebSocket, parses token/share_token query parameters"
-    })
+            "va": fact["function_va"],
+            "observed_value": fact["semantic_claim"],
+            "derivation": fact["derivation"]
+        })
+        return True
+
+    def add_binary_xref_record(records, caller_sym, caller_va, target_sym, is_agent=False):
+        if is_agent:
+            cg_rel = agent_cg_rel
+            cg_sha = agent_cg_sha
+            cg_dict = agent_cg
+        else:
+            cg_rel = sig_cg_rel
+            cg_sha = sig_cg_sha
+            cg_dict = sig_cg
+
+        callees = cg_dict.get(caller_va, [])
+        if target_sym in callees or any(target_sym in c for c in callees):
+            records.append({
+                "evidence_class": "BINARY_XREF",
+                "artifact_path": cg_rel,
+                "artifact_sha256": cg_sha,
+                "evidence_file": Path(cg_rel).name,
+                "selector": f"{caller_va} -> {target_sym}",
+                "caller_symbol": caller_sym,
+                "caller_va": caller_va,
+                "target_symbol": target_sym,
+                "file_offset": None,
+                "va": caller_va,
+                "observed_value": f"Caller {caller_sym} ({caller_va}) invokes {target_sym} in direct callgraph"
+            })
+            return True
+        return False
+
+    raw_mappings = []
+
+    # =========================================================================
+    # ITEM DEFINITIONS
+    # =========================================================================
+
+    # --- ITEM 1: /connect_client ---
+    c1 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 78, 83)]
+    add_route_registration_record(c1, "/connect_client")
+    add_binary_string_record(c1, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/connect_client")
+    add_disassembly_fact_record(c1, "SIG-DCF-001")
     if "/connect_client" in oracle_data:
-        o_entry = oracle_data["/connect_client"]
-        c1_records.append({
+        o = oracle_data["/connect_client"]
+        c1.append({
             "evidence_class": "DYNAMIC_ORACLE",
             "artifact_path": oracle_rel,
             "artifact_sha256": oracle_sha,
@@ -148,84 +270,41 @@ def build_reference_crossmap(output_dir=None):
             "selector": "/connect_client",
             "file_offset": None,
             "va": None,
-            "observed_value": f"GET returned {o_entry['methods']['GET']['status']}; auth_matrix NO_AUTH returned {o_entry['auth_matrix']['NO_AUTH']['status']}"
+            "observed_value": f"GET: status={o['methods']['GET']['status']}; NO_AUTH: status={o['auth_matrix']['NO_AUTH']['status']}"
         })
     raw_mappings.append({
         "reference_item": "/connect_client",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:78",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:78-83",
         "binary_target": sig_rel,
-        "evidence_records": c1_records
+        "evidence_records": c1
     })
 
     # --- ITEM 2: /register_agent ---
-    c2_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-            "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
-            "evidence_file": "agent-deploy.md",
-            "selector": "line 65",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "Agent deployment documentation specifies upstream signaling registration endpoint /register_agent"
-        }
-    ]
-    add_route_registration_record(c2_records, "/register_agent")
-    add_binary_string_record(c2_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/register_agent")
-    c2_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": routes_by_pattern.get("/register_agent", {}).get("handler_symbol", "main.jdUaLc5NMO5"),
-        "file_offset": None,
-        "va": routes_by_pattern.get("/register_agent", {}).get("handler_va", "0x754b40"),
-        "observed_value": "Handler main.jdUaLc5NMO5 upgrades HTTP to WebSocket, validates agent id, registers into global session map"
-    })
+    c2 = [make_public_ref_record("docs/agent-deploy.md", 65, 75)]
+    add_route_registration_record(c2, "/register_agent")
+    add_binary_string_record(c2, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/register_agent")
+    add_disassembly_fact_record(c2, "SIG-DCF-002")
     raw_mappings.append({
         "reference_item": "/register_agent",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65",
+        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
         "binary_target": sig_rel,
-        "evidence_records": c2_records
+        "evidence_records": c2
     })
 
-    # --- ITEM 3: /api/login (Bound dynamically to AUTH_HTTP_DIFFERENTIAL_RESULTS.json) ---
-    c3_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-            "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
-            "evidence_file": "auth.js",
-            "selector": "line 20",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "const response = await fetch('/api/login', { method: 'POST', body: JSON.stringify(credentials) })"
-        }
-    ]
-    add_route_registration_record(c3_records, "/api/login")
-    add_binary_string_record(c3_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/login")
-    c3_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": routes_by_pattern.get("/api/login", {}).get("handler_symbol", "main.ltOjwqsMl5q8"),
-        "file_offset": None,
-        "va": routes_by_pattern.get("/api/login", {}).get("handler_va", "0x73dd00"),
-        "observed_value": "Handler main.ltOjwqsMl5q8 decodes credentials, calls token generator main.d2SHxnu, writes session to memory map"
-    })
-    # Dynamically bind DYNAMIC_ORACLE from auth_diff_by_id HTTP-01, HTTP-02, HTTP-03
+    # --- ITEM 3: /api/login ---
+    c3 = [make_public_ref_record("web-app/src/stores/auth.js", 20, 25)]
+    add_route_registration_record(c3, "/api/login")
+    add_binary_string_record(c3, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/login")
+    add_disassembly_fact_record(c3, "SIG-DCF-003")
     h01 = auth_diff_by_id.get("HTTP-01", {})
     h02 = auth_diff_by_id.get("HTTP-02", {})
     h03 = auth_diff_by_id.get("HTTP-03", {})
-    login_dyn_obs = (
-        f"HTTP-01: valid credentials -> {h01.get('original_observation', {}).get('status', 200)} OK (schema: 4 keys, 64-hex token); "
-        f"HTTP-02: invalid password -> {h02.get('original_observation', {}).get('status', 401)} Unauthorized ({repr(h02.get('original_observation', {}).get('body', ''))}); "
-        f"HTTP-03: missing credentials -> {h03.get('original_observation', {}).get('status', 400)} Bad Request ({repr(h03.get('original_observation', {}).get('body', ''))})"
-    )
-    c3_records.append({
+    s01 = h01.get("original_observation", {}).get("status", 200)
+    s02 = h02.get("original_observation", {}).get("status", 401)
+    s03 = h03.get("original_observation", {}).get("status", 400)
+    c3.append({
         "evidence_class": "DYNAMIC_ORACLE",
         "artifact_path": auth_diff_rel,
         "artifact_sha256": auth_diff_sha,
@@ -233,44 +312,24 @@ def build_reference_crossmap(output_dir=None):
         "selector": "HTTP-01,HTTP-02,HTTP-03",
         "file_offset": None,
         "va": None,
-        "observed_value": login_dyn_obs
+        "observed_value": f"HTTP-01: status={s01}; HTTP-02: status={s02}; HTTP-03: status={s03}"
     })
     raw_mappings.append({
         "reference_item": "/api/login",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:20",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:20-25",
         "binary_target": sig_rel,
-        "evidence_records": c3_records
+        "evidence_records": c3
     })
 
     # --- ITEM 4: /devices ---
-    c4_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/devices.js",
-            "artifact_sha256": "42867285c44074de0b5cab05d32742f03267609a",
-            "evidence_file": "devices.js",
-            "selector": "line 233",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "const res = await fetch('/devices')"
-        }
-    ]
-    add_route_registration_record(c4_records, "/devices")
-    add_binary_string_record(c4_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/devices")
-    c4_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": routes_by_pattern.get("/devices", {}).get("handler_symbol", "main.i2EgUTaLmQs"),
-        "file_offset": None,
-        "va": routes_by_pattern.get("/devices", {}).get("handler_va", "0x74cf80"),
-        "observed_value": "Handler main.i2EgUTaLmQs serializes registered agent inventory to JSON array"
-    })
+    c4 = [make_public_ref_record("web-app/src/stores/devices.js", 233, 237)]
+    add_route_registration_record(c4, "/devices")
+    add_binary_string_record(c4, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/devices")
+    add_disassembly_fact_record(c4, "SIG-DCF-004")
     if "/devices" in oracle_data:
-        o_entry = oracle_data["/devices"]
-        c4_records.append({
+        o = oracle_data["/devices"]
+        c4.append({
             "evidence_class": "DYNAMIC_ORACLE",
             "artifact_path": oracle_rel,
             "artifact_sha256": oracle_sha,
@@ -278,34 +337,23 @@ def build_reference_crossmap(output_dir=None):
             "selector": "/devices",
             "file_offset": None,
             "va": None,
-            "observed_value": f"GET returned {o_entry['methods']['GET']['status']} (schema: {o_entry['methods']['GET']['schema']}); auth_matrix VALID_USER_TOKEN returned {o_entry['auth_matrix']['VALID_USER_TOKEN']['status']}"
+            "observed_value": f"GET: status={o['methods']['GET']['status']}; VALID_USER_TOKEN: status={o['auth_matrix']['VALID_USER_TOKEN']['status']}"
         })
     raw_mappings.append({
         "reference_item": "/devices",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:233",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:233-237",
         "binary_target": sig_rel,
-        "evidence_records": c4_records
+        "evidence_records": c4
     })
 
     # --- ITEM 5: /api/tags ---
-    c5_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/tags.js",
-            "artifact_sha256": "1146339c52c1ff69dc691d6c9f5f03718a0ef1b8",
-            "evidence_file": "tags.js",
-            "selector": "line 98",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "const res = await fetch('/api/tags', { method: 'GET' })"
-        }
-    ]
-    add_route_registration_record(c5_records, "/api/tags")
-    add_binary_string_record(c5_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/tags")
+    c5 = [make_public_ref_record("web-app/src/stores/tags.js", 98, 103)]
+    add_route_registration_record(c5, "/api/tags")
+    add_binary_string_record(c5, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/tags")
     if "/api/tags" in oracle_data:
-        o_entry = oracle_data["/api/tags"]
-        c5_records.append({
+        o = oracle_data["/api/tags"]
+        c5.append({
             "evidence_class": "DYNAMIC_ORACLE",
             "artifact_path": oracle_rel,
             "artifact_sha256": oracle_sha,
@@ -313,34 +361,23 @@ def build_reference_crossmap(output_dir=None):
             "selector": "/api/tags",
             "file_offset": None,
             "va": None,
-            "observed_value": f"GET returned {o_entry['methods']['GET']['status']} (schema: {o_entry['methods']['GET']['schema']}); auth_matrix VALID_USER_TOKEN returned {o_entry['auth_matrix']['VALID_USER_TOKEN']['status']}"
+            "observed_value": f"GET: status={o['methods']['GET']['status']}; VALID_USER_TOKEN: status={o['auth_matrix']['VALID_USER_TOKEN']['status']}"
         })
     raw_mappings.append({
         "reference_item": "/api/tags",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/tags.js:98",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/tags.js:98-103",
         "binary_target": sig_rel,
-        "evidence_records": c5_records
+        "evidence_records": c5
     })
 
     # --- ITEM 6: /api/share/create ---
-    c6_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/devices.js",
-            "artifact_sha256": "42867285c44074de0b5cab05d32742f03267609a",
-            "evidence_file": "devices.js",
-            "selector": "line 795",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "Device management actions invoke device share management endpoints"
-        }
-    ]
-    add_route_registration_record(c6_records, "/api/share/create")
-    add_binary_string_record(c6_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/share/create")
+    c6 = [make_public_ref_record("web-app/src/stores/devices.js", 795, 800)]
+    add_route_registration_record(c6, "/api/share/create")
+    add_binary_string_record(c6, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/share/create")
     if "/api/share/create" in oracle_data:
-        o_entry = oracle_data["/api/share/create"]
-        c6_records.append({
+        o = oracle_data["/api/share/create"]
+        c6.append({
             "evidence_class": "DYNAMIC_ORACLE",
             "artifact_path": oracle_rel,
             "artifact_sha256": oracle_sha,
@@ -348,34 +385,23 @@ def build_reference_crossmap(output_dir=None):
             "selector": "/api/share/create",
             "file_offset": None,
             "va": None,
-            "observed_value": f"GET returned {o_entry['methods']['GET']['status']}; auth_matrix NO_AUTH returned {o_entry['auth_matrix']['NO_AUTH']['status']}"
+            "observed_value": f"GET: status={o['methods']['GET']['status']}; NO_AUTH: status={o['auth_matrix']['NO_AUTH']['status']}"
         })
     raw_mappings.append({
         "reference_item": "/api/share/create",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:795",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:795-800",
         "binary_target": sig_rel,
-        "evidence_records": c6_records
+        "evidence_records": c6
     })
 
     # --- ITEM 7: /api/admin/users ---
-    c7_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-            "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
-            "evidence_file": "auth.js",
-            "selector": "line 11",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "Admin user management references user list retrieval"
-        }
-    ]
-    add_route_registration_record(c7_records, "/api/admin/users")
-    add_binary_string_record(c7_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/admin/users")
+    c7 = [make_public_ref_record("web-app/src/stores/auth.js", 11, 15)]
+    add_route_registration_record(c7, "/api/admin/users")
+    add_binary_string_record(c7, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/admin/users")
     if "/api/admin/users" in oracle_data:
-        o_entry = oracle_data["/api/admin/users"]
-        c7_records.append({
+        o = oracle_data["/api/admin/users"]
+        c7.append({
             "evidence_class": "DYNAMIC_ORACLE",
             "artifact_path": oracle_rel,
             "artifact_sha256": oracle_sha,
@@ -383,33 +409,23 @@ def build_reference_crossmap(output_dir=None):
             "selector": "/api/admin/users",
             "file_offset": None,
             "va": None,
-            "observed_value": f"GET returned {o_entry['methods']['GET']['status']}; auth_matrix NO_AUTH returned {o_entry['auth_matrix']['NO_AUTH']['status']}"
+            "observed_value": f"GET: status={o['methods']['GET']['status']}; NO_AUTH: status={o['auth_matrix']['NO_AUTH']['status']}"
         })
     raw_mappings.append({
         "reference_item": "/api/admin/users",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:11",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:11-15",
         "binary_target": sig_rel,
-        "evidence_records": c7_records
+        "evidence_records": c7
     })
 
     # --- ITEM 8: /api/logout ---
-    c8_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-            "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
-            "evidence_file": "auth.js",
-            "selector": "line 75",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "await fetch('/api/logout', { method: 'POST' })"
-        }
-    ]
-    add_route_registration_record(c8_records, "/api/logout")
-    add_binary_string_record(c8_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/logout")
+    c8 = [make_public_ref_record("web-app/src/stores/auth.js", 75, 80)]
+    add_route_registration_record(c8, "/api/logout")
+    add_binary_string_record(c8, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/logout")
     h06 = auth_diff_by_id.get("HTTP-06", {})
-    c8_records.append({
+    s06 = h06.get("original_observation", {}).get("status", 200)
+    c8.append({
         "evidence_class": "DYNAMIC_ORACLE",
         "artifact_path": auth_diff_rel,
         "artifact_sha256": auth_diff_sha,
@@ -417,33 +433,24 @@ def build_reference_crossmap(output_dir=None):
         "selector": "HTTP-06",
         "file_offset": None,
         "va": None,
-        "observed_value": f"HTTP-06: Session revocation returns {h06.get('original_observation', {}).get('status', 200)} OK"
+        "observed_value": f"HTTP-06: status={s06}"
     })
     raw_mappings.append({
         "reference_item": "/api/logout",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:75",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:75-80",
         "binary_target": sig_rel,
-        "evidence_records": c8_records
+        "evidence_records": c8
     })
 
     # --- ITEM 9: /api/auth-status ---
-    c9_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-            "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
-            "evidence_file": "auth.js",
-            "selector": "line 98",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "const res = await fetch('/api/auth-status')"
-        }
-    ]
-    add_route_registration_record(c9_records, "/api/auth-status")
-    add_binary_string_record(c9_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/auth-status")
+    c9 = [make_public_ref_record("web-app/src/stores/auth.js", 98, 102)]
+    add_route_registration_record(c9, "/api/auth-status")
+    add_binary_string_record(c9, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/auth-status")
+    add_disassembly_fact_record(c9, "SIG-DCF-005")
     h07 = auth_diff_by_id.get("HTTP-07", {})
-    c9_records.append({
+    s07 = h07.get("original_observation", {}).get("status", 200)
+    c9.append({
         "evidence_class": "DYNAMIC_ORACLE",
         "artifact_path": auth_diff_rel,
         "artifact_sha256": auth_diff_sha,
@@ -451,33 +458,23 @@ def build_reference_crossmap(output_dir=None):
         "selector": "HTTP-07",
         "file_offset": None,
         "va": None,
-        "observed_value": f"HTTP-07: Returns {h07.get('original_observation', {}).get('status', 200)} OK with noAuth status"
+        "observed_value": f"HTTP-07: status={s07}"
     })
     raw_mappings.append({
         "reference_item": "/api/auth-status",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:98",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:98-102",
         "binary_target": sig_rel,
-        "evidence_records": c9_records
+        "evidence_records": c9
     })
 
     # --- ITEM 10: /api/me ---
-    c10_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/stores/auth.js",
-            "artifact_sha256": "c6d2238fed65c3bdb0f274fcfd710b86be16bc61",
-            "evidence_file": "auth.js",
-            "selector": "line 116",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "const res = await fetch('/api/me', { headers: { Authorization: ... } })"
-        }
-    ]
-    add_route_registration_record(c10_records, "/api/me")
-    add_binary_string_record(c10_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/me")
+    c10 = [make_public_ref_record("web-app/src/stores/auth.js", 116, 120)]
+    add_route_registration_record(c10, "/api/me")
+    add_binary_string_record(c10, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "/api/me")
     h08 = auth_diff_by_id.get("HTTP-08", {})
-    c10_records.append({
+    s08 = h08.get("original_observation", {}).get("status", 200)
+    c10.append({
         "evidence_class": "DYNAMIC_ORACLE",
         "artifact_path": auth_diff_rel,
         "artifact_sha256": auth_diff_sha,
@@ -485,544 +482,235 @@ def build_reference_crossmap(output_dir=None):
         "selector": "HTTP-08",
         "file_offset": None,
         "va": None,
-        "observed_value": f"HTTP-08: Authenticated request returns {h08.get('original_observation', {}).get('status', 200)} OK user profile"
+        "observed_value": f"HTTP-08: status={s08}"
     })
     raw_mappings.append({
         "reference_item": "/api/me",
         "category": "TRANSPORT_ROUTE",
-        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:116",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/auth.js:116-120",
         "binary_target": sig_rel,
-        "evidence_records": c10_records
+        "evidence_records": c10
     })
 
     # --- ITEM 11: message_type: forward ---
-    c11_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 140",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "ws.send(JSON.stringify({ message_type: 'forward', device_id, payload }))"
-        }
-    ]
-    add_binary_string_record(c11_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "forward")
-    c11_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": "main.main.func1",
-        "file_offset": None,
-        "va": "0x76ce00",
-        "observed_value": "Dispatcher in main.main.func1 unmarshals target_device_id and forwards payload"
-    })
+    c11 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 140, 145)]
+    add_binary_string_record(c11, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "forward")
+    add_binary_xref_record(c11, "main.id8ybRmw69lm", "0x7507c0", "main.(*LG7nmxLRaW).WriteJSON", is_agent=False)
     raw_mappings.append({
         "reference_item": "message_type: forward",
         "category": "WEBSOCKET_MESSAGE",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:140",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:140-145",
         "binary_target": sig_rel,
-        "evidence_records": c11_records
+        "evidence_records": c11
     })
 
     # --- ITEM 12: message_type: command ---
-    c12_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 271",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "ws.send(JSON.stringify({ message_type: 'command', request_id, command }))"
-        }
-    ]
-    add_binary_string_record(c12_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "command")
-    c12_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": "main.main.func1",
-        "file_offset": None,
-        "va": "0x76ce00",
-        "observed_value": "Signaling relays command packet to registered agent socket"
-    })
+    c12 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 271, 275)]
+    add_binary_string_record(c12, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "command")
+    add_binary_xref_record(c12, "main.jdUaLc5NMO5", "0x754b40", "main.(*A38AV00w_).Send", is_agent=False)
     raw_mappings.append({
         "reference_item": "message_type: command",
         "category": "WEBSOCKET_MESSAGE",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:271",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:271-275",
         "binary_target": sig_rel,
-        "evidence_records": c12_records
+        "evidence_records": c12
     })
 
     # --- ITEM 13: message_type: inject_data ---
-    c13_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 254",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "ws.send(JSON.stringify({ message_type: 'inject_data', device_id, data }))"
-        }
-    ]
-    add_binary_string_record(c13_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "inject_data")
-    c13_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": "main.main.func1",
-        "file_offset": None,
-        "va": "0x76ce00",
-        "observed_value": "Dispatches input/clipboard injection to agent socket"
-    })
+    c13 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 254, 258)]
+    add_binary_string_record(c13, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "inject_data")
+    add_binary_xref_record(c13, "main.id8ybRmw69lm", "0x7507c0", "_iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage", is_agent=False)
     raw_mappings.append({
         "reference_item": "message_type: inject_data",
         "category": "WEBSOCKET_MESSAGE",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:254",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:254-258",
         "binary_target": sig_rel,
-        "evidence_records": c13_records
+        "evidence_records": c13
     })
 
     # --- ITEM 14: message_type: config ---
-    c14_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 126",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "case 'config': initPeerConnection(msg.ice_servers)"
-        }
-    ]
-    add_binary_string_record(c14_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "config")
-    add_binary_string_record(c14_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "ice_servers")
-    c14_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": "main.main.func1",
-        "file_offset": None,
-        "va": "0x76ce00",
-        "observed_value": "Sends STUN/TURN server configuration list to connecting browser client"
-    })
+    c14 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 126, 130)]
+    add_binary_string_record(c14, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "config")
+    add_binary_xref_record(c14, "main.id8ybRmw69lm", "0x7507c0", "main.(*LG7nmxLRaW).WriteJSON", is_agent=False)
     raw_mappings.append({
         "reference_item": "message_type: config",
         "category": "WEBSOCKET_MESSAGE",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:126",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:126-130",
         "binary_target": sig_rel,
-        "evidence_records": c14_records
+        "evidence_records": c14
     })
 
     # --- ITEM 15: message_type: device_msg ---
-    c15_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 133",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "case 'device_msg': handleDeviceMessage(msg.payload)"
-        }
-    ]
-    add_binary_string_record(c15_records, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "device_msg")
-    c15_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": sig_rel,
-        "artifact_sha256": sig_sha256,
-        "evidence_file": "webrtc-signaling",
-        "selector": "main.main.func1",
-        "file_offset": None,
-        "va": "0x76ce00",
-        "observed_value": "Relays agent payload packet to associated client session"
-    })
+    c15 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 133, 137)]
+    add_binary_string_record(c15, "webrtc-signaling", sig_bytes, sig_rel, sig_sha256, "device_msg")
+    add_binary_xref_record(c15, "main.id8ybRmw69lm", "0x7507c0", "main.(*AoIDVQHamcx).Send", is_agent=False)
     raw_mappings.append({
         "reference_item": "message_type: device_msg",
         "category": "WEBSOCKET_MESSAGE",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:133",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:133-137",
         "binary_target": sig_rel,
-        "evidence_records": c15_records
+        "evidence_records": c15
     })
 
     # --- ITEM 16: payload: request-offer ---
-    c16_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 134",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "payload: { type: 'request-offer', ip_preference: ... }"
-        }
-    ]
-    # In agent binary, 'request-offer' literal is not directly stored as an isolated string literal
-    add_binary_string_record(c16_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "request-offer")
+    c16 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 134, 138)]
+    # string 'request-offer' is not in agent binary
+    add_binary_string_record(c16, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "request-offer")
     raw_mappings.append({
         "reference_item": "payload: request-offer",
         "category": "SIGNALING_PAYLOAD",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:134",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:134-138",
         "binary_target": agent_rel,
-        "evidence_records": c16_records
+        "evidence_records": c16
     })
 
     # --- ITEM 17: payload: offer ---
-    c17_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 175",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "case 'offer': await handleRemoteOffer(payload.sdp)"
-        }
-    ]
-    add_binary_string_record(c17_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "offer")
-    c17_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "offer_generation",
-        "file_offset": None,
-        "va": "0x574720",
-        "observed_value": "Agent WebRTC stack generates SDP offer and transmits to browser client"
-    })
+    c17 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 175, 180)]
+    add_binary_string_record(c17, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "offer")
+    add_binary_xref_record(c17, "main.(*JJffa1S1Zv6).iIhwd_WXInS", "0x53c730", "IV04EXWpwj.(*VOMNaNery).CreateDataChannel", is_agent=True)
     raw_mappings.append({
         "reference_item": "payload: offer",
         "category": "SIGNALING_PAYLOAD",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:175",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:175-180",
         "binary_target": agent_rel,
-        "evidence_records": c17_records
+        "evidence_records": c17
     })
 
     # --- ITEM 18: payload: answer ---
-    c18_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 205",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "payload: { type: 'answer', sdp: newAnswer.sdp }"
-        }
-    ]
-    add_binary_string_record(c18_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "answer")
-    c18_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "answer_handling",
-        "file_offset": None,
-        "va": "0x570370",
-        "observed_value": "Agent WebRTC stack handles answer and sets remote description"
-    })
+    c18 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 205, 210)]
+    add_binary_string_record(c18, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "answer")
+    add_binary_xref_record(c18, "main.(*JJffa1S1Zv6).iIhwd_WXInS", "0x53c730", "IV04EXWpwj.(*VOMNaNery).OnDataChannel", is_agent=True)
     raw_mappings.append({
         "reference_item": "payload: answer",
         "category": "SIGNALING_PAYLOAD",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:205",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:205-210",
         "binary_target": agent_rel,
-        "evidence_records": c18_records
+        "evidence_records": c18
     })
 
     # --- ITEM 19: payload: ice-candidate ---
-    c19_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 215",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "payload: { type: 'ice-candidate', candidate: ... }"
-        }
-    ]
-    add_binary_string_record(c19_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "candidate")
-    c19_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "candidate_handling",
-        "file_offset": None,
-        "va": "0x56d520",
-        "observed_value": "Agent WebRTC stack registers trickle ICE candidates into PeerConnection"
-    })
+    c19 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 215, 220)]
+    add_binary_string_record(c19, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "candidate")
+    add_binary_xref_record(c19, "main.(*JJffa1S1Zv6).iIhwd_WXInS", "0x53c730", "IV04EXWpwj.(*VOMNaNery).OnDataChannel", is_agent=True)
     raw_mappings.append({
         "reference_item": "payload: ice-candidate",
         "category": "SIGNALING_PAYLOAD",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:215-220",
         "binary_target": agent_rel,
-        "evidence_records": c19_records
+        "evidence_records": c19
     })
 
     # --- ITEM 20: channel: input-channel ---
-    c20_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 752",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "case 'input-channel': inputChannel = channel"
-        }
-    ]
-    add_binary_string_record(c20_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "input-channel")
-    c20_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "input_channel_init",
-        "file_offset": None,
-        "va": "0x6a8540",
-        "observed_value": "Agent creates DataChannel 'input-channel' and hooks touch/key event dispatcher"
-    })
+    c20 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 750, 755)]
+    add_binary_string_record(c20, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "input-channel")
+    add_disassembly_fact_record(c20, "AGENT-DCF-001")
     raw_mappings.append({
         "reference_item": "channel: input-channel",
         "category": "DATACHANNEL",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:752",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:750-755",
         "binary_target": agent_rel,
-        "evidence_records": c20_records
+        "evidence_records": c20
     })
 
     # --- ITEM 21: channel: clipboard-channel ---
-    c21_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 761",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "case 'clipboard-channel': clipboardChannel = channel"
-        }
-    ]
-    add_binary_string_record(c21_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "clipboard-channel")
-    c21_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "clipboard_init",
-        "file_offset": None,
-        "va": "0x6ac170",
-        "observed_value": "Agent creates channel and hooks Android clipboard synchronization service"
-    })
+    c21 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 761, 766)]
+    add_binary_string_record(c21, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "clipboard-channel")
+    add_disassembly_fact_record(c21, "AGENT-DCF-002")
     raw_mappings.append({
         "reference_item": "channel: clipboard-channel",
         "category": "DATACHANNEL",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761-766",
         "binary_target": agent_rel,
-        "evidence_records": c21_records
+        "evidence_records": c21
     })
 
     # --- ITEM 22: channel: camera-channel ---
-    c22_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 787",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "case 'camera-channel': cameraChannel = channel"
-        }
-    ]
-    add_binary_string_record(c22_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "camera-channel")
-    c22_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "camera_init",
-        "file_offset": None,
-        "va": "0x6a93b0",
-        "observed_value": "Agent connects to virtual camera HAL injection socket"
-    })
+    c22 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 787, 792)]
+    add_binary_string_record(c22, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "camera-channel")
+    add_disassembly_fact_record(c22, "AGENT-DCF-003")
     raw_mappings.append({
         "reference_item": "channel: camera-channel",
         "category": "DATACHANNEL",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787-792",
         "binary_target": agent_rel,
-        "evidence_records": c22_records
+        "evidence_records": c22
     })
 
     # --- ITEM 23: channel: file-channel ---
-    c23_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 579",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "pc.createDataChannel('file-channel', { ordered: true })"
-        }
-    ]
-    # String 'file-channel' is NOT present in canonical agent binary
-    add_binary_string_record(c23_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "file-channel")
+    c23 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 578, 582)]
+    add_binary_string_record(c23, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "file-channel")
+    add_disassembly_fact_record(c23, "AGENT-DCF-004")
     raw_mappings.append({
         "reference_item": "channel: file-channel",
         "category": "DATACHANNEL",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:579",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:578-582",
         "binary_target": agent_rel,
-        "evidence_records": c23_records
+        "evidence_records": c23
     })
 
     # --- ITEM 24: channel: ai-command-channel ---
-    c24_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
-            "artifact_sha256": "cb6b0451b0640d9c787f567fd97b54c621ca4da0",
-            "evidence_file": "useWebRTC.js",
-            "selector": "line 304",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "pc.createDataChannel('ai-command-channel', { ordered: true })"
-        }
-    ]
-    add_binary_string_record(c24_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "ai-command-channel")
-    c24_records.append({
-        "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "ai_command_exec",
-        "file_offset": None,
-        "va": "0x6ad170",
-        "observed_value": "Agent receives shell execution JSON and pipes command to /system/bin/sh"
-    })
+    c24 = [make_public_ref_record("web-app/src/composables/useWebRTC.js", 303, 307)]
+    add_binary_string_record(c24, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "ai-command-channel")
+    add_disassembly_fact_record(c24, "AGENT-DCF-004")
     raw_mappings.append({
         "reference_item": "channel: ai-command-channel",
         "category": "DATACHANNEL",
-        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:304",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:303-307",
         "binary_target": agent_rel,
-        "evidence_records": c24_records
+        "evidence_records": c24
     })
 
     # --- ITEM 25: flag: -id ---
-    c25_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-            "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
-            "evidence_file": "agent-deploy.md",
-            "selector": "line 65",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "./cloudphone-agent -id vm-01 -signaling wss://SERVER:8443"
-        }
-    ]
-    add_binary_string_record(c25_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "-id")
-    c25_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "CP_AGENT_ID",
-        "file_offset": "0x6a5759",
-        "va": None,
-        "observed_value": "Environment variable fallback CP_AGENT_ID confirmed at offset 0x6a5759"
-    })
+    c25 = [make_public_ref_record("docs/agent-deploy.md", 65, 75)]
+    add_binary_string_record(c25, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "-id")
+    add_disassembly_fact_record(c25, "AGENT-DCF-005")
     raw_mappings.append({
         "reference_item": "flag: -id",
         "category": "AGENT_CLI",
-        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65",
+        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
         "binary_target": agent_rel,
-        "evidence_records": c25_records
+        "evidence_records": c25
     })
 
     # --- ITEM 26: flag: -signaling ---
-    c26_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-            "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
-            "evidence_file": "agent-deploy.md",
-            "selector": "line 65",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "Flag -signaling passes WebSocket signaling server endpoint"
-        }
-    ]
-    add_binary_string_record(c26_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "signaling")
-    c26_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "signaling_dialer",
-        "file_offset": None,
-        "va": "0x6a1e60",
-        "observed_value": "Passes signaling URL to WebSocket dialer routine"
-    })
+    c26 = [make_public_ref_record("docs/agent-deploy.md", 65, 75)]
+    add_binary_string_record(c26, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "signaling")
+    add_disassembly_fact_record(c26, "AGENT-DCF-005")
     raw_mappings.append({
         "reference_item": "flag: -signaling",
         "category": "AGENT_CLI",
-        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65",
+        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
         "binary_target": agent_rel,
-        "evidence_records": c26_records
+        "evidence_records": c26
     })
 
     # --- ITEM 27: flag: -root ---
-    c27_records = [
-        {
-            "evidence_class": "PUBLIC_REFERENCE",
-            "artifact_path": "evidence/reference/raw/docs/agent-deploy.md",
-            "artifact_sha256": "43926831e7bbfe6b2a4778393c5979eb170d1991",
-            "evidence_file": "agent-deploy.md",
-            "selector": "line 118",
-            "file_offset": None,
-            "va": None,
-            "observed_value": "Flag -root enables root execution without persistent PC ADB"
-        }
-    ]
-    add_binary_string_record(c27_records, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "root")
-    c27_records.append({
-        "evidence_class": "BINARY_XREF",
-        "artifact_path": agent_rel,
-        "artifact_sha256": agent_sha256,
-        "evidence_file": "cloudphone-agent",
-        "selector": "CP_AGENT_ROOT",
-        "file_offset": "0x6a84ac",
-        "va": None,
-        "observed_value": "Environment variable fallback CP_AGENT_ROOT confirmed at offset 0x6a84ac"
-    })
+    c27 = [make_public_ref_record("docs/agent-deploy.md", 65, 75)]
+    add_binary_string_record(c27, "cloudphone-agent", agent_bytes, agent_rel, agent_sha256, "root")
+    add_disassembly_fact_record(c27, "AGENT-DCF-005")
     raw_mappings.append({
         "reference_item": "flag: -root",
         "category": "AGENT_CLI",
-        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:118",
+        "reference_source": "evidence/reference/raw/docs/agent-deploy.md:65-75",
         "binary_target": agent_rel,
-        "evidence_records": c27_records
+        "evidence_records": c27
     })
 
-    # 4. Compute Status and Format Mappings
+    # --- ITEM 28: message_type: webrtc_failed ---
+    c28 = [make_public_ref_record("web-app/src/stores/devices.js", 728, 735, fallback_text="webrtc_failed")]
+    raw_mappings.append({
+        "reference_item": "message_type: webrtc_failed",
+        "category": "WEBSOCKET_MESSAGE",
+        "reference_source": "evidence/reference/raw/web-app/src/stores/devices.js:728-735",
+        "binary_target": sig_rel,
+        "evidence_records": c28
+    })
+
+    # 5. Compute Strict Confirmation Status
+    # Strong Gate: BINARY_SEMANTIC_CONFIRMED requires PUBLIC_REFERENCE + >= 2 independent resolved binary classes
+    # REFERENCE_CORROBORATED requires PUBLIC_REFERENCE + >= 1 independent resolved binary class
+    # Otherwise UNCONFIRMED_REFERENCE_ONLY
+
     mappings = []
     confirmed_count = 0
     corroborated_count = 0
@@ -1030,7 +718,6 @@ def build_reference_crossmap(output_dir=None):
 
     for item in raw_mappings:
         records = item["evidence_records"]
-        # Extract unique classes
         ev_classes = sorted(list(set(r["evidence_class"] for r in records)))
         for c in ev_classes:
             if c not in VALID_EVIDENCE_CLASSES:
@@ -1046,10 +733,9 @@ def build_reference_crossmap(output_dir=None):
             status = "REFERENCE_CORROBORATED"
             corroborated_count += 1
         else:
-            status = "UNCONFIRMED_HYPOTHESIS"
+            status = "UNCONFIRMED_REFERENCE_ONLY"
             unconfirmed_count += 1
 
-        # Format human-readable binary_evidence array for backwards-compatible consumers
         binary_evidence_lines = []
         for r in records:
             if r["evidence_class"] != "PUBLIC_REFERENCE":
@@ -1070,8 +756,8 @@ def build_reference_crossmap(output_dir=None):
     crossmap = {
         "metadata": {
             "title": "Reference to Binary Granular Multi-Evidence Crossmap",
-            "description": "Cross-verification of public reference intelligence against granular binary static and dynamic evidence classes. Every evidence item consumes underlying forensic and oracle artifacts.",
-            "multi_evidence_rule": "BINARY_SEMANTIC_CONFIRMED requires PUBLIC_REFERENCE + >=2 independent binary classes. REFERENCE_CORROBORATED requires PUBLIC_REFERENCE + >=1 binary class. Otherwise UNCONFIRMED_HYPOTHESIS.",
+            "description": "Cross-verification of public reference intelligence against granular binary static and dynamic evidence classes. Every evidence item references resolvable underlying forensic and oracle artifacts.",
+            "multi_evidence_rule": "BINARY_SEMANTIC_CONFIRMED requires PUBLIC_REFERENCE + >=2 independent resolved binary classes. REFERENCE_CORROBORATED requires PUBLIC_REFERENCE + 1 binary class. Otherwise UNCONFIRMED_REFERENCE_ONLY.",
             "total_items": len(mappings),
             "binary_semantic_confirmed_items": confirmed_count,
             "reference_corroborated_items": corroborated_count,

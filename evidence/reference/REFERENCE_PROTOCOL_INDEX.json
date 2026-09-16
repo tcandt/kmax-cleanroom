@@ -1,12 +1,935 @@
 {
   "metadata": {
     "title": "Public Frontend Reference Protocol Index",
-    "evidence_class": "SOURCE_REFERENCE_CANDIDATE",
+    "evidence_class": "REFERENCE_DERIVED",
     "source_repositories": [
       "tcandt/scrcpyoverwebrtc (commit: 65567d777bccb11d2a6d93b6acc735478e880b5b)",
       "hqw700/cloudphone-official (commit: ceb66b20ad4c6f7b217d38852ea9ec2bd70fcd39)"
     ],
-    "description": "Reference protocol index dynamically parsed from pinned public Git snapshots in evidence/reference/raw/. Every entry is a candidate until corroborated by binary evidence."
+    "description": "Reference protocol index separating pure machine extractions (MACHINE_OBSERVED) from human design annotations (ANNOTATION_TEMPLATE)."
+  },
+  "machine_extracted": {
+    "http_endpoints": [
+      {
+        "endpoint": "/api/activate",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 755
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/auth-status",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/auth.js",
+            "line": 98
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/devices",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 795
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/license_status",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 743
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/login",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/auth.js",
+            "line": 20
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/logout",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/auth.js",
+            "line": 75
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/me",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/auth.js",
+            "line": 116
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/register",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/auth.js",
+            "line": 53
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/tags",
+        "occurrences_count": 2,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/tags.js",
+            "line": 98
+          },
+          {
+            "file": "web-app/src/stores/tags.js",
+            "line": 119
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/tasks/details",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 935
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "endpoint": "/api/user/ai-config",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/auth.js",
+            "line": 157
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      }
+    ],
+    "websocket_client_messages": [
+      {
+        "message_type": "command",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 272
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "connect",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 93
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "forward",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 960
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "group_control_event",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 593
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "inject_data",
+        "occurrences_count": 2,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 254
+          },
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 610
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "quit_agent",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 787
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "screenshot_request",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 1182
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      }
+    ],
+    "websocket_server_messages": [
+      {
+        "message_type": "device_list_update",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 690
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "global_settings_updated",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 687
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "license_update",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 706
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "snapshot_update",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 682
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "snapshot_updated",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 684
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "tags_update",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 692
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "message_type": "task_status_updated",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/stores/devices.js",
+            "line": 697
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      }
+    ],
+    "forward_payloads": [
+      {
+        "payload_type": "answer",
+        "occurrences_count": 2,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 197
+          },
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 406
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "payload_type": "ice-candidate",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 672
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "payload_type": "offer",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 184
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      },
+      {
+        "payload_type": "request-offer",
+        "occurrences_count": 1,
+        "occurrences": [
+          {
+            "file": "web-app/src/composables/useWebRTC.js",
+            "line": 134
+          }
+        ],
+        "classification": "MACHINE_OBSERVED"
+      }
+    ]
+  },
+  "annotated_catalog": {
+    "description": "Human/design annotations explicitly excluded from forensic confirmation counts.",
+    "http_endpoints": [
+      {
+        "path": "/api/activate",
+        "method": "POST",
+        "role": "System: apply license key",
+        "source_evidence": "web-app/src/stores/devices.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/assign",
+        "method": "POST",
+        "role": "Admin: assign device permissions to user",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users",
+        "method": "GET",
+        "role": "Admin: list user accounts",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users/create",
+        "method": "POST",
+        "role": "Admin: create new user account",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users/delete",
+        "method": "POST",
+        "role": "Admin: remove user account",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users/kick",
+        "method": "POST",
+        "role": "Admin: kick active user sessions",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users/rename",
+        "method": "POST",
+        "role": "Admin: rename user account",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users/reset_password",
+        "method": "POST",
+        "role": "Admin: reset user password",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users/update",
+        "method": "POST",
+        "role": "Admin: update account properties / expiration",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/admin/users/update_note",
+        "method": "POST",
+        "role": "Admin: update user note field",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/auth-status",
+        "method": "ANY",
+        "role": "Authentication: check whether noAuth mode is active",
+        "source_evidence": "web-app/src/stores/auth.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/default_settings",
+        "method": "GET/POST",
+        "role": "Config: global default settings (bitrate, fps, etc.)",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/devices",
+        "method": "GET",
+        "role": "Device: list active and registered devices",
+        "source_evidence": "web-app/src/stores/devices.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/devices/",
+        "method": "GET/POST/DELETE",
+        "role": "Device: manage specific device by ID",
+        "source_evidence": "web-app/src/stores/devices.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/files",
+        "method": "GET/DELETE",
+        "role": "Files: file management listing and deletion",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/ice_servers",
+        "method": "GET/POST",
+        "role": "Config: STUN/TURN server list",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/license_status",
+        "method": "GET",
+        "role": "System: query license status",
+        "source_evidence": "web-app/src/stores/devices.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/login",
+        "method": "POST",
+        "role": "Authentication: credentials login and session token issuance",
+        "source_evidence": "web-app/src/stores/auth.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/logout",
+        "method": "ANY",
+        "role": "Authentication: session revocation",
+        "source_evidence": "web-app/src/stores/auth.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/me",
+        "method": "ANY",
+        "role": "Authentication: retrieve authenticated user profile",
+        "source_evidence": "web-app/src/stores/auth.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/server/addresses",
+        "method": "GET",
+        "role": "Config: query external server IPs",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/share/create",
+        "method": "POST",
+        "role": "Share: create temporary sharing link for device",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/share/extend",
+        "method": "POST",
+        "role": "Share: extend share token lifetime",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/share/info",
+        "method": "GET",
+        "role": "Share: fetch metadata for shared device",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/share/list",
+        "method": "GET",
+        "role": "Share: list active share tokens",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/share/redeem_card",
+        "method": "POST",
+        "role": "Share: redeem card code for device access",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/share/revoke",
+        "method": "POST",
+        "role": "Share: revoke share token",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/share/update",
+        "method": "POST",
+        "role": "Share: update share token properties",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/shortcuts",
+        "method": "GET/POST",
+        "role": "Config: keyboard shortcut mappings",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/tags",
+        "method": "GET/POST/PUT/DELETE",
+        "role": "Tags: manage device categories and label associations",
+        "source_evidence": "web-app/src/stores/tags.js",
+        "occurrences_in_source": 2,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/tasks",
+        "method": "GET/POST",
+        "role": "Tasks: batch task execution",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/tasks/details",
+        "method": "GET",
+        "role": "Tasks: query task execution status",
+        "source_evidence": "web-app/src/stores/devices.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/user/ai-config",
+        "method": "GET/POST",
+        "role": "User: AI assistant integration settings",
+        "source_evidence": "web-app/src/stores/auth.js",
+        "occurrences_in_source": 1,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/api/version",
+        "method": "GET",
+        "role": "System: signaling server version",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/downloads/",
+        "method": "GET",
+        "role": "Static: agent executable / APK downloads",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/snapshots/",
+        "method": "GET",
+        "role": "Static: device screenshot thumbnail serving",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "path": "/upload",
+        "method": "POST",
+        "role": "Upload: file/APK upload endpoint",
+        "source_evidence": "docs/web-development.md",
+        "occurrences_in_source": 0,
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      }
+    ],
+    "websocket_client_messages": [
+      {
+        "message_type": "connect",
+        "fields": {
+          "message_type": "connect",
+          "device_id": "string"
+        },
+        "description": "Sent by client immediately after WebSocket connection to target device session",
+        "source": "web-app/src/composables/useWebRTC.js:92",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "forward",
+        "fields": {
+          "message_type": "forward",
+          "device_id": "string",
+          "payload": "object"
+        },
+        "description": "Wraps signaling payloads (request-offer, answer, ice-candidate) forwarded to Agent",
+        "source": "web-app/src/composables/useWebRTC.js:140",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "command",
+        "fields": {
+          "message_type": "command",
+          "device_id": "string",
+          "request_id": "string",
+          "command": "string"
+        },
+        "description": "Direct shell/command execution request forwarded to agent via signaling server",
+        "source": "web-app/src/composables/useWebRTC.js:271",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "inject_data",
+        "fields": {
+          "message_type": "inject_data",
+          "device_id": "string",
+          "channel": "string",
+          "data": "any"
+        },
+        "description": "WebSocket fallback for touch/clipboard when DataChannel is unavailable",
+        "source": "web-app/src/composables/useWebRTC.js:254",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "group_control_event",
+        "fields": {
+          "message_type": "group_control_event",
+          "device_ids": "array",
+          "event": "object"
+        },
+        "description": "Multi-device synchronized control broadcast across multiple phone sessions",
+        "source": "web-app/src/stores/devices.js:583",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "get_settings",
+        "fields": {
+          "message_type": "get_settings"
+        },
+        "description": "Requests global system settings from signaling server",
+        "source": "web-app/src/stores/devices.js:592",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "webrtc_failed",
+        "fields": {
+          "message_type": "webrtc_failed",
+          "device_id": "string"
+        },
+        "description": "Candidate message indicating WebRTC failure",
+        "source": "web-app/src/stores/devices.js",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      }
+    ],
+    "websocket_server_messages": [
+      {
+        "message_type": "config",
+        "fields": {
+          "message_type": "config",
+          "ice_servers": "array"
+        },
+        "description": "Provides STUN/TURN ICE server configuration to connecting client",
+        "source": "web-app/src/composables/useWebRTC.js:126",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "device_msg",
+        "fields": {
+          "message_type": "device_msg",
+          "device_id": "string",
+          "payload": "object"
+        },
+        "description": "Delivers forwarded messages from Agent (offer, ice-candidate, clipboard, etc.)",
+        "source": "web-app/src/composables/useWebRTC.js:133",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "device_online",
+        "fields": {
+          "message_type": "device_online",
+          "device": "object"
+        },
+        "description": "Broadcasts that a device agent has connected and registered",
+        "source": "web-app/src/stores/devices.js:675",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "device_offline",
+        "fields": {
+          "message_type": "device_offline",
+          "device_id": "string"
+        },
+        "description": "Broadcasts that a device agent has disconnected",
+        "source": "web-app/src/stores/devices.js:680",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "device_list",
+        "fields": {
+          "message_type": "device_list",
+          "devices": "array"
+        },
+        "description": "Initial synchronization of all online devices on WebSocket connect",
+        "source": "web-app/src/stores/devices.js:670",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "command_result",
+        "fields": {
+          "message_type": "command_result",
+          "request_id": "string",
+          "output": "string",
+          "exit_code": "number"
+        },
+        "description": "Delivers asynchronous shell command execution output back to client",
+        "source": "web-app/src/composables/useWebRTC.js:148",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "message_type": "auth_error",
+        "fields": {
+          "message_type": "auth_error",
+          "error": "string"
+        },
+        "description": "Signals token expiration, invalid permissions, or session kick",
+        "source": "web-app/src/composables/useWebRTC.js:156",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      }
+    ],
+    "forward_payloads": [
+      {
+        "type": "request-offer",
+        "direction": "Browser -> Signaling -> Agent",
+        "fields": {
+          "type": "request-offer",
+          "ip_preference": "string",
+          "scrcpy_options": "object"
+        },
+        "description": "Requests Agent to create a WebRTC PeerConnection, start scrcpy, and generate an SDP offer",
+        "source": "web-app/src/composables/useWebRTC.js:134",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "type": "offer",
+        "direction": "Agent -> Signaling -> Browser",
+        "fields": {
+          "type": "offer",
+          "sdp": "string",
+          "camera_support": "boolean"
+        },
+        "description": "Agent SDP offer containing video/audio media tracks and DataChannel attributes",
+        "source": "web-app/src/composables/useWebRTC.js:175",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "type": "answer",
+        "direction": "Browser -> Signaling -> Agent",
+        "fields": {
+          "type": "answer",
+          "sdp": "string"
+        },
+        "description": "Browser SDP answer with munged bandwidth parameters and audio preferences",
+        "source": "web-app/src/composables/useWebRTC.js:205",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "type": "ice-candidate",
+        "direction": "Bi-directional (Browser <-> Agent)",
+        "fields": {
+          "type": "ice-candidate",
+          "candidate": "string | object"
+        },
+        "description": "Trickle ICE candidate exchange for P2P UDP/TCP hole punching",
+        "source": "web-app/src/composables/useWebRTC.js:215",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "type": "clipboard",
+        "direction": "Bi-directional",
+        "fields": {
+          "type": "clipboard",
+          "text": "string",
+          "source": "string",
+          "origin_client_id": "string"
+        },
+        "description": "Fallback clipboard payload when clipboard-channel is not established",
+        "source": "web-app/src/composables/useWebRTC.js:770",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      },
+      {
+        "type": "camera",
+        "direction": "Bi-directional",
+        "fields": {
+          "type": "camera",
+          "action": "string"
+        },
+        "description": "Camera control signaling fallback",
+        "source": "web-app/src/composables/useWebRTC.js:800",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
+      }
+    ]
   },
   "transport_endpoints": {
     "websocket_signaling": [
@@ -19,7 +942,8 @@
           "share_pwd": "Share link password (optional, if protected)"
         },
         "source_reference": "web-app/src/composables/useWebRTC.js:78-83, web-app/src/stores/devices.js:669",
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/register_agent",
@@ -28,7 +952,8 @@
           "id": "Agent / device unique identifier (passed via -id CLI flag)"
         },
         "source_reference": "docs/agent-deploy.md",
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       }
     ],
     "http_endpoints": [
@@ -38,7 +963,8 @@
         "role": "System: apply license key",
         "source_evidence": "web-app/src/stores/devices.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/assign",
@@ -46,7 +972,8 @@
         "role": "Admin: assign device permissions to user",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users",
@@ -54,7 +981,8 @@
         "role": "Admin: list user accounts",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users/create",
@@ -62,7 +990,8 @@
         "role": "Admin: create new user account",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users/delete",
@@ -70,7 +999,8 @@
         "role": "Admin: remove user account",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users/kick",
@@ -78,7 +1008,8 @@
         "role": "Admin: kick active user sessions",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users/rename",
@@ -86,7 +1017,8 @@
         "role": "Admin: rename user account",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users/reset_password",
@@ -94,7 +1026,8 @@
         "role": "Admin: reset user password",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users/update",
@@ -102,7 +1035,8 @@
         "role": "Admin: update account properties / expiration",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/admin/users/update_note",
@@ -110,7 +1044,8 @@
         "role": "Admin: update user note field",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/auth-status",
@@ -118,7 +1053,8 @@
         "role": "Authentication: check whether noAuth mode is active",
         "source_evidence": "web-app/src/stores/auth.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/default_settings",
@@ -126,7 +1062,8 @@
         "role": "Config: global default settings (bitrate, fps, etc.)",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/devices",
@@ -134,7 +1071,8 @@
         "role": "Device: list active and registered devices",
         "source_evidence": "web-app/src/stores/devices.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/devices/",
@@ -142,7 +1080,8 @@
         "role": "Device: manage specific device by ID",
         "source_evidence": "web-app/src/stores/devices.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/files",
@@ -150,7 +1089,8 @@
         "role": "Files: file management listing and deletion",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/ice_servers",
@@ -158,7 +1098,8 @@
         "role": "Config: STUN/TURN server list",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/license_status",
@@ -166,7 +1107,8 @@
         "role": "System: query license status",
         "source_evidence": "web-app/src/stores/devices.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/login",
@@ -174,7 +1116,8 @@
         "role": "Authentication: credentials login and session token issuance",
         "source_evidence": "web-app/src/stores/auth.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/logout",
@@ -182,7 +1125,8 @@
         "role": "Authentication: session revocation",
         "source_evidence": "web-app/src/stores/auth.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/me",
@@ -190,7 +1134,8 @@
         "role": "Authentication: retrieve authenticated user profile",
         "source_evidence": "web-app/src/stores/auth.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/server/addresses",
@@ -198,7 +1143,8 @@
         "role": "Config: query external server IPs",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/share/create",
@@ -206,7 +1152,8 @@
         "role": "Share: create temporary sharing link for device",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/share/extend",
@@ -214,7 +1161,8 @@
         "role": "Share: extend share token lifetime",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/share/info",
@@ -222,7 +1170,8 @@
         "role": "Share: fetch metadata for shared device",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/share/list",
@@ -230,7 +1179,8 @@
         "role": "Share: list active share tokens",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/share/redeem_card",
@@ -238,7 +1188,8 @@
         "role": "Share: redeem card code for device access",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/share/revoke",
@@ -246,7 +1197,8 @@
         "role": "Share: revoke share token",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/share/update",
@@ -254,7 +1206,8 @@
         "role": "Share: update share token properties",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/shortcuts",
@@ -262,7 +1215,8 @@
         "role": "Config: keyboard shortcut mappings",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/tags",
@@ -270,7 +1224,8 @@
         "role": "Tags: manage device categories and label associations",
         "source_evidence": "web-app/src/stores/tags.js",
         "occurrences_in_source": 2,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/tasks",
@@ -278,7 +1233,8 @@
         "role": "Tasks: batch task execution",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/tasks/details",
@@ -286,7 +1242,8 @@
         "role": "Tasks: query task execution status",
         "source_evidence": "web-app/src/stores/devices.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/user/ai-config",
@@ -294,7 +1251,8 @@
         "role": "User: AI assistant integration settings",
         "source_evidence": "web-app/src/stores/auth.js",
         "occurrences_in_source": 1,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/api/version",
@@ -302,7 +1260,8 @@
         "role": "System: signaling server version",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/downloads/",
@@ -310,7 +1269,8 @@
         "role": "Static: agent executable / APK downloads",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/snapshots/",
@@ -318,7 +1278,8 @@
         "role": "Static: device screenshot thumbnail serving",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "path": "/upload",
@@ -326,7 +1287,8 @@
         "role": "Upload: file/APK upload endpoint",
         "source_evidence": "docs/web-development.md",
         "occurrences_in_source": 0,
-        "classification": "SOURCE_REFERENCE_CANDIDATE"
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       }
     ]
   },
@@ -339,7 +1301,9 @@
           "device_id": "string"
         },
         "description": "Sent by client immediately after WebSocket connection to target device session",
-        "source": "web-app/src/composables/useWebRTC.js:92"
+        "source": "web-app/src/composables/useWebRTC.js:92",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "forward",
@@ -349,7 +1313,9 @@
           "payload": "object"
         },
         "description": "Wraps signaling payloads (request-offer, answer, ice-candidate) forwarded to Agent",
-        "source": "web-app/src/composables/useWebRTC.js:140"
+        "source": "web-app/src/composables/useWebRTC.js:140",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "command",
@@ -360,7 +1326,9 @@
           "command": "string"
         },
         "description": "Direct shell/command execution request forwarded to agent via signaling server",
-        "source": "web-app/src/composables/useWebRTC.js:271"
+        "source": "web-app/src/composables/useWebRTC.js:271",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "inject_data",
@@ -371,7 +1339,9 @@
           "data": "any"
         },
         "description": "WebSocket fallback for touch/clipboard when DataChannel is unavailable",
-        "source": "web-app/src/composables/useWebRTC.js:254"
+        "source": "web-app/src/composables/useWebRTC.js:254",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "group_control_event",
@@ -381,7 +1351,9 @@
           "event": "object"
         },
         "description": "Multi-device synchronized control broadcast across multiple phone sessions",
-        "source": "web-app/src/stores/devices.js:583"
+        "source": "web-app/src/stores/devices.js:583",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "get_settings",
@@ -389,7 +1361,9 @@
           "message_type": "get_settings"
         },
         "description": "Requests global system settings from signaling server",
-        "source": "web-app/src/stores/devices.js:592"
+        "source": "web-app/src/stores/devices.js:592",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "webrtc_failed",
@@ -398,7 +1372,9 @@
           "device_id": "string"
         },
         "description": "Candidate message indicating WebRTC failure",
-        "source": "web-app/src/stores/devices.js"
+        "source": "web-app/src/stores/devices.js",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       }
     ],
     "server_to_client": [
@@ -409,7 +1385,9 @@
           "ice_servers": "array"
         },
         "description": "Provides STUN/TURN ICE server configuration to connecting client",
-        "source": "web-app/src/composables/useWebRTC.js:126"
+        "source": "web-app/src/composables/useWebRTC.js:126",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "device_msg",
@@ -419,7 +1397,9 @@
           "payload": "object"
         },
         "description": "Delivers forwarded messages from Agent (offer, ice-candidate, clipboard, etc.)",
-        "source": "web-app/src/composables/useWebRTC.js:133"
+        "source": "web-app/src/composables/useWebRTC.js:133",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "device_online",
@@ -428,7 +1408,9 @@
           "device": "object"
         },
         "description": "Broadcasts that a device agent has connected and registered",
-        "source": "web-app/src/stores/devices.js:675"
+        "source": "web-app/src/stores/devices.js:675",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "device_offline",
@@ -437,7 +1419,9 @@
           "device_id": "string"
         },
         "description": "Broadcasts that a device agent has disconnected",
-        "source": "web-app/src/stores/devices.js:680"
+        "source": "web-app/src/stores/devices.js:680",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "device_list",
@@ -446,7 +1430,9 @@
           "devices": "array"
         },
         "description": "Initial synchronization of all online devices on WebSocket connect",
-        "source": "web-app/src/stores/devices.js:670"
+        "source": "web-app/src/stores/devices.js:670",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "command_result",
@@ -457,7 +1443,9 @@
           "exit_code": "number"
         },
         "description": "Delivers asynchronous shell command execution output back to client",
-        "source": "web-app/src/composables/useWebRTC.js:148"
+        "source": "web-app/src/composables/useWebRTC.js:148",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       },
       {
         "message_type": "auth_error",
@@ -466,7 +1454,9 @@
           "error": "string"
         },
         "description": "Signals token expiration, invalid permissions, or session kick",
-        "source": "web-app/src/composables/useWebRTC.js:156"
+        "source": "web-app/src/composables/useWebRTC.js:156",
+        "classification": "ANNOTATION_TEMPLATE",
+        "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
       }
     ]
   },
@@ -480,7 +1470,9 @@
         "scrcpy_options": "object"
       },
       "description": "Requests Agent to create a WebRTC PeerConnection, start scrcpy, and generate an SDP offer",
-      "source": "web-app/src/composables/useWebRTC.js:134"
+      "source": "web-app/src/composables/useWebRTC.js:134",
+      "classification": "ANNOTATION_TEMPLATE",
+      "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
     },
     {
       "type": "offer",
@@ -491,7 +1483,9 @@
         "camera_support": "boolean"
       },
       "description": "Agent SDP offer containing video/audio media tracks and DataChannel attributes",
-      "source": "web-app/src/composables/useWebRTC.js:175"
+      "source": "web-app/src/composables/useWebRTC.js:175",
+      "classification": "ANNOTATION_TEMPLATE",
+      "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
     },
     {
       "type": "answer",
@@ -501,7 +1495,9 @@
         "sdp": "string"
       },
       "description": "Browser SDP answer with munged bandwidth parameters and audio preferences",
-      "source": "web-app/src/composables/useWebRTC.js:205"
+      "source": "web-app/src/composables/useWebRTC.js:205",
+      "classification": "ANNOTATION_TEMPLATE",
+      "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
     },
     {
       "type": "ice-candidate",
@@ -511,7 +1507,9 @@
         "candidate": "string | object"
       },
       "description": "Trickle ICE candidate exchange for P2P UDP/TCP hole punching",
-      "source": "web-app/src/composables/useWebRTC.js:215"
+      "source": "web-app/src/composables/useWebRTC.js:215",
+      "classification": "ANNOTATION_TEMPLATE",
+      "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
     },
     {
       "type": "clipboard",
@@ -523,7 +1521,9 @@
         "origin_client_id": "string"
       },
       "description": "Fallback clipboard payload when clipboard-channel is not established",
-      "source": "web-app/src/composables/useWebRTC.js:770"
+      "source": "web-app/src/composables/useWebRTC.js:770",
+      "classification": "ANNOTATION_TEMPLATE",
+      "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
     },
     {
       "type": "camera",
@@ -533,7 +1533,9 @@
         "action": "string"
       },
       "description": "Camera control signaling fallback",
-      "source": "web-app/src/composables/useWebRTC.js:800"
+      "source": "web-app/src/composables/useWebRTC.js:800",
+      "classification": "ANNOTATION_TEMPLATE",
+      "forensic_status": "EXCLUDED_FROM_CONFIRMATION_COUNTS"
     }
   ],
   "demo_mock_routes": [
