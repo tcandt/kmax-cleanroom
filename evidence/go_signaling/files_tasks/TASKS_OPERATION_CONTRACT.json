@@ -29,5 +29,9 @@
       "result": "Device offline"
     }
   },
-  "online_dispatch_classification": "ONLINE_DISPATCH_TRANSPORT_DEPENDENT"
+  "online_dispatch_classification": "ONLINE_DISPATCH_TRANSPORT_DEPENDENT",
+  "transport_boundary": {
+    "offline_branch": "IMPLEMENTED_AND_DIFFERENTIAL_VERIFIED",
+    "online_dispatch": "DEFERRED_TO_TRANSPORT_PHASE"
+  }
 }

@@ -6,6 +6,14 @@
   ],
   "auth": "AUTHENTICATED_ANY_ROLE",
   "query_parameter": "task_id",
+  "access_isolation": {
+    "admin_access": "FULL_TASK_DTO",
+    "normal_user_assigned_access": "FULL_TASK_DTO",
+    "normal_user_unassigned_access": "FULL_TASK_DTO",
+    "unauthenticated_access": "401_UNAUTHORIZED",
+    "no_auth_mode_access": "FULL_TASK_DTO",
+    "rule": "AUTHENTICATED_GLOBAL_READ"
+  },
   "missing_task_id_status": 400,
   "missing_task_id_body": "Missing task_id parameter\n",
   "task_not_found_status": 404,

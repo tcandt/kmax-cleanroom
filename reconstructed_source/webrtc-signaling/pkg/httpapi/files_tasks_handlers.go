@@ -96,13 +96,8 @@ func (s *Server) HandleUpload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid file name", http.StatusBadRequest)
 		return
 	}
-	if clean == ".." || strings.Contains(name, "..") {
-		http.Error(w, "Invalid file path (path traversal detected)", http.StatusBadRequest)
-		return
-	}
-
 	base := filepath.Base(clean)
-	if base == "." || base == ".." {
+	if clean == ".." || base == ".." || base == "." {
 		http.Error(w, "Invalid file path (path traversal detected)", http.StatusBadRequest)
 		return
 	}

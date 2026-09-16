@@ -7,13 +7,16 @@
     "options_status": 200
   },
   "directory_behavior": {
-    "status": 301,
-    "location": "./"
+    "without_slash_status": 301,
+    "with_slash_status": 200,
+    "location_suffix": "/"
   },
   "features": {
     "mime_sniffing": true,
     "accept_ranges": "bytes",
     "range_requests_supported": true,
+    "partial_content_status": 206,
+    "out_of_bounds_status": 416,
     "head_supported": true,
     "last_modified_emitted": true
   }

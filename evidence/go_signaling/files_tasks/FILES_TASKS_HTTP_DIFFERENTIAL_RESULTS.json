@@ -1,7 +1,9 @@
 {
-  "execution_timestamp": "2026-09-16T12:32:36.493934+00:00",
-  "total_cases": 67,
-  "passed": 67,
+  "execution_timestamp": "2026-09-16T13:01:42.704827+00:00",
+  "historical_cases": 67,
+  "remediation_cases": 26,
+  "total_cases": 93,
+  "passed": 93,
   "failed": 0,
   "all_passed": true,
   "results": [
@@ -487,7 +489,7 @@
     },
     {
       "case_id": "FT-DIFF-49",
-      "description": "Task details read by admin (200 OK, offline failure parity)",
+      "description": "Task details read by admin (200 OK, full Task DTO parity)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
@@ -507,7 +509,7 @@
     },
     {
       "case_id": "FT-DIFF-51",
-      "description": "Task details read by normal user (200 OK)",
+      "description": "Task details read by normal user (200 OK, full Task DTO parity)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
@@ -674,6 +676,267 @@
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
       "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-68",
+      "description": "Task details access isolation: ADMIN role (200 OK, full Task DTO)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-69",
+      "description": "Task details access isolation: NORMAL_USER_ASSIGNED role (200 OK, global authenticated read)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-70",
+      "description": "Task details access isolation: NORMAL_USER_UNASSIGNED role (200 OK, global authenticated read)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-71",
+      "description": "Task details access isolation: MISSING_TOKEN (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-72",
+      "description": "Task details access isolation: INVALID_TOKEN (401 Unauthorized)",
+      "status": "PASS",
+      "orig_status": 401,
+      "recon_status": 401,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-73",
+      "description": "Task details access isolation: NO_AUTH_MODE (200 OK without token)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-74",
+      "description": "File list exact contract by ADMIN (sorting B.txt before a.txt, excluded subdirs, mtime parity)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-75",
+      "description": "File list exact contract by NORMAL USER (identical item count, size, schema parity)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "application/json",
+      "recon_content_type": "application/json",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-76",
+      "description": "Downloads static GET existing (200 OK, Accept-Ranges: bytes, Last-Modified, CORS)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-77",
+      "description": "Downloads static HEAD existing (200 OK, empty body)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-78",
+      "description": "Downloads Range bytes=0-3 (206 Partial Content, Content-Range bytes 0-3/6)",
+      "status": "PASS",
+      "orig_status": 206,
+      "recon_status": 206,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-79",
+      "description": "Downloads Range bytes=2- (206 Partial Content, Content-Range bytes 2-5/6)",
+      "status": "PASS",
+      "orig_status": 206,
+      "recon_status": 206,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-80",
+      "description": "Downloads invalid Range (416 Range Not Satisfiable, Content-Range bytes */6)",
+      "status": "PASS",
+      "orig_status": 416,
+      "recon_status": 416,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-81",
+      "description": "Downloads directory without slash (301 Moved Permanently, Location: sub/)",
+      "status": "PASS",
+      "orig_status": 301,
+      "recon_status": 301,
+      "orig_content_type": "",
+      "recon_content_type": "",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-82",
+      "description": "Downloads unicode filename delivery (200 OK, matching payload)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-83",
+      "description": "Downloads zero-byte file delivery (200 OK, Content-Length: 0)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-84",
+      "description": "Path security upload 'dir/file.txt' (200 OK, strips dir to base 'file.txt')",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-85",
+      "description": "Path security upload './file2.txt' (200 OK, saves as 'file2.txt')",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-86",
+      "description": "Path security upload '../file3.txt' (200 OK, base file3.txt)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-87",
+      "description": "Path security upload 'a/../file4.txt' (200 OK, base file4.txt)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-88",
+      "description": "Path security upload '.leading' dotfile (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-89",
+      "description": "Path security upload backslash path 'C:\\test\\win.txt' (200 OK, base 'win.txt')",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-90",
+      "description": "Path security upload absolute '/etc/passwd' (200 OK, base 'passwd')",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": ""
+    },
+    {
+      "case_id": "FT-DIFF-91",
+      "description": "Delete path '.' directory removal protection (INTENTIONAL_SECURITY_DIVERGENCE)",
+      "status": "PASS",
+      "classification": "INTENTIONAL_SECURITY_DIVERGENCE",
+      "orig_status": 500,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "Original behavior: 500, Cleanroom hardened behavior: 404"
+    },
+    {
+      "case_id": "FT-DIFF-92",
+      "description": "Snapshots directory startup lifecycle parity (eager empty directory on disk)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "filesystem/dir",
+      "recon_content_type": "filesystem/dir",
+      "details": "orig_dir=True(empty=True), recon_dir=True(empty=True)"
+    },
+    {
+      "case_id": "FT-DIFF-93",
+      "description": "Snapshot data storage remains in-memory only (0 disk snapshot files created)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "filesystem/dir",
+      "recon_content_type": "filesystem/dir",
+      "details": "orig_disk_files=0, recon_disk_files=0"
     }
   ]
 }

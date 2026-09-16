@@ -1,15 +1,20 @@
 {
   "downloads_files": {
     "storage": "FILESYSTEM",
-    "path": "data/downloads",
-    "persisted_across_restarts": true
+    "directory": "data/downloads",
+    "file_mode": "0666 (OpenFile O_CREATE|O_WRONLY|O_TRUNC)",
+    "restart_persistence": true
   },
   "tasks_metadata": {
     "storage": "IN_MEMORY_ONLY",
-    "persisted_across_restarts": false
+    "disk_file": null,
+    "restart_persistence": false
   },
-  "snapshots_data": {
+  "snapshots_metadata": {
+    "directory_lifecycle": "EAGER_EMPTY_DIR_ON_STARTUP",
     "storage": "IN_MEMORY_ONLY",
-    "persisted_across_restarts": false
+    "disk_directory_present": true,
+    "disk_bytes_written": false,
+    "restart_persistence": false
   }
 }

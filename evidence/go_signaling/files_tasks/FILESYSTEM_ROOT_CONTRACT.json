@@ -1,23 +1,21 @@
 {
-  "metadata": {
-    "data_flag": "-data",
-    "default_data_dir": "data"
-  },
   "roots": {
     "downloads": {
       "path": "data/downloads",
-      "classification": "EAGER_CREATED",
+      "classification": "FILESYSTEM_STATIC_STORE",
+      "disk_directory_present": true,
       "access": "READ_WRITE",
       "filesystem_target": true,
-      "description": "Exposed via /downloads/ and managed via /api/files and /upload"
+      "description": "On-disk directory used for uploaded files and static /downloads/ delivery"
     },
     "snapshots": {
-      "path": "memory",
-      "classification": "IN_MEMORY_MAP",
+      "path": "data/snapshots",
+      "directory_lifecycle": "EAGER_EMPTY_DIR_ON_STARTUP",
+      "snapshot_data_storage": "IN_MEMORY_MAP",
       "disk_directory_present": true,
       "access": "READ_WRITE",
       "filesystem_target": false,
-      "description": "In-memory sync.Map storing JPEG snapshots keyed by device_id"
+      "description": "Directory eagerly initialized on startup by binary, but snapshot JPEG bytes are held exclusively in-memory (0 persistent snapshot files written to disk)"
     }
   }
 }

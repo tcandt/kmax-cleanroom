@@ -5,14 +5,57 @@
       {
         "input": ".",
         "verdict": "REJECT_400",
-        "error": "Invalid file path (path traversal detected)\n"
+        "error": "Invalid file name\n"
       },
       {
         "input": "..",
         "verdict": "REJECT_400",
         "error": "Invalid file path (path traversal detected)\n"
+      },
+      {
+        "input": "...",
+        "verdict": "REJECT_400",
+        "error": "Invalid file path (path traversal detected)\n"
       }
     ],
+    "expanded_matrix": {
+      "dir/file.txt": {
+        "status": 200,
+        "saved_as": "file.txt"
+      },
+      "./file.txt": {
+        "status": 200,
+        "saved_as": "file.txt"
+      },
+      "../file.txt": {
+        "status": 200,
+        "saved_as": "file.txt"
+      },
+      "a/../file.txt": {
+        "status": 200,
+        "saved_as": "file.txt"
+      },
+      ".leading": {
+        "status": 200,
+        "saved_as": ".leading"
+      },
+      "/etc/passwd": {
+        "status": 200,
+        "saved_as": "passwd"
+      },
+      "C:\\test.txt": {
+        "status": 200,
+        "saved_as": "test.txt"
+      },
+      "sub\\file.txt": {
+        "status": 200,
+        "saved_as": "file.txt"
+      },
+      "..%2ffile.txt": {
+        "status": 200,
+        "saved_as": "file.txt"
+      }
+    },
     "containment_mechanism": "filepath.Join(dataDir, 'downloads', filepath.Base(cleanName))",
     "security_classification": "BENIGN_SAFE_CONTAINED"
   },

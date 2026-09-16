@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"cloudphone-signaling/pkg/auth"
@@ -84,6 +85,12 @@ func main() {
 	server.SetFileManager(fileMgr)
 	taskMgr := storage.NewTaskManager()
 	server.SetTaskManager(taskMgr)
+	// Ensure empty snapshots directory on disk for startup filesystem parity with oracle
+	snapshotsDir := filepath.Join(*dataDir, "snapshots")
+	if err := os.MkdirAll(snapshotsDir, 0755); err != nil {
+		log.Printf("Failed to initialize snapshots directory: %v", err)
+	}
+
 	snapshotMgr := storage.NewSnapshotManager()
 	server.SetSnapshotManager(snapshotMgr)
 

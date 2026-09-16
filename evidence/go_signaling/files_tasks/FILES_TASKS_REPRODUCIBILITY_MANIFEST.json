@@ -1,310 +1,552 @@
 {
-  "metadata": {
-    "phase": "2C.3I",
-    "generator": "reproduce_files_tasks_forensics.py",
-    "timestamp": "2026-09-16T12:33:11Z",
-    "total_canonical_artifacts": 21,
-    "verified_count": 21,
-    "all_reproducible": true,
-    "canonical_input_used": false,
-    "hr3_strict_mode": true
-  },
+  "manifest_name": "FILES_TASKS_REPRODUCIBILITY_MANIFEST",
+  "generated_at": "2026-09-16T13:05:51.479299+00:00",
+  "phase": "2C.3IR",
+  "total_contract_artifacts": 21,
+  "verified_reproduced_count": 21,
+  "overall_verdict": "PASS",
+  "zero_canonical_copy_policy": "STRICT_ENFORCED",
   "artifacts": {
     "FILES_TASKS_ROUTE_FAMILY.json": {
       "artifact_name": "FILES_TASKS_ROUTE_FAMILY.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "6_routes_verified",
-        "route_symbols_resolved"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILES_TASKS_METHOD_MATRIX.json": {
       "artifact_name": "FILES_TASKS_METHOD_MATRIX.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "7_verbs_across_7_semantic_targets",
-        "split_upload_semantics_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "7 routes checked",
+        "7 HTTP verbs probed per route",
+        "status parity with canonical"
+      ]
     },
     "FILES_TASKS_AUTH_MATRIX.json": {
       "artifact_name": "FILES_TASKS_AUTH_MATRIX.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "auth_contexts_verified_including_rbac"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "7 routes checked",
+        "6 auth contexts probed per route",
+        "status parity with canonical"
+      ]
     },
     "FILESYSTEM_ROOT_CONTRACT.json": {
       "artifact_name": "FILESYSTEM_ROOT_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "in_memory_snapshot_storage_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "downloads filesystem target",
+        "snapshots in-memory map",
+        "snapshots eager empty dir",
+        "canonical equality"
+      ]
     },
     "UPLOAD_REQUEST_TYPE_EVIDENCE.json": {
       "artifact_name": "UPLOAD_REQUEST_TYPE_EVIDENCE.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "raw_body_with_query_params_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "UPLOAD_OPERATION_CONTRACT.json": {
       "artifact_name": "UPLOAD_OPERATION_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "upload_error_branches_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILE_PATH_SECURITY_CONTRACT.json": {
       "artifact_name": "FILE_PATH_SECURITY_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "traversal_rejection_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILES_TYPE_EVIDENCE.json": {
       "artifact_name": "FILES_TYPE_EVIDENCE.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "files_list_dto_fields_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILES_LIST_CONTRACT.json": {
       "artifact_name": "FILES_LIST_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "files_crud_and_delete_errors_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "DOWNLOADS_STATIC_CONTRACT.json": {
       "artifact_name": "DOWNLOADS_STATIC_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "downloads_static_delivery_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "SNAPSHOTS_STATIC_CONTRACT.json": {
       "artifact_name": "SNAPSHOTS_STATIC_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "snapshot_in_memory_and_deferral_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "TASK_TYPE_EVIDENCE.json": {
       "artifact_name": "TASK_TYPE_EVIDENCE.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "task_struct_descriptors_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "3 machine-derived DTOs",
+        "struct VAs 0x7ea980, 0x7fb3c0, 0x7f4be0",
+        "exact field parity with canonical"
+      ]
     },
     "TASKS_OPERATION_CONTRACT.json": {
       "artifact_name": "TASKS_OPERATION_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "task_creation_and_offline_dispatch_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "TASK_DETAILS_CONTRACT.json": {
       "artifact_name": "TASK_DETAILS_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "task_selector_and_errors_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "access isolation AUTHENTICATED_GLOBAL_READ",
+        "query parameter task_id",
+        "canonical equality"
+      ]
     },
     "TASK_LIFECYCLE_CONTRACT.json": {
       "artifact_name": "TASK_LIFECYCLE_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "in_memory_lifecycle_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "TASK_ID_CONTRACT.json": {
       "artifact_name": "TASK_ID_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "task_id_layout_and_randomness_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "generator main.g0bIYv (0x75a1e0)",
+        "format task_%s_%x",
+        "layout 20060102150405",
+        "canonical equality"
+      ]
     },
     "FILES_TASKS_PERSISTENCE_CONTRACT.json": {
       "artifact_name": "FILES_TASKS_PERSISTENCE_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "persistence_boundaries_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILES_TASKS_CROSS_CONTRACT.json": {
       "artifact_name": "FILES_TASKS_CROSS_CONTRACT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "cross_contract_edges_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILES_TASKS_EDGE_MATRIX.json": {
       "artifact_name": "FILES_TASKS_EDGE_MATRIX.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "edge_and_error_cases_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILES_TASKS_FUNCTION_SLICES.json": {
       "artifact_name": "FILES_TASKS_FUNCTION_SLICES.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "capstone_disassembly_slices_verified"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "full semantic equality (rj == cj)"
+      ]
     },
     "FILES_TASKS_FORENSIC_GATE_RESULT.json": {
       "artifact_name": "FILES_TASKS_FORENSIC_GATE_RESULT.json",
       "generation_sources": [
-        "canonical_builds/linux_amd64/webrtc-signaling",
+        "webrtc-signaling (Linux AMD64 ELF SHA256: 6865f05fe598...)",
+        "webrtc-signaling.exe (Windows AMD64)",
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json",
+        "Capstone Engine Disassembly",
+        "Fresh Isolated Oracle Execution"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
         "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
         "evidence/go_signaling/FUNCTION_MAP.json"
       ],
-      "canonical_input_used": false,
-      "semantic_checks": [
-        "forensic_gate_18_invariants_pass"
+      "dynamic_inputs": [
+        "Isolated oracle HTTP probing on dynamic localhost port"
       ],
-      "verification_result": "PASS"
+      "canonical_input_used": false,
+      "verification_result": "PASS",
+      "deep_semantic_checks": [
+        "18 evaluated invariants",
+        "verdict == PASS",
+        "canonical invariants equality"
+      ]
     }
   }
 }
