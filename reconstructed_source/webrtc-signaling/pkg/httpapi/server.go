@@ -9,6 +9,7 @@ package httpapi
 
 import (
 	"net/http"
+	"path/filepath"
 	"sync"
 
 	"cloudphone-signaling/pkg/auth"
@@ -186,8 +187,8 @@ func (s *Server) SetSnapshotManager(sm *storage.SnapshotManager) {
 // Classification: RECONSTRUCTED_FROM_BINARY
 // Binary Symbol: main.main.func4
 // VA: 0x76d760
-// Evidence: DOWNLOADS_STATIC_CONTRACT.json
-// Purpose: Wraps http.FileServer with CORS headers and OPTIONS preflight handling
+// Evidence: DOWNLOADS_STATIC_CONTRACT.json, FILES_TASKS_FUNCTION_SLICES.json
+// Purpose: Wraps http.ServeFile with CORS headers, OPTIONS preflight, and filepath.Base path flattening
 // Confidence: HIGH
 func (s *Server) downloadsHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -204,9 +205,12 @@ func (s *Server) downloadsHandler() http.Handler {
 		if dir == "" {
 			dir = "./data/downloads"
 		}
-		http.FileServer(http.Dir(dir)).ServeHTTP(w, r)
+		base := filepath.Base(r.URL.Path)
+		filePath := filepath.Join(dir, base)
+		http.ServeFile(w, r, filePath)
 	})
 }
+
 
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_ADAPTER

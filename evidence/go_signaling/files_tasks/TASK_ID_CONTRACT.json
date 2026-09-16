@@ -1,6 +1,7 @@
 {
   "generator_symbol": "main.g0bIYv",
   "generator_va": "0x75a1e0",
+  "generator_size_bytes": 224,
   "format_string_va": "0x82229b",
   "format_string": "task_%s_%x",
   "layout_va": "0x825bda",
@@ -8,5 +9,7 @@
   "time_source": "LOCAL_TIME (time.Now)",
   "random_source": "crypto/rand.Read(8 bytes)",
   "random_format": "%016x",
-  "example": "task_20260916190631_1b242ddb55d05405"
+  "separator_structure": "task_<timestamp14>_<random_hex16>",
+  "example": "task_20260916190631_1b242ddb55d05405",
+  "provenance": "STATIC_BINARY_DERIVED"
 }

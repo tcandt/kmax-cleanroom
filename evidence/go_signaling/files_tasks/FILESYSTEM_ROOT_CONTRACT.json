@@ -6,7 +6,8 @@
       "disk_directory_present": true,
       "access": "READ_WRITE",
       "filesystem_target": true,
-      "description": "On-disk directory used for uploaded files and static /downloads/ delivery"
+      "description": "On-disk directory used for uploaded files and static /downloads/ delivery",
+      "provenance": "DYNAMIC_ORACLE_DERIVED"
     },
     "snapshots": {
       "path": "data/snapshots",
@@ -15,7 +16,9 @@
       "disk_directory_present": true,
       "access": "READ_WRITE",
       "filesystem_target": false,
-      "description": "Directory eagerly initialized on startup by binary, but snapshot JPEG bytes are held exclusively in-memory (0 persistent snapshot files written to disk)"
+      "description": "Directory eagerly initialized on startup by binary, but snapshot JPEG bytes are held exclusively in-memory (0 persistent snapshot files written to disk)",
+      "provenance": "DYNAMIC_ORACLE_DERIVED"
     }
-  }
+  },
+  "classification": "DYNAMIC_ORACLE_DERIVED"
 }

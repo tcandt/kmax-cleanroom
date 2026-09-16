@@ -1,7 +1,7 @@
 {
   "manifest_name": "FILES_TASKS_REPRODUCIBILITY_MANIFEST",
-  "generated_at": "2026-09-16T13:05:51.479299+00:00",
-  "phase": "2C.3IR",
+  "generated_at": "2026-09-16T13:38:44.530368+00:00",
+  "phase": "2C.3IR2",
   "total_contract_artifacts": 21,
   "verified_reproduced_count": 21,
   "overall_verdict": "PASS",
@@ -56,7 +56,7 @@
       "deep_semantic_checks": [
         "7 routes checked",
         "7 HTTP verbs probed per route",
-        "status parity with canonical"
+        "status, location, headers, CORS parity with canonical"
       ]
     },
     "FILES_TASKS_AUTH_MATRIX.json": {
@@ -83,7 +83,7 @@
       "deep_semantic_checks": [
         "7 routes checked",
         "6 auth contexts probed per route",
-        "status parity with canonical"
+        "status, content-type, body-len parity with canonical"
       ]
     },
     "FILESYSTEM_ROOT_CONTRACT.json": {
@@ -311,9 +311,10 @@
       "canonical_input_used": false,
       "verification_result": "PASS",
       "deep_semantic_checks": [
-        "3 machine-derived DTOs",
-        "struct VAs 0x7ea980, 0x7fb3c0, 0x7f4be0",
-        "exact field parity with canonical"
+        "3 machine-derived DTOs (TaskCreateRequest, Task, DeviceTaskStatus)",
+        "struct VAs (0x7ea980, 0x7fb3c0, 0x7f4be0)",
+        "type identity, size, kind, field_count exact match",
+        "all field names, tags, offsets, and type VAs match canonical"
       ]
     },
     "TASKS_OPERATION_CONTRACT.json": {

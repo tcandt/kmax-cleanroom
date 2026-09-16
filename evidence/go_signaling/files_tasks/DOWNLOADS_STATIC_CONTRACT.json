@@ -1,15 +1,18 @@
 {
   "endpoint": "/downloads/",
-  "wrapper_chain": "http.StripPrefix('/downloads/', corsHandler(http.FileServer))",
+  "wrapper_chain": "http.StripPrefix('/downloads/', main.main.func4)",
+  "provenance_wrapper_chain": "STATIC_BINARY_DERIVED",
   "cors": {
     "origin": "*",
     "headers": "Content-Type, Authorization",
-    "options_status": 200
+    "options_status": 200,
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "directory_behavior": {
     "without_slash_status": 301,
     "with_slash_status": 200,
-    "location_suffix": "/"
+    "location_suffix": "/",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "features": {
     "mime_sniffing": true,
@@ -18,6 +21,8 @@
     "partial_content_status": 206,
     "out_of_bounds_status": 416,
     "head_supported": true,
-    "last_modified_emitted": true
-  }
+    "last_modified_emitted": true,
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "classification": "COMBINED"
 }

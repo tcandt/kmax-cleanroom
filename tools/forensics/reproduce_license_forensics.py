@@ -539,13 +539,16 @@ def verify_license_reproducibility():
         "artifacts": manifest_entries
     }
 
-    (canonical_dir / "LICENSE_REPRODUCIBILITY_MANIFEST.json").write_text(
-        json.dumps(manifest_doc, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    if "--update-manifest" in sys.argv:
+        (canonical_dir / "LICENSE_REPRODUCIBILITY_MANIFEST.json").write_text(
+            json.dumps(manifest_doc, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        print(f"[+] Written canonical LICENSE_REPRODUCIBILITY_MANIFEST.json ({len(verified_artifacts)}/{total_manifest} verified)")
+    else:
+        print(f"[i] Read-only verification: canonical LICENSE_REPRODUCIBILITY_MANIFEST.json untouched (pass --update-manifest to update)")
     (temp_out / "LICENSE_REPRODUCIBILITY_MANIFEST.json").write_text(
         json.dumps(manifest_doc, indent=2, ensure_ascii=False), encoding="utf-8"
     )
-    print(f"[+] Written LICENSE_REPRODUCIBILITY_MANIFEST.json ({len(verified_artifacts)}/{total_manifest} verified)")
 
     print("\n----------------------------------------------------------")
     print(f"LICENSE_FORENSIC_REPRODUCIBILITY = {total_manifest}/{total_manifest}")

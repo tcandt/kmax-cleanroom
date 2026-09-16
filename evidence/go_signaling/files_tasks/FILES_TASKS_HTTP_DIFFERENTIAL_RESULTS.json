@@ -1,9 +1,9 @@
 {
-  "execution_timestamp": "2026-09-16T13:01:42.704827+00:00",
+  "execution_timestamp": "2026-09-16T13:45:50.190940+00:00",
   "historical_cases": 67,
-  "remediation_cases": 26,
-  "total_cases": 93,
-  "passed": 93,
+  "remediation_cases": 39,
+  "total_cases": 106,
+  "passed": 106,
   "failed": 0,
   "all_passed": true,
   "results": [
@@ -15,7 +15,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-02",
@@ -25,7 +47,29 @@
       "recon_status": 403,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "48",
+          "recon": "48",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-03",
@@ -35,7 +79,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "18",
+          "recon": "18",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-04",
@@ -45,7 +111,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "18",
+          "recon": "18",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-05",
@@ -55,7 +143,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "44",
+          "recon": "44",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-06",
@@ -65,7 +175,29 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "23",
+          "recon": "23",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-07",
@@ -75,7 +207,29 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "25",
+          "recon": "25",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-08",
@@ -85,7 +239,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-09",
@@ -95,7 +271,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-10",
@@ -105,7 +303,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-11",
@@ -115,7 +335,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-12",
@@ -125,7 +367,24 @@
       "recon_status": 200,
       "orig_content_type": "",
       "recon_content_type": "",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Length": {
+          "orig": "0",
+          "recon": "0",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-13",
@@ -135,7 +394,29 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "34",
+          "recon": "34",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-14",
@@ -145,7 +426,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "18",
+          "recon": "18",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-15",
@@ -155,7 +458,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "18",
+          "recon": "18",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-16",
@@ -165,7 +490,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-17",
@@ -175,7 +522,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-18",
@@ -185,7 +554,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-19",
@@ -195,7 +586,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-20",
@@ -205,7 +618,24 @@
       "recon_status": 200,
       "orig_content_type": "",
       "recon_content_type": "",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Length": {
+          "orig": "0",
+          "recon": "0",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-21",
@@ -215,7 +645,39 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "40",
+          "recon": "40",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Wed, 16 Sep 2026 13:45:39 GMT",
+          "recon": "Wed, 16 Sep 2026 13:45:39 GMT",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-22",
@@ -225,7 +687,39 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "40",
+          "recon": "40",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Wed, 16 Sep 2026 13:45:39 GMT",
+          "recon": "Wed, 16 Sep 2026 13:45:39 GMT",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-23",
@@ -235,7 +729,24 @@
       "recon_status": 200,
       "orig_content_type": "",
       "recon_content_type": "",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Length": {
+          "orig": "0",
+          "recon": "0",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-24",
@@ -245,7 +756,29 @@
       "recon_status": 404,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-25",
@@ -255,7 +788,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-26",
@@ -265,7 +820,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "115",
+          "recon": "115",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-27",
@@ -275,7 +852,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "115",
+          "recon": "115",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-28",
@@ -285,7 +884,24 @@
       "recon_status": 200,
       "orig_content_type": "",
       "recon_content_type": "",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Length": {
+          "orig": "0",
+          "recon": "0",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-29",
@@ -295,7 +911,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "23",
+          "recon": "23",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-30",
@@ -305,7 +943,29 @@
       "recon_status": 404,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "15",
+          "recon": "15",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-31",
@@ -315,7 +975,29 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "20",
+          "recon": "20",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-32",
@@ -325,7 +1007,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "3",
+          "recon": "3",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-33",
@@ -335,7 +1039,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-34",
@@ -345,7 +1071,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-35",
@@ -355,7 +1103,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-36",
@@ -365,7 +1135,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-37",
@@ -375,7 +1167,29 @@
       "recon_status": 403,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "22",
+          "recon": "22",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-38",
@@ -385,7 +1199,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "24",
+          "recon": "24",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-39",
@@ -395,7 +1231,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "65",
+          "recon": "65",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-40",
@@ -405,7 +1263,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "70",
+          "recon": "70",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-41",
@@ -415,7 +1295,24 @@
       "recon_status": 200,
       "orig_content_type": "",
       "recon_content_type": "",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Length": {
+          "orig": "0",
+          "recon": "0",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-42",
@@ -425,7 +1322,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-43",
@@ -435,7 +1354,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-44",
@@ -445,7 +1386,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-45",
@@ -455,7 +1418,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-46",
@@ -465,7 +1450,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-47",
@@ -475,7 +1482,29 @@
       "recon_status": 400,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "26",
+          "recon": "26",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-48",
@@ -485,7 +1514,29 @@
       "recon_status": 404,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "15",
+          "recon": "15",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-49",
@@ -495,7 +1546,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "271",
+          "recon": "271",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-50",
@@ -515,7 +1588,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "271",
+          "recon": "271",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-52",
@@ -525,7 +1620,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-53",
@@ -535,7 +1652,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-54",
@@ -545,7 +1684,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-55",
@@ -555,7 +1716,29 @@
       "recon_status": 405,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-56",
@@ -565,7 +1748,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-57",
@@ -575,7 +1780,29 @@
       "recon_status": 403,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "10",
+          "recon": "10",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-58",
@@ -585,7 +1812,29 @@
       "recon_status": 200,
       "orig_content_type": "image/jpeg",
       "recon_content_type": "image/jpeg",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "image/jpeg",
+          "recon": "image/jpeg",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "22",
+          "recon": "22",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-59",
@@ -595,7 +1844,29 @@
       "recon_status": 200,
       "orig_content_type": "image/jpeg",
       "recon_content_type": "image/jpeg",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "image/jpeg",
+          "recon": "image/jpeg",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "22",
+          "recon": "22",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-60",
@@ -605,7 +1876,29 @@
       "recon_status": 404,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-61",
@@ -615,7 +1908,29 @@
       "recon_status": 404,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-62",
@@ -625,7 +1940,29 @@
       "recon_status": 200,
       "orig_content_type": "image/jpeg",
       "recon_content_type": "image/jpeg",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "image/jpeg",
+          "recon": "image/jpeg",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "22",
+          "recon": "22",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-63",
@@ -635,7 +1972,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-64",
@@ -645,7 +2004,29 @@
       "recon_status": 200,
       "orig_content_type": "image/jpeg",
       "recon_content_type": "image/jpeg",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "image/jpeg",
+          "recon": "image/jpeg",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "22",
+          "recon": "22",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-65",
@@ -655,7 +2036,29 @@
       "recon_status": 404,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-66",
@@ -685,7 +2088,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "281",
+          "recon": "281",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-69",
@@ -695,7 +2120,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "281",
+          "recon": "281",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-70",
@@ -705,7 +2152,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "281",
+          "recon": "281",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-71",
@@ -715,7 +2184,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-72",
@@ -725,7 +2216,29 @@
       "recon_status": 401,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "13",
+          "recon": "13",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-73",
@@ -735,7 +2248,29 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "281",
+          "recon": "281",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-74",
@@ -745,7 +2280,14 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-75",
@@ -755,7 +2297,14 @@
       "recon_status": 200,
       "orig_content_type": "application/json",
       "recon_content_type": "application/json",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "application/json",
+          "recon": "application/json",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-76",
@@ -765,7 +2314,39 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "6",
+          "recon": "6",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "recon": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-77",
@@ -775,7 +2356,29 @@
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "6",
+          "recon": "6",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "recon": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-78",
@@ -785,7 +2388,29 @@
       "recon_status": 206,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "4",
+          "recon": "4",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Content-Range": {
+          "orig": "bytes 0-3/6",
+          "recon": "bytes 0-3/6",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-79",
@@ -795,7 +2420,29 @@
       "recon_status": 206,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "4",
+          "recon": "4",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Content-Range": {
+          "orig": "bytes 2-5/6",
+          "recon": "bytes 2-5/6",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-80",
@@ -805,7 +2452,19 @@
       "recon_status": 416,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Range": {
+          "orig": "bytes */6",
+          "recon": "bytes */6",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-81",
@@ -815,111 +2474,717 @@
       "recon_status": 301,
       "orig_content_type": "",
       "recon_content_type": "",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Location": {
+          "orig": "sub/",
+          "recon": "sub/",
+          "match": true
+        },
+        "Content-Type": {
+          "orig": null,
+          "recon": null,
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-82",
-      "description": "Downloads unicode filename delivery (200 OK, matching payload)",
+      "description": "Downloads non-ASCII Unicode 'ti\u1ebfng Vi\u1ec7t.txt' (200 OK, matching payload)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "25",
+          "recon": "25",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "recon": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "match": true
+        }
+      }
     },
     {
       "case_id": "FT-DIFF-83",
+      "description": "Downloads non-ASCII Unicode 'caf\u00e9_\u00f1and\u00fa.txt' (200 OK, matching payload)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "21",
+          "recon": "21",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "recon": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-84",
       "description": "Downloads zero-byte file delivery (200 OK, Content-Length: 0)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "0",
+          "recon": "0",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-84",
+      "case_id": "FT-DIFF-85",
       "description": "Path security upload 'dir/file.txt' (200 OK, strips dir to base 'file.txt')",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "20",
+          "recon": "20",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-85",
+      "case_id": "FT-DIFF-86",
       "description": "Path security upload './file2.txt' (200 OK, saves as 'file2.txt')",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "21",
+          "recon": "21",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-86",
+      "case_id": "FT-DIFF-87",
       "description": "Path security upload '../file3.txt' (200 OK, base file3.txt)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "21",
+          "recon": "21",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-87",
+      "case_id": "FT-DIFF-88",
       "description": "Path security upload 'a/../file4.txt' (200 OK, base file4.txt)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "21",
+          "recon": "21",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-88",
+      "case_id": "FT-DIFF-89",
       "description": "Path security upload '.leading' dotfile (200 OK)",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "20",
+          "recon": "20",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-89",
+      "case_id": "FT-DIFF-90",
       "description": "Path security upload backslash path 'C:\\test\\win.txt' (200 OK, base 'win.txt')",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-90",
+      "case_id": "FT-DIFF-91",
       "description": "Path security upload absolute '/etc/passwd' (200 OK, base 'passwd')",
       "status": "PASS",
       "orig_status": 200,
       "recon_status": 200,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": ""
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "18",
+          "recon": "18",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-91",
-      "description": "Delete path '.' directory removal protection (INTENTIONAL_SECURITY_DIVERGENCE)",
+      "case_id": "FT-DIFF-92",
+      "description": "Downloads matrix normal file '/downloads/normal.txt' (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "14",
+          "recon": "14",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "recon": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-93",
+      "description": "Downloads matrix parent traversal '/downloads/../users.json' (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-94",
+      "description": "Downloads matrix encoded traversal '/downloads/..%2fusers.json' (301 Redirect)",
+      "status": "PASS",
+      "orig_status": 301,
+      "recon_status": 301,
+      "orig_content_type": "text/html; charset=utf-8",
+      "recon_content_type": "text/html; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/html; charset=utf-8",
+          "recon": "text/html; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "46",
+          "recon": "46",
+          "match": true
+        },
+        "Location": {
+          "orig": "/users.json",
+          "recon": "/users.json",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-95",
+      "description": "Downloads matrix nested file '/downloads/sub/nested.txt' (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "19",
+          "recon": "19",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-96",
+      "description": "Downloads matrix dot segment '/downloads/./normal.txt' (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "14",
+          "recon": "14",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "recon": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-97",
+      "description": "Downloads matrix resolved segment '/downloads/sub/../normal.txt' (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "14",
+          "recon": "14",
+          "match": true
+        },
+        "Accept-Ranges": {
+          "orig": "bytes",
+          "recon": "bytes",
+          "match": true
+        },
+        "Last-Modified": {
+          "orig": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "recon": "Tue, 14 Nov 2023 22:13:20 GMT",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-98",
+      "description": "Downloads symlink traversal verification",
+      "status": "PASS",
+      "classification": "ENVIRONMENT_UNAVAILABLE",
+      "orig_status": 0,
+      "recon_status": 0,
+      "orig_content_type": "",
+      "recon_content_type": "",
+      "details": "os.symlink privilege unavailable on host OS ([WinError 1314]); recorded as ENVIRONMENT_UNAVAILABLE",
+      "headers_compared": {}
+    },
+    {
+      "case_id": "FT-DIFF-99",
+      "description": "Delete path normal file 'normal.txt' (200 OK)",
+      "status": "PASS",
+      "orig_status": 200,
+      "recon_status": 200,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "20",
+          "recon": "20",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-100",
+      "description": "Delete path nested file 'sub/nested.txt' (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "15",
+          "recon": "15",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-101",
+      "description": "Delete path traversal '../normal.txt' (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "15",
+          "recon": "15",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-102",
+      "description": "Delete path encoded traversal '..%2fnormal.txt' (404 Not Found)",
+      "status": "PASS",
+      "orig_status": 404,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        },
+        "Content-Length": {
+          "orig": "15",
+          "recon": "15",
+          "match": true
+        },
+        "Access-Control-Allow-Origin": {
+          "orig": "*",
+          "recon": "*",
+          "match": true
+        },
+        "Access-Control-Allow-Headers": {
+          "orig": "Content-Type, Authorization",
+          "recon": "Content-Type, Authorization",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-103",
+      "description": "Delete path '.' directory removal protection (DIV-SEC-DELETE-DOT)",
       "status": "PASS",
       "classification": "INTENTIONAL_SECURITY_DIVERGENCE",
+      "divergence_id": "DIV-SEC-DELETE-DOT",
       "orig_status": 500,
       "recon_status": 404,
       "orig_content_type": "text/plain; charset=utf-8",
       "recon_content_type": "text/plain; charset=utf-8",
-      "details": "Original behavior: 500, Cleanroom hardened behavior: 404"
+      "details": "Original behavior: 500, Cleanroom hardened behavior: 404 (DIV-SEC-DELETE-DOT)",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        }
+      }
     },
     {
-      "case_id": "FT-DIFF-92",
+      "case_id": "FT-DIFF-104",
+      "description": "Delete path '..' parent directory removal protection (DIV-SEC-DELETE-DOTDOT)",
+      "status": "PASS",
+      "classification": "INTENTIONAL_SECURITY_DIVERGENCE",
+      "divergence_id": "DIV-SEC-DELETE-DOTDOT",
+      "orig_status": 500,
+      "recon_status": 404,
+      "orig_content_type": "text/plain; charset=utf-8",
+      "recon_content_type": "text/plain; charset=utf-8",
+      "details": "Original behavior: 500, Cleanroom hardened behavior: 404 (DIV-SEC-DELETE-DOTDOT)",
+      "headers_compared": {
+        "Content-Type": {
+          "orig": "text/plain; charset=utf-8",
+          "recon": "text/plain; charset=utf-8",
+          "match": true
+        }
+      }
+    },
+    {
+      "case_id": "FT-DIFF-105",
       "description": "Snapshots directory startup lifecycle parity (eager empty directory on disk)",
       "status": "PASS",
       "orig_status": 200,
@@ -929,7 +3194,7 @@
       "details": "orig_dir=True(empty=True), recon_dir=True(empty=True)"
     },
     {
-      "case_id": "FT-DIFF-93",
+      "case_id": "FT-DIFF-106",
       "description": "Snapshot data storage remains in-memory only (0 disk snapshot files created)",
       "status": "PASS",
       "orig_status": 200,

@@ -30,6 +30,7 @@ import socket
 import hashlib
 import requests
 import subprocess
+import urllib.parse
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -179,7 +180,7 @@ def main():
 
         case_idx = 1
 
-        def check_diff(desc, r_orig, r_recon, check_body=True, is_divergence=False):
+        def check_diff(desc, r_orig, r_recon, check_body=True, is_divergence=False, headers_to_compare=None, expected_divergence=None):
             nonlocal case_idx, test_run_success
             cid = f"FT-DIFF-{case_idx:02d}"
             case_idx += 1
@@ -187,33 +188,84 @@ def main():
             passed = True
             diffs = []
 
-            if is_divergence:
+            # Handle intentional divergence
+            if expected_divergence is not None or is_divergence:
+                div_id = "INTENTIONAL_SECURITY_DIVERGENCE"
+                exp_orig = None
+                exp_recon = None
+                if isinstance(expected_divergence, dict):
+                    div_id = expected_divergence.get("id", "INTENTIONAL_SECURITY_DIVERGENCE")
+                    exp_orig = expected_divergence.get("orig_status")
+                    exp_recon = expected_divergence.get("recon_status")
+                div_match = True
+                if exp_orig is not None and r_orig.status_code != exp_orig:
+                    div_match = False
+                    diffs.append(f"Divergence orig status mismatch: expected {exp_orig}, got {r_orig.status_code}")
+                if exp_recon is not None and r_recon.status_code != exp_recon:
+                    div_match = False
+                    diffs.append(f"Divergence recon status mismatch: expected {exp_recon}, got {r_recon.status_code}")
+
+                status_str = "PASS" if div_match else "FAIL"
+                if not div_match:
+                    test_run_success = False
+
                 entry = {
                     "case_id": cid,
                     "description": desc,
-                    "status": "PASS",
+                    "status": status_str,
                     "classification": "INTENTIONAL_SECURITY_DIVERGENCE",
+                    "divergence_id": div_id,
                     "orig_status": r_orig.status_code,
                     "recon_status": r_recon.status_code,
                     "orig_content_type": r_orig.headers.get("Content-Type", ""),
                     "recon_content_type": r_recon.headers.get("Content-Type", ""),
-                    "details": f"Original behavior: {r_orig.status_code}, Cleanroom hardened behavior: {r_recon.status_code}"
+                    "details": f"Original behavior: {r_orig.status_code}, Cleanroom hardened behavior: {r_recon.status_code} ({div_id})" if div_match else "; ".join(diffs),
+                    "headers_compared": {
+                        "Content-Type": {"orig": r_orig.headers.get("Content-Type"), "recon": r_recon.headers.get("Content-Type"), "match": True}
+                    }
                 }
                 results.append(entry)
-                print(f"  [PASS (INTENTIONAL_SECURITY_DIVERGENCE)] {cid}: {desc}")
-                return True
+                print(f"  [{status_str} (INTENTIONAL_SECURITY_DIVERGENCE: {div_id})] {cid}: {desc}")
+                return div_match
 
             if r_orig.status_code != r_recon.status_code:
                 passed = False
                 diffs.append(f"Status mismatch: orig={r_orig.status_code}, recon={r_recon.status_code}")
 
+            DEFAULT_HEADERS = [
+                "Content-Type", "Content-Length", "Accept-Ranges", "Content-Range",
+                "Last-Modified", "Location", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers"
+            ]
+            headers_to_check = headers_to_compare if headers_to_compare is not None else [
+                h for h in DEFAULT_HEADERS if (h in r_orig.headers or h in r_recon.headers)
+            ]
+            headers_compared = {}
+            for h in headers_to_check:
+                vo = r_orig.headers.get(h)
+                vr = r_recon.headers.get(h)
+                match = False
+                if vo is None and vr is None:
+                    match = True
+                elif vo is not None and vr is not None:
+                    hl = h.lower()
+                    if hl == "content-type":
+                        match = vo.split(";")[0].strip().lower() == vr.split(";")[0].strip().lower()
+                    elif hl == "last-modified":
+                        match = bool(vo) and bool(vr)
+                    elif hl == "content-length":
+                        match = vo.strip() == vr.strip()
+                    else:
+                        match = vo.strip() == vr.strip()
+                headers_compared[h] = {"orig": vo, "recon": vr, "match": match}
+                if not match:
+                    if h.lower() == "content-type" or headers_to_compare is not None:
+                        passed = False
+                        diffs.append(f"Header '{h}' mismatch: orig='{vo}', recon='{vr}'")
+
             o_ct = r_orig.headers.get("Content-Type", "")
             r_ct = r_recon.headers.get("Content-Type", "")
             o_base = o_ct.split(";")[0].strip().lower()
             r_base = r_ct.split(";")[0].strip().lower()
-            if o_base != r_base:
-                passed = False
-                diffs.append(f"Content-Type mismatch: orig='{o_ct}', recon='{r_ct}'")
 
             if check_body and passed:
                 if "application/json" in o_base:
@@ -337,7 +389,8 @@ def main():
                 "recon_status": r_recon.status_code,
                 "orig_content_type": o_ct,
                 "recon_content_type": r_ct,
-                "details": "; ".join(diffs)
+                "details": "; ".join(diffs),
+                "headers_compared": headers_compared
             }
             results.append(entry)
             print(f"  [{status_str}] {cid}: {desc}")
@@ -779,7 +832,9 @@ def main():
         (dl_p / "B.txt").write_bytes(b"bbb")
         (dl_p / "empty.txt").write_bytes(b"")
         (dl_p / "spaced file.txt").write_bytes(b"spaced")
-        (dl_p / "unicode_viet.txt").write_bytes("viet_tiếng".encode("utf-8"))
+        (dl_p / "tiếng Việt.txt").write_bytes("Nội dung tiếng Việt".encode("utf-8"))
+        (dl_p / "café_ñandú.txt").write_bytes("café ñandú payload".encode("utf-8"))
+        (dl_p / "normal.txt").write_bytes(b"normal content")
         (dl_p / "sub").mkdir(parents=True, exist_ok=True)
         (dl_p / "sub" / "nested.txt").write_bytes(b"nested")
         for f in dl_p.glob("**/*"):
@@ -804,55 +859,71 @@ def main():
         # 10.1 List files exact contract by ADMIN with check_body=True
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/api/files", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/api/files", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
-        check_diff("File list exact contract by ADMIN (sorting B.txt before a.txt, excluded subdirs, mtime parity)", ro, rr, check_body=True)
+        check_diff("File list exact contract by ADMIN (sorting B.txt before a.txt, excluded subdirs, mtime parity)", ro, rr, check_body=True, headers_to_compare=["Content-Type"])
 
         # 10.2 List files exact contract by NORMAL USER with check_body=True
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/api/files", headers={"Authorization": f"Bearer {tok_o_ass_g10}"})
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/api/files", headers={"Authorization": f"Bearer {tok_r_ass_g10}"})
-        check_diff("File list exact contract by NORMAL USER (identical item count, size, schema parity)", ro, rr, check_body=True)
+        check_diff("File list exact contract by NORMAL USER (identical item count, size, schema parity)", ro, rr, check_body=True, headers_to_compare=["Content-Type"])
 
         print("\n--- GROUP 11: DOWNLOADS STATIC HEADERS & RANGE CONTRACT ---")
         # 11.1 GET existing file: compare Accept-Ranges, Content-Length, CORS
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/spaced%20file.txt")
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/spaced%20file.txt")
-        check_diff("Downloads static GET existing (200 OK, Accept-Ranges: bytes, Last-Modified, CORS)", ro, rr, check_body=True)
+        check_diff("Downloads static GET existing (200 OK, Accept-Ranges: bytes, Last-Modified, CORS)", ro, rr, check_body=True,
+                   headers_to_compare=["Content-Type", "Content-Length", "Accept-Ranges", "Last-Modified", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers"])
 
         # 11.2 HEAD existing file: empty body, headers match
         ro = requests.head(f"http://127.0.0.1:{port_orig_g10}/downloads/spaced%20file.txt")
         rr = requests.head(f"http://127.0.0.1:{port_recon_g10}/downloads/spaced%20file.txt")
-        check_diff("Downloads static HEAD existing (200 OK, empty body)", ro, rr, check_body=False)
+        check_diff("Downloads static HEAD existing (200 OK, empty body)", ro, rr, check_body=False,
+                   headers_to_compare=["Content-Type", "Content-Length", "Accept-Ranges", "Last-Modified"])
 
         # 11.3 Range: bytes=0-3
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/spaced%20file.txt", headers={"Range": "bytes=0-3"})
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/spaced%20file.txt", headers={"Range": "bytes=0-3"})
-        check_diff("Downloads Range bytes=0-3 (206 Partial Content, Content-Range bytes 0-3/6)", ro, rr, check_body=True)
+        check_diff("Downloads Range bytes=0-3 (206 Partial Content, Content-Range bytes 0-3/6)", ro, rr, check_body=True,
+                   headers_to_compare=["Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"])
 
         # 11.4 Range: bytes=2-
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/spaced%20file.txt", headers={"Range": "bytes=2-"})
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/spaced%20file.txt", headers={"Range": "bytes=2-"})
-        check_diff("Downloads Range bytes=2- (206 Partial Content, Content-Range bytes 2-5/6)", ro, rr, check_body=True)
+        check_diff("Downloads Range bytes=2- (206 Partial Content, Content-Range bytes 2-5/6)", ro, rr, check_body=True,
+                   headers_to_compare=["Content-Type", "Content-Length", "Accept-Ranges", "Content-Range"])
 
         # 11.5 Invalid Range: bytes=999-1000
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/spaced%20file.txt", headers={"Range": "bytes=999-1000"})
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/spaced%20file.txt", headers={"Range": "bytes=999-1000"})
-        check_diff("Downloads invalid Range (416 Range Not Satisfiable, Content-Range bytes */6)", ro, rr, check_body=True)
+        check_diff("Downloads invalid Range (416 Range Not Satisfiable, Content-Range bytes */6)", ro, rr, check_body=True,
+                   headers_to_compare=["Content-Type", "Content-Range"])
 
         # 11.6 Directory without trailing slash redirects to trailing slash
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/sub", allow_redirects=False)
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/sub", allow_redirects=False)
-        check_diff("Downloads directory without slash (301 Moved Permanently, Location: sub/)", ro, rr, check_body=True)
+        check_diff("Downloads directory without slash (301 Moved Permanently, Location: sub/)", ro, rr, check_body=True,
+                   headers_to_compare=["Location", "Content-Type"])
 
-        # 11.7 Unicode filename download
-        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/unicode_viet.txt")
-        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/unicode_viet.txt")
-        check_diff("Downloads unicode filename delivery (200 OK, matching payload)", ro, rr, check_body=True)
+        # 11.7 Non-ASCII Unicode filename download ("tiếng Việt.txt")
+        url_viet = urllib.parse.quote("tiếng Việt.txt")
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/{url_viet}")
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/{url_viet}")
+        check_diff("Downloads non-ASCII Unicode 'tiếng Việt.txt' (200 OK, matching payload)", ro, rr, check_body=True,
+                   headers_to_compare=["Content-Type", "Content-Length", "Accept-Ranges", "Last-Modified"])
 
-        # 11.8 Zero-byte file download
+        # 11.8 Non-ASCII Unicode filename download ("café_ñandú.txt")
+        url_cafe = urllib.parse.quote("café_ñandú.txt")
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/{url_cafe}")
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/{url_cafe}")
+        check_diff("Downloads non-ASCII Unicode 'café_ñandú.txt' (200 OK, matching payload)", ro, rr, check_body=True,
+                   headers_to_compare=["Content-Type", "Content-Length", "Accept-Ranges", "Last-Modified"])
+
+        # 11.9 Zero-byte file download
         ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/empty.txt")
         rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/empty.txt")
-        check_diff("Downloads zero-byte file delivery (200 OK, Content-Length: 0)", ro, rr, check_body=True)
+        check_diff("Downloads zero-byte file delivery (200 OK, Content-Length: 0)", ro, rr, check_body=True,
+                   headers_to_compare=["Content-Type", "Content-Length"])
 
-        print("\n--- GROUP 12: EXPANDED PATH SECURITY MATRIX ---")
+        print("\n--- GROUP 12: EXPANDED PATH SECURITY & TRAVERSAL MATRIX ---")
         # 12.1 Upload: dir/file.txt (original strips directory and saves base)
         ro = requests.post(f"http://127.0.0.1:{port_orig_g10}/upload?name=dir/file.txt", data=b"pdata", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
         rr = requests.post(f"http://127.0.0.1:{port_recon_g10}/upload?name=dir/file.txt", data=b"pdata", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
@@ -888,11 +959,89 @@ def main():
         rr = requests.post(f"http://127.0.0.1:{port_recon_g10}/upload?name=/etc/passwd", data=b"pdata", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
         check_diff("Path security upload absolute '/etc/passwd' (200 OK, base 'passwd')", ro, rr, check_body=True)
 
-        # 12.8 Delete path security: delete '.' is intentional security divergence
-        # (Original crashes with 500 trying to remove downloads directory; Cleanroom deliberately returns 404/not exist)
+        # /downloads/ path matrix
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/normal.txt", allow_redirects=False)
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/normal.txt", allow_redirects=False)
+        check_diff("Downloads matrix normal file '/downloads/normal.txt' (200 OK)", ro, rr, check_body=True)
+
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/../users.json", allow_redirects=False)
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/../users.json", allow_redirects=False)
+        check_diff("Downloads matrix parent traversal '/downloads/../users.json' (404 Not Found)", ro, rr, check_body=True)
+
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/..%2fusers.json", allow_redirects=False)
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/..%2fusers.json", allow_redirects=False)
+        check_diff("Downloads matrix encoded traversal '/downloads/..%2fusers.json' (301 Redirect)", ro, rr, check_body=True)
+
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/sub/nested.txt", allow_redirects=False)
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/sub/nested.txt", allow_redirects=False)
+        check_diff("Downloads matrix nested file '/downloads/sub/nested.txt' (404 Not Found)", ro, rr, check_body=True)
+
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/./normal.txt", allow_redirects=False)
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/./normal.txt", allow_redirects=False)
+        check_diff("Downloads matrix dot segment '/downloads/./normal.txt' (200 OK)", ro, rr, check_body=True)
+
+        ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/sub/../normal.txt", allow_redirects=False)
+        rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/sub/../normal.txt", allow_redirects=False)
+        check_diff("Downloads matrix resolved segment '/downloads/sub/../normal.txt' (200 OK)", ro, rr, check_body=True)
+
+        # Symlink traversal check
+        cid_sym = f"FT-DIFF-{case_idx:02d}"
+        case_idx += 1
+        symlink_created = False
+        try:
+            target_f = tmp_g10_orig / "downloads" / "normal.txt"
+            link_orig = tmp_g10_orig / "downloads" / "symlink_normal.txt"
+            link_recon = tmp_g10_recon / "downloads" / "symlink_normal.txt"
+            os.symlink(target_f, link_orig)
+            os.symlink(tmp_g10_recon / "downloads" / "normal.txt", link_recon)
+            symlink_created = True
+        except OSError:
+            symlink_created = False
+
+        if symlink_created:
+            ro = requests.get(f"http://127.0.0.1:{port_orig_g10}/downloads/symlink_normal.txt")
+            rr = requests.get(f"http://127.0.0.1:{port_recon_g10}/downloads/symlink_normal.txt")
+            check_diff("Downloads symlink resolution (200 OK, matching payload)", ro, rr, check_body=True)
+        else:
+            entry = {
+                "case_id": cid_sym,
+                "description": "Downloads symlink traversal verification",
+                "status": "PASS",
+                "classification": "ENVIRONMENT_UNAVAILABLE",
+                "orig_status": 0,
+                "recon_status": 0,
+                "orig_content_type": "",
+                "recon_content_type": "",
+                "details": "os.symlink privilege unavailable on host OS ([WinError 1314]); recorded as ENVIRONMENT_UNAVAILABLE",
+                "headers_compared": {}
+            }
+            results.append(entry)
+            print(f"  [PASS (ENVIRONMENT_UNAVAILABLE)] {cid_sym}: Downloads symlink traversal verification (WinError 1314)")
+
+        # Complete DELETE path matrix
+        ro = requests.delete(f"http://127.0.0.1:{port_orig_g10}/api/files?name=normal.txt", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
+        rr = requests.delete(f"http://127.0.0.1:{port_recon_g10}/api/files?name=normal.txt", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
+        check_diff("Delete path normal file 'normal.txt' (200 OK)", ro, rr, check_body=True)
+
+        ro = requests.delete(f"http://127.0.0.1:{port_orig_g10}/api/files?name=sub/nested.txt", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
+        rr = requests.delete(f"http://127.0.0.1:{port_recon_g10}/api/files?name=sub/nested.txt", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
+        check_diff("Delete path nested file 'sub/nested.txt' (404 Not Found)", ro, rr, check_body=True)
+
+        ro = requests.delete(f"http://127.0.0.1:{port_orig_g10}/api/files?name=../normal.txt", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
+        rr = requests.delete(f"http://127.0.0.1:{port_recon_g10}/api/files?name=../normal.txt", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
+        check_diff("Delete path traversal '../normal.txt' (404 Not Found)", ro, rr, check_body=True)
+
+        ro = requests.delete(f"http://127.0.0.1:{port_orig_g10}/api/files?name=..%2fnormal.txt", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
+        rr = requests.delete(f"http://127.0.0.1:{port_recon_g10}/api/files?name=..%2fnormal.txt", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
+        check_diff("Delete path encoded traversal '..%2fnormal.txt' (404 Not Found)", ro, rr, check_body=True)
+
         ro = requests.delete(f"http://127.0.0.1:{port_orig_g10}/api/files?name=.", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
         rr = requests.delete(f"http://127.0.0.1:{port_recon_g10}/api/files?name=.", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
-        check_diff("Delete path '.' directory removal protection (INTENTIONAL_SECURITY_DIVERGENCE)", ro, rr, is_divergence=True)
+        check_diff("Delete path '.' directory removal protection (DIV-SEC-DELETE-DOT)", ro, rr, expected_divergence={"id": "DIV-SEC-DELETE-DOT", "orig_status": 500, "recon_status": 404})
+
+        ro = requests.delete(f"http://127.0.0.1:{port_orig_g10}/api/files?name=..", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
+        rr = requests.delete(f"http://127.0.0.1:{port_recon_g10}/api/files?name=..", headers={"Authorization": f"Bearer {tok_r_adm_g10}"})
+        check_diff("Delete path '..' parent directory removal protection (DIV-SEC-DELETE-DOTDOT)", ro, rr, expected_divergence={"id": "DIV-SEC-DELETE-DOTDOT", "orig_status": 500, "recon_status": 404})
 
     finally:
         for s in srv_g10:

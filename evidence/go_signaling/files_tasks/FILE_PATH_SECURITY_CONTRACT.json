@@ -1,70 +1,89 @@
 {
   "upload_path_security": {
     "base_cleaner": "filepath.Base",
+    "base_cleaner_provenance": "STATIC_BINARY_DERIVED",
     "traversal_checks": [
       {
         "input": ".",
         "verdict": "REJECT_400",
-        "error": "Invalid file name\n"
+        "error": "Invalid file name\n",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       {
         "input": "..",
         "verdict": "REJECT_400",
-        "error": "Invalid file path (path traversal detected)\n"
+        "error": "Invalid file path (path traversal detected)\n",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       {
         "input": "...",
         "verdict": "REJECT_400",
-        "error": "Invalid file path (path traversal detected)\n"
+        "error": "Invalid file path (path traversal detected)\n",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     ],
     "expanded_matrix": {
       "dir/file.txt": {
         "status": 200,
-        "saved_as": "file.txt"
+        "saved_as": "file.txt",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "./file.txt": {
         "status": 200,
-        "saved_as": "file.txt"
+        "saved_as": "file.txt",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "../file.txt": {
         "status": 200,
-        "saved_as": "file.txt"
+        "saved_as": "file.txt",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "a/../file.txt": {
         "status": 200,
-        "saved_as": "file.txt"
+        "saved_as": "file.txt",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       ".leading": {
         "status": 200,
-        "saved_as": ".leading"
+        "saved_as": ".leading",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "/etc/passwd": {
         "status": 200,
-        "saved_as": "passwd"
+        "saved_as": "passwd",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "C:\\test.txt": {
         "status": 200,
-        "saved_as": "test.txt"
+        "saved_as": "test.txt",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "sub\\file.txt": {
         "status": 200,
-        "saved_as": "file.txt"
+        "saved_as": "file.txt",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "..%2ffile.txt": {
         "status": 200,
-        "saved_as": "file.txt"
+        "saved_as": "file.txt",
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     },
     "containment_mechanism": "filepath.Join(dataDir, 'downloads', filepath.Base(cleanName))",
+    "containment_mechanism_provenance": "STATIC_BINARY_DERIVED",
     "security_classification": "BENIGN_SAFE_CONTAINED"
   },
   "delete_path_security": {
     "mechanism": "filepath.Join(dataDir, 'downloads', name)",
-    "traversal_result": "404 File not found (does not escape downloads directory or match existing non-download file)"
+    "mechanism_provenance": "STATIC_BINARY_DERIVED",
+    "traversal_result": "404 File not found (does not escape downloads directory or match existing non-download file)",
+    "traversal_provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "downloads_static_security": {
-    "mechanism": "http.StripPrefix('/downloads/', http.FileServer)",
-    "traversal_result": "404 Not Found (standard Go http.FileServer containment)"
-  }
+    "mechanism": "http.StripPrefix('/downloads/', main.main.func4)",
+    "mechanism_provenance": "STATIC_BINARY_DERIVED",
+    "traversal_result": "404 Not Found (standard Go containment)",
+    "traversal_provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "classification": "COMBINED"
 }

@@ -12,7 +12,8 @@
     "normal_user_unassigned_access": "FULL_TASK_DTO",
     "unauthenticated_access": "401_UNAUTHORIZED",
     "no_auth_mode_access": "FULL_TASK_DTO",
-    "rule": "AUTHENTICATED_GLOBAL_READ"
+    "rule": "AUTHENTICATED_GLOBAL_READ",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "missing_task_id_status": 400,
   "missing_task_id_body": "Missing task_id parameter\n",
@@ -21,6 +22,8 @@
   "success_response": {
     "status": 200,
     "content_type": "application/json",
-    "dto_reference": "Task (0x7fb3c0)"
-  }
+    "dto_reference": "Task (0x7fb3c0)",
+    "dto_reference_provenance": "STATIC_BINARY_DERIVED"
+  },
+  "classification": "COMBINED"
 }

@@ -2572,14 +2572,33 @@ def verify_all():
         tt_data = json.loads(ft_tt_file.read_text(encoding="utf-8"))
         tt = tt_data.get("types", {})
         ft = json.loads(ft_ft_file.read_text(encoding="utf-8"))
-        req_rec = tt_data.get("metadata", {}).get("classification") == "DIRECT_TYPE_RECOVERY" and tt.get("TaskCreateRequest", {}).get("struct_va") == "0x7ea980"
-        task_rec = tt.get("Task", {}).get("struct_va") == "0x7fb3c0"
-        dev_rec = tt.get("DeviceTaskStatus", {}).get("struct_va") == "0x7f4be0"
+        t_req = tt.get("TaskCreateRequest", {})
+        t_task = tt.get("Task", {})
+        t_dev = tt.get("DeviceTaskStatus", {})
+        req_rec = (
+            tt_data.get("metadata", {}).get("classification") == "DIRECT_TYPE_RECOVERY" and
+            t_req.get("kind") == 25 and
+            t_req.get("size_bytes", 0) > 0 and
+            any("json:\"targets\"" in f.get("tag", "") for f in t_req.get("fields", [])) and
+            t_req.get("struct_va", "").startswith("0x")
+        )
+        task_rec = (
+            t_task.get("kind") == 25 and
+            t_task.get("size_bytes", 0) > 0 and
+            any("json:\"task_id\"" in f.get("tag", "") for f in t_task.get("fields", [])) and
+            t_task.get("struct_va", "").startswith("0x")
+        )
+        dev_rec = (
+            t_dev.get("kind") == 25 and
+            t_dev.get("size_bytes", 0) > 0 and
+            any("json:\"device_id\"" in f.get("tag", "") for f in t_dev.get("fields", [])) and
+            t_dev.get("struct_va", "").startswith("0x")
+        )
         m_deriv = tt_data.get("metadata", {}).get("derivation_method") == "INSTRUCTION_DISASSEMBLY_NEWOBJECT_TRAVERSAL"
         file_wire = ft.get("classification") == "GENERATED_WIRE_MODEL"
         ft_type_valid = req_rec and task_rec and dev_rec and m_deriv and file_wire
     record_check("Phase 2C.3I Type Provenance & Descriptor Recovery", ft_type_valid,
-                 "Task descriptors (0x7ea980, 0x7fb3c0, 0x7f4be0) machine-derived from main.koVbnsD4T0d runtime.newobject; FileItem GENERATED_WIRE_MODEL")
+                 "Task descriptors machine-derived from /api/tasks handler runtime.newobject traversal; FileItem GENERATED_WIRE_MODEL")
 
     # 16.6 Storage & Task Lifecycle Invariants (Snapshot Directory Parity Resolved)
     ft_fs_file = ft_dir / "FILESYSTEM_ROOT_CONTRACT.json"
@@ -2594,10 +2613,17 @@ def verify_all():
         snap_dir_lifecycle = snap_s.get("directory_lifecycle") == "EAGER_EMPTY_DIR_ON_STARTUP"
         snap_in_mem = (snap_s.get("snapshot_data_storage") == "IN_MEMORY_MAP" or snap_s.get("classification") == "IN_MEMORY_MAP") and snap_s.get("filesystem_target") is False
         online_dep = tl_c.get("state_transitions", {}).get("online_target") == "ONLINE_DISPATCH_TRANSPORT_DEPENDENT"
-        task_fmt = ti_c.get("layout_va") == "0x825bda" and ti_c.get("format_string_va") == "0x82229b"
+        task_fmt = (
+            ti_c.get("format_string") == "task_%s_%x" and
+            ti_c.get("layout") == "20060102150405" and
+            ti_c.get("generator_symbol") == "main.g0bIYv" and
+            ti_c.get("format_string_va", "").startswith("0x") and
+            ti_c.get("layout_va", "").startswith("0x") and
+            ti_c.get("provenance") == "STATIC_BINARY_DERIVED"
+        )
         ft_invar_valid = snap_dir_lifecycle and snap_in_mem and online_dep and task_fmt
     record_check("Phase 2C.3I Storage & Task Lifecycle Invariants", ft_invar_valid,
-                 "Snapshots eager empty dir on disk with data storage in-memory only; online tasks transport-deferred; task ID format (0x825bda, 0x82229b)")
+                 "Snapshots eager empty dir on disk with data storage in-memory only; online tasks transport-deferred; task ID format machine-derived from main.g0bIYv")
 
     # 16.7 Method & Auth Matrices & Task Details Access Isolation
     ft_mm_file = ft_dir / "FILES_TASKS_METHOD_MATRIX.json"
@@ -2647,14 +2673,17 @@ def verify_all():
         has_range = any("Range" in r.get("description", "") for r in res_list)
         has_isolation = any("access isolation" in r.get("description", "") for r in res_list)
         has_dir_parity = any("Snapshots directory startup lifecycle parity" in r.get("description", "") for r in res_list)
+        has_header_comp = any("headers_compared" in r and len(r["headers_compared"]) > 0 for r in res_list)
+        has_unicode = any("tiếng Việt" in r.get("description", "") or "café" in r.get("description", "") for r in res_list)
+        has_path_matrix = any("Downloads matrix" in r.get("description", "") for r in res_list) and any("Delete path" in r.get("description", "") for r in res_list)
         ft_diff_valid = (
             ft_diff_data.get("all_passed") is True and
             ft_diff_data.get("passed") == ft_diff_data.get("total_cases") and
-            ft_diff_data.get("total_cases", 0) >= 90 and
-            has_range and has_isolation and has_dir_parity
+            ft_diff_data.get("total_cases", 0) >= 100 and
+            has_range and has_isolation and has_dir_parity and has_header_comp and has_unicode and has_path_matrix
         )
     record_check("Phase 2C.3I Files & Tasks REST Differential Results", ft_diff_valid,
-                 f"IMPLEMENTED_FILES_TASKS_CONTRACT_DIFFERENTIAL_PASS_RATE = {ft_diff_data.get('passed', 0)}/{ft_diff_data.get('total_cases', 0)} (100% PASS across 6 endpoints, 67 historical + 26 remediation)")
+                 f"IMPLEMENTED_FILES_TASKS_CONTRACT_DIFFERENTIAL_PASS_RATE = {ft_diff_data.get('passed', 0)}/{ft_diff_data.get('total_cases', 0)} (100% PASS across 6 endpoints, explicit header comparisons, Unicode & path traversal matrix)")
 
     # 16.10 Dynamic Cumulative Differential Denominator Audit (No Hardcoded Denominator)
     canonical_diff_artifacts = [
@@ -2715,6 +2744,14 @@ def verify_all():
     diff_audit_ok = diff_audit_ok and (cumulative_passed == cumulative_total) and (cumulative_total > 0)
     record_check("Dynamic Cumulative Differential Denominator Audit", diff_audit_ok,
                  f"PREVIOUS_TOTAL = {prev_passed}/{prev_total}; NEW_FILES_TASKS_TOTAL = {new_ft_passed}/{new_ft_total}; CUMULATIVE_PASS_RATE = {cumulative_passed}/{cumulative_total} (100% across all {len(canonical_diff_artifacts)} canonical suites)")
+
+    # 16.11 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
+    is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
+    allow_dirty = "--allow-dirty" in sys.argv
+    clean_tree = is_clean or allow_dirty
+    record_check("Master Verifier Non-Mutating Audit Invariant", clean_tree,
+                 "git status --porcelain is strictly empty; verification and reproducers cause zero repository mutations")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

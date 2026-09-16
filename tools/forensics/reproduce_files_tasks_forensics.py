@@ -153,7 +153,22 @@ def verify_reproducibility():
                     if details.get("status") != c_details.get("status"):
                         print(f"[FAIL] Status mismatch on {route} {verb}: {details.get('status')} != {c_details.get('status')}")
                         return False
-            checks_performed = ["7 routes checked", "7 HTTP verbs probed per route", "status parity with canonical"]
+                    if details.get("location") != c_details.get("location"):
+                        print(f"[FAIL] Location mismatch on {route} {verb}: {details.get('location')} != {c_details.get('location')}")
+                        return False
+                    if details.get("content_type") != c_details.get("content_type"):
+                        print(f"[FAIL] Content-Type mismatch on {route} {verb}: {details.get('content_type')} != {c_details.get('content_type')}")
+                        return False
+                    if details.get("content_length") != c_details.get("content_length"):
+                        print(f"[FAIL] Content-Length mismatch on {route} {verb}: {details.get('content_length')} != {c_details.get('content_length')}")
+                        return False
+                    if details.get("cors_origin") != c_details.get("cors_origin"):
+                        print(f"[FAIL] CORS Origin mismatch on {route} {verb}: {details.get('cors_origin')} != {c_details.get('cors_origin')}")
+                        return False
+                    if details.get("cors_headers") != c_details.get("cors_headers"):
+                        print(f"[FAIL] CORS Headers mismatch on {route} {verb}: {details.get('cors_headers')} != {c_details.get('cors_headers')}")
+                        return False
+            checks_performed = ["7 routes checked", "7 HTTP verbs probed per route", "status, location, headers, CORS parity with canonical"]
 
         elif a_name == "FILES_TASKS_AUTH_MATRIX.json":
             if set(rj.keys()) != set(cj.keys()):
@@ -168,7 +183,13 @@ def verify_reproducibility():
                     if details.get("status") != c_details.get("status"):
                         print(f"[FAIL] Status mismatch on {route} context {ctx}: {details.get('status')} != {c_details.get('status')}")
                         return False
-            checks_performed = ["7 routes checked", "6 auth contexts probed per route", "status parity with canonical"]
+                    if details.get("content_type") != c_details.get("content_type"):
+                        print(f"[FAIL] Content-Type mismatch on {route} context {ctx}: {details.get('content_type')} != {c_details.get('content_type')}")
+                        return False
+                    if details.get("body_len") != c_details.get("body_len"):
+                        print(f"[FAIL] Body len mismatch on {route} context {ctx}: {details.get('body_len')} != {c_details.get('body_len')}")
+                        return False
+            checks_performed = ["7 routes checked", "6 auth contexts probed per route", "status, content-type, body-len parity with canonical"]
 
         elif a_name == "TASK_TYPE_EVIDENCE.json":
             types_r = rj.get("types", {})
@@ -177,13 +198,28 @@ def verify_reproducibility():
                 if t_name not in types_r:
                     print(f"[FAIL] Missing type {t_name} in regenerated TASK_TYPE_EVIDENCE")
                     return False
-                if types_r[t_name].get("struct_va") != types_c.get(t_name, {}).get("struct_va"):
-                    print(f"[FAIL] Struct VA mismatch for {t_name}: {types_r[t_name].get('struct_va')} != {types_c.get(t_name, {}).get('struct_va')}")
+                tr = types_r[t_name]
+                tc = types_c.get(t_name, {})
+                for attr in ["struct_va", "name", "size_bytes", "kind", "field_count"]:
+                    if tr.get(attr) != tc.get(attr):
+                        print(f"[FAIL] {attr} mismatch for {t_name}: {tr.get(attr)} != {tc.get(attr)}")
+                        return False
+                r_fields = tr.get("fields", [])
+                c_fields = tc.get("fields", [])
+                if len(r_fields) != len(c_fields):
+                    print(f"[FAIL] Field count mismatch for {t_name}: {len(r_fields)} != {len(c_fields)}")
                     return False
-                if len(types_r[t_name].get("fields", [])) != len(types_c.get(t_name, {}).get("fields", [])):
-                    print(f"[FAIL] Field count mismatch for {t_name}")
-                    return False
-            checks_performed = ["3 machine-derived DTOs", "struct VAs 0x7ea980, 0x7fb3c0, 0x7f4be0", "exact field parity with canonical"]
+                for f_idx, (rf, cf) in enumerate(zip(r_fields, c_fields)):
+                    for fattr in ["name", "tag", "offset", "type_va"]:
+                        if rf.get(fattr) != cf.get(fattr):
+                            print(f"[FAIL] Field {f_idx} {fattr} mismatch in {t_name}: {rf.get(fattr)} != {cf.get(fattr)}")
+                            return False
+            checks_performed = [
+                "3 machine-derived DTOs (TaskCreateRequest, Task, DeviceTaskStatus)",
+                "struct VAs (0x7ea980, 0x7fb3c0, 0x7f4be0)",
+                "type identity, size, kind, field_count exact match",
+                "all field names, tags, offsets, and type VAs match canonical"
+            ]
 
         elif a_name == "FILESYSTEM_ROOT_CONTRACT.json":
             r_roots = rj.get("roots", {})
@@ -262,7 +298,7 @@ def verify_reproducibility():
     manifest_doc = {
         "manifest_name": "FILES_TASKS_REPRODUCIBILITY_MANIFEST",
         "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "phase": "2C.3IR",
+        "phase": "2C.3IR2",
         "total_contract_artifacts": total_manifest,
         "verified_reproduced_count": len(verified_artifacts),
         "overall_verdict": "PASS",
@@ -270,7 +306,11 @@ def verify_reproducibility():
         "artifacts": {e["artifact_name"]: e for e in manifest_entries}
     }
 
-    MANIFEST_PATH.write_text(json.dumps(manifest_doc, indent=2, ensure_ascii=False), encoding="utf-8")
+    if "--update-manifest" in sys.argv:
+        MANIFEST_PATH.write_text(json.dumps(manifest_doc, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"[+] Updated canonical {MANIFEST_PATH.name}")
+    else:
+        print(f"[i] Read-only verification: canonical manifest untouched (pass --update-manifest to overwrite)")
     (temp_dir / "FILES_TASKS_REPRODUCIBILITY_MANIFEST.json").write_text(json.dumps(manifest_doc, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print("\n----------------------------------------------------------")

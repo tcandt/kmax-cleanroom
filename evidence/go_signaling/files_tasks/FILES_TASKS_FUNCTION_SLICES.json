@@ -106,7 +106,8 @@
       "0x758eaf: mov      rcx, qword ptr [rsp + 0x380]",
       "0x758eb7: mov      rdi, qword ptr [rsp + 0x388]",
       "0x758ebf: lea      rax, [rip + 0x9b8ba]"
-    ]
+    ],
+    "provenance": "STATIC_BINARY_DERIVED"
   },
   "main.qa3RvDW": {
     "symbol": "main.qa3RvDW",
@@ -215,7 +216,8 @@
       "0x75a4ee: mov      rcx, qword ptr [rsp + 0x228]",
       "0x75a4f6: mov      rdi, qword ptr [rsp + 0xb0]",
       "0x75a4fe: nop      "
-    ]
+    ],
+    "provenance": "STATIC_BINARY_DERIVED"
   },
   "main.koVbnsD4T0d": {
     "symbol": "main.koVbnsD4T0d",
@@ -324,7 +326,8 @@
       "0x75b1c3: lea      rax, [rip + 0x995b6]",
       "0x75b1ca: mov      rbx, qword ptr [rsp + 0x78]",
       "0x75b1cf: mov      rcx, qword ptr [rsp + 0x140]"
-    ]
+    ],
+    "provenance": "STATIC_BINARY_DERIVED"
   },
   "main.bhMId7t5J": {
     "symbol": "main.bhMId7t5J",
@@ -433,7 +436,8 @@
       "0x7640af: mov      rdi, qword ptr [rsp + 0x38]",
       "0x7640b4: call     0x40b5a0",
       "0x7640b9: mov      qword ptr [rax + 8], 1"
-    ]
+    ],
+    "provenance": "STATIC_BINARY_DERIVED"
   },
   "main.main.Op3UlgB95u.func8": {
     "symbol": "main.main.Op3UlgB95u.func8",
@@ -542,7 +546,8 @@
       "0x767117: mov      r9, qword ptr [rsp + 0x38]",
       "0x76711c: mov      qword ptr [r8 + 0x40], r9",
       "0x767120: cmp      dword ptr [rip + 0x4c28e9], 0"
-    ]
+    ],
+    "provenance": "STATIC_BINARY_DERIVED"
   },
   "main.main.func4": {
     "symbol": "main.main.func4",
@@ -651,7 +656,8 @@
       "0x76d92d: mov      rbx, qword ptr [rcx + 0x40]",
       "0x76d931: call     0x4d4780",
       "0x76d936: movups   xmmword ptr [rsp + 0x50], xmm15"
-    ]
+    ],
+    "provenance": "STATIC_BINARY_DERIVED"
   },
   "main.main.func5": {
     "symbol": "main.main.func5",
@@ -760,6 +766,7 @@
       "0x76dbfa: mov      ecx, 4",
       "0x76dbff: nop      ",
       "0x76dc00: call     0x403600"
-    ]
+    ],
+    "provenance": "STATIC_BINARY_DERIVED"
   }
 }
