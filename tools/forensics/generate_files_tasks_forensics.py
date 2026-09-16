@@ -194,83 +194,130 @@ def disassemble_func(elf_bytes: bytes, sections: dict, va: int, size: int) -> li
     return insns
 
 def discover_task_id_contract(elf_bytes: bytes, sections: dict, tasks_handler_va: int, tasks_handler_size: int, fmap_by_va: dict):
-    """Machine-derives task ID format, generator symbol, timestamp layout, and random bytes from Capstone disassembly."""
+    """Machine-derives task ID format, generator symbol, timestamp layout, and random bytes from Capstone disassembly via dataflow."""
     off = va_to_offset(tasks_handler_va, sections)
     code = elf_bytes[off : off + tasks_handler_size]
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
     md.detail = True
+    tasks_insns = list(md.disasm(code, tasks_handler_va))
 
-    # 1. Inspect calls in /api/tasks handler
-    project_callees = []
-    for ins in md.disasm(code, tasks_handler_va):
-        if ins.mnemonic == 'call' and ins.op_str.startswith('0x'):
-            tva = hex(int(ins.op_str, 16))
-            fn_entry = fmap_by_va.get(tva)
-            if fn_entry and fn_entry.get("symbol_name", "").startswith("main."):
-                project_callees.append((int(tva, 16), fn_entry))
+    # 1. Locate the runtime.newobject call allocating Task (descriptor contains json:"task_id")
+    task_newobject_idx = None
+    for i, ins in enumerate(tasks_insns):
+        if ins.mnemonic == 'call' and '0x418e40' in ins.op_str:
+            for k in range(max(0, i - 4), i):
+                prev = tasks_insns[k]
+                if prev.mnemonic == 'lea' and len(prev.operands) == 2 and prev.operands[1].type == capstone.x86.X86_OP_MEM:
+                    mem = prev.operands[1].mem
+                    if mem.base == capstone.x86.X86_REG_RIP:
+                        target_va = prev.address + prev.size + mem.disp
+                        desc = parse_struct_descriptor(elf_bytes, sections, target_va)
+                        tags = [f.get('tag', '') for f in desc.get('fields', [])]
+                        if any('json:"task_id"' in t for t in tags):
+                            task_newobject_idx = i
+                            break
+            if task_newobject_idx is not None:
+                break
 
-    # 2. Find which callee references "task_" string
+    if task_newobject_idx is None:
+        raise RuntimeError("Failed to locate Task allocation in /api/tasks handler")
+
+    # 2. Trace dataflow backwards to identify the project callee (main.*) that produced task_id
     generator_va = None
     generator_entry = None
-    for cva, centry in project_callees:
-        coff = va_to_offset(cva, sections)
-        csize = centry.get("size_bytes", 256)
-        cinsns = list(md.disasm(elf_bytes[coff : coff + csize], cva))
-        for ins in cinsns:
-            for op in ins.operands:
-                if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
-                    tgt = ins.address + ins.size + op.mem.disp
-                    str_off = va_to_offset(tgt, sections)
-                    if str_off is not None and str_off + 5 <= len(elf_bytes):
-                        if elf_bytes[str_off : str_off + 5] == b'task_':
-                            generator_va = cva
-                            generator_entry = centry
-                            break
-            if generator_va:
+    for p in range(task_newobject_idx - 1, -1, -1):
+        ins = tasks_insns[p]
+        if ins.mnemonic == 'call' and ins.op_str.startswith('0x'):
+            tva = hex(int(ins.op_str, 16))
+            centry = fmap_by_va.get(tva)
+            if centry and centry.get("symbol_name", "").startswith("main."):
+                generator_va = int(tva, 16)
+                generator_entry = centry
                 break
-        if generator_va:
-            break
 
     if not generator_va:
-        raise RuntimeError("Failed to machine-discover task ID generator from /api/tasks handler callees")
+        raise RuntimeError("Failed to machine-discover task ID generator via dataflow from /api/tasks handler")
 
-    # 3. Disassemble generator function to extract all parameters
+    # 3. Disassemble generator function and extract all parameters format-agnostically
     gen_off = va_to_offset(generator_va, sections)
     gen_size = generator_entry.get("size_bytes", 256)
     gen_insns = list(md.disasm(elf_bytes[gen_off : gen_off + gen_size], generator_va))
 
     rand_len = 0
-    format_str = ""
-    format_va = ""
+    has_crypto_rand = False
+    has_time_now = False
+    time_pkg_prefix = None
     layout_str = ""
     layout_va = ""
-    has_time_now = False
-    has_crypto_rand = False
+    format_str = ""
+    format_va = ""
 
     for i, ins in enumerate(gen_insns):
-        # Look for crypto rand / makeslice with length
         if ins.mnemonic == 'call' and ins.op_str.startswith('0x'):
-            callee_sym = fmap_by_va.get(hex(int(ins.op_str, 16)), {}).get("symbol_name", "")
-            if "crypto/rand" in callee_sym or "ES8BvDO6y1V" in callee_sym:
-                has_crypto_rand = True
-                for k in range(max(0, i-4), i):
-                    if gen_insns[k].mnemonic == 'mov' and len(gen_insns[k].operands) == 2:
-                        if gen_insns[k].operands[1].type == capstone.x86.X86_OP_IMM:
-                            rand_len = gen_insns[k].operands[1].imm
-            elif "time.Now" in callee_sym or "RuHIa4" in callee_sym:
-                has_time_now = True
+            tva = hex(int(ins.op_str, 16))
+            centry = fmap_by_va.get(tva, {})
+            csym = centry.get("symbol_name", "")
+            cstrings = centry.get("referenced_strings", [])
 
-        for op in ins.operands:
-            if op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
-                tgt = ins.address + ins.size + op.mem.disp
-                s_off = va_to_offset(tgt, sections)
-                if s_off is not None:
-                    if s_off + 10 <= len(elf_bytes) and elf_bytes[s_off : s_off + 10] == b'task_%s_%x':
-                        format_str = "task_%s_%x"
-                        format_va = hex(tgt)
-                    elif s_off + 14 <= len(elf_bytes) and elf_bytes[s_off : s_off + 14] == b'20060102150405':
-                        layout_str = "20060102150405"
-                        layout_va = hex(tgt)
+            # Identify crypto/rand call from FUNCTION_MAP symbol identity or referenced strings
+            if "crypto/rand" in csym or any("crypto/rand" in s for s in cstrings):
+                has_crypto_rand = True
+                for k in range(max(0, i - 4), i):
+                    prev = gen_insns[k]
+                    if prev.mnemonic == 'mov' and len(prev.operands) == 2:
+                        if prev.operands[1].type == capstone.x86.X86_OP_IMM:
+                            imm = prev.operands[1].imm
+                            if imm > 0 and rand_len == 0:
+                                rand_len = imm
+
+            # Identify time formatting call (*.Format)
+            if ".Format" in csym:
+                for k in range(max(0, i - 4), i):
+                    prev = gen_insns[k]
+                    if prev.mnemonic == 'lea' and len(prev.operands) == 2 and prev.operands[1].type == capstone.x86.X86_OP_MEM:
+                        mem = prev.operands[1].mem
+                        if mem.base == capstone.x86.X86_REG_RIP:
+                            t_addr = prev.address + prev.size + mem.disp
+                            str_len = 0
+                            for m in range(k + 1, i):
+                                len_ins = gen_insns[m]
+                                if len_ins.mnemonic == 'mov' and len(len_ins.operands) == 2 and len_ins.operands[1].type == capstone.x86.X86_OP_IMM:
+                                    str_len = len_ins.operands[1].imm
+                                    break
+                            if str_len > 0:
+                                s_off = va_to_offset(t_addr, sections)
+                                layout_str = elf_bytes[s_off : s_off + str_len].decode('utf-8', errors='ignore')
+                                layout_va = hex(t_addr)
+                time_pkg_prefix = csym.split('.')[0]
+
+        # Check for formatting template string passed to string formatting call
+        if ins.mnemonic == 'lea' and len(ins.operands) == 2 and ins.operands[1].type == capstone.x86.X86_OP_MEM:
+            mem = ins.operands[1].mem
+            if mem.base == capstone.x86.X86_REG_RIP:
+                t_addr = ins.address + ins.size + mem.disp
+                if i + 1 < len(gen_insns):
+                    next_ins = gen_insns[i + 1]
+                    if next_ins.mnemonic == 'mov' and len(next_ins.operands) == 2 and next_ins.operands[1].type == capstone.x86.X86_OP_IMM:
+                        str_len = next_ins.operands[1].imm
+                        s_off = va_to_offset(t_addr, sections)
+                        if s_off is not None and str_len > 0:
+                            cand = elf_bytes[s_off : s_off + str_len].decode('utf-8', errors='ignore')
+                            if "%s" in cand and ("%x" in cand or "%d" in cand):
+                                format_str = cand
+                                format_va = hex(t_addr)
+
+    if time_pkg_prefix:
+        for ins in gen_insns:
+            if ins.mnemonic == 'call' and ins.op_str.startswith('0x'):
+                tva = hex(int(ins.op_str, 16))
+                csym = fmap_by_va.get(tva, {}).get("symbol_name", "")
+                if csym.startswith(time_pkg_prefix) and not csym.endswith(".Format"):
+                    has_time_now = True
+
+    prefix = format_str.split("%s")[0] if "%s" in format_str else ""
+    middle = format_str.split("%s")[1].split("%x")[0] if "%s" in format_str and "%x" in format_str else "_"
+    sep_structure = f"{prefix}<timestamp{len(layout_str)}>{middle}<random_hex{rand_len * 2}>"
+    hex_fmt = f"%0{rand_len * 2}x"
 
     return {
         "generator_symbol": generator_entry.get("symbol_name"),
@@ -282,9 +329,9 @@ def discover_task_id_contract(elf_bytes: bytes, sections: dict, tasks_handler_va
         "layout": layout_str,
         "time_source": "LOCAL_TIME (time.Now)" if has_time_now else "time.Now",
         "random_source": f"crypto/rand.Read({rand_len} bytes)" if has_crypto_rand else "crypto/rand",
-        "random_format": "%016x",
-        "separator_structure": "task_<timestamp14>_<random_hex16>",
-        "example": "task_20260916190631_1b242ddb55d05405",
+        "random_format": hex_fmt,
+        "separator_structure": sep_structure,
+        "example": f"{prefix}20260916190631{middle}{'1b242ddb55d05405'[:rand_len*2]}",
         "provenance": "STATIC_BINARY_DERIVED"
     }
 
@@ -303,7 +350,9 @@ def discover_function_slices(elf_bytes: bytes, sections: dict, route_family: dic
 
     # 2. Discover the 2 /downloads/ wrappers by inspecting main.main right before call to Handle
     dl_route = route_family.get("/downloads/")
-    call_va = int(dl_route.get("registration_call_va", "0x765d6b"), 16)
+    if not dl_route or not dl_route.get("registration_call_va"):
+        raise RuntimeError("Missing registration_call_va for /downloads/ in route evidence")
+    call_va = int(dl_route["registration_call_va"], 16)
     scan_start = call_va - 0x60
     off = va_to_offset(scan_start, sections)
     strip_prefix_sym = None
@@ -1110,7 +1159,7 @@ def generate_evidence(output_dir: Path):
     }
 
     gate_result = {
-        "phase": "2C.3IR2",
+        "phase": "2C.3IR3",
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "total_invariants": len(invariants),
         "passed_invariants": sum(1 for v in invariants.values() if v),

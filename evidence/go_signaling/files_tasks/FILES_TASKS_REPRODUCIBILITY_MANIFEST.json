@@ -1,6 +1,6 @@
 {
   "manifest_name": "FILES_TASKS_REPRODUCIBILITY_MANIFEST",
-  "generated_at": "2026-09-16T13:38:44.530368+00:00",
+  "generated_at": "2026-09-16T14:10:09.132945+00:00",
   "phase": "2C.3IR2",
   "total_contract_artifacts": 21,
   "verified_reproduced_count": 21,
@@ -312,7 +312,7 @@
       "verification_result": "PASS",
       "deep_semantic_checks": [
         "3 machine-derived DTOs (TaskCreateRequest, Task, DeviceTaskStatus)",
-        "struct VAs (0x7ea980, 0x7fb3c0, 0x7f4be0)",
+        "struct VAs match canonical",
         "type identity, size, kind, field_count exact match",
         "all field names, tags, offsets, and type VAs match canonical"
       ]
@@ -416,10 +416,11 @@
       "canonical_input_used": false,
       "verification_result": "PASS",
       "deep_semantic_checks": [
-        "generator main.g0bIYv (0x75a1e0)",
-        "format task_%s_%x",
-        "layout 20060102150405",
-        "canonical equality"
+        "format_string equality",
+        "layout equality",
+        "generator symbol and VA equality",
+        "random source & format equality",
+        "canonical semantic equality"
       ]
     },
     "FILES_TASKS_PERSISTENCE_CONTRACT.json": {

@@ -1,11 +1,25 @@
 {
-  "execution_timestamp": "2026-09-16T13:45:50.190940+00:00",
-  "historical_cases": 67,
-  "remediation_cases": 39,
-  "total_cases": 106,
-  "passed": 106,
+  "execution_timestamp": "2026-09-16T14:12:08.861738+00:00",
+  "total_cases_evaluated": 106,
+  "exact_parity_total": 103,
+  "exact_parity_passed": 103,
+  "exact_parity_pass_rate": "103/103",
+  "verified_intentional_divergences": 2,
+  "excluded_environment_unavailable": 1,
   "failed": 0,
   "all_passed": true,
+  "passed": 103,
+  "total_cases": 103,
+  "summary": {
+    "total_cases_evaluated": 106,
+    "exact_parity_total": 103,
+    "exact_parity_passed": 103,
+    "exact_parity_pass_rate": "103/103",
+    "verified_intentional_divergences": 2,
+    "excluded_environment_unavailable": 1,
+    "failed": 0,
+    "verdict": "PASS"
+  },
   "results": [
     {
       "case_id": "FT-DIFF-01",
@@ -663,8 +677,8 @@
           "match": true
         },
         "Last-Modified": {
-          "orig": "Wed, 16 Sep 2026 13:45:39 GMT",
-          "recon": "Wed, 16 Sep 2026 13:45:39 GMT",
+          "orig": "Wed, 16 Sep 2026 14:11:58 GMT",
+          "recon": "Wed, 16 Sep 2026 14:11:58 GMT",
           "match": true
         },
         "Access-Control-Allow-Origin": {
@@ -705,8 +719,8 @@
           "match": true
         },
         "Last-Modified": {
-          "orig": "Wed, 16 Sep 2026 13:45:39 GMT",
-          "recon": "Wed, 16 Sep 2026 13:45:39 GMT",
+          "orig": "Wed, 16 Sep 2026 14:11:58 GMT",
+          "recon": "Wed, 16 Sep 2026 14:11:58 GMT",
           "match": true
         },
         "Access-Control-Allow-Origin": {
@@ -3008,7 +3022,7 @@
     {
       "case_id": "FT-DIFF-98",
       "description": "Downloads symlink traversal verification",
-      "status": "PASS",
+      "status": "EXCLUDED",
       "classification": "ENVIRONMENT_UNAVAILABLE",
       "orig_status": 0,
       "recon_status": 0,
@@ -3148,7 +3162,7 @@
     {
       "case_id": "FT-DIFF-103",
       "description": "Delete path '.' directory removal protection (DIV-SEC-DELETE-DOT)",
-      "status": "PASS",
+      "status": "VERIFIED_DIVERGENCE",
       "classification": "INTENTIONAL_SECURITY_DIVERGENCE",
       "divergence_id": "DIV-SEC-DELETE-DOT",
       "orig_status": 500,
@@ -3167,7 +3181,7 @@
     {
       "case_id": "FT-DIFF-104",
       "description": "Delete path '..' parent directory removal protection (DIV-SEC-DELETE-DOTDOT)",
-      "status": "PASS",
+      "status": "VERIFIED_DIVERGENCE",
       "classification": "INTENTIONAL_SECURITY_DIVERGENCE",
       "divergence_id": "DIV-SEC-DELETE-DOTDOT",
       "orig_status": 500,

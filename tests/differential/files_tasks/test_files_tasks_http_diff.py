@@ -205,7 +205,7 @@ def main():
                     div_match = False
                     diffs.append(f"Divergence recon status mismatch: expected {exp_recon}, got {r_recon.status_code}")
 
-                status_str = "PASS" if div_match else "FAIL"
+                status_str = "VERIFIED_DIVERGENCE" if div_match else "FAIL"
                 if not div_match:
                     test_run_success = False
 
@@ -251,14 +251,21 @@ def main():
                     if hl == "content-type":
                         match = vo.split(";")[0].strip().lower() == vr.split(";")[0].strip().lower()
                     elif hl == "last-modified":
-                        match = bool(vo) and bool(vr)
+                        # Compare parsed HTTP-date timestamps exactly or exact normalized HTTP-date strings
+                        try:
+                            from email.utils import parsedate_to_datetime
+                            dto = parsedate_to_datetime(vo)
+                            dtr = parsedate_to_datetime(vr)
+                            match = (dto == dtr)
+                        except Exception:
+                            match = (vo.strip().lower() == vr.strip().lower())
                     elif hl == "content-length":
                         match = vo.strip() == vr.strip()
                     else:
                         match = vo.strip() == vr.strip()
                 headers_compared[h] = {"orig": vo, "recon": vr, "match": match}
                 if not match:
-                    if h.lower() == "content-type" or headers_to_compare is not None:
+                    if h.lower() in ("content-type", "last-modified") or headers_to_compare is not None:
                         passed = False
                         diffs.append(f"Header '{h}' mismatch: orig='{vo}', recon='{vr}'")
 
@@ -1006,7 +1013,7 @@ def main():
             entry = {
                 "case_id": cid_sym,
                 "description": "Downloads symlink traversal verification",
-                "status": "PASS",
+                "status": "EXCLUDED",
                 "classification": "ENVIRONMENT_UNAVAILABLE",
                 "orig_status": 0,
                 "recon_status": 0,
@@ -1016,7 +1023,7 @@ def main():
                 "headers_compared": {}
             }
             results.append(entry)
-            print(f"  [PASS (ENVIRONMENT_UNAVAILABLE)] {cid_sym}: Downloads symlink traversal verification (WinError 1314)")
+            print(f"  [EXCLUDED (ENVIRONMENT_UNAVAILABLE)] {cid_sym}: Downloads symlink traversal verification (WinError 1314)")
 
         # Complete DELETE path matrix
         ro = requests.delete(f"http://127.0.0.1:{port_orig_g10}/api/files?name=normal.txt", headers={"Authorization": f"Bearer {tok_o_adm_g10}"})
@@ -1117,18 +1124,49 @@ def main():
             s.stop()
 
     total_cases = len(results)
-    passed_cases = sum(1 for r in results if r["status"] == "PASS")
-    failed_cases = total_cases - passed_cases
-    all_passed = (failed_cases == 0)
+    exact_parity_cases = [
+        r for r in results
+        if r.get("classification") == "PARITY" or (
+            r.get("status") in ("PASS", "FAIL") and
+            r.get("classification") not in ("ENVIRONMENT_UNAVAILABLE", "INTENTIONAL_SECURITY_DIVERGENCE")
+        )
+    ]
+    exact_parity_total = len(exact_parity_cases)
+    exact_parity_passed = len([r for r in exact_parity_cases if r.get("status") == "PASS"])
+
+    verified_divergences = len([
+        r for r in results
+        if r.get("classification") == "INTENTIONAL_SECURITY_DIVERGENCE" and r.get("status") == "VERIFIED_DIVERGENCE"
+    ])
+    excluded_env = len([
+        r for r in results
+        if r.get("classification") == "ENVIRONMENT_UNAVAILABLE" and r.get("status") == "EXCLUDED"
+    ])
+    failed_cases = len([r for r in results if r.get("status") == "FAIL"])
+    verdict_passed = (failed_cases == 0 and exact_parity_passed == exact_parity_total)
 
     summary_payload = {
         "execution_timestamp": datetime.now(timezone.utc).isoformat(),
-        "historical_cases": 67,
-        "remediation_cases": total_cases - 67,
-        "total_cases": total_cases,
-        "passed": passed_cases,
+        "total_cases_evaluated": total_cases,
+        "exact_parity_total": exact_parity_total,
+        "exact_parity_passed": exact_parity_passed,
+        "exact_parity_pass_rate": f"{exact_parity_passed}/{exact_parity_total}",
+        "verified_intentional_divergences": verified_divergences,
+        "excluded_environment_unavailable": excluded_env,
         "failed": failed_cases,
-        "all_passed": all_passed,
+        "all_passed": verdict_passed,
+        "passed": exact_parity_passed,
+        "total_cases": exact_parity_total,
+        "summary": {
+            "total_cases_evaluated": total_cases,
+            "exact_parity_total": exact_parity_total,
+            "exact_parity_passed": exact_parity_passed,
+            "exact_parity_pass_rate": f"{exact_parity_passed}/{exact_parity_total}",
+            "verified_intentional_divergences": verified_divergences,
+            "excluded_environment_unavailable": excluded_env,
+            "failed": failed_cases,
+            "verdict": "PASS" if verdict_passed else "FAIL"
+        },
         "results": results
     }
 
@@ -1137,13 +1175,16 @@ def main():
         json.dump(summary_payload, f, indent=2)
 
     print("\n==========================================================")
-    print(f"DIFFERENTIAL TEST RESULTS: {passed_cases}/{total_cases} PASSED")
-    print(f"Historical cases: 67/67 PASSED (hardened comparator)")
-    print(f"Remediation cases: {total_cases - 67}/{total_cases - 67} PASSED")
+    print("DIFFERENTIAL TEST RESULTS SUMMARY:")
+    print(f"  EXACT_PARITY_PASS_RATE = {exact_parity_passed}/{exact_parity_total}")
+    print(f"  VERIFIED_INTENTIONAL_DIVERGENCES = {verified_divergences}")
+    print(f"  ENVIRONMENT_UNAVAILABLE_EXCLUDED = {excluded_env}")
+    print(f"  FAILED = {failed_cases}")
+    print(f"  VERDICT = {'PASS' if verdict_passed else 'FAIL'}")
     print(f"Output saved to: {OUTPUT_JSON}")
     print("==========================================================")
 
-    if not all_passed:
+    if not verdict_passed:
         sys.exit(1)
 
 if __name__ == "__main__":

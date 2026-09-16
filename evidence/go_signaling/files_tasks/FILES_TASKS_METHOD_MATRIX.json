@@ -167,7 +167,7 @@
       "cors_methods": "GET, DELETE, OPTIONS",
       "cors_headers": "Content-Type, Authorization",
       "body_bytes": 355,
-      "body_sha256": "7edb18d9ad7ef9ecfa66f7b62fcb1bc29603fbd75c95c5d0782a08852d1c85ad"
+      "body_sha256": "fd8f76b49e1420507443c6a3a427cf1242c02c106c9c8c6ae02afdeec803ee79"
     },
     "POST": {
       "status": 405,
@@ -257,7 +257,7 @@
       "cors_methods": "POST, OPTIONS",
       "cors_headers": "Content-Type, Authorization",
       "body_bytes": 70,
-      "body_sha256": "d0d1a173d1893dfef4863b6fffe06e7146de093048c0d838f4951734d9b5d010"
+      "body_sha256": "dbc888caa5f9427755dc5ab4699e2862d64eebc5908f797dc8adb218f39b2d82"
     },
     "PUT": {
       "status": 405,
@@ -325,7 +325,7 @@
       "cors_methods": "GET, OPTIONS",
       "cors_headers": "Content-Type, Authorization",
       "body_bytes": 425,
-      "body_sha256": "2ad8a43e0296a67aa1b153162aa05b393707e89aef4af457e728e31af29aa0ec"
+      "body_sha256": "5d881bdfe2c407a7735afc79f85c97382a380a31ee55b5447c9d30c064fc01d1"
     },
     "POST": {
       "status": 405,
