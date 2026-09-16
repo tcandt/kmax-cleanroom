@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 """
-test_devices_http_diff.py - Phase 2C.3B Device Registry HTTP Differential Test Suite
+test_devices_http_diff.py - Phase 2C.3BR Device Registry HTTP Differential Test Suite
 
 Runs original webrtc-signaling and reconstructed http-server side-by-side.
-Executes test cases DEV-HTTP-01 through DEV-HTTP-14.
+Executes 28 exhaustive differential test cases covering:
+  - Empty/populated registry queries
+  - Exact DTO schema and invariant verification
+  - Auth and visibility filtering
+  - Reconnect and disconnect lifecycles
+  - Full method contract across /devices (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS)
+  - Full delete route contract across /api/devices/ (all error branches, auth requirements, OPTIONS, HEAD)
+  - ServeMux trailing-slash redirect semantics with allow_redirects=False
+  - Independent No-Auth server mode verification
+
 Outputs:
   - evidence/go_signaling/devices/DEVICE_HTTP_DIFFERENTIAL_RESULTS.json
   - reports/13_PHASE2C3B_DEVICE_REGISTRY_DIFFERENTIAL.md
@@ -20,21 +29,28 @@ import hashlib
 import json
 import requests
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 EXE_ORIG = ROOT / "cloudphone-v0.3.6 (1)" / "bin" / "windows_amd64" / "webrtc-signaling.exe"
 ASSETS = ROOT / "cloudphone-v0.3.6 (1)" / "assets"
 DIFF_TMP = ROOT / "scratch" / "device_http_diff_fixture"
+DIFF_TMP_NA = ROOT / "scratch" / "device_http_noauth_fixture"
 EXE_RECON = ROOT / "scratch" / "reconstructed_http_server.exe"
 
 OUTPUT_JSON = ROOT / "evidence" / "go_signaling" / "devices" / "DEVICE_HTTP_DIFFERENTIAL_RESULTS.json"
-OUTPUT_REPORT = ROOT / "reports" / "13_PHASE2C3B_DEVICE_REGISTRY_DIFFERENTIAL.md"
+OUTPUT_REPORT = ROOT / "reports" / "13R_PHASE2C3B_DEVICE_CONTRACT_CLOSURE.md"
 
 PORT_ORIG = 29888
 PORT_RECON = 29889
 URL_ORIG = f"http://127.0.0.1:{PORT_ORIG}"
 URL_RECON = f"http://127.0.0.1:{PORT_RECON}"
+
+PORT_ORIG_NA = 29892
+PORT_RECON_NA = 29893
+URL_ORIG_NA = f"http://127.0.0.1:{PORT_ORIG_NA}"
+URL_RECON_NA = f"http://127.0.0.1:{PORT_RECON_NA}"
 
 def ws_connect(host, port, path):
     s = socket.create_connection((host, port), timeout=5)
@@ -117,6 +133,12 @@ def build_reconstructed():
         raise RuntimeError(f"Failed to build reconstructed HTTP server: {res.stderr}")
     print("[+] Successfully compiled reconstructed HTTP server")
 
+def parse_iso_time(ts_str):
+    try:
+        return datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+    except Exception:
+        return None
+
 def run_suite():
     setup_fixtures()
     build_reconstructed()
@@ -178,7 +200,7 @@ def run_suite():
     active_ws = {}
 
     def register_device_sync(device_id, info, is_webrtc=True):
-        # Original: WebSocket connect
+        # Original: WebSocket connect to /register_agent
         ws = ws_connect("127.0.0.1", PORT_ORIG, "/register_agent")
         msg = json.dumps({
             "type": "agent_register",
@@ -216,7 +238,7 @@ def run_suite():
             tokens_recon[u] = r_r.json()["token"]
 
         # =====================================================================
-        # DEV-HTTP-01: Empty Registry Admin
+        # DEV-HTTP-01: Empty Registry Admin Query
         # =====================================================================
         r_o = requests.get(f"{URL_ORIG}/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
         r_r = requests.get(f"{URL_RECON}/devices", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
@@ -233,7 +255,7 @@ def run_suite():
         )
 
         # =====================================================================
-        # DEV-HTTP-02: Populated Registry One Device
+        # DEV-HTTP-02: Populated Registry One Device (Strict Schema & Invariants)
         # =====================================================================
         register_device_sync("dev-alpha-001", {"brand": "Google", "model": "Pixel 7 Pro", "sdk": 33}, True)
         r_o = requests.get(f"{URL_ORIG}/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
@@ -241,6 +263,26 @@ def run_suite():
 
         d_o = r_o.json()
         d_r = r_r.json()
+
+        # Strict JSON Schema Comparison
+        expected_keys = {"device_id", "device_info", "online", "first_seen", "last_seen", "client_count"}
+        keys_o = set(d_o[0].keys())
+        keys_r = set(d_r[0].keys())
+        schema_match = (
+            keys_o.issubset(expected_keys.union({"clients"})) and
+            keys_r.issubset(expected_keys.union({"clients"})) and
+            keys_o == keys_r
+        )
+        # Timestamp Invariant Check
+        t_first_o = parse_iso_time(d_o[0]["first_seen"])
+        t_last_o = parse_iso_time(d_o[0]["last_seen"])
+        t_first_r = parse_iso_time(d_r[0]["first_seen"])
+        t_last_r = parse_iso_time(d_r[0]["last_seen"])
+        ts_valid = (
+            t_first_o is not None and t_last_o is not None and t_first_o <= t_last_o and
+            t_first_r is not None and t_last_r is not None and t_first_r <= t_last_r
+        )
+
         passed = (
             r_o.status_code == r_r.status_code == 200 and
             len(d_o) == len(d_r) == 1 and
@@ -248,18 +290,17 @@ def run_suite():
             d_o[0]["online"] == d_r[0]["online"] == True and
             d_o[0]["client_count"] == d_r[0]["client_count"] == 0 and
             d_o[0]["device_info"] == d_r[0]["device_info"] and
-            "first_seen" in d_o[0] and "first_seen" in d_r[0] and
-            "last_seen" in d_o[0] and "last_seen" in d_r[0]
+            schema_match and ts_valid
         )
         record_diff(
-            "DEV-HTTP-02", "Populated Registry One Device", "STRUCTURAL_EXACT_MATCH", passed,
-            {"status": r_o.status_code, "count": len(d_o), "dev": d_o[0]["device_id"], "online": d_o[0]["online"]},
-            {"status": r_r.status_code, "count": len(d_r), "dev": d_r[0]["device_id"], "online": d_r[0]["online"]},
-            "Both emit 200 OK with matching 1-device JSON schema, online=true, client_count=0, and timestamps"
+            "DEV-HTTP-02", "Populated Registry One Device Schema & Invariants", "STRUCTURAL_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "keys": sorted(list(keys_o)), "dev": d_o[0]["device_id"], "online": d_o[0]["online"]},
+            {"status": r_r.status_code, "keys": sorted(list(keys_r)), "dev": d_r[0]["device_id"], "online": d_r[0]["online"]},
+            "Both emit 200 OK with matching 7-field schema, deep equal device_info, and valid RFC3339 timestamp invariants"
         )
 
         # =====================================================================
-        # DEV-HTTP-03: Populated Registry Multiple Devices
+        # DEV-HTTP-03: Populated Registry Multiple Devices (Normalized DTO Match)
         # =====================================================================
         register_device_sync("dev-beta-002", {"brand": "Samsung", "model": "Galaxy S23", "sdk": 34}, True)
         r_o = requests.get(f"{URL_ORIG}/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
@@ -267,18 +308,26 @@ def run_suite():
 
         d_o = r_o.json()
         d_r = r_r.json()
-        ids_o = sorted([d["device_id"] for d in d_o])
-        ids_r = sorted([d["device_id"] for d in d_r])
+
+        def normalize_dto_map(dev_list):
+            res = {}
+            for d in dev_list:
+                item = {k: v for k, v in d.items() if k not in ["first_seen", "last_seen"]}
+                res[d["device_id"]] = item
+            return res
+
+        norm_o = normalize_dto_map(d_o)
+        norm_r = normalize_dto_map(d_r)
         passed = (
             r_o.status_code == r_r.status_code == 200 and
             len(d_o) == len(d_r) == 2 and
-            ids_o == ids_r == ["dev-alpha-001", "dev-beta-002"]
+            norm_o == norm_r
         )
         record_diff(
-            "DEV-HTTP-03", "Populated Registry Multiple Devices", "NORMALIZED_JSON_MATCH", passed,
-            {"status": r_o.status_code, "count": len(d_o), "device_ids": ids_o},
-            {"status": r_r.status_code, "count": len(d_r), "device_ids": ids_r},
-            "Both contain exact 2 registered devices under non-deterministic map iteration order"
+            "DEV-HTTP-03", "Populated Registry Multiple Devices Normalized DTO", "NORMALIZED_JSON_MATCH", passed,
+            {"status": r_o.status_code, "count": len(d_o), "devices": sorted(list(norm_o.keys()))},
+            {"status": r_r.status_code, "count": len(d_r), "devices": sorted(list(norm_r.keys()))},
+            "Both contain identical normalized DTOs for 2 devices under non-deterministic Go map iteration order"
         )
 
         # =====================================================================
@@ -351,9 +400,7 @@ def run_suite():
         # =====================================================================
         # DEV-HTTP-08: Reconnected Device Lifecycle
         # =====================================================================
-        # Disconnect dev-alpha-001
         disconnect_device_sync("dev-alpha-001")
-        # Reconnect dev-alpha-001
         register_device_sync("dev-alpha-001", {"brand": "Google", "model": "Pixel 7 Pro", "sdk": 33}, True)
         r_o = requests.get(f"{URL_ORIG}/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
         r_r = requests.get(f"{URL_RECON}/devices", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
@@ -392,7 +439,7 @@ def run_suite():
         )
 
         # =====================================================================
-        # DEV-HTTP-10: Wrong Method on DELETE Endpoint
+        # DEV-HTTP-10: Wrong Method (GET) on /api/devices/{id}
         # =====================================================================
         r_o = requests.get(f"{URL_ORIG}/api/devices/dev-alpha-001", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
         r_r = requests.get(f"{URL_RECON}/api/devices/dev-alpha-001", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
@@ -408,7 +455,7 @@ def run_suite():
         )
 
         # =====================================================================
-        # DEV-HTTP-11: HEAD Method Support
+        # DEV-HTTP-11: HEAD Method on /devices
         # =====================================================================
         r_o = requests.head(f"{URL_ORIG}/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
         r_r = requests.head(f"{URL_RECON}/devices", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
@@ -425,7 +472,7 @@ def run_suite():
         )
 
         # =====================================================================
-        # DEV-HTTP-12: OPTIONS Preflight
+        # DEV-HTTP-12: OPTIONS Preflight CORS Headers
         # =====================================================================
         r_o = requests.options(f"{URL_ORIG}/devices", timeout=2)
         r_r = requests.options(f"{URL_RECON}/devices", timeout=2)
@@ -461,9 +508,8 @@ def run_suite():
         )
 
         # =====================================================================
-        # DEV-HTTP-14: Route Identity & Deletion Lifecycle (/devices vs /api/devices/)
+        # DEV-HTTP-14: Online & Offline Deletion Lifecycle
         # =====================================================================
-        # Online deletion rejection (dev-beta-002 is online)
         r_del_on_o = requests.delete(f"{URL_ORIG}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
         r_del_on_r = requests.delete(f"{URL_RECON}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
         on_del_match = (
@@ -471,7 +517,6 @@ def run_suite():
             r_del_on_o.text == r_del_on_r.text == "Device is online, disconnect it first\n"
         )
 
-        # Offline deletion success (dev-alpha-001 is offline)
         r_del_off_o = requests.delete(f"{URL_ORIG}/api/devices/dev-alpha-001", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
         r_del_off_r = requests.delete(f"{URL_RECON}/api/devices/dev-alpha-001", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
         off_del_match = (
@@ -479,21 +524,178 @@ def run_suite():
             r_del_off_o.text == r_del_off_r.text == '{"status":"deleted"}\n'
         )
 
-        # GET /api/devices (without trailing slash) returns 405
-        r_alias_o = requests.get(f"{URL_ORIG}/api/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
-        r_alias_r = requests.get(f"{URL_RECON}/api/devices", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
-        alias_match = (
-            r_alias_o.status_code == r_alias_r.status_code == 405
+        passed = on_del_match and off_del_match
+        record_diff(
+            "DEV-HTTP-14", "Online & Offline Deletion Lifecycle", "BIT_EXACT_MATCH", passed,
+            {"online_delete_status": r_del_on_o.status_code, "offline_delete_status": r_del_off_o.status_code},
+            {"online_delete_status": r_del_on_r.status_code, "offline_delete_status": r_del_off_r.status_code},
+            "Online delete rejected with 409, offline delete succeeds with 200 {'status':'deleted'}\\n"
         )
 
-        passed = on_del_match and off_del_match and alias_match
-        detail = f"on_del={on_del_match} (orig={r_del_on_o.text!r}, recon={r_del_on_r.text!r}), off_del={off_del_match} (orig={r_del_off_o.text!r}, recon={r_del_off_r.text!r}), alias={alias_match} (orig={r_alias_o.text!r}, recon={r_alias_r.text!r})"
+        # =====================================================================
+        # DEV-HTTP-15 to DEV-HTTP-18: /devices All-Method Support
+        # =====================================================================
+        for m, cid in [("POST", "DEV-HTTP-15"), ("PUT", "DEV-HTTP-16"), ("PATCH", "DEV-HTTP-17"), ("DELETE", "DEV-HTTP-18")]:
+            req_fn = getattr(requests, m.lower())
+            resp_o = req_fn(f"{URL_ORIG}/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
+            resp_r = req_fn(f"{URL_RECON}/devices", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
+            m_pass = (
+                resp_o.status_code == resp_r.status_code == 200 and
+                resp_o.headers.get("Content-Type") == resp_r.headers.get("Content-Type") == "application/json" and
+                len(resp_o.json()) == len(resp_r.json())
+            )
+            record_diff(
+                cid, f"{m} Method on /devices", "STRUCTURAL_EXACT_MATCH", m_pass,
+                {"status": resp_o.status_code, "count": len(resp_o.json())},
+                {"status": resp_r.status_code, "count": len(resp_r.json())},
+                f"Both serve device list with 200 OK on {m} /devices (matching lack of method check in binary)"
+            )
+
+        # =====================================================================
+        # DEV-HTTP-19: DELETE device as normal assigned user
+        # =====================================================================
+        r_o = requests.delete(f"{URL_ORIG}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_orig['user_assigned']}"}, timeout=2)
+        r_r = requests.delete(f"{URL_RECON}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_recon['user_assigned']}"}, timeout=2)
+        passed = (
+            r_o.status_code == r_r.status_code == 403 and
+            r_o.text == r_r.text == "Forbidden\n"
+        )
         record_diff(
-            "DEV-HTTP-14", "Route Identity & Deletion Lifecycle", "BIT_EXACT_MATCH", passed,
-            {"online_delete_status": r_del_on_o.status_code, "offline_delete_status": r_del_off_o.status_code, "alias_get_status": r_alias_o.status_code},
-            {"online_delete_status": r_del_on_r.status_code, "offline_delete_status": r_del_off_r.status_code, "alias_get_status": r_alias_r.status_code},
-            "Online delete rejected with 409, offline delete succeeds with 200 {'status':'deleted'}, GET /api/devices returns 405",
-            detail=detail
+            "DEV-HTTP-19", "DELETE Device as Normal Assigned User Rejection", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "body": r_o.text},
+            {"status": r_r.status_code, "body": r_r.text},
+            "Both reject non-admin delete with 403 Forbidden"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-20: DELETE device as normal unassigned user
+        # =====================================================================
+        r_o = requests.delete(f"{URL_ORIG}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_orig['user_unassigned']}"}, timeout=2)
+        r_r = requests.delete(f"{URL_RECON}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_recon['user_unassigned']}"}, timeout=2)
+        passed = (
+            r_o.status_code == r_r.status_code == 403 and
+            r_o.text == r_r.text == "Forbidden\n"
+        )
+        record_diff(
+            "DEV-HTTP-20", "DELETE Device as Normal Unassigned User Rejection", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "body": r_o.text},
+            {"status": r_r.status_code, "body": r_r.text},
+            "Both reject unassigned user delete with 403 Forbidden"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-21: DELETE with missing token
+        # =====================================================================
+        r_o = requests.delete(f"{URL_ORIG}/api/devices/dev-beta-002", timeout=2)
+        r_r = requests.delete(f"{URL_RECON}/api/devices/dev-beta-002", timeout=2)
+        passed = (
+            r_o.status_code == r_r.status_code == 401 and
+            r_o.text == r_r.text == "Unauthorized\n"
+        )
+        record_diff(
+            "DEV-HTTP-21", "DELETE with Missing Token Rejection", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "body": r_o.text},
+            {"status": r_r.status_code, "body": r_r.text},
+            "Both reject unauthenticated delete with 401 Unauthorized"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-22: DELETE with invalid token
+        # =====================================================================
+        r_o = requests.delete(f"{URL_ORIG}/api/devices/dev-beta-002", headers={"Authorization": "Bearer bad_token_999"}, timeout=2)
+        r_r = requests.delete(f"{URL_RECON}/api/devices/dev-beta-002", headers={"Authorization": "Bearer bad_token_999"}, timeout=2)
+        passed = (
+            r_o.status_code == r_r.status_code == 401 and
+            r_o.text == r_r.text == "Unauthorized\n"
+        )
+        record_diff(
+            "DEV-HTTP-22", "DELETE with Invalid Token Rejection", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "body": r_o.text},
+            {"status": r_r.status_code, "body": r_r.text},
+            "Both reject invalid token delete with 401 Unauthorized"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-23: DELETE nonexistent device ID
+        # =====================================================================
+        r_o = requests.delete(f"{URL_ORIG}/api/devices/dev-nonexistent-999", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
+        r_r = requests.delete(f"{URL_RECON}/api/devices/dev-nonexistent-999", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
+        passed = (
+            r_o.status_code == r_r.status_code == 404 and
+            r_o.text == r_r.text == "Device not found\n"
+        )
+        record_diff(
+            "DEV-HTTP-23", "DELETE Nonexistent Device ID", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "body": r_o.text},
+            {"status": r_r.status_code, "body": r_r.text},
+            "Both return 404 Device not found for nonexistent device"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-24: DELETE empty ID / slash-root
+        # =====================================================================
+        r_o = requests.delete(f"{URL_ORIG}/api/devices/", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
+        r_r = requests.delete(f"{URL_RECON}/api/devices/", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
+        passed = (
+            r_o.status_code == r_r.status_code == 400 and
+            r_o.text == r_r.text == "Invalid device id\n"
+        )
+        record_diff(
+            "DEV-HTTP-24", "DELETE Empty Device ID on /api/devices/", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "body": r_o.text},
+            {"status": r_r.status_code, "body": r_r.text},
+            "Both return 400 Invalid device id for empty path parameter"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-25: OPTIONS on delete route
+        # =====================================================================
+        r_o = requests.options(f"{URL_ORIG}/api/devices/dev-beta-002", timeout=2)
+        r_r = requests.options(f"{URL_RECON}/api/devices/dev-beta-002", timeout=2)
+        cors_o = r_o.headers.get("Access-Control-Allow-Methods")
+        cors_r = r_r.headers.get("Access-Control-Allow-Methods")
+        passed = (
+            r_o.status_code == r_r.status_code == 200 and
+            cors_o == cors_r == "DELETE, OPTIONS"
+        )
+        record_diff(
+            "DEV-HTTP-25", "OPTIONS on Delete Route /api/devices/{id}", "STRUCTURAL_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "methods": cors_o},
+            {"status": r_r.status_code, "methods": cors_r},
+            "Both return 200 OK with Access-Control-Allow-Methods: DELETE, OPTIONS"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-26: HEAD on delete route
+        # =====================================================================
+        r_o = requests.head(f"{URL_ORIG}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, timeout=2)
+        r_r = requests.head(f"{URL_RECON}/api/devices/dev-beta-002", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, timeout=2)
+        passed = (
+            r_o.status_code == r_r.status_code == 405
+        )
+        record_diff(
+            "DEV-HTTP-26", "HEAD on Delete Route /api/devices/{id}", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code},
+            {"status": r_r.status_code},
+            "Both reject HEAD request on delete handler with 405 Method not allowed"
+        )
+
+        # =====================================================================
+        # DEV-HTTP-27: Initial /api/devices redirect semantics with allow_redirects=False
+        # =====================================================================
+        r_o = requests.get(f"{URL_ORIG}/api/devices", headers={"Authorization": f"Bearer {tokens_orig['admin']}"}, allow_redirects=False, timeout=2)
+        r_r = requests.get(f"{URL_RECON}/api/devices", headers={"Authorization": f"Bearer {tokens_recon['admin']}"}, allow_redirects=False, timeout=2)
+        loc_o = r_o.headers.get("Location")
+        loc_r = r_r.headers.get("Location")
+        passed = (
+            r_o.status_code == r_r.status_code == 301 and
+            loc_o == loc_r == "/api/devices/"
+        )
+        record_diff(
+            "DEV-HTTP-27", "ServeMux Trailing Slash Redirect Semantics", "BIT_EXACT_MATCH", passed,
+            {"status": r_o.status_code, "location": loc_o},
+            {"status": r_r.status_code, "location": loc_r},
+            "Both return 301 Moved Permanently with Location: /api/devices/ when trailing slash is omitted"
         )
 
     finally:
@@ -513,19 +715,88 @@ def run_suite():
         if DIFF_TMP.exists():
             shutil.rmtree(DIFF_TMP, ignore_errors=True)
 
+    # =====================================================================
+    # DEV-HTTP-28: No-Auth Server Mode Verification
+    # =====================================================================
+    if DIFF_TMP_NA.exists():
+        shutil.rmtree(DIFF_TMP_NA, ignore_errors=True)
+    DIFF_TMP_NA.mkdir(parents=True, exist_ok=True)
+
+    cmd_orig_na = [
+        str(EXE_ORIG), "-tls=false", f"-port={PORT_ORIG_NA}", f"-data={DIFF_TMP_NA}", f"-assets={ASSETS}", "-no-auth", "-debug"
+    ]
+    proc_orig_na = subprocess.Popen(cmd_orig_na, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
+
+    cmd_recon_na = [
+        str(EXE_RECON), f"-port={PORT_RECON_NA}", f"-data={DIFF_TMP_NA}", "-no-auth"
+    ]
+    proc_recon_na = subprocess.Popen(cmd_recon_na, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
+
+    for target, url in [("Original Oracle (no-auth)", URL_ORIG_NA), ("Reconstructed (no-auth)", URL_RECON_NA)]:
+        ready = False
+        for _ in range(40):
+            time.sleep(0.2)
+            try:
+                r = requests.get(f"{url}/api/auth-status", timeout=1)
+                if r.status_code == 200:
+                    ready = True
+                    break
+            except Exception:
+                pass
+        if not ready:
+            proc_orig_na.kill()
+            proc_recon_na.kill()
+            raise RuntimeError(f"{target} failed to initialize on {url}")
+
+    try:
+        r_o_na = requests.get(f"{URL_ORIG_NA}/devices", timeout=2)
+        r_r_na = requests.get(f"{URL_RECON_NA}/devices", timeout=2)
+        r_o_status = requests.get(f"{URL_ORIG_NA}/api/auth-status", timeout=2)
+        r_r_status = requests.get(f"{URL_RECON_NA}/api/auth-status", timeout=2)
+
+        passed = (
+            r_o_na.status_code == r_r_na.status_code == 200 and
+            r_o_na.text == r_r_na.text == "[]\n" and
+            r_o_status.json().get("noAuth") == r_r_status.json().get("noAuth") == True
+        )
+        record_diff(
+            "DEV-HTTP-28", "No-Auth Server Mode Unauthenticated Query", "BIT_EXACT_MATCH", passed,
+            {"status": r_o_na.status_code, "body": r_o_na.text, "noAuth": r_o_status.json().get("noAuth")},
+            {"status": r_r_na.status_code, "body": r_r_na.text, "noAuth": r_r_status.json().get("noAuth")},
+            "Both serve device list without token and report noAuth: true when started with -no-auth"
+        )
+    finally:
+        proc_orig_na.terminate()
+        proc_recon_na.terminate()
+        try:
+            proc_orig_na.wait(timeout=2)
+            proc_recon_na.wait(timeout=2)
+        except Exception:
+            proc_orig_na.kill()
+            proc_recon_na.kill()
+        if DIFF_TMP_NA.exists():
+            shutil.rmtree(DIFF_TMP_NA, ignore_errors=True)
+
     # Save Results
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
+    total_count = len(results)
+    passed_count = sum(1 for r in results if r["passed"])
+    failed_count = sum(1 for r in results if not r["passed"])
+    rate_str = f"IMPLEMENTED_DEVICE_CONTRACT_DIFFERENTIAL_PASS_RATE = {passed_count}/{total_count}"
+
     results_obj = {
         "metadata": {
-            "title": "Phase 2C.3B Device REST Differential Results",
-            "total_cases": len(results),
-            "passed_cases": sum(1 for r in results if r["passed"]),
-            "failed_cases": sum(1 for r in results if not r["passed"])
+            "title": "Phase 2C.3BR Device REST Differential Results",
+            "contract_coverage": rate_str,
+            "total_cases": total_count,
+            "passed_cases": passed_count,
+            "failed_cases": failed_count
         },
         "results": results
     }
     OUTPUT_JSON.write_text(json.dumps(results_obj, indent=2), encoding="utf-8")
     print(f"\n[+] Wrote {len(results)} differential results to {OUTPUT_JSON}")
+    print(f"[+] Status: {rate_str}")
 
     # Generate Markdown Report 13
     md_lines = [
@@ -533,12 +804,12 @@ def run_suite():
         "",
         "## 1. Executive Summary",
         "",
-        f"The Phase 2C.3B Device Registry REST differential test suite executed **{len(results)} automated test cases** comparing the original `webrtc-signaling` binary against the cleanroom reconstructed HTTP server.",
+        f"The Phase 2C.3BR Device Registry REST differential test suite executed **{len(results)} automated test cases** comparing the original `webrtc-signaling` binary against the cleanroom reconstructed HTTP server.",
         "",
-        f"- **Total Test Cases**: {len(results)}",
-        f"- **Passed Cases**: {sum(1 for r in results if r['passed'])}",
-        f"- **Failed Cases**: {sum(1 for r in results if not r['passed'])}",
-        f"- **Verdict**: **{'PASS (100% PARITY)' if all(r['passed'] for r in results) else 'FAIL'}**",
+        f"- **Total Test Cases**: {total_count}",
+        f"- **Passed Cases**: {passed_count}",
+        f"- **Failed Cases**: {failed_count}",
+        f"- **Contract Pass Rate**: **`{rate_str}`**",
         "",
         "---",
         "",
@@ -558,14 +829,16 @@ def run_suite():
         "## 3. Verified Parity Highlights",
         "",
         "1. **Empty Registry Serialization**: Both servers emit exact byte sequence `[]\\n` with `Content-Type: application/json`.",
-        "2. **Device Data Model**: Matching 7-field JSON schema (`device_id`, `device_info`, `online`, `first_seen`, `last_seen`, `client_count`, and omitempty `clients`).",
+        "2. **Device Data Model**: Matching 7-field JSON schema (`device_id`, `device_info`, `online`, `first_seen`, `last_seen`, `client_count`, and omitempty `clients`), field types, deep equality, and RFC3339 timestamp invariants (`first_seen <= last_seen`).",
         "3. **Assignment Filtering**: Admin sees all devices (`*`); assigned users see only their designated device; unassigned users receive `[]\\n`.",
-        "4. **Lifecycle & Deletion**: Online devices cannot be deleted (`409 Conflict: Device is online, disconnect it first`); offline devices are successfully removed (`200 OK: {\"status\":\"deleted\"}`).",
-        "5. **CORS & Preflight**: Identical headers for `OPTIONS` (`Access-Control-Allow-Origin: *`, `Access-Control-Allow-Methods: GET, OPTIONS`).",
-        "6. **Route Identity**: Conclusively verified that `/devices` is the list route and `/api/devices/` is the prefix deletion route."
+        "4. **Lifecycle & Deletion**: Online devices cannot be deleted (`409 Conflict: Device is online, disconnect it first\\n`); offline devices are successfully removed (`200 OK: {\"status\":\"deleted\"}\\n`).",
+        "5. **CORS & Preflight**: Identical headers for `OPTIONS` across listing and delete routes.",
+        "6. **ServeMux Redirect Semantics**: With redirects disabled, `/api/devices` returns `301 Moved Permanently` with `Location: /api/devices/`.",
+        "7. **Delete Route Contract Closure**: All error branches verified (401 missing/invalid token, 403 non-admin, 404 nonexistent ID, 400 empty ID, 405 wrong method/HEAD).",
+        "8. **No-Auth Server Mode**: Both servers operate unauthenticated when launched with `-no-auth`."
     ])
     OUTPUT_REPORT.write_text("\n".join(md_lines), encoding="utf-8")
-    print(f"[+] Wrote Report 13 to {OUTPUT_REPORT}")
+    print(f"[+] Wrote Report 13R to {OUTPUT_REPORT}")
 
     all_passed = all(r["passed"] for r in results)
     if not all_passed:

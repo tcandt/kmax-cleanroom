@@ -48,15 +48,38 @@
       "stage": "DELETE_OFFLINE_DEVICE",
       "action": "Admin calls DELETE /api/devices/{deviceId} on offline device",
       "expected_status": 200,
-      "expected_body": "{\"status\":\"deleted\"}",
+      "expected_body": "{\"status\":\"deleted\"}\n",
       "result_in_registry": "REMOVED"
     },
     {
       "stage": "DELETE_ONLINE_DEVICE",
       "action": "Admin calls DELETE /api/devices/{deviceId} on active online device",
       "expected_status": 409,
-      "expected_body": "Device is online, disconnect it first",
+      "expected_body": "Device is online, disconnect it first\n",
       "result_in_registry": "RETAINED"
+    },
+    {
+      "stage": "DUPLICATE_ACTIVE_CONNECTION",
+      "action": "Second agent connection arrives with identical device_id while first is still active",
+      "observation": "Server closes previous stale connection, updates record, online remains true",
+      "online_state": true,
+      "device_info_updated": {
+        "model": "Galaxy S23 Updated"
+      },
+      "registry_count": 1
+    },
+    {
+      "stage": "ABRUPT_TCP_TERMINATION",
+      "action": "Active agent socket closes abruptly without WebSocket close handshake",
+      "observation": "Server detects socket EOF/reset, transitions device to offline (online=false), record retained",
+      "online_state": false,
+      "device_retained": true
+    },
+    {
+      "stage": "RECONNECT_AFTER_ABRUPT",
+      "action": "Agent reconnects with same device_id after abrupt termination",
+      "observation": "Device restored to active state (online=true), last_seen timestamp refreshed",
+      "online_state": true
     }
   ]
 }

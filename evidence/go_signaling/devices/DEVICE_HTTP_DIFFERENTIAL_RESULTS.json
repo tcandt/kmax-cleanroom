@@ -1,8 +1,9 @@
 {
   "metadata": {
-    "title": "Phase 2C.3B Device REST Differential Results",
-    "total_cases": 14,
-    "passed_cases": 14,
+    "title": "Phase 2C.3BR Device REST Differential Results",
+    "contract_coverage": "IMPLEMENTED_DEVICE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28",
+    "total_cases": 28,
+    "passed_cases": 28,
     "failed_cases": 0
   },
   "results": [
@@ -26,33 +27,47 @@
     },
     {
       "test_id": "DEV-HTTP-02",
-      "test_name": "Populated Registry One Device",
+      "test_name": "Populated Registry One Device Schema & Invariants",
       "classification": "STRUCTURAL_EXACT_MATCH",
       "passed": true,
       "original_observation": {
         "status": 200,
-        "count": 1,
+        "keys": [
+          "client_count",
+          "device_id",
+          "device_info",
+          "first_seen",
+          "last_seen",
+          "online"
+        ],
         "dev": "dev-alpha-001",
         "online": true
       },
       "reconstructed_observation": {
         "status": 200,
-        "count": 1,
+        "keys": [
+          "client_count",
+          "device_id",
+          "device_info",
+          "first_seen",
+          "last_seen",
+          "online"
+        ],
         "dev": "dev-alpha-001",
         "online": true
       },
-      "comparison_result": "Both emit 200 OK with matching 1-device JSON schema, online=true, client_count=0, and timestamps",
+      "comparison_result": "Both emit 200 OK with matching 7-field schema, deep equal device_info, and valid RFC3339 timestamp invariants",
       "detail": ""
     },
     {
       "test_id": "DEV-HTTP-03",
-      "test_name": "Populated Registry Multiple Devices",
+      "test_name": "Populated Registry Multiple Devices Normalized DTO",
       "classification": "NORMALIZED_JSON_MATCH",
       "passed": true,
       "original_observation": {
         "status": 200,
         "count": 2,
-        "device_ids": [
+        "devices": [
           "dev-alpha-001",
           "dev-beta-002"
         ]
@@ -60,12 +75,12 @@
       "reconstructed_observation": {
         "status": 200,
         "count": 2,
-        "device_ids": [
+        "devices": [
           "dev-alpha-001",
           "dev-beta-002"
         ]
       },
-      "comparison_result": "Both contain exact 2 registered devices under non-deterministic map iteration order",
+      "comparison_result": "Both contain identical normalized DTOs for 2 devices under non-deterministic Go map iteration order",
       "detail": ""
     },
     {
@@ -236,21 +251,243 @@
     },
     {
       "test_id": "DEV-HTTP-14",
-      "test_name": "Route Identity & Deletion Lifecycle",
+      "test_name": "Online & Offline Deletion Lifecycle",
       "classification": "BIT_EXACT_MATCH",
       "passed": true,
       "original_observation": {
         "online_delete_status": 409,
-        "offline_delete_status": 200,
-        "alias_get_status": 405
+        "offline_delete_status": 200
       },
       "reconstructed_observation": {
         "online_delete_status": 409,
-        "offline_delete_status": 200,
-        "alias_get_status": 405
+        "offline_delete_status": 200
       },
-      "comparison_result": "Online delete rejected with 409, offline delete succeeds with 200 {'status':'deleted'}, GET /api/devices returns 405",
-      "detail": "on_del=True (orig='Device is online, disconnect it first\\n', recon='Device is online, disconnect it first\\n'), off_del=True (orig='{\"status\":\"deleted\"}\\n', recon='{\"status\":\"deleted\"}\\n'), alias=True (orig='Method not allowed\\n', recon='Method not allowed\\n')"
+      "comparison_result": "Online delete rejected with 409, offline delete succeeds with 200 {'status':'deleted'}\\n",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-15",
+      "test_name": "POST Method on /devices",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "comparison_result": "Both serve device list with 200 OK on POST /devices (matching lack of method check in binary)",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-16",
+      "test_name": "PUT Method on /devices",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "comparison_result": "Both serve device list with 200 OK on PUT /devices (matching lack of method check in binary)",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-17",
+      "test_name": "PATCH Method on /devices",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "comparison_result": "Both serve device list with 200 OK on PATCH /devices (matching lack of method check in binary)",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-18",
+      "test_name": "DELETE Method on /devices",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "count": 1
+      },
+      "comparison_result": "Both serve device list with 200 OK on DELETE /devices (matching lack of method check in binary)",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-19",
+      "test_name": "DELETE Device as Normal Assigned User Rejection",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 403,
+        "body": "Forbidden\n"
+      },
+      "reconstructed_observation": {
+        "status": 403,
+        "body": "Forbidden\n"
+      },
+      "comparison_result": "Both reject non-admin delete with 403 Forbidden",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-20",
+      "test_name": "DELETE Device as Normal Unassigned User Rejection",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 403,
+        "body": "Forbidden\n"
+      },
+      "reconstructed_observation": {
+        "status": 403,
+        "body": "Forbidden\n"
+      },
+      "comparison_result": "Both reject unassigned user delete with 403 Forbidden",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-21",
+      "test_name": "DELETE with Missing Token Rejection",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "comparison_result": "Both reject unauthenticated delete with 401 Unauthorized",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-22",
+      "test_name": "DELETE with Invalid Token Rejection",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed_observation": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "comparison_result": "Both reject invalid token delete with 401 Unauthorized",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-23",
+      "test_name": "DELETE Nonexistent Device ID",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 404,
+        "body": "Device not found\n"
+      },
+      "reconstructed_observation": {
+        "status": 404,
+        "body": "Device not found\n"
+      },
+      "comparison_result": "Both return 404 Device not found for nonexistent device",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-24",
+      "test_name": "DELETE Empty Device ID on /api/devices/",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 400,
+        "body": "Invalid device id\n"
+      },
+      "reconstructed_observation": {
+        "status": 400,
+        "body": "Invalid device id\n"
+      },
+      "comparison_result": "Both return 400 Invalid device id for empty path parameter",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-25",
+      "test_name": "OPTIONS on Delete Route /api/devices/{id}",
+      "classification": "STRUCTURAL_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "methods": "DELETE, OPTIONS"
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "methods": "DELETE, OPTIONS"
+      },
+      "comparison_result": "Both return 200 OK with Access-Control-Allow-Methods: DELETE, OPTIONS",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-26",
+      "test_name": "HEAD on Delete Route /api/devices/{id}",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 405
+      },
+      "reconstructed_observation": {
+        "status": 405
+      },
+      "comparison_result": "Both reject HEAD request on delete handler with 405 Method not allowed",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-27",
+      "test_name": "ServeMux Trailing Slash Redirect Semantics",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 301,
+        "location": "/api/devices/"
+      },
+      "reconstructed_observation": {
+        "status": 301,
+        "location": "/api/devices/"
+      },
+      "comparison_result": "Both return 301 Moved Permanently with Location: /api/devices/ when trailing slash is omitted",
+      "detail": ""
+    },
+    {
+      "test_id": "DEV-HTTP-28",
+      "test_name": "No-Auth Server Mode Unauthenticated Query",
+      "classification": "BIT_EXACT_MATCH",
+      "passed": true,
+      "original_observation": {
+        "status": 200,
+        "body": "[]\n",
+        "noAuth": true
+      },
+      "reconstructed_observation": {
+        "status": 200,
+        "body": "[]\n",
+        "noAuth": true
+      },
+      "comparison_result": "Both serve device list without token and report noAuth: true when started with -no-auth",
+      "detail": ""
     }
   ]
 }

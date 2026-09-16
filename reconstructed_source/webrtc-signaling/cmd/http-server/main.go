@@ -31,6 +31,7 @@ func main() {
 	port := flag.Int("port", 29991, "Port to listen on")
 	dataDir := flag.String("data", "./data", "Data directory containing users.json")
 	noAuth := flag.Bool("noAuth", false, "Disable authentication requirements")
+	flag.BoolVar(noAuth, "no-auth", false, "Disable authentication requirements (alias)")
 	flag.Parse()
 
 	usersPath := filepath.Join(*dataDir, "users.json")

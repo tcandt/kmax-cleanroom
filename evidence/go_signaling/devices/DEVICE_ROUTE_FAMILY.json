@@ -1,7 +1,8 @@
 {
   "metadata": {
     "title": "Device Route Family",
-    "total_routes": 4
+    "total_routes": 4,
+    "derivation_source": "DEVICE_ROUTE_IDENTITY_MATRIX.json"
   },
   "routes": [
     {
@@ -13,6 +14,11 @@
       "registration_call_va": "0x765c58",
       "supported_methods": [
         "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "HEAD",
         "OPTIONS"
       ],
       "reference_occurrences": [

@@ -259,6 +259,120 @@ Audit Summary:
 - [x] Master verifier `tools/verify_phase2.py` passes all 26 invariant checks.
 - [x] Zero Phase 2C.3B backend source written (strict HOLD maintained).
 
-**PHASE 2R.1 COMPLETE.**  
-Awaiting user review before opening Phase 2C.3B (Devices/Registry REST family).
+**PHASE 2R.1 COMPLETE.**
+
+---
+
+# Phase 2C.3BR Walkthrough: Device Registry Contract & Evidence Closure
+
+**Milestone**: Phase 2C.3BR Device Registry Remediation & Contract Closure  
+**Status**: COMPLETE, AUDITED, AND FULLY VERIFIED (`IMPLEMENTED_DEVICE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28`)  
+
+## 1. Executive Summary & Remediation Deliverables
+
+In Phase 2C.3BR, all 7 identified hold/remediation items were rigorously addressed without touching out-of-scope modules (Users, Admin, Tags, Shares, WebSocket signaling):
+
+1. **`/api/devices` Route Identity & ServeMux Redirect Semantics**:
+   - Re-probed with `allow_redirects=False` recording `initial_status`, `Location`, and redirection behavior.
+   - Proved that `/api/devices` returns `301 Moved Permanently` with `Location: /api/devices/` across all 7 verbs (GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS).
+   - Proved that `/api/devices` is NOT an alias, but Go `http.ServeMux` trailing-slash redirect to registered prefix route `/api/devices/`.
+   - Updated [DEVICE_ROUTE_IDENTITY_MATRIX.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/devices/DEVICE_ROUTE_IDENTITY_MATRIX.json) and enforced in `DEV-HTTP-27`.
+
+2. **`/devices` All-Method Contract Parity**:
+   - Analyzed `main.i2EgUTaLmQs` (`0x74cf80`) machine instructions; confirmed absence of method checking (`r.Method == "GET"`).
+   - Updated [DEVICE_ROUTE_FAMILY.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/devices/DEVICE_ROUTE_FAMILY.json) to reflect supported methods: `["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]`.
+   - Added differential cases `DEV-HTTP-15` (POST), `DEV-HTTP-16` (PUT), `DEV-HTTP-17` (PATCH), and `DEV-HTTP-18` (DELETE), all passing with 200 OK.
+
+3. **100% Binary-Derived Type Descriptors**:
+   - Completely rewrote `tools/forensics/generate_device_forensics.py` to eliminate hardcoded field dictionaries and VAs.
+   - Implemented dynamic Go runtime `structType` parser decoding ELF `.rodata` and type metadata directly from binary bytes:
+     - `DeviceDTO` (`0x7ff0e0`): 120 bytes, 7 fields (`device_id`, `device_info`, `online`, `first_seen`, `last_seen`, `client_count`, `clients,omitempty`).
+     - `DeviceEntry` (`0x805760`): 128 bytes, exactly 10 fields (`f0` to `f9`).
+   - Regenerated [DEVICE_TYPE_EVIDENCE.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/devices/DEVICE_TYPE_EVIDENCE.json) purely from raw ELF machine bytes.
+
+4. **Internal `DeviceEntry` Field Count & Provenance Reconciliation**:
+   - Reconciled field count from binary: exact 10 fields (the historical "11 fields" was an unverified claim, now corrected).
+   - In [pkg/types/device.go](file:///d:/KMAX-CLEANROOM/reconstructed_source/webrtc-signaling/pkg/types/device.go):
+     - `DeviceDTO`: Classified as `DIRECT_TYPE_RECOVERY`.
+     - `DeviceEntry`: Classified as `RECONSTRUCTED_FROM_BEHAVIOR` with explicit warning `NOT_LAYOUT_EQUIVALENT_TO_ORIGINAL_DEVICEENTRY`.
+     - `webrtc_flag`: Honestly classified as `DEFERRED_INTERNAL_FIELD / PHASE_2C4_OR_2C6`.
+
+5. **Machine-Derived Function Slices**:
+   - Rewrote slice extraction in `generate_device_forensics.py` using Capstone disassembly bounded by `FUNCTION_MAP.json`.
+   - Extracted direct calls, mutex locks, JSON serialization calls, and string xrefs from raw instruction bytes in [DEVICE_HTTP_FUNCTION_SLICES.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/devices/DEVICE_HTTP_FUNCTION_SLICES.json).
+
+6. **Expanded Differential Coverage (28/28 Cases)**:
+   - Expanded differential test suite from 14 to 28 cases covering all delete authorization/error branches, all `/devices` HTTP methods, OPTIONS preflight, HEAD semantics, ServeMux redirects, and No-Auth server mode.
+   - Passed with `IMPLEMENTED_DEVICE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28`.
+   - Published [reports/13R_PHASE2C3B_DEVICE_CONTRACT_CLOSURE.md](file:///d:/KMAX-CLEANROOM/reports/13R_PHASE2C3B_DEVICE_CONTRACT_CLOSURE.md).
+
+7. **No-Auth Server Mode Dynamic Contract**:
+   - Launched isolated original binary with `-no-auth` flag.
+   - Verified `/api/auth-status` returns 200 `{"noAuth":true}` and `/devices` serves unauthenticated queries.
+   - Generated [evidence/go_signaling/devices/DEVICE_NOAUTH_CONTRACT.json](file:///d:/KMAX-CLEANROOM/evidence/go_signaling/devices/DEVICE_NOAUTH_CONTRACT.json) and tested via `DEV-HTTP-28`.
+
+8. **Forensic Reproducibility Pipeline**:
+   - Created [tools/forensics/reproduce_device_forensics.py](file:///d:/KMAX-CLEANROOM/tools/forensics/reproduce_device_forensics.py) which regenerates all 9 device artifacts into a temporary directory and verifies deterministic bit/key parity (**PASS**).
+
+---
+
+## 2. Test Suite Summary Matrix (28 Cases)
+
+| Test ID | Test Name | Classification | Result |
+|---|---|---|---|
+| `DEV-HTTP-01` | Empty Registry Admin Query | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-02` | Populated Registry One Device Schema & Invariants | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-03` | Populated Registry Multiple Devices Normalized DTO | `NORMALIZED_JSON_MATCH` | **PASS** |
+| `DEV-HTTP-04` | Invalid Token Rejection | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-05` | Missing Token Rejection | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-06` | Normal User Assigned Device Filtering | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-07` | Normal User Unassigned Visibility | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-08` | Reconnected Device State Restoration | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-09` | Disconnect Lifecycle & Offline State | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-10` | Wrong Method (GET) on /api/devices/{id} | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-11` | HEAD Method on /devices | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-12` | OPTIONS Preflight CORS Headers | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-13` | Content-Type and Raw JSON Shape | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-14` | Online & Offline Deletion Lifecycle | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-15` | POST Method on /devices | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-16` | PUT Method on /devices | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-17` | PATCH Method on /devices | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-18` | DELETE Method on /devices | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-19` | DELETE Device as Normal Assigned User Rejection | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-20` | DELETE Device as Normal Unassigned User Rejection | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-21` | DELETE with Missing Token Rejection | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-22` | DELETE with Invalid Token Rejection | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-23` | DELETE Nonexistent Device ID | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-24` | DELETE Empty Device ID on /api/devices/ | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-25` | OPTIONS on Delete Route /api/devices/{id} | `STRUCTURAL_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-26` | HEAD on Delete Route /api/devices/{id} | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-27` | ServeMux Trailing Slash Redirect Semantics | `BIT_EXACT_MATCH` | **PASS** |
+| `DEV-HTTP-28` | No-Auth Server Mode Unauthenticated Query | `BIT_EXACT_MATCH` | **PASS** |
+
+---
+
+## 3. Exit Gate Verification Checklist
+
+- [x] `/api/devices` initial redirect semantics proven with redirects off (301 Moved Permanently)
+- [x] `/devices` all-method behavior differential verified (all 7 verbs return 200 OK)
+- [x] `DeviceDTO` type evidence machine-derived (parsed directly from ELF bytes at `0x7ff0e0`)
+- [x] `DeviceEntry` field count resolved (exact 10 fields verified from runtime descriptor at `0x805760`)
+- [x] Simplified internal struct no longer mislabeled direct recovery (`RECONSTRUCTED_FROM_BEHAVIOR`)
+- [x] `webrtc_flag` classified honestly (`DEFERRED_INTERNAL_FIELD / PHASE_2C4_OR_2C6`)
+- [x] HTTP function slices machine-derived (Capstone disassembly instruction tracking)
+- [x] Device verifier validates underlying evidence (re-derives routes, type descriptors, function boundaries)
+- [x] Delete authorization/error branches differential verified (401, 403, 404, 400, 405)
+- [x] Exact DTO schema/type comparison added (`DEV-HTTP-02`)
+- [x] No-Auth server mode dynamically tested (`DEV-HTTP-28` and `DEVICE_NOAUTH_CONTRACT.json`)
+- [x] Lifecycle duplicate/abrupt cases observed (`DEVICE_REGISTRY_LIFECYCLE_MATRIX.json`)
+- [x] Device forensic reproduction tool PASS (`reproduce_device_forensics.py`)
+- [x] Persistence differential tests 8/8 PASS
+- [x] Auth core differential tests 12/12 PASS
+- [x] Auth HTTP differential tests 18/18 PASS
+- [x] Expanded device differential cases 28/28 PASS
+- [x] Provenance auditor 73/73 declared functions PASS
+- [x] Master verifier `tools/verify_phase2.py` OVERALL AUDIT VERDICT: PASS
+- [x] Zero production WebSocket implementation
+- [x] Zero WebRTC implementation
+- [x] Users/Admin/Tags/Shares untouched
 

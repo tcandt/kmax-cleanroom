@@ -2,88 +2,173 @@
   "metadata": {
     "title": "Device REST Handler Forensic Slices",
     "artifact_path": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
-    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3"
+    "sha256": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
+    "derivation": "CAPSTONE_DISASSEMBLY_ANCHORS"
   },
   "handlers": [
     {
       "symbol": "main.i2EgUTaLmQs",
       "va": "0x74cf80",
       "size_bytes": 2528,
-      "route": "/devices",
+      "boundary": [
+        "0x74cf80",
+        "0x74d960"
+      ],
+      "total_disassembled_instructions": 472,
+      "discovered_calls_count": 44,
+      "discovered_rip_strings_count": 18,
       "slices": [
         {
           "slice_id": "DEV-LIST-CORS",
           "instruction_range": [
-            "0x74cfe2",
-            "0x74d1a5"
+            "0x74cf80",
+            "0x74d040"
           ],
-          "operation": "SET_CORS_HEADERS",
-          "headers": {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Methods": "GET, OPTIONS"
+          "machine_observation": {
+            "string_references": [
+              {
+                "instruction_va": "0x74cfd6",
+                "target_va": "0x82e2ee",
+                "string_snippet": "Access-Control-Allow-OriginContent-"
+              },
+              {
+                "instruction_va": "0x74d0a1",
+                "target_va": "0x82eca9",
+                "string_snippet": "Access-Control-Allow-HeadersAccess-"
+              },
+              {
+                "instruction_va": "0x74d168",
+                "target_va": "0x82ecc5",
+                "string_snippet": "Access-Control-Allow-MethodsInvalid"
+              },
+              {
+                "instruction_va": "0x74d1a5",
+                "target_va": "0x824703",
+                "string_snippet": "GET, OPTIONSUnauthorizedforbid_audi"
+              },
+              {
+                "instruction_va": "0x74d784",
+                "target_va": "0x8246f7",
+                "string_snippet": "Content-TypeGET, OPTIONSUnauthorize"
+              }
+            ],
+            "calls": [
+              {
+                "instruction_va": "0x74cfcb",
+                "mnemonic": "call",
+                "callee": "indirect",
+                "op_str": "rcx"
+              },
+              {
+                "instruction_va": "0x74cfe2",
+                "mnemonic": "call",
+                "callee": "ikG9yFZB.Iw0ORK5lLe",
+                "op_str": "0x684f60"
+              },
+              {
+                "instruction_va": "0x74d000",
+                "mnemonic": "call",
+                "callee": "runtime.newobject",
+                "op_str": "0x418e40"
+              },
+              {
+                "instruction_va": "0x74d040",
+                "mnemonic": "call",
+                "callee": "runtime.mapassign_faststr",
+                "op_str": "0x40b5a0"
+              }
+            ]
+          },
+          "semantic_annotation": {
+            "operation": "SET_CORS_HEADERS",
+            "headers": {
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET, OPTIONS"
+            }
           }
         },
         {
           "slice_id": "DEV-LIST-AUTH",
           "instruction_range": [
             "0x74d260",
-            "0x74d355"
+            "0x74d2a0"
           ],
-          "operation": "AUTHENTICATE_TOKEN",
-          "auth_call_va": "0x74d260",
-          "auth_callee": "main.lYKp_Iuf",
-          "error_branch": {
-            "status": 401,
-            "body": "Unauthorized"
+          "machine_observation": {
+            "auth_call": {
+              "instruction_va": "0x74d260",
+              "mnemonic": "call",
+              "callee": "main.lYKp_Iuf",
+              "op_str": "0x73b080"
+            }
+          },
+          "semantic_annotation": {
+            "operation": "AUTHENTICATE_TOKEN",
+            "auth_callee": "main.lYKp_Iuf",
+            "error_status": 401
           }
         },
         {
-          "slice_id": "DEV-LIST-REGISTRY-READ",
+          "slice_id": "DEV-LIST-MAP-ITER",
           "instruction_range": [
-            "0x74d27a",
+            "0x74d322",
             "0x74d380"
           ],
-          "operation": "REGISTRY_RWLOCK_RLOCK_AND_ITERATE",
-          "rlock_va": "0x74d286",
-          "map_iter_start_va": "0x74d322",
-          "map_iter_next_va": "0x74d380"
+          "machine_observation": {
+            "map_iter_start": {
+              "instruction_va": "0x74d322",
+              "mnemonic": "call",
+              "callee": "runtime.mapIterStart",
+              "op_str": "0x419520"
+            },
+            "map_iter_next": {
+              "instruction_va": "0x74d380",
+              "mnemonic": "call",
+              "callee": "runtime.mapIterNext",
+              "op_str": "0x419580"
+            }
+          },
+          "semantic_annotation": {
+            "operation": "ITERATE_REGISTRY_MAP",
+            "ordering": "MAP_ITERATION_NON_DETERMINISTIC"
+          }
         },
         {
           "slice_id": "DEV-LIST-FILTER",
           "instruction_range": [
-            "0x73d8a0",
-            "0x73dcac"
+            "0x74d3ee",
+            "0x74d40e"
           ],
-          "operation": "USER_ASSIGNED_DEVICE_FILTERING",
-          "filter_fn_symbol": "main.pVOasuBli",
-          "filter_fn_va": "0x73d8a0",
-          "rules": [
-            "role == 'admin' -> true",
-            "assigned_devices contains '*' -> true",
-            "assigned_devices contains device_id -> true",
-            "otherwise -> false"
-          ]
-        },
-        {
-          "slice_id": "DEV-LIST-DTO-CONSTRUCT",
-          "instruction_range": [
-            "0x74d533",
-            "0x74d67a"
-          ],
-          "operation": "CONSTRUCT_DEVICE_DTO",
-          "dto_type_va": "0x7ff0e0",
-          "dto_size": 120
+          "machine_observation": {
+            "filter_call": {
+              "instruction_va": "0x74d3ee",
+              "mnemonic": "call",
+              "callee": "main.pVOasuBli",
+              "op_str": "0x73d8a0"
+            }
+          },
+          "semantic_annotation": {
+            "operation": "FILTER_BY_USER_ASSIGNED_DEVICES",
+            "filter_callee": "main.pVOasuBli"
+          }
         },
         {
           "slice_id": "DEV-LIST-ENCODE",
           "instruction_range": [
-            "0x74d784",
+            "0x74d880",
             "0x74d8c0"
           ],
-          "operation": "JSON_ENCODE_RESPONSE",
-          "encoder_call_va": "0x74d8c0",
-          "content_type": "application/json"
+          "machine_observation": {
+            "json_encoder_call": {
+              "instruction_va": "0x74d8c0",
+              "mnemonic": "call",
+              "callee": "JOaOfPm.(*Za4F248ANZ7).Encode",
+              "op_str": "0x53edc0"
+            }
+          },
+          "semantic_annotation": {
+            "operation": "JSON_ENCODE_RESPONSE",
+            "content_type": "application/json"
+          }
         }
       ]
     },
@@ -91,86 +176,249 @@
       "symbol": "main.rXQMyuE",
       "va": "0x74da60",
       "size_bytes": 2528,
-      "route": "/api/devices/",
+      "boundary": [
+        "0x74da60",
+        "0x74e440"
+      ],
+      "total_disassembled_instructions": 503,
+      "discovered_calls_count": 55,
+      "discovered_rip_strings_count": 32,
       "slices": [
         {
           "slice_id": "DEV-DEL-CORS-METHOD",
           "instruction_range": [
-            "0x74dab0",
-            "0x74dd4b"
+            "0x74da60",
+            "0x74dd77"
           ],
-          "operation": "CORS_AND_METHOD_VALIDATION",
-          "allowed_methods": [
-            "DELETE",
-            "OPTIONS"
-          ],
-          "invalid_method_branch": {
-            "status": 405,
-            "body": "Method not allowed\n"
+          "machine_observation": {
+            "string_references": [
+              {
+                "instruction_va": "0x74daa4",
+                "target_va": "0x82e2ee",
+                "string_snippet": "Access-Control-Allow-OriginContent-"
+              },
+              {
+                "instruction_va": "0x74db65",
+                "target_va": "0x82eca9",
+                "string_snippet": "Access-Control-Allow-HeadersAccess-"
+              },
+              {
+                "instruction_va": "0x74dc28",
+                "target_va": "0x82ecc5",
+                "string_snippet": "Access-Control-Allow-MethodsInvalid"
+              },
+              {
+                "instruction_va": "0x74dc65",
+                "target_va": "0x8266ba",
+                "string_snippet": "DELETE, OPTIONSsnapshot_update/shar"
+              },
+              {
+                "instruction_va": "0x74e168",
+                "target_va": "0x8246f7",
+                "string_snippet": "Content-TypeGET, OPTIONSUnauthorize"
+              }
+            ],
+            "calls": [
+              {
+                "instruction_va": "0x74da9c",
+                "mnemonic": "call",
+                "callee": "indirect",
+                "op_str": "rcx"
+              },
+              {
+                "instruction_va": "0x74dab0",
+                "mnemonic": "call",
+                "callee": "ikG9yFZB.Iw0ORK5lLe",
+                "op_str": "0x684f60"
+              },
+              {
+                "instruction_va": "0x74dacc",
+                "mnemonic": "call",
+                "callee": "runtime.newobject",
+                "op_str": "0x418e40"
+              },
+              {
+                "instruction_va": "0x74db07",
+                "mnemonic": "call",
+                "callee": "runtime.mapassign_faststr",
+                "op_str": "0x40b5a0"
+              },
+              {
+                "instruction_va": "0x74db32",
+                "mnemonic": "call",
+                "callee": "runtime.gcWriteBarrier2",
+                "op_str": "0x482f80"
+              },
+              {
+                "instruction_va": "0x74db5d",
+                "mnemonic": "call",
+                "callee": "indirect",
+                "op_str": "rcx"
+              },
+              {
+                "instruction_va": "0x74db71",
+                "mnemonic": "call",
+                "callee": "ikG9yFZB.Iw0ORK5lLe",
+                "op_str": "0x684f60"
+              },
+              {
+                "instruction_va": "0x74db8d",
+                "mnemonic": "call",
+                "callee": "runtime.newobject",
+                "op_str": "0x418e40"
+              },
+              {
+                "instruction_va": "0x74dbc8",
+                "mnemonic": "call",
+                "callee": "runtime.mapassign_faststr",
+                "op_str": "0x40b5a0"
+              },
+              {
+                "instruction_va": "0x74dbf3",
+                "mnemonic": "call",
+                "callee": "runtime.gcWriteBarrier2",
+                "op_str": "0x482f80"
+              },
+              {
+                "instruction_va": "0x74dc20",
+                "mnemonic": "call",
+                "callee": "indirect",
+                "op_str": "rcx"
+              },
+              {
+                "instruction_va": "0x74dc34",
+                "mnemonic": "call",
+                "callee": "ikG9yFZB.Iw0ORK5lLe",
+                "op_str": "0x684f60"
+              },
+              {
+                "instruction_va": "0x74dc50",
+                "mnemonic": "call",
+                "callee": "runtime.newobject",
+                "op_str": "0x418e40"
+              },
+              {
+                "instruction_va": "0x74dc8b",
+                "mnemonic": "call",
+                "callee": "runtime.mapassign_faststr",
+                "op_str": "0x40b5a0"
+              },
+              {
+                "instruction_va": "0x74dcb6",
+                "mnemonic": "call",
+                "callee": "runtime.gcWriteBarrier2",
+                "op_str": "0x482f80"
+              },
+              {
+                "instruction_va": "0x74dd18",
+                "mnemonic": "call",
+                "callee": "indirect",
+                "op_str": "rcx"
+              },
+              {
+                "instruction_va": "0x74dd60",
+                "mnemonic": "call",
+                "callee": "Y0caeZ_zze.AFewevPD9",
+                "op_str": "0x6e03a0"
+              }
+            ]
+          },
+          "semantic_annotation": {
+            "operation": "CORS_AND_METHOD_VALIDATION",
+            "allowed_methods": [
+              "DELETE",
+              "OPTIONS"
+            ]
           }
         },
         {
           "slice_id": "DEV-DEL-AUTH",
           "instruction_range": [
             "0x74dd77",
-            "0x74de88"
+            "0x74def3"
           ],
-          "operation": "REQUIRE_ADMIN_AUTH",
-          "auth_call_va": "0x74dd77",
-          "non_admin_branch": {
-            "status": 403,
-            "body": "Forbidden\n"
+          "machine_observation": {
+            "auth_call": {
+              "instruction_va": "0x74dd77",
+              "mnemonic": "call",
+              "callee": "main.lYKp_Iuf",
+              "op_str": "0x73b080"
+            },
+            "admin_check_memequal": {
+              "instruction_va": "0x74def3",
+              "mnemonic": "call",
+              "callee": "runtime.memequal",
+              "op_str": "0x403600"
+            }
+          },
+          "semantic_annotation": {
+            "operation": "REQUIRE_ADMIN_AUTH",
+            "non_admin_status": 403
           }
         },
         {
-          "slice_id": "DEV-DEL-EXTRACT-ID",
-          "instruction_range": [
-            "0x74def3",
-            "0x74e2c6"
-          ],
-          "operation": "PARSE_DEVICE_ID_FROM_PATH",
-          "prefix": "/api/devices/",
-          "empty_id_branch": {
-            "status": 400,
-            "body": "Invalid device id\n"
-          }
-        },
-        {
-          "slice_id": "DEV-DEL-LOCK-AND-CHECK",
+          "slice_id": "DEV-DEL-LOCK-AND-LOOKUP",
           "instruction_range": [
             "0x74df80",
-            "0x74e256"
+            "0x74e030"
           ],
-          "operation": "LOOKUP_AND_ONLINE_CHECK",
-          "lock_va": "0x74df80",
-          "not_found_branch": {
-            "status": 404,
-            "body": "Device not found\n"
+          "machine_observation": {
+            "registry_lock": {
+              "instruction_va": "0x74df80",
+              "mnemonic": "call",
+              "callee": "sync.(*D2KbQ7Jm).Lock",
+              "op_str": "0x48bda0"
+            }
           },
-          "online_branch": {
-            "status": 409,
-            "body": "Device is online, disconnect it first\n"
+          "semantic_annotation": {
+            "operation": "LOCK_AND_VERIFY_OFFLINE",
+            "online_status": 409,
+            "not_found_status": 404
           }
         },
         {
-          "slice_id": "DEV-DEL-MUTATE",
+          "slice_id": "DEV-DEL-MUTATE-UNLOCK",
           "instruction_range": [
             "0x74e030",
             "0x74e042"
           ],
-          "operation": "DELETE_FROM_MAP",
-          "delete_va": "0x74e030",
-          "unlock_va": "0x74e042"
+          "machine_observation": {
+            "map_delete": {
+              "instruction_va": "0x74e030",
+              "mnemonic": "call",
+              "callee": "runtime.mapdelete_faststr",
+              "op_str": "0x40bb20"
+            },
+            "registry_unlock": {
+              "instruction_va": "0x74e042",
+              "mnemonic": "call",
+              "callee": "sync.(*D2KbQ7Jm).Unlock",
+              "op_str": "0x48be40"
+            }
+          },
+          "semantic_annotation": {
+            "operation": "DELETE_DEVICE_AND_UNLOCK"
+          }
         },
         {
-          "slice_id": "DEV-DEL-RESPONSE",
+          "slice_id": "DEV-DEL-JSON-RESPONSE",
           "instruction_range": [
-            "0x74e353",
+            "0x74e388",
             "0x74e3b8"
           ],
-          "operation": "JSON_STATUS_DELETED_RESPONSE",
-          "status": 200,
-          "body": "{\"status\":\"deleted\"}"
+          "machine_observation": {
+            "json_encoder_call": {
+              "instruction_va": "0x74e3b8",
+              "mnemonic": "call",
+              "callee": "JOaOfPm.(*Za4F248ANZ7).Encode",
+              "op_str": "0x53edc0"
+            }
+          },
+          "semantic_annotation": {
+            "operation": "WRITE_JSON_DELETED",
+            "status": 200,
+            "body": "{\"status\":\"deleted\"}\n"
+          }
         }
       ]
     }

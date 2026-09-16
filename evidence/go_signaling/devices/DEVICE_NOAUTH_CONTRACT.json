@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "title": "Device No-Auth Server Mode Contract",
+    "server_flag": "-no-auth",
+    "port": 29995
+  },
+  "observations": {
+    "auth_status": {
+      "status": 200,
+      "body": "{\"noAuth\":true}\n",
+      "parsed": {
+        "noAuth": true
+      }
+    },
+    "empty_devices_unauthenticated": {
+      "status": 200,
+      "body": "[]\n",
+      "allows_query_without_token": true
+    },
+    "populated_devices_unauthenticated": {
+      "status": 200,
+      "device_count": 1,
+      "first_device_id": "dev-noauth-001"
+    },
+    "delete_online_without_token": {
+      "status": 409,
+      "body": "Device is online, disconnect it first\n"
+    },
+    "delete_offline_without_token": {
+      "status": 200,
+      "body": "{\"status\":\"deleted\"}\n"
+    }
+  }
+}

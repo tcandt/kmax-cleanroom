@@ -2,7 +2,7 @@
   "metadata": {
     "title": "Device Route Identity Matrix",
     "canonical_binary": "webrtc-signaling",
-    "description": "Exhaustive multi-verb probe reconciling /devices vs /api/devices and prefix routes."
+    "description": "Multi-verb probe with allow_redirects=False capturing initial HTTP response, Location header, and redirect classification."
   },
   "routes": {
     "/devices": {
@@ -13,43 +13,71 @@
       "classification": "REGISTERED_ROUTE",
       "methods": {
         "GET": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "application/json",
           "body_preview": "[]",
           "body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
         },
         "POST": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "application/json",
           "body_preview": "[]",
           "body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
         },
         "PUT": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "application/json",
           "body_preview": "[]",
           "body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
         },
         "PATCH": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "application/json",
           "body_preview": "[]",
           "body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
         },
         "DELETE": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "application/json",
           "body_preview": "[]",
           "body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
         },
         "HEAD": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "application/json",
           "body_preview": "",
           "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "OPTIONS": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "",
           "body_preview": "",
           "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -61,46 +89,74 @@
       "handler_symbol": "main.rXQMyuE",
       "handler_va": "0x74da60",
       "registration_call_va": null,
-      "classification": "ALIAS",
+      "classification": "SERVEMUX_TRAILING_SLASH_REDIRECT",
       "methods": {
         "GET": {
-          "status": 405,
-          "content_type": "text/plain; charset=utf-8",
-          "body_preview": "Method not allowed",
-          "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+          "initial_status": 301,
+          "location": "/api/devices/",
+          "redirected": true,
+          "redirect_target": "/api/devices/",
+          "final_status": 405,
+          "content_type": "text/html; charset=utf-8",
+          "body_preview": "<a href=\"/api/devices/\">Moved Permanently</a>.",
+          "body_sha256": "2b8353a63fe18329abd06b0913192aaf5825583c44f173cf660d66a7cbd23565"
         },
         "POST": {
-          "status": 405,
-          "content_type": "text/plain; charset=utf-8",
-          "body_preview": "Method not allowed",
-          "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+          "initial_status": 301,
+          "location": "/api/devices/",
+          "redirected": true,
+          "redirect_target": "/api/devices/",
+          "final_status": 405,
+          "content_type": "",
+          "body_preview": "",
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "PUT": {
-          "status": 405,
-          "content_type": "text/plain; charset=utf-8",
-          "body_preview": "Method not allowed",
-          "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+          "initial_status": 301,
+          "location": "/api/devices/",
+          "redirected": true,
+          "redirect_target": "/api/devices/",
+          "final_status": 405,
+          "content_type": "",
+          "body_preview": "",
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "PATCH": {
-          "status": 405,
-          "content_type": "text/plain; charset=utf-8",
-          "body_preview": "Method not allowed",
-          "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
+          "initial_status": 301,
+          "location": "/api/devices/",
+          "redirected": true,
+          "redirect_target": "/api/devices/",
+          "final_status": 405,
+          "content_type": "",
+          "body_preview": "",
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "DELETE": {
-          "status": 400,
-          "content_type": "text/plain; charset=utf-8",
-          "body_preview": "Invalid device id",
-          "body_sha256": "3d25f9603bb07ce07a5debce41e4411edd79cc0cdfd236fd20c5cbb7ac082b55"
+          "initial_status": 301,
+          "location": "/api/devices/",
+          "redirected": true,
+          "redirect_target": "/api/devices/",
+          "final_status": 400,
+          "content_type": "",
+          "body_preview": "",
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "HEAD": {
-          "status": 301,
+          "initial_status": 301,
+          "location": "/api/devices/",
+          "redirected": true,
+          "redirect_target": "/api/devices/",
+          "final_status": 405,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "",
           "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "OPTIONS": {
-          "status": 200,
+          "initial_status": 301,
+          "location": "/api/devices/",
+          "redirected": true,
+          "redirect_target": "/api/devices/",
+          "final_status": 200,
           "content_type": "",
           "body_preview": "",
           "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -115,43 +171,71 @@
       "classification": "PREFIX_HANDLER",
       "methods": {
         "GET": {
-          "status": 405,
+          "initial_status": 405,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 405,
           "content_type": "text/plain; charset=utf-8",
           "body_preview": "Method not allowed",
           "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
         },
         "POST": {
-          "status": 405,
+          "initial_status": 405,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 405,
           "content_type": "text/plain; charset=utf-8",
           "body_preview": "Method not allowed",
           "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
         },
         "PUT": {
-          "status": 405,
+          "initial_status": 405,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 405,
           "content_type": "text/plain; charset=utf-8",
           "body_preview": "Method not allowed",
           "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
         },
         "PATCH": {
-          "status": 405,
+          "initial_status": 405,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 405,
           "content_type": "text/plain; charset=utf-8",
           "body_preview": "Method not allowed",
           "body_sha256": "669bb658059b0d13e583d42c2de2a8b0988a64c2febec0f8b47a963b9780d5a6"
         },
         "DELETE": {
-          "status": 400,
+          "initial_status": 400,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 400,
           "content_type": "text/plain; charset=utf-8",
           "body_preview": "Invalid device id",
           "body_sha256": "3d25f9603bb07ce07a5debce41e4411edd79cc0cdfd236fd20c5cbb7ac082b55"
         },
         "HEAD": {
-          "status": 405,
+          "initial_status": 405,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 405,
           "content_type": "text/plain; charset=utf-8",
           "body_preview": "",
           "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "OPTIONS": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "",
           "body_preview": "",
           "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -160,49 +244,77 @@
     },
     "/devices/": {
       "route": "/devices/",
-      "handler_symbol": "main.(*OIR9dZw9ZyV).ServeHTTP",
-      "handler_va": "0x748c20",
+      "handler_symbol": null,
+      "handler_va": null,
       "registration_call_va": null,
       "classification": "NOT_REGISTERED",
       "methods": {
         "GET": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=",
           "body_sha256": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624"
         },
         "POST": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=",
           "body_sha256": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624"
         },
         "PUT": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=",
           "body_sha256": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624"
         },
         "PATCH": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=",
           "body_sha256": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624"
         },
         "DELETE": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=",
           "body_sha256": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624"
         },
         "HEAD": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "",
           "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         "OPTIONS": {
-          "status": 200,
+          "initial_status": 200,
+          "location": "",
+          "redirected": false,
+          "redirect_target": "",
+          "final_status": 200,
           "content_type": "text/html; charset=utf-8",
           "body_preview": "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=",
           "body_sha256": "321256d99b50b9ac17e604ee6ddb2eb77becf2dc72b3c2feb876782d37b6a624"

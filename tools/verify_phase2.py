@@ -1313,76 +1313,100 @@ def verify_all():
     # =========================================================================
     # 9. Phase 2C.3B Device Registry Forensics & Differential Verification
     # =========================================================================
+    # =========================================================================
+    # 9. Phase 2C.3BR Device Registry Forensics & Differential Verification
+    # =========================================================================
     dev_dir = ROOT / "evidence" / "go_signaling" / "devices"
 
-    # 9.1 Route Identity Reconciliation
+    # 9.1 Route Identity Reconciliation (Re-derived from ROUTE_HANDLER_MAP & Probes)
+    r_map_file = ROOT / "evidence" / "go_signaling" / "ROUTE_HANDLER_MAP.json"
     r_id_file = dev_dir / "DEVICE_ROUTE_IDENTITY_MATRIX.json"
-    if not r_id_file.exists():
-        record_check("Phase 2C.3B Route Identity Reconciliation", False, "DEVICE_ROUTE_IDENTITY_MATRIX.json missing")
+    if not r_map_file.exists() or not r_id_file.exists():
+        record_check("Phase 2C.3BR Route Identity Reconciliation", False, "Matrix or ROUTE_HANDLER_MAP files missing")
     else:
+        r_map = json.loads(r_map_file.read_text(encoding="utf-8"))
+        registered_routes = {r["pattern"]: r for r in r_map.get("routes", []) if "pattern" in r}
         r_id = json.loads(r_id_file.read_text(encoding="utf-8"))
         r_dev = r_id.get("routes", {}).get("/devices", {})
         r_api_slash = r_id.get("routes", {}).get("/api/devices/", {})
         r_api = r_id.get("routes", {}).get("/api/devices", {})
+
+        # Underlying proofs:
+        # 1. /devices is registered in ServeMux at 0x765c58 -> main.i2EgUTaLmQs (0x74cf80)
+        # 2. /api/devices/ is registered in ServeMux at 0x765c70 -> main.rXQMyuE (0x74da60)
+        # 3. /api/devices is NOT registered in ServeMux (handled via ServeMux trailing-slash redirect)
+        # 4. Probes with allow_redirects=False confirm 301 on /api/devices and 200 on /devices across all 7 verbs
         r_id_valid = (
+            "/devices" in registered_routes and
+            registered_routes["/devices"]["handler_symbol"] == "main.i2EgUTaLmQs" and
+            registered_routes["/devices"]["call_va"] == "0x765c58" and
+            "/api/devices/" in registered_routes and
+            registered_routes["/api/devices/"]["handler_symbol"] == "main.rXQMyuE" and
+            registered_routes["/api/devices/"]["call_va"] == "0x765c70" and
+            "/api/devices" not in registered_routes and
             r_dev.get("classification") == "REGISTERED_ROUTE" and
-            r_dev.get("handler_symbol") == "main.i2EgUTaLmQs" and
-            r_dev.get("handler_va") == "0x74cf80" and
-            r_dev.get("registration_call_va") == "0x765c58" and
+            all(m.get("initial_status") == 200 for m in r_dev.get("methods", {}).values()) and
             r_api_slash.get("classification") == "PREFIX_HANDLER" and
-            r_api_slash.get("handler_symbol") == "main.rXQMyuE" and
-            r_api_slash.get("handler_va") == "0x74da60" and
-            r_api_slash.get("registration_call_va") == "0x765c70" and
-            r_api.get("classification") == "ALIAS" and
-            len(r_dev.get("methods", {})) == 7 and
-            len(r_api_slash.get("methods", {})) == 7
+            r_api.get("classification") == "SERVEMUX_TRAILING_SLASH_REDIRECT" and
+            all(m.get("initial_status") == 301 and m.get("location") == "/api/devices/" for m in r_api.get("methods", {}).values())
         )
-        record_check("Phase 2C.3B Route Identity Reconciliation", r_id_valid,
-                     "/devices: REGISTERED_ROUTE (0x74cf80), /api/devices/: PREFIX_HANDLER (0x74da60), /api/devices: ALIAS")
+        record_check("Phase 2C.3BR Route Identity Reconciliation", r_id_valid,
+                     "/devices: ServeMux registered (0x74cf80, 200 all verbs); /api/devices/: Prefix (0x74da60); /api/devices: ServeMux 301 redirect")
 
     # 9.2 Route Family & WS Scope Isolation
     r_fam_file = dev_dir / "DEVICE_ROUTE_FAMILY.json"
     if not r_fam_file.exists():
-        record_check("Phase 2C.3B Route Family & WS Isolation", False, "DEVICE_ROUTE_FAMILY.json missing")
+        record_check("Phase 2C.3BR Route Family & WS Isolation", False, "DEVICE_ROUTE_FAMILY.json missing")
     else:
         r_fam = json.loads(r_fam_file.read_text(encoding="utf-8"))
         ws_routes = [r for r in r_fam.get("routes", []) if r.get("transport") == "TRANSPORT_WS"]
         rest_routes = [r for r in r_fam.get("routes", []) if r.get("transport") == "HTTP_REST"]
+        dev_entry = next((r for r in rest_routes if r.get("route") == "/devices"), {})
+        all_7_methods = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
         fam_valid = (
             len(ws_routes) >= 1 and
             all(r.get("scope") == "NOT_PART_OF_2C3B_IMPLEMENTATION" for r in ws_routes) and
             len(rest_routes) >= 2 and
-            all(r.get("scope") == "PART_OF_2C3B_IMPLEMENTATION" for r in rest_routes)
+            all_7_methods.issubset(set(dev_entry.get("supported_methods", [])))
         )
-        record_check("Phase 2C.3B Route Family & WS Isolation", fam_valid,
-                     f"{len(rest_routes)} REST routes in 2C.3B scope; {len(ws_routes)} WS routes isolated from implementation")
+        record_check("Phase 2C.3BR Route Family & WS Isolation", fam_valid,
+                     f"/devices serves all 7 HTTP verbs; {len(ws_routes)} WS routes isolated from implementation")
 
-    # 9.3 Device Type Evidence & Data Model Recovery
+    # 9.3 Binary-Derived Device Type Descriptors & Model Provenance
     t_ev_file = dev_dir / "DEVICE_TYPE_EVIDENCE.json"
-    if not t_ev_file.exists():
-        record_check("Phase 2C.3B Device Type Evidence & Data Model", False, "DEVICE_TYPE_EVIDENCE.json missing")
+    recon_types_file = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "types" / "device.go"
+    if not t_ev_file.exists() or not recon_types_file.exists():
+        record_check("Phase 2C.3BR Device Type Evidence & Provenance", False, "Type evidence or types/device.go missing")
     else:
-        t_ev = json.loads(t_ev_file.read_text(encoding="utf-8"))
-        pub_dto = t_ev.get("public_dto", {})
-        int_entry = t_ev.get("internal_registry_entry", {})
+        # Re-derive descriptors directly from binary ELF bytes
+        from tools.forensics.generate_device_forensics import parse_struct_descriptor
+        bin_path = ROOT / "cloudphone-v0.3.6 (1)" / "bin" / "linux_amd64" / "webrtc-signaling"
+        bin_data = bin_path.read_bytes()
+        bin_sections = parse_elf_sections(bin_data)
+        dto_derived = parse_struct_descriptor(bin_data, bin_sections, 0x7ff0e0)
+        entry_derived = parse_struct_descriptor(bin_data, bin_sections, 0x805760)
+
+        recon_types_src = recon_types_file.read_text(encoding="utf-8")
         type_valid = (
-            pub_dto.get("type_name") == "DeviceDTO" and
-            pub_dto.get("descriptor_va") == "0x7ff0e0" and
-            pub_dto.get("struct_size") == 120 and
-            len(pub_dto.get("fields", [])) == 7 and
-            int_entry.get("type_name") == "DeviceEntry" and
-            int_entry.get("descriptor_va") == "0x805760" and
-            int_entry.get("struct_size") == 128 and
-            all(f.get("classification") in ["TYPE_DESCRIPTOR_CONFIRMED", "BINARY_ACCESS_CONFIRMED", "DYNAMIC_JSON_CONFIRMED"] for f in pub_dto.get("fields", []))
+            dto_derived["struct_size"] == 120 and
+            len(dto_derived["fields"]) == 7 and
+            [f["json_tag"] for f in dto_derived["fields"]] == ["device_id", "device_info", "online", "first_seen", "last_seen", "client_count", "clients,omitempty"] and
+            entry_derived["struct_size"] == 128 and
+            len(entry_derived["fields"]) == 10 and
+            "Classification: DIRECT_TYPE_RECOVERY" in recon_types_src and
+            "DeviceDTO represents" in recon_types_src and
+            "Classification: RECONSTRUCTED_FROM_BEHAVIOR" in recon_types_src and
+            "NOT_LAYOUT_EQUIVALENT_TO_ORIGINAL_DEVICEENTRY" in recon_types_src and
+            "DEFERRED_INTERNAL_FIELD" in recon_types_src
         )
-        record_check("Phase 2C.3B Device Type Evidence & Data Model", type_valid,
-                     "DeviceDTO (0x7ff0e0, 120 bytes, 7 fields), DeviceEntry (0x805760, 128 bytes, 11 fields)")
+        record_check("Phase 2C.3BR Device Type Evidence & Provenance", type_valid,
+                     "DeviceDTO (0x7ff0e0, 120B, 7 fields: DIRECT_TYPE_RECOVERY); DeviceEntry (0x805760, 128B, 10 fields: RECONSTRUCTED_FROM_BEHAVIOR)")
 
     # 9.4 Device Registry Empty & Populated Contracts
     c_emp_file = dev_dir / "DEVICE_EMPTY_REGISTRY_CONTRACT.json"
     c_pop_file = dev_dir / "DEVICE_POPULATED_REGISTRY_CONTRACT.json"
     if not c_emp_file.exists() or not c_pop_file.exists():
-        record_check("Phase 2C.3B Device Registry Contracts", False, "Registry contract files missing")
+        record_check("Phase 2C.3BR Device Registry Contracts", False, "Registry contract files missing")
     else:
         c_emp = json.loads(c_emp_file.read_text(encoding="utf-8"))
         c_pop = json.loads(c_pop_file.read_text(encoding="utf-8"))
@@ -1400,14 +1424,14 @@ def verify_all():
             len(pop_mul.get("parsed", [])) == 2 and
             pop_mul.get("order_rule") == "GO_MAP_ITERATION"
         )
-        record_check("Phase 2C.3B Device Registry Contracts", contracts_valid,
+        record_check("Phase 2C.3BR Device Registry Contracts", contracts_valid,
                      "Empty: 200 '[]\\n', Populated: 1-device online=true, 2-devices GO_MAP_ITERATION non-deterministic")
 
     # 9.5 Device Registry Lifecycle & Auth Visibility Matrices
     l_mat_file = dev_dir / "DEVICE_REGISTRY_LIFECYCLE_MATRIX.json"
     a_mat_file = dev_dir / "DEVICE_VISIBILITY_AUTH_MATRIX.json"
     if not l_mat_file.exists() or not a_mat_file.exists():
-        record_check("Phase 2C.3B Lifecycle & Auth Visibility Matrices", False, "Matrix files missing")
+        record_check("Phase 2C.3BR Lifecycle & Auth Visibility Matrices", False, "Matrix files missing")
     else:
         l_mat = json.loads(l_mat_file.read_text(encoding="utf-8"))
         a_mat = json.loads(a_mat_file.read_text(encoding="utf-8"))
@@ -1415,54 +1439,96 @@ def verify_all():
         trans_stages = {t.get("stage") for t in transitions}
         cases = a_mat.get("cases", {})
         mat_valid = (
-            len(transitions) >= 6 and
-            {"EMPTY_REGISTRY", "AGENT_CONNECTED", "CLEAN_DISCONNECT", "SAME_ID_RECONNECT", "DELETE_OFFLINE_DEVICE", "DELETE_ONLINE_DEVICE"}.issubset(trans_stages) and
+            len(transitions) >= 8 and
+            {"EMPTY_REGISTRY", "AGENT_CONNECTED", "CLEAN_DISCONNECT", "SAME_ID_RECONNECT", "ABRUPT_TCP_TERMINATION", "RECONNECT_AFTER_ABRUPT", "DUPLICATE_ACTIVE_CONNECTION", "DELETE_OFFLINE_DEVICE", "DELETE_ONLINE_DEVICE"}.issubset(trans_stages) and
             cases.get("ADMIN", {}).get("visible_count") == 2 and
             cases.get("NORMAL_USER_ASSIGNED_DEVICE_A", {}).get("visible_count") == 1 and
             cases.get("NORMAL_USER_UNASSIGNED", {}).get("visible_count") == 0 and
             cases.get("INVALID_TOKEN", {}).get("status") == 401
         )
-        record_check("Phase 2C.3B Lifecycle & Auth Visibility Matrices", mat_valid,
-                     f"{len(transitions)} lifecycle transitions verified; Admin sees all, assigned user sees 1, unassigned receives '[]'")
+        record_check("Phase 2C.3BR Lifecycle & Auth Visibility Matrices", mat_valid,
+                     f"{len(transitions)} lifecycle transitions (including abrupt drop/reconnect); Admin sees all, assigned user sees 1, unassigned receives '[]'")
 
-    # 9.6 Device HTTP Function Slices
+    # 9.6 Device HTTP Function Slices (Machine-Derived via Capstone Disassembly)
     f_sl_file = dev_dir / "DEVICE_HTTP_FUNCTION_SLICES.json"
-    if not f_sl_file.exists():
-        record_check("Phase 2C.3B Handler Forensic Slices", False, "DEVICE_HTTP_FUNCTION_SLICES.json missing")
+    f_map_file = ROOT / "evidence" / "go_signaling" / "FUNCTION_MAP.json"
+    if not f_sl_file.exists() or not f_map_file.exists():
+        record_check("Phase 2C.3BR Handler Forensic Slices", False, "DEVICE_HTTP_FUNCTION_SLICES.json or FUNCTION_MAP.json missing")
     else:
         f_sl = json.loads(f_sl_file.read_text(encoding="utf-8"))
+        f_map = {f["symbol_name"]: f for f in json.loads(f_map_file.read_text(encoding="utf-8"))}
         handlers = {h.get("symbol"): h for h in f_sl.get("handlers", [])}
+
+        # Check function boundaries match FUNCTION_MAP exactly
+        i2e_entry = int(f_map["main.i2EgUTaLmQs"]["va"], 16)
+        i2e_size = f_map["main.i2EgUTaLmQs"]["size_bytes"]
+        rxq_entry = int(f_map["main.rXQMyuE"]["va"], 16)
+        rxq_size = f_map["main.rXQMyuE"]["size_bytes"]
+
         slices_valid = (
             "main.i2EgUTaLmQs" in handlers and
-            handlers["main.i2EgUTaLmQs"].get("va") == "0x74cf80" and
+            int(handlers["main.i2EgUTaLmQs"].get("va"), 16) == i2e_entry and
+            handlers["main.i2EgUTaLmQs"].get("size_bytes") == i2e_size and
+            handlers["main.i2EgUTaLmQs"].get("total_disassembled_instructions", 0) > 100 and
+            handlers["main.i2EgUTaLmQs"].get("discovered_calls_count", 0) > 5 and
             len(handlers["main.i2EgUTaLmQs"].get("slices", [])) >= 4 and
             "main.rXQMyuE" in handlers and
-            handlers["main.rXQMyuE"].get("va") == "0x74da60" and
+            int(handlers["main.rXQMyuE"].get("va"), 16) == rxq_entry and
+            handlers["main.rXQMyuE"].get("size_bytes") == rxq_size and
+            handlers["main.rXQMyuE"].get("total_disassembled_instructions", 0) > 100 and
+            handlers["main.rXQMyuE"].get("discovered_calls_count", 0) > 5 and
             len(handlers["main.rXQMyuE"].get("slices", [])) >= 4
         )
-        record_check("Phase 2C.3B Handler Forensic Slices", slices_valid,
-                     "main.i2EgUTaLmQs (0x74cf80) & main.rXQMyuE (0x74da60) slices mapped with auth, registry, error & JSON branches")
+        record_check("Phase 2C.3BR Handler Forensic Slices", slices_valid,
+                     "main.i2EgUTaLmQs (0x74cf80) & main.rXQMyuE (0x74da60) machine-derived boundaries and Capstone instruction slices")
 
-    # 9.7 Device HTTP Differential Results (DEV-HTTP-01 to DEV-HTTP-14)
+    # 9.7 Device HTTP Differential Results (DEV-HTTP-01 to DEV-HTTP-28)
     d_res_file = dev_dir / "DEVICE_HTTP_DIFFERENTIAL_RESULTS.json"
     if not d_res_file.exists():
-        record_check("Phase 2C.3B Device REST Differential Results", False, "DEVICE_HTTP_DIFFERENTIAL_RESULTS.json missing")
+        record_check("Phase 2C.3BR Device REST Differential Results", False, "DEVICE_HTTP_DIFFERENTIAL_RESULTS.json missing")
     else:
         d_res = json.loads(d_res_file.read_text(encoding="utf-8"))
         res_list = d_res.get("results", [])
         case_ids = {r.get("test_id") for r in res_list}
-        expected_cases = {f"DEV-HTTP-{i:02d}" for i in range(1, 15)}
+        expected_cases = {f"DEV-HTTP-{i:02d}" for i in range(1, 29)}
         diff_valid = (
-            d_res.get("metadata", {}).get("total_cases") == 14 and
-            d_res.get("metadata", {}).get("passed_cases") == 14 and
+            d_res.get("metadata", {}).get("total_cases") == 28 and
+            d_res.get("metadata", {}).get("passed_cases") == 28 and
             d_res.get("metadata", {}).get("failed_cases") == 0 and
             case_ids == expected_cases and
-            all(r.get("passed") is True for r in res_list)
+            all(r.get("passed") is True for r in res_list) and
+            "IMPLEMENTED_DEVICE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28" in d_res.get("metadata", {}).get("contract_coverage", "")
         )
-        record_check("Phase 2C.3B Device REST Differential Results", diff_valid,
-                     f"14/14 automated test cases passed (DEV-HTTP-01 to DEV-HTTP-14), 100% parity against original binary")
+        record_check("Phase 2C.3BR Device REST Differential Results", diff_valid,
+                     "IMPLEMENTED_DEVICE_CONTRACT_DIFFERENTIAL_PASS_RATE = 28/28 (all 28 cases PASS)")
 
-    # 9.8 Cleanroom Scope & Provenance Isolation Guard
+    # 9.8 Device No-Auth Server Mode Contract
+    noauth_file = dev_dir / "DEVICE_NOAUTH_CONTRACT.json"
+    if not noauth_file.exists():
+        record_check("Phase 2C.3BR No-Auth Server Mode Contract", False, "DEVICE_NOAUTH_CONTRACT.json missing")
+    else:
+        noauth_data = json.loads(noauth_file.read_text(encoding="utf-8"))
+        noauth_valid = (
+            noauth_data.get("metadata", {}).get("server_flag") == "-no-auth" and
+            noauth_data.get("observations", {}).get("auth_status", {}).get("parsed", {}).get("noAuth") is True and
+            noauth_data.get("observations", {}).get("empty_devices_unauthenticated", {}).get("status") == 200 and
+            noauth_data.get("observations", {}).get("empty_devices_unauthenticated", {}).get("allows_query_without_token") is True
+        )
+        record_check("Phase 2C.3BR No-Auth Server Mode Contract", noauth_valid,
+                     "Original binary launched with -no-auth serves /devices unauthenticated and reports noAuth: true")
+
+    # 9.9 Device Forensic Reproducibility
+    repro_tool = ROOT / "tools" / "forensics" / "reproduce_device_forensics.py"
+    if not repro_tool.exists():
+        record_check("Phase 2C.3BR Device Forensic Reproducibility", False, "reproduce_device_forensics.py missing")
+    else:
+        import subprocess
+        res = subprocess.run([sys.executable, str(repro_tool)], capture_output=True, text=True)
+        repro_pass = (res.returncode == 0 and "REPRODUCIBILITY VERDICT: PASS" in res.stdout)
+        record_check("Phase 2C.3BR Device Forensic Reproducibility", repro_pass,
+                     "tools/forensics/reproduce_device_forensics.py PASS (all 9 artifacts bit/key exact reproducible)")
+
+    # 9.10 Cleanroom Scope & Provenance Isolation Guard
     recon_dir = ROOT / "reconstructed_source" / "webrtc-signaling"
     forbidden_tokens = ["websocket.Upgrader", "github.com/pion/webrtc", "nhooyr.io/websocket", "gorilla/websocket"]
     found_forbidden = []
@@ -1472,7 +1538,7 @@ def verify_all():
             if tok in content:
                 found_forbidden.append((str(gp.name), tok))
     scope_guard_valid = len(found_forbidden) == 0
-    record_check("Phase 2C.3B Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
+    record_check("Phase 2C.3BR Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
                  f"0 production WebSocket/WebRTC packages implemented ({len(found_forbidden)} violations)")
 
     # Summary

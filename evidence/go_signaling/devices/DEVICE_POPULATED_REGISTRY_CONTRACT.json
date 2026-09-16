@@ -6,7 +6,7 @@
   "one_device": {
     "status": 200,
     "content_type": "application/json",
-    "raw_body": "[{\"device_id\":\"dev-alpha-001\",\"device_info\":{\"model\":\"Pixel 7\",\"sdk\":33},\"online\":true,\"first_seen\":\"2026-09-16T07:42:57.1007099+07:00\",\"last_seen\":\"2026-09-16T07:42:57.1007099+07:00\",\"client_count\":0}]\n",
+    "raw_body": "[{\"device_id\":\"dev-alpha-001\",\"device_info\":{\"model\":\"Pixel 7\",\"sdk\":33},\"online\":true,\"first_seen\":\"2026-09-16T08:07:42.5693985+07:00\",\"last_seen\":\"2026-09-16T08:07:42.5693985+07:00\",\"client_count\":0}]\n",
     "parsed": [
       {
         "device_id": "dev-alpha-001",
@@ -15,8 +15,8 @@
           "sdk": 33
         },
         "online": true,
-        "first_seen": "2026-09-16T07:42:57.1007099+07:00",
-        "last_seen": "2026-09-16T07:42:57.1007099+07:00",
+        "first_seen": "2026-09-16T08:07:42.5693985+07:00",
+        "last_seen": "2026-09-16T08:07:42.5693985+07:00",
         "client_count": 0
       }
     ]
@@ -24,7 +24,7 @@
   "multiple_devices": {
     "status": 200,
     "content_type": "application/json",
-    "raw_body": "[{\"device_id\":\"dev-alpha-001\",\"device_info\":{\"model\":\"Pixel 7\",\"sdk\":33},\"online\":true,\"first_seen\":\"2026-09-16T07:42:57.1007099+07:00\",\"last_seen\":\"2026-09-16T07:42:57.1007099+07:00\",\"client_count\":0},{\"device_id\":\"dev-beta-002\",\"device_info\":{\"model\":\"Galaxy S23\",\"sdk\":34},\"online\":true,\"first_seen\":\"2026-09-16T07:42:57.5416287+07:00\",\"last_seen\":\"2026-09-16T07:42:57.5416287+07:00\",\"client_count\":0}]\n",
+    "raw_body": "[{\"device_id\":\"dev-alpha-001\",\"device_info\":{\"model\":\"Pixel 7\",\"sdk\":33},\"online\":true,\"first_seen\":\"2026-09-16T08:07:42.5693985+07:00\",\"last_seen\":\"2026-09-16T08:07:42.5693985+07:00\",\"client_count\":0},{\"device_id\":\"dev-beta-002\",\"device_info\":{\"model\":\"Galaxy S23\",\"sdk\":34},\"online\":true,\"first_seen\":\"2026-09-16T08:07:43.0064665+07:00\",\"last_seen\":\"2026-09-16T08:07:43.0064665+07:00\",\"client_count\":0}]\n",
     "parsed": [
       {
         "device_id": "dev-alpha-001",
@@ -33,8 +33,8 @@
           "sdk": 33
         },
         "online": true,
-        "first_seen": "2026-09-16T07:42:57.1007099+07:00",
-        "last_seen": "2026-09-16T07:42:57.1007099+07:00",
+        "first_seen": "2026-09-16T08:07:42.5693985+07:00",
+        "last_seen": "2026-09-16T08:07:42.5693985+07:00",
         "client_count": 0
       },
       {
@@ -44,8 +44,8 @@
           "sdk": 34
         },
         "online": true,
-        "first_seen": "2026-09-16T07:42:57.5416287+07:00",
-        "last_seen": "2026-09-16T07:42:57.5416287+07:00",
+        "first_seen": "2026-09-16T08:07:43.0064665+07:00",
+        "last_seen": "2026-09-16T08:07:43.0064665+07:00",
         "client_count": 0
       }
     ],

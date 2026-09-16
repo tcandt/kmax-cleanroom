@@ -18,6 +18,7 @@ import (
 
 // DeviceDTO represents the public JSON structure returned by GET /devices.
 // Struct layout recovered directly from binary .rodata type descriptor at VA 0x7ff0e0.
+// Classification: DIRECT_TYPE_RECOVERY
 type DeviceDTO struct {
 	DeviceID    string        `json:"device_id"`
 	DeviceInfo  interface{}   `json:"device_info"`
@@ -28,8 +29,23 @@ type DeviceDTO struct {
 	Clients     []interface{} `json:"clients,omitempty"`
 }
 
-// DeviceEntry represents the internal registry record stored in the global devices map.
-// Struct layout recovered directly from binary .rodata type descriptor at VA 0x805760.
+// CLEANROOM-PROVENANCE:
+// Classification: RECONSTRUCTED_FROM_BEHAVIOR
+// Mapping Scope: CLEANROOM_BEHAVIORAL_REGISTRY_MODEL
+// Original Function Mapping: NONE
+// Original Binary Struct: main.AoIDVQHamcx at VA 0x805760 (128 bytes, 10 fields)
+// Relationship to Original: NOT_LAYOUT_EQUIVALENT_TO_ORIGINAL_DEVICEENTRY
+// Description: Simplified cleanroom in-memory representation capturing the fields required
+//   for REST API behavior (/devices listing, filtering, and deletion).
+// Deferred Internal Fields:
+//   - webrtc_flag (offset 0x34): DEFERRED_INTERNAL_FIELD / PHASE_2C4_OR_2C6
+//     Proven via binary disassembly of main.i2EgUTaLmQs and dynamic oracle testing to have
+//     zero effect on /devices REST output or deletion lifecycle.
+//   - ws_connection (offset 0x20): WebSocket peer connection pointer (deferred to Phase 2C.4)
+//   - connected_clients (offset 0x28): map[uint32]*client (deferred to Phase 2C.4)
+// Confidence: HIGH
+
+// DeviceEntry represents the simplified cleanroom internal registry record.
 type DeviceEntry struct {
 	DeviceID    string
 	DeviceInfo  interface{}
