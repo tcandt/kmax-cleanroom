@@ -69,10 +69,30 @@
       "struct_descriptor_va": "0x7ed2a0",
       "struct_size_bytes": 56,
       "fields": [
-        {"name": "FLdrjU", "json_tag": "machine_id", "type": "string", "offset": 0},
-        {"name": "FzadFNPQCB", "json_tag": "max_devices", "type": "int", "offset": 16},
-        {"name": "TF9svpC2ha", "json_tag": "expires_at", "type": "string", "offset": 24},
-        {"name": "M6ofLo6ey", "json_tag": "customer", "type": "string", "offset": 40}
+        {
+          "name": "FLdrjU",
+          "json_tag": "machine_id",
+          "type": "string",
+          "offset": 0
+        },
+        {
+          "name": "FzadFNPQCB",
+          "json_tag": "max_devices",
+          "type": "int",
+          "offset": 16
+        },
+        {
+          "name": "TF9svpC2ha",
+          "json_tag": "expires_at",
+          "type": "string",
+          "offset": 24
+        },
+        {
+          "name": "M6ofLo6ey",
+          "json_tag": "customer",
+          "type": "string",
+          "offset": 40
+        }
       ],
       "on_failure_error": "无效的授权声明内容",
       "confidence": "HIGH"

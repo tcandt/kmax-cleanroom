@@ -49,7 +49,7 @@
     "status_field": "status",
     "status_value": "success",
     "message_field": "message",
-    "message_value": "\u6fc0\u6d3b\u7801\u66f4\u65b0\u6210\u529f"
+    "message_value": "激活码更新成功"
   },
   "compile_time_globals": {
     "license_filename": "license.txt",
