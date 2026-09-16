@@ -5,21 +5,42 @@
       "rest_endpoint": "POST /api/admin/users/delete",
       "status_code": 200,
       "shares_json_bit_identical": true,
-      "callgraph_proof": "main.d709Uf_4gI (user delete handler at 0x742b80) has 0 calls to share functions (main.fomL4ATwVV1)"
+      "static_proof": {
+        "route": "/api/admin/users/delete",
+        "handler_symbol": "main._Wcin_o",
+        "handler_va": "0x745ba0",
+        "share_related_callees": [],
+        "saveShares_reachable_directly": false,
+        "derivation": "Resolved from ROUTE_HANDLER_MAP (pattern /api/admin/users/delete -> main._Wcin_o at 0x745ba0). FUNCTION_MAP confirms 0 share-related callees."
+      }
     },
     "CROSS-02": {
       "description": "Device deletion / disconnect leaves shares.json intact",
       "rest_endpoint": "DELETE /api/devices/{id}",
       "status_code": 404,
       "shares_json_bit_identical": true,
-      "callgraph_proof": "main.tP8uF9S8U7K (device delete handler at 0x74da60) has 0 calls to share functions"
+      "static_proof": {
+        "route": "/api/devices/",
+        "handler_symbol": "main.rXQMyuE",
+        "handler_va": "0x74da60",
+        "share_related_callees": [],
+        "saveShares_reachable_directly": false,
+        "derivation": "Resolved from ROUTE_HANDLER_MAP (pattern /api/devices/ -> main.rXQMyuE at 0x74da60). FUNCTION_MAP confirms 0 share-related callees."
+      }
     },
     "CROSS-03": {
       "description": "/devices GET endpoint does not expose share tokens or modify DeviceDTO",
       "rest_endpoint": "GET /devices",
       "status_code": 200,
       "isolation_verified": true,
-      "callgraph_proof": "main.q601l9 (devices handler at 0x74cf00) queries in-memory device map with 0 references to SharesStore"
+      "static_proof": {
+        "route": "/devices",
+        "handler_symbol": "main.i2EgUTaLmQs",
+        "handler_va": "0x74cf80",
+        "share_related_callees": [],
+        "saveShares_reachable_directly": false,
+        "derivation": "Resolved from ROUTE_HANDLER_MAP (pattern /devices -> main.i2EgUTaLmQs at 0x74cf80). FUNCTION_MAP confirms queries in-memory device registry with 0 references to SharesStore."
+      }
     }
   },
   "device_uniqueness": {

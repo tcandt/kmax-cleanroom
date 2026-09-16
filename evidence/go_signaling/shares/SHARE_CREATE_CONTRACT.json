@@ -8,7 +8,7 @@
   },
   "duplicate_device_rejection": {
     "status_code": 409,
-    "body_prefix": "{\"code\":409,\"msg\":\"\u8be5\u8bbe\u5907\u5df2\u5b58\u5728\u6d3b\u8dc3\u5206\u4eab\uff08\u5361\u5bc6 CP-SXVL-R9Y6\uff09\uff0c\u8bf7\u5148\u64a4\u9500\u6216\u5bf9\u5176\u5ef6\u65f6\"}\n"
+    "body_prefix": "{\"code\":409,\"msg\":\"\u8be5\u8bbe\u5907\u5df2\u5b58\u5728\u6d3b\u8dc3\u5206\u4eab\uff08\u5361\u5bc6 CP-LJTL-UGDX\uff09\uff0c\u8bf7\u5148\u64a4\u9500\u6216\u5bf9\u5176\u5ef6\u65f6\"}\n"
   },
   "minimal_response_schema": {
     "code": 0,

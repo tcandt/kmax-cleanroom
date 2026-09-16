@@ -1,0 +1,50 @@
+{
+  "read_initial_empty": {
+    "status_code": 200,
+    "response_body": "[]\n",
+    "shape": "empty array []"
+  },
+  "mutation_replace": {
+    "status_code": 200,
+    "response_body": "{\"status\":\"success\"}\n",
+    "verified_readback": [
+      {
+        "name": "Home",
+        "cmd": "input keyevent 3"
+      },
+      {
+        "name": "Back",
+        "cmd": "input keyevent 4"
+      }
+    ],
+    "behavior": "REPLACE_ALL (replaces entire list of shortcuts for calling user)"
+  },
+  "per_user_isolation": {
+    "user_alpha_before_mutation": [],
+    "user_alpha_after_mutation": [
+      {
+        "name": "VolumeUp",
+        "cmd": "input keyevent 24"
+      }
+    ],
+    "isolation_verified": true
+  },
+  "error_handling": {
+    "empty_body": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    },
+    "non_array_object": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    },
+    "malformed_json": {
+      "status_code": 400,
+      "body": "Invalid JSON\n"
+    },
+    "empty_array_clear": {
+      "status_code": 200,
+      "readback": []
+    }
+  }
+}

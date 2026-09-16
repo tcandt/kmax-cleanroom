@@ -20,12 +20,15 @@ ELF_LINUX = REPO_ROOT / "cloudphone-v0.3.6 (1)" / "bin" / "linux_amd64" / "webrt
 CANONICAL_SHA256 = "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "evidence" / "go_signaling" / "shares"
 
+import capstone
+
 sys.path.insert(0, str(REPO_ROOT))
 
 from tools.forensics.generate_share_forensics import (
     generate_evidence,
     parse_elf_sections,
-    parse_struct_descriptor
+    parse_struct_descriptor,
+    va_to_offset
 )
 
 def verify_share_reproducibility():
@@ -182,45 +185,127 @@ def verify_share_reproducibility():
     # Artifact 10: SHARE_PERSISTENCE_CONTRACT.json
     f10_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_PERSISTENCE_CONTRACT.json").read_text(encoding="utf-8"))
     f10_r = json.loads((temp_out / "SHARE_PERSISTENCE_CONTRACT.json").read_text(encoding="utf-8"))
+    
+    # Independent binary disassembly verification of main.fomL4ATwVV1
+    fm_path = REPO_ROOT / "evidence" / "go_signaling" / "FUNCTION_MAP.json"
+    fm_data = {f["symbol_name"]: f for f in json.loads(fm_path.read_text(encoding="utf-8"))}
+    f_save = fm_data.get("main.fomL4ATwVV1", {})
+    va_save_start = int(f_save.get("va", "0x739900"), 16)
+    size_save = f_save.get("size_bytes", 1664)
+    sec_off_save = va_to_offset(va_save_start, sections)
+    code_save = elf_bytes[sec_off_save:sec_off_save+size_save]
+    
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
+    md.detail = True
+    indep_p_facts = {}
+    for insn in md.disasm(code_save, va_save_start):
+        if insn.mnemonic == 'call':
+            try:
+                target = int(insn.op_str, 16)
+                if target == 0x533e80:
+                    indep_p_facts["marshal_indent"] = hex(insn.address)
+                elif target == 0x4608a0:
+                    indep_p_facts["tmp_concat"] = hex(insn.address)
+                elif target == 0x4e0da0:
+                    indep_p_facts["write_file"] = hex(insn.address)
+                elif target == 0x4e1160:
+                    indep_p_facts["rename"] = hex(insn.address)
+            except:
+                pass
+        for op in insn.operands:
+            if op.type == capstone.x86.X86_OP_IMM and op.imm == 0x180:
+                indep_p_facts["mode_0600"] = hex(insn.address)
+            elif op.type == capstone.x86.X86_OP_MEM and op.mem.base == capstone.x86.X86_REG_RIP:
+                target_va = insn.address + insn.size + op.mem.disp
+                target_off = va_to_offset(target_va, sections)
+                if target_off is not None and elf_bytes[target_off:target_off+4] == b'.tmp':
+                    indep_p_facts["tmp_xref"] = hex(insn.address)
+
     p10 = (
         f10_r["file_name"] == "shares.json" and
         f10_r["atomic_tmp_rename"] is True and
         "0600" in f10_r["file_mode"] and
         f10_r.get("machine_facts", {}).get("save_shares_symbol") == "main.fomL4ATwVV1" and
-        f10_r.get("machine_facts", {}).get("save_shares_va") == "0x739900" and
-        f10_r.get("machine_facts", {}).get("mode_arg_instruction_va") == "0x739cd9" and
-        f10_r.get("machine_facts", {}).get("write_file_call_va") == "0x739ce0" and
-        f10_r.get("machine_facts", {}).get("rename_call_va") == "0x739e12"
+        f10_r.get("machine_facts", {}).get("marshal_indent_call_va") == indep_p_facts.get("marshal_indent") and
+        f10_r.get("machine_facts", {}).get("tmp_string_xref_va") == indep_p_facts.get("tmp_xref") and
+        f10_r.get("machine_facts", {}).get("mode_arg_instruction_va") == indep_p_facts.get("mode_0600") and
+        f10_r.get("machine_facts", {}).get("write_file_call_va") == indep_p_facts.get("write_file") and
+        f10_r.get("machine_facts", {}).get("rename_call_va") == indep_p_facts.get("rename")
     )
     results["10. SHARE_PERSISTENCE_CONTRACT"] = p10
-    print(f"[{'PASS' if p10 else 'FAIL'}] 10. SHARE_PERSISTENCE_CONTRACT: Atomic .tmp + os.Rename (0x739e12), mode 0600 (0x739cd9)")
+    print(f"[{'PASS' if p10 else 'FAIL'}] 10. SHARE_PERSISTENCE_CONTRACT: Atomic .tmp + os.Rename ({indep_p_facts.get('rename')}), mode 0600 ({indep_p_facts.get('mode_0600')}) independently decoded")
 
     # Artifact 11: SHARE_EXPIRY_CONTRACT.json
     f11_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_EXPIRY_CONTRACT.json").read_text(encoding="utf-8"))
     f11_r = json.loads((temp_out / "SHARE_EXPIRY_CONTRACT.json").read_text(encoding="utf-8"))
+    
+    # Independent binary disassembly verification of setup and worker
+    f_setup = fm_data.get("main.dYBSRoVh", {})
+    va_setup = int(f_setup.get("va", "0x73a0a0"), 16)
+    size_setup = f_setup.get("size_bytes", 128)
+    sec_off_setup = va_to_offset(va_setup, sections)
+    code_setup = elf_bytes[sec_off_setup:sec_off_setup+size_setup]
+    
+    indep_ticker_imm = None
+    for insn in md.disasm(code_setup, va_setup):
+        for op in insn.operands:
+            if op.type == capstone.x86.X86_OP_IMM and op.imm > 1000000000:
+                indep_ticker_imm = op.imm
+
+    f_worker = fm_data.get("main.dYBSRoVh.func1", {})
+    va_worker = int(f_worker.get("va", "0x73a120"), 16)
+    size_worker = f_worker.get("size_bytes", 992)
+    sec_off_worker = va_to_offset(va_worker, sections)
+    code_worker = elf_bytes[sec_off_worker:sec_off_worker+size_worker]
+    
+    indep_worker_facts = {}
+    for insn in md.disasm(code_worker, va_worker):
+        if insn.mnemonic == 'call':
+            try:
+                target = int(insn.op_str, 16)
+                if target == 0x4c98a0:
+                    indep_worker_facts["after"] = hex(insn.address)
+                elif target == 0x739900:
+                    indep_worker_facts["save_shares"] = hex(insn.address)
+                elif target == 0x40bb20 and "del1" not in indep_worker_facts:
+                    indep_worker_facts["del1"] = hex(insn.address)
+            except:
+                pass
+
     p11 = (
+        indep_ticker_imm == 300000000000 and
         f11_r.get("cleanup_worker", {}).get("setup_symbol") == "main.dYBSRoVh" and
-        f11_r.get("cleanup_worker", {}).get("setup_va") == "0x73a0a0" and
         f11_r.get("cleanup_worker", {}).get("ticker_interval_seconds") == 300 and
         f11_r.get("cleanup_worker", {}).get("worker_symbol") == "main.dYBSRoVh.func1" and
-        f11_r.get("cleanup_worker", {}).get("worker_va") == "0x73a120" and
-        f11_r.get("cleanup_worker", {}).get("worker_size_bytes") == 992 and
+        f11_r.get("cleanup_worker", {}).get("machine_facts", {}).get("save_shares_call_va") == indep_worker_facts.get("save_shares") and
+        f11_r.get("cleanup_worker", {}).get("machine_facts", {}).get("expiry_comparison_call_va") == indep_worker_facts.get("after") and
         f11_r.get("lazy_check_on_query", {}).get("handler_va") == "0x760480"
     )
     results["11. SHARE_EXPIRY_CONTRACT"] = p11
-    print(f"[{'PASS' if p11 else 'FAIL'}] 11. SHARE_EXPIRY_CONTRACT: Ticker 300s (0x73a0ae), reaper worker (0x73a120), lazy check")
+    print(f"[{'PASS' if p11 else 'FAIL'}] 11. SHARE_EXPIRY_CONTRACT: Ticker 300s (decoded immediate {hex(indep_ticker_imm or 0)}), reaper worker save ({indep_worker_facts.get('save_shares')})")
 
     # Artifact 12: SHARE_CROSS_CONTRACT.json
     f12_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_CROSS_CONTRACT.json").read_text(encoding="utf-8"))
     f12_r = json.loads((temp_out / "SHARE_CROSS_CONTRACT.json").read_text(encoding="utf-8"))
+    
+    # Independent verification of cross-contract route binding from ROUTE_HANDLER_MAP
+    route_map_raw = json.loads((REPO_ROOT / "evidence" / "go_signaling" / "ROUTE_HANDLER_MAP.json").read_text(encoding="utf-8"))
+    routes_by_pat = {r["pattern"]: r for r in route_map_raw.get("routes", [])}
+    
     p12 = (
         f12_r.get("test_cases", {}).get("CROSS-01", {}).get("shares_json_bit_identical") is True and
+        f12_r.get("test_cases", {}).get("CROSS-01", {}).get("static_proof", {}).get("handler_symbol") == routes_by_pat.get("/api/admin/users/delete", {}).get("handler_symbol") == "main._Wcin_o" and
+        f12_r.get("test_cases", {}).get("CROSS-01", {}).get("static_proof", {}).get("handler_va") == routes_by_pat.get("/api/admin/users/delete", {}).get("handler_va") == "0x745ba0" and
         f12_r.get("test_cases", {}).get("CROSS-02", {}).get("shares_json_bit_identical") is True and
+        f12_r.get("test_cases", {}).get("CROSS-02", {}).get("static_proof", {}).get("handler_symbol") == routes_by_pat.get("/api/devices/", {}).get("handler_symbol") == "main.rXQMyuE" and
+        f12_r.get("test_cases", {}).get("CROSS-02", {}).get("static_proof", {}).get("handler_va") == routes_by_pat.get("/api/devices/", {}).get("handler_va") == "0x74da60" and
         f12_r.get("test_cases", {}).get("CROSS-03", {}).get("isolation_verified") is True and
+        f12_r.get("test_cases", {}).get("CROSS-03", {}).get("static_proof", {}).get("handler_symbol") == routes_by_pat.get("/devices", {}).get("handler_symbol") == "main.i2EgUTaLmQs" and
+        f12_r.get("test_cases", {}).get("CROSS-03", {}).get("static_proof", {}).get("handler_va") == routes_by_pat.get("/devices", {}).get("handler_va") == "0x74cf80" and
         f12_r.get("device_uniqueness", {}).get("status_code") == 409
     )
     results["12. SHARE_CROSS_CONTRACT"] = p12
-    print(f"[{'PASS' if p12 else 'FAIL'}] 12. SHARE_CROSS_CONTRACT: Structured tests CROSS-01..03 PASS & callgraph isolation")
+    print(f"[{'PASS' if p12 else 'FAIL'}] 12. SHARE_CROSS_CONTRACT: Canonical handlers /admin/users/delete (main._Wcin_o), /devices/ (main.rXQMyuE), /devices (main.i2EgUTaLmQs) independently bound")
 
     # Artifact 13: SHARE_HTTP_FUNCTION_SLICES.json
     f13_c = json.loads((DEFAULT_OUTPUT_DIR / "SHARE_HTTP_FUNCTION_SLICES.json").read_text(encoding="utf-8"))

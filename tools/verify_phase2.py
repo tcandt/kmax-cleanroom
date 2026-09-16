@@ -2043,19 +2043,182 @@ def verify_all():
         record_check("Phase 2C.3E Shares Forensic Reproducibility", sh_repro_pass,
                      "tools/forensics/reproduce_share_forensics.py PASS (all 13 artifacts reproducible via temp directory)")
 
-    # 12.10 Cleanroom Scope & Provenance Isolation Guard
+    # ==================================================
+    # 13. Phase 2C.3F Shortcuts REST Reconstruction Audit
+    # ==================================================
+    sc_dir = ROOT / "evidence" / "go_signaling" / "shortcuts"
+
+    # 13.1 Shortcuts Route Family & Provenance
+    sc_family_file = sc_dir / "SHORTCUT_ROUTE_FAMILY.json"
+    if not sc_family_file.exists():
+        record_check("Phase 2C.3F Shortcuts Route Family", False, "SHORTCUT_ROUTE_FAMILY.json missing")
+    else:
+        sc_fam = json.loads(sc_family_file.read_text(encoding="utf-8"))
+        fam_valid = (
+            sc_fam.get("pattern") == "/api/shortcuts" and
+            sc_fam.get("wrapper", {}).get("symbol") == "main.main.func3" and
+            sc_fam.get("wrapper", {}).get("va") == "0x76d4c0" and
+            sc_fam.get("business_handler", {}).get("symbol") == "main.yHBQWSpi" and
+            sc_fam.get("business_handler", {}).get("va") == "0x76c640" and
+            sc_fam.get("registration_call_va") == "0x765984"
+        )
+        record_check("Phase 2C.3F Shortcuts Route Family", fam_valid,
+                     "/api/shortcuts bound to wrapper main.main.func3 (0x76d4c0) & handler main.yHBQWSpi (0x76c640)")
+
+    # 13.2 Shortcuts 7-Verb Method Matrix
+    sc_matrix_file = sc_dir / "SHORTCUT_ROUTE_METHOD_MATRIX.json"
+    if not sc_matrix_file.exists():
+        record_check("Phase 2C.3F Shortcuts Method Matrix", False, "SHORTCUT_ROUTE_METHOD_MATRIX.json missing")
+    else:
+        sc_mat = json.loads(sc_matrix_file.read_text(encoding="utf-8"))
+        mat_valid = (
+            len(sc_mat) == 7 and
+            sc_mat.get("GET", {}).get("status_code") == 200 and
+            sc_mat.get("OPTIONS", {}).get("status_code") == 200 and
+            sc_mat.get("PUT", {}).get("status_code") == 405 and
+            sc_mat.get("PATCH", {}).get("status_code") == 405 and
+            sc_mat.get("DELETE", {}).get("status_code") == 405 and
+            sc_mat.get("HEAD", {}).get("status_code") == 405 and
+            sc_mat.get("HEAD", {}).get("body_bytes") == 0 and
+            sc_mat.get("HEAD", {}).get("content_length") == "19"
+        )
+        record_check("Phase 2C.3F Shortcuts Method Matrix", mat_valid,
+                     "7 verbs verified: GET 200, OPTIONS 200, PUT/PATCH/DELETE/HEAD 405, wire bodyless HEAD (Content-Length: 19)")
+
+    # 13.3 Shortcuts Type Evidence
+    sc_type_file = sc_dir / "SHORTCUT_TYPE_EVIDENCE.json"
+    if not sc_type_file.exists():
+        record_check("Phase 2C.3F Shortcuts Type Evidence", False, "SHORTCUT_TYPE_EVIDENCE.json missing")
+    else:
+        sc_type = json.loads(sc_type_file.read_text(encoding="utf-8"))
+        sc_s = sc_type.get("shortcut_struct", {})
+        sc_map = sc_type.get("storage_map", {})
+        type_valid = (
+            sc_s.get("size_bytes") == 32 and
+            sc_s.get("field_count") == 2 and
+            sc_map.get("descriptor_va") == "0x7bfc40"
+        )
+        record_check("Phase 2C.3F Shortcuts Type Evidence", type_valid,
+                     "Shortcut struct (0x7d70c0, 32B, 2 fields) & map descriptor (0x7bfc40) recovered from ELF")
+
+    # 13.4 Shortcuts Operation Contracts
+    sc_ops_file = sc_dir / "SHORTCUT_OPERATION_CONTRACTS.json"
+    if not sc_ops_file.exists():
+        record_check("Phase 2C.3F Shortcuts Operations Contract", False, "SHORTCUT_OPERATION_CONTRACTS.json missing")
+    else:
+        sc_ops = json.loads(sc_ops_file.read_text(encoding="utf-8"))
+        ops_valid = (
+            sc_ops.get("read_initial_empty", {}).get("status_code") == 200 and
+            sc_ops.get("read_initial_empty", {}).get("response_body") == "[]\n" and
+            sc_ops.get("mutation_replace", {}).get("status_code") == 200 and
+            sc_ops.get("mutation_replace", {}).get("response_body") == '{"status":"success"}\n' and
+            sc_ops.get("per_user_isolation", {}).get("isolation_verified") is True and
+            sc_ops.get("error_handling", {}).get("malformed_json", {}).get("status_code") == 400 and
+            sc_ops.get("error_handling", {}).get("empty_body", {}).get("status_code") == 400
+        )
+        record_check("Phase 2C.3F Shortcuts Operations Contract", ops_valid,
+                     "Read initial '[]\\n', replace mutation, per-user isolation, error handling 400")
+
+    # 13.5 Shortcuts Persistence Contract
+    sc_pers_file = sc_dir / "SHORTCUT_PERSISTENCE_CONTRACT.json"
+    if not sc_pers_file.exists():
+        record_check("Phase 2C.3F Shortcuts Persistence Contract", False, "SHORTCUT_PERSISTENCE_CONTRACT.json missing")
+    else:
+        sc_pers = json.loads(sc_pers_file.read_text(encoding="utf-8"))
+        pers_valid = (
+            sc_pers.get("file_name") == "shortcuts.json" and
+            "0644" in sc_pers.get("file_mode", "") and
+            "DIRECT_WRITE_FILE" in sc_pers.get("write_mechanism", "") and
+            sc_pers.get("machine_facts", {}).get("saver_symbol") == "main.jk9A26" and
+            sc_pers.get("machine_facts", {}).get("saver_va") == "0x76c2c0" and
+            sc_pers.get("no_auth_mode_key", {}).get("key_used") == "admin" and
+            "2 spaces" in sc_pers.get("per_user_disk_format", {}).get("indentation", "")
+        )
+        record_check("Phase 2C.3F Shortcuts Persistence Contract", pers_valid,
+                     "Direct os.WriteFile (0x76c435), mode 0644 (0x76c426), no-auth key 'admin' verified")
+
+    # 13.6 Shortcuts Auth Matrix
+    sc_auth_file = sc_dir / "SHORTCUT_AUTH_MATRIX.json"
+    if not sc_auth_file.exists():
+        record_check("Phase 2C.3F Shortcuts Auth Matrix", False, "SHORTCUT_AUTH_MATRIX.json missing")
+    else:
+        sc_auth = json.loads(sc_auth_file.read_text(encoding="utf-8"))
+        auth_valid = (
+            sc_auth.get("ADMIN", {}).get("status_code") == 200 and
+            sc_auth.get("NORMAL_USER", {}).get("status_code") == 200 and
+            sc_auth.get("MISSING_TOKEN", {}).get("status_code") == 401 and
+            sc_auth.get("INVALID_TOKEN", {}).get("status_code") == 401 and
+            sc_auth.get("NO_AUTH_MODE", {}).get("status_code") == 200
+        )
+        record_check("Phase 2C.3F Shortcuts Auth Matrix", auth_valid,
+                     "Admin 200, Normal user 200, No-Auth mode 200, Missing/Invalid token 401")
+
+    # 13.7 Shortcuts Handler Forensic Slices
+    sc_sl_file = sc_dir / "SHORTCUT_HTTP_FUNCTION_SLICES.json"
+    if not sc_sl_file.exists():
+        record_check("Phase 2C.3F Shortcuts Function Slices", False, "SHORTCUT_HTTP_FUNCTION_SLICES.json missing")
+    else:
+        sc_sl = json.loads(sc_sl_file.read_text(encoding="utf-8"))
+        sc_slices_valid = (
+            len(sc_sl) == 4 and
+            all(
+                s.get("symbol") in fn_map_data and
+                s.get("machine_observation", {}).get("start_va") == fn_map_data[s["symbol"]]["va"] and
+                s.get("machine_observation", {}).get("size_bytes") == fn_map_data[s["symbol"]]["size_bytes"] and
+                s.get("machine_observation", {}).get("instruction_count", 0) > 0
+                for s in sc_sl
+            )
+        )
+        record_check("Phase 2C.3F Shortcuts Function Slices", sc_slices_valid,
+                     f"4 query-derived slices (wrapper, handler, loader, saver) bound to FUNCTION_MAP")
+
+    # 13.8 Shortcuts REST Differential Results (SHORTCUT-HTTP-01 to SHORTCUT-HTTP-13)
+    sc_diff_file = sc_dir / "SHORTCUT_HTTP_DIFFERENTIAL_RESULTS.json"
+    if not sc_diff_file.exists():
+        record_check("Phase 2C.3F Shortcuts REST Differential Results", False, "SHORTCUT_HTTP_DIFFERENTIAL_RESULTS.json missing")
+    else:
+        sc_diff = json.loads(sc_diff_file.read_text(encoding="utf-8"))
+        sc_results = sc_diff.get("results", [])
+        sc_meta = sc_diff.get("metadata", {})
+        sc_cases = {r.get("test_id") for r in sc_results}
+        expected_sc_cases = {f"SHORTCUT-HTTP-{i:02d}" for i in range(1, 14)}
+        sc_diff_valid = (
+            sc_meta.get("total_executed") == 13 and
+            sc_meta.get("passed") == 13 and
+            sc_cases == expected_sc_cases and
+            all(r.get("status") == "PASS" for r in sc_results) and
+            "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 13/13" in sc_meta.get("metric", "")
+        )
+        record_check("Phase 2C.3F Shortcuts REST Differential Results", sc_diff_valid,
+                     "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 13/13 (all 13 cases PASS)")
+
+    # 13.9 Shortcuts Forensic Reproducibility Tool
+    sc_repro_tool = ROOT / "tools" / "forensics" / "reproduce_shortcut_forensics.py"
+    if not sc_repro_tool.exists():
+        record_check("Phase 2C.3F Shortcuts Forensic Reproducibility", False, "reproduce_shortcut_forensics.py missing")
+    else:
+        import subprocess
+        sc_res = subprocess.run([sys.executable, str(sc_repro_tool)], capture_output=True, text=True)
+        sc_repro_pass = (sc_res.returncode == 0 and "OVERALL REPRODUCIBILITY: PASS" in sc_res.stdout)
+        record_check("Phase 2C.3F Shortcuts Forensic Reproducibility", sc_repro_pass,
+                     "tools/forensics/reproduce_shortcut_forensics.py PASS (all 7 artifacts reproducible via temp directory)")
+
+    # 13.10 Cleanroom Scope & Provenance Isolation Guard
     recon_dir = ROOT / "reconstructed_source" / "webrtc-signaling"
     forbidden_tokens = [
         "websocket.Upgrader",
         "github.com/pion/webrtc",
         "nhooyr.io/websocket",
         "gorilla/websocket",
-        "/api/shortcuts",
         "/api/activate",
         "/api/license_status",
         "/debug/license",
         "/register_agent",
         "/connect_client",
+        "/api/files",
+        "/api/tasks",
+        "/upload",
+        '"/register_device"',
     ]
     found_forbidden = []
     for gp in recon_dir.rglob("*.go"):
@@ -2064,8 +2227,8 @@ def verify_all():
             if tok in content:
                 found_forbidden.append((str(gp.name), tok))
     scope_guard_valid = len(found_forbidden) == 0
-    record_check("Phase 2C.3E Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
-                 f"0 production WebSocket/WebRTC packages, 0 Shortcuts, 0 License ({len(found_forbidden)} violations)")
+    record_check("Phase 2C.3F Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
+                 f"0 production WebSocket/WebRTC packages, 0 License/Tasks/Files ({len(found_forbidden)} violations)")
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

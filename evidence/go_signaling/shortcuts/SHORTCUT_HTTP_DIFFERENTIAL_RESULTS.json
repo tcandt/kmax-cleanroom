@@ -1,0 +1,296 @@
+{
+  "metadata": {
+    "title": "Phase 2C.3F Shortcuts REST HTTP Differential Verification Results",
+    "timestamp": "2026-09-16T05:10:41.413895+00:00",
+    "target": "/api/shortcuts",
+    "total_executed": 13,
+    "passed": 13,
+    "failed": 0,
+    "metric": "IMPLEMENTED_SHORTCUT_CONTRACT_DIFFERENTIAL_PASS_RATE = 13/13",
+    "all_passed": true
+  },
+  "results": [
+    {
+      "test_id": "SHORTCUT-HTTP-01",
+      "test_name": "Baseline empty GET ([]\\n)",
+      "classification": "READ_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "body": "[]\n",
+        "ct": "application/json"
+      },
+      "reconstructed": {
+        "status": 200,
+        "body": "[]\n",
+        "ct": "application/json"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-02",
+      "test_name": "Missing token 401 (Unauthorized\\n)",
+      "classification": "AUTH_MATRIX",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-03",
+      "test_name": "Invalid token 401 (Unauthorized\\n)",
+      "classification": "AUTH_MATRIX",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "reconstructed": {
+        "status": 401,
+        "body": "Unauthorized\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-04",
+      "test_name": "Normal user GET & POST parity",
+      "classification": "RBAC_PARITY",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "post_status": 200,
+        "get_status": 200,
+        "get_body": [
+          {
+            "name": "UserCmd",
+            "cmd": "echo user"
+          }
+        ]
+      },
+      "reconstructed": {
+        "post_status": 200,
+        "get_status": 200,
+        "get_body": [
+          {
+            "name": "UserCmd",
+            "cmd": "echo user"
+          }
+        ]
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-05",
+      "test_name": "No-auth mode bypass & 'admin' key mapping",
+      "classification": "NO_AUTH_SEMANTICS",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "post_status": 200,
+        "get_status": 200,
+        "disk_keys": [
+          "admin"
+        ]
+      },
+      "reconstructed": {
+        "post_status": 200,
+        "get_status": 200,
+        "disk_keys": [
+          "admin"
+        ]
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-06",
+      "test_name": "OPTIONS method and CORS headers",
+      "classification": "CORS_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "origin": "*",
+        "methods": "GET, POST, OPTIONS",
+        "headers": "Content-Type, Authorization"
+      },
+      "reconstructed": {
+        "status": 200,
+        "origin": "*",
+        "methods": "GET, POST, OPTIONS",
+        "headers": "Content-Type, Authorization"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-07",
+      "test_name": "HEAD method 405 (wire bodyless, Content-Length: 19)",
+      "classification": "METHOD_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 405,
+        "wire_body_len": 0,
+        "content_length": "19"
+      },
+      "reconstructed": {
+        "status": 405,
+        "wire_body_len": 0,
+        "content_length": "19"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-08",
+      "test_name": "Disallowed methods (PUT, PATCH, DELETE) 405",
+      "classification": "METHOD_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "PUT": {
+          "status": 405,
+          "body": "Method not allowed\n"
+        },
+        "PATCH": {
+          "status": 405,
+          "body": "Method not allowed\n"
+        },
+        "DELETE": {
+          "status": 405,
+          "body": "Method not allowed\n"
+        }
+      },
+      "reconstructed": {
+        "PUT": {
+          "status": 405,
+          "body": "Method not allowed\n"
+        },
+        "PATCH": {
+          "status": 405,
+          "body": "Method not allowed\n"
+        },
+        "DELETE": {
+          "status": 405,
+          "body": "Method not allowed\n"
+        }
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-09",
+      "test_name": "Valid mutation and list replacement",
+      "classification": "MUTATION_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 200,
+        "body": "{\"status\":\"success\"}\n"
+      },
+      "reconstructed": {
+        "status": 200,
+        "body": "{\"status\":\"success\"}\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-10",
+      "test_name": "Malformed JSON 400 (Invalid JSON\\n)",
+      "classification": "ERROR_HANDLING",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "reconstructed": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-11",
+      "test_name": "Empty body 400 (Invalid JSON\\n)",
+      "classification": "ERROR_HANDLING",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "reconstructed": {
+        "status": 400,
+        "body": "Invalid JSON\n"
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-12",
+      "test_name": "Disk persistence contract & restart reload",
+      "classification": "PERSISTENCE_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "file_exists": true,
+        "reloaded_items": 2
+      },
+      "reconstructed": {
+        "file_exists": true,
+        "reloaded_items": 2
+      },
+      "details": ""
+    },
+    {
+      "test_id": "SHORTCUT-HTTP-13",
+      "test_name": "Per-user isolation (multi-user independent state)",
+      "classification": "ISOLATION_CONTRACT",
+      "status": "PASS",
+      "passed": true,
+      "original": {
+        "admin_shortcuts": [
+          {
+            "name": "Cmd1",
+            "cmd": "c1"
+          },
+          {
+            "name": "Cmd2",
+            "cmd": "c2"
+          }
+        ],
+        "user_shortcuts": [
+          {
+            "name": "UserCmd",
+            "cmd": "echo user"
+          }
+        ]
+      },
+      "reconstructed": {
+        "admin_shortcuts": [
+          {
+            "name": "Cmd1",
+            "cmd": "c1"
+          },
+          {
+            "name": "Cmd2",
+            "cmd": "c2"
+          }
+        ],
+        "user_shortcuts": [
+          {
+            "name": "UserCmd",
+            "cmd": "echo user"
+          }
+        ]
+      },
+      "details": ""
+    }
+  ]
+}

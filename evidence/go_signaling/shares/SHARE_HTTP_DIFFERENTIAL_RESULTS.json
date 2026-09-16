@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-16T03:57:03Z",
+  "timestamp": "2026-09-16T05:10:48Z",
   "summary": {
     "total": 36,
     "passed": 36,
@@ -13,7 +13,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact empty list match: {\"code\":0,\"data\":[]}\\n",
-      "duration_ms": 1.95
+      "duration_ms": 1.99
     },
     {
       "test_id": "SHARE-HTTP-02",
@@ -21,7 +21,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 401 Unauthorized\\n across all 5 admin endpoints",
-      "duration_ms": 9.98
+      "duration_ms": 10.5
     },
     {
       "test_id": "SHARE-HTTP-03",
@@ -29,7 +29,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 401 Unauthorized\\n on invalid token",
-      "duration_ms": 10.06
+      "duration_ms": 11.3
     },
     {
       "test_id": "SHARE-HTTP-04",
@@ -37,7 +37,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 403 Forbidden: admin only\\n across all 5 admin endpoints",
-      "duration_ms": 9.49
+      "duration_ms": 10.0
     },
     {
       "test_id": "SHARE-HTTP-05",
@@ -45,7 +45,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "structural parity on create share: token st_<32hex>, card CP-XXXX-XXXX, access_mode full",
-      "duration_ms": 3.14
+      "duration_ms": 3.37
     },
     {
       "test_id": "SHARE-HTTP-06",
@@ -53,7 +53,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "structural match: 409 conflict when active share already exists on device",
-      "duration_ms": 1.91
+      "duration_ms": 2.37
     },
     {
       "test_id": "SHARE-HTTP-07",
@@ -61,7 +61,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 400 device_id is required\\n on empty body",
-      "duration_ms": 1.89
+      "duration_ms": 2.28
     },
     {
       "test_id": "SHARE-HTTP-08",
@@ -69,7 +69,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "structural schema match on list shares (17 keys, active_connections present)",
-      "duration_ms": 1.89
+      "duration_ms": 2.36
     },
     {
       "test_id": "SHARE-HTTP-09",
@@ -77,7 +77,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact filtering by ?device_id= and empty array on unmatched device",
-      "duration_ms": 3.74
+      "duration_ms": 4.57
     },
     {
       "test_id": "SHARE-HTTP-10",
@@ -85,7 +85,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "structural parity on public /api/share/info query without auth",
-      "duration_ms": 1.97
+      "duration_ms": 2.54
     },
     {
       "test_id": "SHARE-HTTP-11",
@@ -93,7 +93,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 400 Token required\\n on empty token query",
-      "duration_ms": 1.73
+      "duration_ms": 1.99
     },
     {
       "test_id": "SHARE-HTTP-12",
@@ -101,7 +101,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 404 Share link expired or invalid\\n on invalid token",
-      "duration_ms": 2.07
+      "duration_ms": 2.24
     },
     {
       "test_id": "SHARE-HTTP-13",
@@ -109,7 +109,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 401 challenge on password-protected share without password",
-      "duration_ms": 4.7
+      "duration_ms": 5.98
     },
     {
       "test_id": "SHARE-HTTP-14",
@@ -117,7 +117,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "password authentication parity: wrong rejected (401), right accepted (0)",
-      "duration_ms": 4.21
+      "duration_ms": 4.38
     },
     {
       "test_id": "SHARE-HTTP-15",
@@ -125,7 +125,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 400 rejection when extending permanent share",
-      "duration_ms": 2.37
+      "duration_ms": 1.94
     },
     {
       "test_id": "SHARE-HTTP-16",
@@ -133,7 +133,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "structural match: successfully extended expiring share",
-      "duration_ms": 6.72
+      "duration_ms": 6.07
     },
     {
       "test_id": "SHARE-HTTP-17",
@@ -141,7 +141,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact error handling on extend: 400 for empty, 404 for unknown token",
-      "duration_ms": 5.11
+      "duration_ms": 4.17
     },
     {
       "test_id": "SHARE-HTTP-18",
@@ -149,7 +149,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "structural match on /api/share/update field mutations",
-      "duration_ms": 3.3
+      "duration_ms": 2.74
     },
     {
       "test_id": "SHARE-HTTP-19",
@@ -157,7 +157,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 400 token is required\\n on empty token update",
-      "duration_ms": 2.02
+      "duration_ms": 2.05
     },
     {
       "test_id": "SHARE-HTTP-20",
@@ -165,7 +165,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "structural parity on public card redemption",
-      "duration_ms": 2.3
+      "duration_ms": 1.94
     },
     {
       "test_id": "SHARE-HTTP-21",
@@ -173,7 +173,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact response on invalid card code (200 with code 404)",
-      "duration_ms": 2.23
+      "duration_ms": 2.22
     },
     {
       "test_id": "SHARE-HTTP-22",
@@ -181,7 +181,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 400 card_code is required\\n on empty body",
-      "duration_ms": 2.16
+      "duration_ms": 1.94
     },
     {
       "test_id": "SHARE-HTTP-23",
@@ -189,7 +189,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact revocation and subsequent 404 on query",
-      "duration_ms": 4.98
+      "duration_ms": 4.79
     },
     {
       "test_id": "SHARE-HTTP-24",
@@ -197,7 +197,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 404 Share token not found\\n on invalid revoke",
-      "duration_ms": 3.87
+      "duration_ms": 3.86
     },
     {
       "test_id": "SHARE-HTTP-25",
@@ -205,7 +205,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact CORS headers and status 200 across all 7 endpoints",
-      "duration_ms": 13.15
+      "duration_ms": 13.57
     },
     {
       "test_id": "SHARE-HTTP-26",
@@ -213,7 +213,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "no-auth mode successfully bypasses admin token requirement",
-      "duration_ms": 5.2
+      "duration_ms": 5.22
     },
     {
       "test_id": "SHARE-HTTP-27",
@@ -221,7 +221,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "persistence format verified: JSON array with 2 records on disk",
-      "duration_ms": 0.32
+      "duration_ms": 0.41
     },
     {
       "test_id": "SHARE-HTTP-28",
@@ -229,7 +229,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact isolation: /devices unaffected by share token lifecycles",
-      "duration_ms": 1.97
+      "duration_ms": 2.23
     },
     {
       "test_id": "SHARE-HTTP-29",
@@ -237,7 +237,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 405 Method Not Allowed\\n on GET /api/share/extend",
-      "duration_ms": 2.01
+      "duration_ms": 2.0
     },
     {
       "test_id": "SHARE-HTTP-30",
@@ -245,7 +245,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 405 Method Not Allowed\\n across PUT, PATCH, DELETE on /api/share/extend",
-      "duration_ms": 6.05
+      "duration_ms": 5.73
     },
     {
       "test_id": "SHARE-HTTP-31",
@@ -253,7 +253,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 405 with empty body on HEAD /api/share/extend",
-      "duration_ms": 1.86
+      "duration_ms": 1.81
     },
     {
       "test_id": "SHARE-HTTP-32",
@@ -261,7 +261,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 405 Method Not Allowed\\n on GET /api/share/update",
-      "duration_ms": 1.92
+      "duration_ms": 1.74
     },
     {
       "test_id": "SHARE-HTTP-33",
@@ -269,7 +269,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 405 Method Not Allowed\\n across PUT, PATCH, DELETE on /api/share/update",
-      "duration_ms": 5.53
+      "duration_ms": 5.75
     },
     {
       "test_id": "SHARE-HTTP-34",
@@ -277,7 +277,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 405 with empty body on HEAD /api/share/update",
-      "duration_ms": 1.76
+      "duration_ms": 1.89
     },
     {
       "test_id": "SHARE-HTTP-35",
@@ -285,7 +285,7 @@
       "passed": true,
       "classification": "BIT_EXACT_MATCH",
       "detail": "bit-exact 405 across non-POST verbs on /api/share/create",
-      "duration_ms": 9.32
+      "duration_ms": 9.72
     },
     {
       "test_id": "SHARE-HTTP-36",
@@ -293,7 +293,7 @@
       "passed": true,
       "classification": "STRUCTURAL_EXACT_MATCH",
       "detail": "verified exact non-gating/body-driven semantics on /list, /revoke, /redeem_card, /info",
-      "duration_ms": 10.45
+      "duration_ms": 10.92
     }
   ]
 }

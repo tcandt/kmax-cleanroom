@@ -1,0 +1,22 @@
+{
+  "ADMIN": {
+    "status_code": 200,
+    "body_preview": "[]"
+  },
+  "NORMAL_USER": {
+    "status_code": 200,
+    "body_preview": "[]"
+  },
+  "MISSING_TOKEN": {
+    "status_code": 401,
+    "body_preview": "Unauthorized"
+  },
+  "INVALID_TOKEN": {
+    "status_code": 401,
+    "body_preview": "Unauthorized"
+  },
+  "NO_AUTH_MODE": {
+    "status_code": 200,
+    "body_preview": "[]"
+  }
+}

@@ -21,8 +21,9 @@ type Server struct {
 	auth      *auth.Authenticator
 	noAuth    bool
 	deviceReg   *devices.Registry
-	tagsStore   *storage.TagsStore
-	sharesStore *storage.SharesStore
+	tagsStore      *storage.TagsStore
+	sharesStore    *storage.SharesStore
+	shortcutsStore *storage.ShortcutsStore
 }
 
 // CLEANROOM-PROVENANCE:
@@ -81,6 +82,9 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 	s.mux.HandleFunc("/api/share/update", s.HandleShareUpdate)
 	s.mux.HandleFunc("/api/share/info", s.HandleShareInfo)
 	s.mux.HandleFunc("/api/share/redeem_card", s.HandleShareRedeemCard)
+
+	// Register shortcuts route matching original binary
+	s.mux.HandleFunc("/api/shortcuts", s.HandleShortcuts)
 
 	// Register differential test fixture endpoints
 	s.mux.HandleFunc("/_test/register_device", s.HandleTestRegisterDevice)

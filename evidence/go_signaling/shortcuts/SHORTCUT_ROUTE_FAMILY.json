@@ -1,0 +1,25 @@
+{
+  "pattern": "/api/shortcuts",
+  "registration_type": "HandleFunc",
+  "registration_call_va": "0x765984",
+  "wrapper": {
+    "symbol": "main.main.func3",
+    "va": "0x76d4c0",
+    "size_bytes": 672,
+    "role": "CORS_AND_OPTIONS_DISPATCHER"
+  },
+  "business_handler": {
+    "symbol": "main.yHBQWSpi",
+    "va": "0x76c640",
+    "size_bytes": 1856,
+    "role": "AUTH_AND_SHORTCUT_CRUD_ROUTER"
+  },
+  "persistence_callees": {
+    "loader_symbol": "main.iXiPYH2zBLTK",
+    "loader_va": "0x76bf20",
+    "loader_size_bytes": 640,
+    "saver_symbol": "main.jk9A26",
+    "saver_va": "0x76c2c0",
+    "saver_size_bytes": 608
+  }
+}

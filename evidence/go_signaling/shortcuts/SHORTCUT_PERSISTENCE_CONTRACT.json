@@ -1,0 +1,41 @@
+{
+  "file_name": "shortcuts.json",
+  "write_mechanism": "DIRECT_WRITE_FILE (no atomic rename)",
+  "file_mode": "0644 (0x1a4)",
+  "machine_facts": {
+    "saver_symbol": "main.jk9A26",
+    "saver_va": "0x76c2c0",
+    "saver_size_bytes": 608,
+    "marshal_indent_call_va": "0x76c360",
+    "mode_arg_instruction_va": "0x76c426",
+    "mode_arg_instruction": "mov r8d, 0x1a4",
+    "file_mode_octal": "0644",
+    "write_file_call_va": "0x76c435",
+    "write_file_callee": "uOfWpGI3.ZkONNWV (os.WriteFile)"
+  },
+  "no_auth_mode_key": {
+    "key_used": "admin",
+    "evidence": "Observed on disk in NO_AUTH_MODE: json map contains key 'admin'",
+    "observed_no_auth_disk": {
+      "admin": [
+        {
+          "name": "NoAuth Key",
+          "cmd": "input keyevent 82"
+        }
+      ]
+    }
+  },
+  "per_user_disk_format": {
+    "root_type": "object (map[string][]Shortcut)",
+    "indentation": "2 spaces (json.MarshalIndent)",
+    "observed_disk": {
+      "admin": [],
+      "user_alpha": [
+        {
+          "name": "VolumeUp",
+          "cmd": "input keyevent 24"
+        }
+      ]
+    }
+  }
+}

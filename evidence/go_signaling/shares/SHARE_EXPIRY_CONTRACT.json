@@ -17,13 +17,13 @@
       "time_now_call_va": "0x73a1a2",
       "mutex_lock_call_va": "0x73a1c0",
       "map_iter_start_va": "0x73a202",
+      "mutex_unlock_call_va": "0x73a220",
+      "save_shares_call_va": "0x73a248",
+      "save_shares_callee": "main.fomL4ATwVV1",
       "expiry_comparison_call_va": "0x73a357",
       "expiry_comparison_callee": "fZqVo7pKK.AipSo2.After (time.Time.After)",
       "map_delete_faststr_va1": "0x73a3b3",
-      "map_delete_faststr_va2": "0x73a3d8",
-      "mutex_unlock_call_va": "0x73a220",
-      "save_shares_call_va": "0x73a248",
-      "save_shares_callee": "main.fomL4ATwVV1"
+      "map_delete_faststr_va2": "0x73a3d8"
     },
     "mechanism": "Goroutine runs in background every 300s (5m), checks expired shares via time.Time.After, deletes from map with mapdelete_faststr, and calls main.fomL4ATwVV1 (saveShares) to persist to disk"
   },

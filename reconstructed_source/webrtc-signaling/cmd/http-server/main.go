@@ -52,11 +52,18 @@ func main() {
 		log.Printf("Failed to initialize shares store: %v", err)
 	}
 
+	shortcutsPath := filepath.Join(*dataDir, "shortcuts.json")
+	shortcutsStore := storage.NewShortcutsStore(shortcutsPath)
+	if err := shortcutsStore.LoadOrCreate(); err != nil {
+		log.Printf("Failed to initialize shortcuts store: %v", err)
+	}
+
 	sm := session.NewSessionManager(session.RealClock{})
 	authenticator := auth.NewAuthenticator(usersStore, sm, *noAuth)
 	server := httpapi.NewServer(authenticator, *noAuth)
 	server.SetTagsStore(tagsStore)
 	server.SetSharesStore(sharesStore)
+	server.SetShortcutsStore(shortcutsStore)
 
 	addr := fmt.Sprintf("127.0.0.1:%d", *port)
 	log.Printf("[HTTP] Reconstructed server listening on %s", addr)

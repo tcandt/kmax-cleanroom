@@ -1,0 +1,32 @@
+{
+  "classification": "DIRECT_TYPE_RECOVERY",
+  "shortcut_struct": {
+    "struct_va": "0x7d70c0",
+    "struct_name": "*main.KXuCJAAi60",
+    "size_bytes": 32,
+    "field_count": 2,
+    "fields": [
+      {
+        "field_index": 0,
+        "name": "DIHvMDn",
+        "tag": "json:\"name\"",
+        "offset": 0,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "field_index": 1,
+        "name": "MTkDoTKb",
+        "tag": "json:\"cmd\"",
+        "offset": 8,
+        "type_va": "0x79e2c0"
+      }
+    ]
+  },
+  "storage_map": {
+    "descriptor_va": "0x7bfc40",
+    "type_name": "*map[string][]main.KXuCJAAi60",
+    "kind": "0x35 (pointer to map)",
+    "key_type": "string (username)",
+    "value_type": "[]main.KXuCJAAi60 ([]Shortcut)"
+  }
+}

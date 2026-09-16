@@ -1,0 +1,219 @@
+[
+  {
+    "symbol": "main.main.func3",
+    "machine_observation": {
+      "start_va": "0x76d4c0",
+      "size_bytes": 672,
+      "end_va": "0x76d760",
+      "instruction_count": 157,
+      "machine_call_facts": [
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "main.yHBQWSpi",
+        "runtime.morestack_noctxt"
+      ],
+      "string_xrefs": [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Headers",
+        "Content-Type, AuthorizationTarget username is required",
+        "Access-Control-Allow-Methods"
+      ],
+      "assembly_preview": [
+        "0x76d4c0: cmp rsp, qword ptr [r14 + 0x10]",
+        "0x76d4c4: jbe 0x76d72b",
+        "0x76d4ca: push rbp",
+        "0x76d4cb: mov rbp, rsp",
+        "0x76d4ce: sub rsp, 0x50",
+        "0x76d4d2: mov qword ptr [rsp + 0x70], rcx",
+        "0x76d4d7: mov qword ptr [rsp + 0x68], rbx",
+        "0x76d4dc: mov qword ptr [rsp + 0x60], rax",
+        "0x76d4e1: mov rcx, qword ptr [rax + 0x18]",
+        "0x76d4e5: mov rax, rbx",
+        "0x76d4e8: call rcx",
+        "0x76d4ea: mov qword ptr [rsp + 0x30], rax",
+        "0x76d4ef: nop ",
+        "0x76d4f0: lea rax, [rip + 0xc0df7]",
+        "0x76d4f7: mov ebx, 0x1b",
+        "0x76d4fc: nop dword ptr [rax]",
+        "0x76d500: call 0x684f60",
+        "0x76d505: mov qword ptr [rsp + 0x48], rax",
+        "0x76d50a: mov qword ptr [rsp + 0x20], rbx",
+        "0x76d50f: lea rax, [rip + 0x357aa]",
+        "0x76d516: call 0x418e40",
+        "0x76d51b: mov qword ptr [rsp + 0x40], rax",
+        "0x76d520: mov qword ptr [rax + 8], 1",
+        "0x76d528: lea rcx, [rip + 0x14bd01]",
+        "0x76d52f: mov qword ptr [rax], rcx"
+      ]
+    },
+    "semantic_annotation": {
+      "route": "/api/shortcuts",
+      "role_description": "CORS and OPTIONS preflight wrapper for /api/shortcuts"
+    }
+  },
+  {
+    "symbol": "main.yHBQWSpi",
+    "machine_observation": {
+      "start_va": "0x76c640",
+      "size_bytes": 1856,
+      "end_va": "0x76cd80",
+      "instruction_count": 402,
+      "machine_call_facts": [
+        "main.lYKp_Iuf",
+        "sync.wC1Ayu5",
+        "runtime.mapaccess2_faststr",
+        "sync.(*D2KbQ7Jm).nL0DFYQFoU",
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.gcWriteBarrier1"
+      ],
+      "string_xrefs": [
+        "Content-Type",
+        "application/jsonapplication/gzip0123456789abcdefsnapshotInte",
+        "Method not allowed",
+        "Unauthorized",
+        "Invalid JSON",
+        "status",
+        "successdevicesmessagedeletedpayloadcommandforwardchanneltask"
+      ],
+      "assembly_preview": [
+        "0x76c640: lea r12, [rsp - 0xe8]",
+        "0x76c648: cmp r12, qword ptr [r14 + 0x10]",
+        "0x76c64c: jbe 0x76cd3a",
+        "0x76c652: push rbp",
+        "0x76c653: mov rbp, rsp",
+        "0x76c656: sub rsp, 0x160",
+        "0x76c65d: mov qword ptr [rsp + 0x180], rcx",
+        "0x76c665: mov qword ptr [rsp + 0x178], rbx",
+        "0x76c66d: mov qword ptr [rsp + 0x170], rax",
+        "0x76c675: mov rax, rcx",
+        "0x76c678: call 0x73b080",
+        "0x76c67d: nop dword ptr [rax]",
+        "0x76c680: test cl, cl",
+        "0x76c682: je 0x76c902",
+        "0x76c688: mov qword ptr [rsp + 0x30], rbx",
+        "0x76c68d: mov qword ptr [rsp + 0x60], rax",
+        "0x76c692: mov rdx, qword ptr [rsp + 0x180]",
+        "0x76c69a: mov r8, qword ptr [rdx + 8]",
+        "0x76c69e: mov r9, qword ptr [rdx]",
+        "0x76c6a1: cmp r8, 3",
+        "0x76c6a5: jne 0x76c880",
+        "0x76c6ab: cmp word ptr [r9], 0x4547",
+        "0x76c6b1: jne 0x76c880",
+        "0x76c6b7: cmp byte ptr [r9 + 2], 0x54",
+        "0x76c6bc: nop dword ptr [rax]"
+      ]
+    },
+    "semantic_annotation": {
+      "route": "/api/shortcuts",
+      "role_description": "Authentication, method routing, and JSON serialization for /api/shortcuts"
+    }
+  },
+  {
+    "symbol": "main.iXiPYH2zBLTK",
+    "machine_observation": {
+      "start_va": "0x76bf20",
+      "size_bytes": 640,
+      "end_va": "0x76c1a0",
+      "instruction_count": 138,
+      "machine_call_facts": [
+        "uOfWpGI3.P_SioCaq",
+        "uOfWpGI3.iSy6hPaRTh8",
+        "uOfWpGI3.RJYVKHKa",
+        "sqr5WlKaW.(*AbNC7zYqUFt).sQ1Wyiarc5U",
+        "sync.(*D2KbQ7Jm).Lock",
+        "JOaOfPm.OPQrPOkar",
+        "runtime.deferreturn",
+        "runtime.morestack_noctxt"
+      ],
+      "string_xrefs": [
+        "[Shortcuts] Failed to parse JSON: %vjson: encoding error for"
+      ],
+      "assembly_preview": [
+        "0x76bf20: lea r12, [rsp - 0x38]",
+        "0x76bf25: cmp r12, qword ptr [r14 + 0x10]",
+        "0x76bf29: jbe 0x76c178",
+        "0x76bf2f: push rbp",
+        "0x76bf30: mov rbp, rsp",
+        "0x76bf33: sub rsp, 0xb0",
+        "0x76bf3a: movq qword ptr [rsp + 0xa8], xmm15",
+        "0x76bf44: mov byte ptr [rsp + 0x2f], 0",
+        "0x76bf49: mov rax, qword ptr [rip + 0x482e80]",
+        "0x76bf50: mov rbx, qword ptr [rip + 0x482e81]",
+        "0x76bf57: call 0x4e2d80",
+        "0x76bf5c: mov rdx, qword ptr [rip + 0x49b0bd]",
+        "0x76bf63: mov rsi, qword ptr [rip + 0x49b0be]",
+        "0x76bf6a: mov rax, rcx",
+        "0x76bf6d: mov rbx, rdi",
+        "0x76bf70: mov rcx, rdx",
+        "0x76bf73: mov rdi, rsi",
+        "0x76bf76: call 0x4df720",
+        "0x76bf7b: nop dword ptr [rax + rax]",
+        "0x76bf80: test al, al",
+        "0x76bf82: jne 0x76c161",
+        "0x76bf88: mov rax, qword ptr [rip + 0x482e41]",
+        "0x76bf8f: mov rbx, qword ptr [rip + 0x482e42]",
+        "0x76bf96: call 0x4e0920",
+        "0x76bf9b: nop dword ptr [rax + rax]"
+      ]
+    },
+    "semantic_annotation": {
+      "route": null,
+      "role_description": "loadShortcuts (reads shortcuts.json at server startup)"
+    }
+  },
+  {
+    "symbol": "main.jk9A26",
+    "machine_observation": {
+      "start_va": "0x76c2c0",
+      "size_bytes": 608,
+      "end_va": "0x76c520",
+      "instruction_count": 136,
+      "machine_call_facts": [
+        "sync.wC1Ayu5",
+        "JOaOfPm.Ut0MFmSj_",
+        "sqr5WlKaW.(*AbNC7zYqUFt).sQ1Wyiarc5U",
+        "uOfWpGI3.ZkONNWV",
+        "runtime.deferreturn",
+        "runtime.morestack_noctxt"
+      ],
+      "string_xrefs": [],
+      "assembly_preview": [
+        "0x76c2c0: lea r12, [rsp - 0x28]",
+        "0x76c2c5: cmp r12, qword ptr [r14 + 0x10]",
+        "0x76c2c9: jbe 0x76c4fb",
+        "0x76c2cf: push rbp",
+        "0x76c2d0: mov rbp, rsp",
+        "0x76c2d3: sub rsp, 0xa0",
+        "0x76c2da: movq qword ptr [rsp + 0x98], xmm15",
+        "0x76c2e4: mov byte ptr [rsp + 0x37], 0",
+        "0x76c2e9: nop ",
+        "0x76c2ea: mov edx, 1",
+        "0x76c2ef: lea r9, [rip + 0x4bd7ba]",
+        "0x76c2f6: lock xadd dword ptr [r9], edx",
+        "0x76c2fb: inc edx",
+        "0x76c2fd: nop dword ptr [rax]",
+        "0x76c300: test edx, edx",
+        "0x76c302: jge 0x76c314",
+        "0x76c304: lea rax, [rip + 0x4bd7a1]",
+        "0x76c30b: xor ebx, ebx",
+        "0x76c30d: xor ecx, ecx",
+        "0x76c30f: call 0x47c6e0",
+        "0x76c314: lea rdx, [rip + 0x2c5]",
+        "0x76c31b: mov qword ptr [rsp + 0x58], rdx",
+        "0x76c320: lea rdx, [rip + 0x4bd779]",
+        "0x76c327: mov qword ptr [rsp + 0x60], rdx",
+        "0x76c32c: lea rdx, [rsp + 0x58]"
+      ]
+    },
+    "semantic_annotation": {
+      "route": null,
+      "role_description": "saveShortcuts (marshals map and writes to shortcuts.json with 0644)"
+    }
+  }
+]
