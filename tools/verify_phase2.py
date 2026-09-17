@@ -3079,7 +3079,27 @@ def verify_all():
     record_check("Phase 2C.4BR Transport Differential Parity & Fail-Closed Oracle Verification", diff_valid,
                  f"{diff_res.get('exact_parity_passed')}/{diff_res.get('exact_parity_total')} exact parity cases passed with verified oracle identity, health, and 0 failures")
 
-    # 18.4 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # 19. PHASE 2C.5A WEBRTC / DATACHANNEL / MEDIA FORENSIC AUDIT
+    # 19.1 Phase 2C.5A WebRTC & DataChannel Forensic Reproducibility Verification
+    import tools.forensics.reproduce_webrtc_datachannel_forensics as rwdf
+    webrtc_repro_res = rwdf.run_reproducibility_verification()
+    webrtc_repro_valid = (
+        webrtc_repro_res is not None and
+        webrtc_repro_res.get("verdict") == "PASS" and
+        webrtc_repro_res.get("total_artifacts_verified") == 14 and
+        webrtc_repro_res.get("gate_dimensions") == 19 and
+        webrtc_repro_res.get("gate_verdict") == "PASS_PHASE_2C5A_CLOSED"
+    )
+    record_check("Phase 2C.5A WebRTC & DataChannel Forensic Reproducibility", webrtc_repro_valid,
+                 f"{webrtc_repro_res.get('total_artifacts_verified')}/14 canonical artifacts reproduced with exact parity and 19/19 gate dimensions")
+
+    # 19.2 Phase 2C.5A Strict Production Boundary Enforcement
+    boundary_violations = rwdf.verify_strict_production_boundary()
+    prod_boundary_clean = (len(boundary_violations) == 0)
+    record_check("Phase 2C.5A Strict Production Boundary Enforcement", prod_boundary_clean,
+                 "Zero production WebRTC/DataChannel/Media packages; zero Pion dependency in signaling go.mod")
+
+    # 19.3 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv

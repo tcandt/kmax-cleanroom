@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "title": "Agent-Helper IPC Socket Matrix",
+    "phase": "Phase 2C.5A"
+  },
+  "abstract_uds_sockets": {
+    "@uds_sys_v_": {
+      "literal_prefix": "@uds_sys_v_",
+      "suffix_generation": "Dynamic 3-character random alphanumeric suffix per session",
+      "semantic_role": "VIDEO_NALU_STREAM",
+      "agent_side": "Dialer / Reader",
+      "helper_side": "Listener / Writer (SurfaceEncoder.java)",
+      "disassembly_xref_amd64": "main.(*IDhLgq).wB52gd (0x9d0777)",
+      "disassembly_xref_arm64": "main.(*JJffa1S1Zv6).wR5c1uXW (0x52a230)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "@uds_sys_a_": {
+      "literal_prefix": "@uds_sys_a_",
+      "suffix_generation": "Dynamic 3-character random alphanumeric suffix per session",
+      "semantic_role": "AUDIO_STREAM",
+      "agent_side": "Dialer / Reader",
+      "helper_side": "Listener / Writer (Audio capture)",
+      "disassembly_xref_amd64": "main.(*IDhLgq).wB52gd (0x9d07b2)",
+      "disassembly_xref_arm64": "main.(*JJffa1S1Zv6).wR5c1uXW (0x52a268)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "@uds_sys_c_": {
+      "literal_prefix": "@uds_sys_c_",
+      "suffix_generation": "Dynamic 3-character random alphanumeric suffix per session",
+      "semantic_role": "CONTROL_CHANNEL_COMMANDS",
+      "agent_side": "Bidirectional Reader / Writer",
+      "helper_side": "Listener / Bidirectional ControlChannel.java",
+      "disassembly_xref_amd64": "main.(*IDhLgq).wB52gd (0x9d07fe)",
+      "disassembly_xref_arm64": "main.(*JJffa1S1Zv6).wR5c1uXW (0x52a2b0)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "@uds_sys_t_": {
+      "literal_prefix": "@uds_sys_t_",
+      "suffix_generation": "Dynamic 3-character random alphanumeric suffix per session",
+      "semantic_role": "TOUCH_INPUT_EVENTS",
+      "agent_side": "Writer (encodes scrcpy binary ControlMessage)",
+      "helper_side": "Reader (ControlMessageReader.java / InputManager.java)",
+      "disassembly_xref_amd64": "main.(*IDhLgq).wB52gd (0x9d084a)",
+      "disassembly_xref_arm64": "main.(*JJffa1S1Zv6).wR5c1uXW (0x52a2f8)",
+      "classification": "STATIC_CONFIRMED"
+    }
+  },
+  "helper_lifecycle": {
+    "staging_path": "/data/local/tmp/libsys_core.so",
+    "source_artifact": "cloudphone-agent-magisk-v0.3.6 (1)/libsys_core.so (ZIP archive containing classes.dex)",
+    "integrity_verification": "SHA256 checksum verified against expected constant before launch",
+    "execution_command": "CLASSPATH=/data/local/tmp/libsys_core.so app_process / com.android.helper.CoreService",
+    "privilege_dropping": {
+      "status": "STATIC_CONFIRMED",
+      "evidence_string": "[Agent] Executing CoreService with dropped privileges (shell UID 2000) and supplementary groups: CLASSPATH=%s app_process %s",
+      "rodata_va_amd64": "0xb8ba60",
+      "user_id": 2000,
+      "user_group": "shell"
+    },
+    "classification": "STATIC_CONFIRMED"
+  }
+}

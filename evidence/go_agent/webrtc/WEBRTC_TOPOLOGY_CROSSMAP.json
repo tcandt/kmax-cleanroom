@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "title": "WebRTC Tri-Party Topology Crossmap",
+    "phase": "Phase 2C.5A"
+  },
+  "topology_type": "TRI_PARTY_SIGNALING_RELAY_WITH_DIRECT_P2P_MEDIA",
+  "entities": {
+    "signaling_server": {
+      "role": "WebSocket Signaling Relay ONLY",
+      "routes": [
+        "/register_device",
+        "/register_agent",
+        "/connect_client"
+      ],
+      "webrtc_peerconnection_created": false,
+      "datachannels_created": false,
+      "media_tracks_created": false,
+      "classification": "STATIC_CONFIRMED (Phase 2C.4B/2C.4BR proven)"
+    },
+    "cloudphone_agent": {
+      "role": "WebRTC Peer Endpoint (Offerer)",
+      "pion_webrtc_version": "v3.3.6",
+      "webrtc_peerconnection_created": true,
+      "datachannels_created": [
+        "input-channel",
+        "clipboard-channel",
+        "camera-channel"
+      ],
+      "datachannels_handled": [
+        "file-channel",
+        "ai-command-channel",
+        "adb-channel"
+      ],
+      "media_tracks_sent": [
+        "display_0 (video/H264)",
+        "audio_0 (audio/opus)"
+      ],
+      "classification": "STATIC_CONFIRMED"
+    },
+    "browser_client": {
+      "role": "WebRTC Peer Endpoint (Answerer)",
+      "datachannels_created": [
+        "file-channel",
+        "ai-command-channel",
+        "adb-channel"
+      ],
+      "datachannels_handled": [
+        "input-channel",
+        "clipboard-channel",
+        "camera-channel"
+      ],
+      "media_tracks_received": [
+        "display_0 (video/H264)",
+        "audio_0 (audio/opus)"
+      ],
+      "classification": "REFERENCE_OBSERVED (Lane D/E)"
+    }
+  }
+}

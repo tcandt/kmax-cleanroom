@@ -1,0 +1,73 @@
+{
+  "metadata": {
+    "title": "WebRTC DataChannel Framing Matrix",
+    "phase": "Phase 2C.5A"
+  },
+  "channels": {
+    "input-channel": {
+      "payload_encoding": "JSON_TEXT",
+      "binary_framing": false,
+      "message_types": [
+        "inject_touch",
+        "inject_text",
+        "inject_keycode",
+        "hard_keyboard",
+        "inject_scroll"
+      ],
+      "target_downstream": "Abstract UDS @uds_sys_t_ (translated to binary scrcpy ControlMessage)",
+      "evidence_classification": "COMBINED_CONFIRMED"
+    },
+    "clipboard-channel": {
+      "payload_encoding": "JSON_TEXT",
+      "binary_framing": false,
+      "message_types": [
+        "set_clipboard",
+        "get_clipboard"
+      ],
+      "target_downstream": "Android ClipboardManager / System Service",
+      "evidence_classification": "COMBINED_CONFIRMED"
+    },
+    "camera-channel": {
+      "payload_encoding": "MIXED_JSON_AND_RAW_BINARY",
+      "binary_framing": true,
+      "message_types": [
+        "start",
+        "stop",
+        "raw_yuv_frames"
+      ],
+      "target_downstream": "Virtual Camera feed / CameraCapture.java",
+      "evidence_classification": "COMBINED_CONFIRMED"
+    },
+    "file-channel": {
+      "payload_encoding": "HYBRID_METADATA_JSON_AND_BINARY_CHUNKS",
+      "binary_framing": true,
+      "message_types": [
+        "upload_start (filename, size, sha256, install)",
+        "raw_file_chunks",
+        "upload_finish"
+      ],
+      "target_downstream": "File system /data/local/tmp / APK installer",
+      "evidence_classification": "COMBINED_CONFIRMED"
+    },
+    "ai-command-channel": {
+      "payload_encoding": "JSON_TEXT_IN_ARRAYBUFFER",
+      "binary_framing": true,
+      "message_types": [
+        "ai_command_request (request_id, command)",
+        "ai_command_response"
+      ],
+      "target_downstream": "Agent AI automation engine",
+      "evidence_classification": "COMBINED_CONFIRMED"
+    },
+    "adb-channel": {
+      "payload_encoding": "RAW_BINARY_STREAM",
+      "binary_framing": true,
+      "message_types": [
+        "raw_adb_multiplexed_packets",
+        "reverse_shell_stream"
+      ],
+      "target_downstream": "Local ADB daemon / 127.0.0.1:5555 / reverse shell",
+      "evidence_classification": "COMBINED_CONFIRMED"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5A Forensic Gate Result",
+    "phase": "Phase 2C.5A (WebRTC / DataChannel / Media Forensics)",
+    "gate_version": "1.0.0"
+  },
+  "gate_summary": {
+    "total_dimensions": 19,
+    "passed_dimensions": 19,
+    "failed_dimensions": 0,
+    "verdict": "PASS_PHASE_2C5A_CLOSED"
+  },
+  "evaluations": [
+    {
+      "dimension": "peerconnection_topology",
+      "status": "PASS",
+      "evidence": "Agent is offerer, Browser is answerer, Signaling is WebSocket relay"
+    },
+    {
+      "dimension": "signaling_boundary",
+      "status": "PASS",
+      "evidence": "Signaling server has zero WebRTC peer/media code (Phase 2C.4B proven)"
+    },
+    {
+      "dimension": "agent_pion_dependency",
+      "status": "PASS",
+      "evidence": "Discovered Pion WebRTC in both AMD64 and ARM64 binaries"
+    },
+    {
+      "dimension": "exact_dependency_version",
+      "status": "PASS",
+      "evidence": "Verbatim rodata string 'Pion WebRTC v3.3.6' in AMD64 and ARM64"
+    },
+    {
+      "dimension": "peerconnection_state_machine",
+      "status": "PASS",
+      "evidence": "CreateOffer -> SetLocalDescription -> Send -> SetRemoteDescription -> AddICECandidate"
+    },
+    {
+      "dimension": "datachannel_labels",
+      "status": "PASS",
+      "evidence": "6 confirmed WebRTC DataChannels machine discovered; 6 historical strings separated"
+    },
+    {
+      "dimension": "datachannel_creation_ownership",
+      "status": "PASS",
+      "evidence": "Agent creates 3 outbound; Browser creates 3 inbound"
+    },
+    {
+      "dimension": "datachannel_framing",
+      "status": "PASS",
+      "evidence": "JSON text vs raw binary byte stream mapped per channel"
+    },
+    {
+      "dimension": "message_types",
+      "status": "PASS",
+      "evidence": "Discovered inject_touch, inject_text, inject_keycode, hard_keyboard, inject_scroll, set_clipboard, get_clipboard"
+    },
+    {
+      "dimension": "codec_capabilities",
+      "status": "PASS",
+      "evidence": "video/H264 (90000) and audio/opus (48000, 2ch, minptime=10) confirmed in main.main"
+    },
+    {
+      "dimension": "media_track_construction",
+      "status": "PASS",
+      "evidence": "display_0 and audio_0 created via NewTrackLocalStaticSample and fed via WriteSample"
+    },
+    {
+      "dimension": "helper_ipc_sockets",
+      "status": "PASS",
+      "evidence": "@uds_sys_v_, @uds_sys_a_, @uds_sys_c_, @uds_sys_t_ machine discovered"
+    },
+    {
+      "dimension": "helper_lifecycle",
+      "status": "PASS",
+      "evidence": "Staging at /data/local/tmp/libsys_core.so, app_process launch, shell UID 2000 confirmed"
+    },
+    {
+      "dimension": "control_input_path",
+      "status": "PASS",
+      "evidence": "input-channel JSON -> bswap/rol big-endian binary scrcpy ControlMessage -> @uds_sys_t_"
+    },
+    {
+      "dimension": "video_pipeline",
+      "status": "PASS",
+      "evidence": "Android display capture -> MediaCodec H.264 -> @uds_sys_v_ -> IDR cache -> WriteSample -> RTP"
+    },
+    {
+      "dimension": "audio_pipeline",
+      "status": "PASS",
+      "evidence": "Android audio capture -> MediaCodec Opus -> @uds_sys_a_ -> WriteSample -> RTP"
+    },
+    {
+      "dimension": "cross_build_correlation",
+      "status": "PASS",
+      "evidence": "Exact 1-to-1 structural and rodata parity between AMD64 and ARM64"
+    },
+    {
+      "dimension": "reproducibility",
+      "status": "PASS",
+      "evidence": "100% reproducible from canonical inputs via reproduce_webrtc_datachannel_forensics.py"
+    },
+    {
+      "dimension": "strict_production_boundary",
+      "status": "PASS",
+      "evidence": "Zero production WebRTC/DataChannel/Media code created or modified"
+    }
+  ],
+  "boundary_invariants": {
+    "production_webrtc_source_created": false,
+    "production_datachannel_source_created": false,
+    "production_media_source_created": false,
+    "pion_in_signaling_go_mod": false,
+    "phase_2c5b_reconstruction_started": false
+  }
+}

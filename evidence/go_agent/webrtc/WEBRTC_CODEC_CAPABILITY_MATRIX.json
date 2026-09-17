@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "title": "WebRTC Codec Capability Matrix",
+    "phase": "Phase 2C.5A"
+  },
+  "selected_codecs": {
+    "video": {
+      "mime_type": "video/H264",
+      "clock_rate": 90000,
+      "channels": 1,
+      "fmtp": "UNKNOWN (Default / Negotiated in SDP)",
+      "rtcp_feedback": [
+        "nack",
+        "pli",
+        "fir"
+      ],
+      "evidence_classification": "STATIC_CONFIRMED",
+      "disassembly_xref_amd64": "main.main 0x9bc7a1 (RODATA 0xb55a94 'video/H264')",
+      "disassembly_xref_arm64": "main.main 0x51e7f0 (RODATA 0x6b3a01 'video/H264')"
+    },
+    "audio": {
+      "mime_type": "audio/opus",
+      "clock_rate": 48000,
+      "channels": 2,
+      "fmtp": "minptime=10",
+      "rtcp_feedback": [],
+      "evidence_classification": "STATIC_CONFIRMED",
+      "disassembly_xref_amd64": "main.main 0x9bc816 (RODATA 0xb55a9e 'audio/opus', 0xb5776e 'minptime=10')",
+      "disassembly_xref_arm64": "main.main 0x51e850 (RODATA 0x6b3a0b 'audio/opus', 0x6b5764 'minptime=10')"
+    }
+  },
+  "unselected_pion_registered_codecs": {
+    "note": "Registered in Pion default media engine tables but not created by Agent main.main",
+    "candidates": [
+      "video/VP8",
+      "video/VP9",
+      "video/AV1",
+      "audio/G722",
+      "audio/PCMU",
+      "audio/PCMA"
+    ],
+    "classification": "REFERENCE_ONLY"
+  }
+}

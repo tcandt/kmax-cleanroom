@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "title": "WebRTC PeerConnection State Machine Forensic Evidence",
+    "phase": "Phase 2C.5A"
+  },
+  "role": "AGENT_OFFER_INITIATOR",
+  "states": [
+    {
+      "state": "CLOSED",
+      "transition": "Triggered by incoming client connection request over signaling",
+      "next_state": "CONNECTING"
+    },
+    {
+      "state": "CONNECTING",
+      "transition": "Agent calls NewPeerConnection, AddTrack x2, CreateDataChannel x3",
+      "next_state": "HAVE_LOCAL_OFFER"
+    },
+    {
+      "state": "HAVE_LOCAL_OFFER",
+      "transition": "Agent calls CreateOffer -> SetLocalDescription -> dispatches to signaling",
+      "next_state": "WAITING_FOR_REMOTE_ANSWER"
+    },
+    {
+      "state": "WAITING_FOR_REMOTE_ANSWER",
+      "transition": "Browser client answers -> signaling forwards Answer -> Agent calls SetRemoteDescription",
+      "next_state": "HAVE_REMOTE_ANSWER"
+    },
+    {
+      "state": "HAVE_REMOTE_ANSWER",
+      "transition": "ICE gathering & connectivity checks succeed",
+      "next_state": "CONNECTED"
+    },
+    {
+      "state": "CONNECTED",
+      "transition": "DataChannels active, H.264/Opus media flowing",
+      "next_state": "DISCONNECTING / CLOSED"
+    }
+  ],
+  "classification": "STATIC_CONFIRMED"
+}

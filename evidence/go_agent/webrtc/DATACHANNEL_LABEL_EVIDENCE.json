@@ -1,0 +1,222 @@
+{
+  "metadata": {
+    "title": "WebRTC DataChannel Label Forensic Evidence",
+    "phase": "Phase 2C.5A (Forensics-Only)",
+    "total_active_webrtc_channels": 6,
+    "total_historical_separated_strings": 6
+  },
+  "confirmed_webrtc_channels": {
+    "input-channel": {
+      "label": "input-channel",
+      "evidence_classification": "COMBINED_CONFIRMED",
+      "channel_type": "OUTBOUND_AGENT_CREATED",
+      "creator_side": "Agent",
+      "consumer_side": "Browser Client",
+      "ordered": true,
+      "ordered_evidence": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel in AMD64 and ARM64)",
+      "lane_a_binary_evidence": {
+        "amd64": {
+          "rodata_va": "0xb5a5af",
+          "creation_site": "0x9e1f4f",
+          "caller_function": "main.(*IDhLgq).woxaqqFN5Km"
+        },
+        "arm64": {
+          "rodata_va": "0x6b8548",
+          "creation_site": "0x53e588",
+          "caller_function": "main.(*JJffa1S1Zv6).iIhwd_WXInS"
+        }
+      },
+      "lane_d_frontend_evidence": {
+        "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:752-760, 1031-1044, 1141-1152, 1531-1570",
+        "negotiation_method": "pc.ondatachannel (agent initiates 'input-channel')"
+      }
+    },
+    "clipboard-channel": {
+      "label": "clipboard-channel",
+      "evidence_classification": "COMBINED_CONFIRMED",
+      "channel_type": "OUTBOUND_AGENT_CREATED",
+      "creator_side": "Agent",
+      "consumer_side": "Browser Client",
+      "ordered": true,
+      "ordered_evidence": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel in AMD64 and ARM64)",
+      "lane_a_binary_evidence": {
+        "amd64": {
+          "rodata_va": "0xb5e208",
+          "creation_site": "0x9e1ff7",
+          "caller_function": "main.(*IDhLgq).woxaqqFN5Km"
+        },
+        "arm64": {
+          "rodata_va": "0x6bc175",
+          "creation_site": "0x53e610",
+          "caller_function": "main.(*JJffa1S1Zv6).iIhwd_WXInS"
+        }
+      },
+      "lane_d_frontend_evidence": {
+        "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761-786, 1195-1215",
+        "negotiation_method": "pc.ondatachannel (agent initiates 'clipboard-channel')"
+      }
+    },
+    "camera-channel": {
+      "label": "camera-channel",
+      "evidence_classification": "COMBINED_CONFIRMED",
+      "channel_type": "OUTBOUND_AGENT_CREATED",
+      "creator_side": "Agent",
+      "consumer_side": "Browser Client",
+      "ordered": true,
+      "ordered_evidence": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel in AMD64 and ARM64)",
+      "lane_a_binary_evidence": {
+        "amd64": {
+          "rodata_va": "0xb5b42e",
+          "creation_site": "0x9e216d",
+          "caller_function": "main.(*IDhLgq).woxaqqFN5Km"
+        },
+        "arm64": {
+          "rodata_va": "0x6b93ba",
+          "creation_site": "0x53e740",
+          "caller_function": "main.(*JJffa1S1Zv6).iIhwd_WXInS"
+        }
+      },
+      "lane_d_frontend_evidence": {
+        "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:787-815",
+        "negotiation_method": "pc.ondatachannel (agent initiates 'camera-channel')"
+      }
+    },
+    "file-channel": {
+      "label": "file-channel",
+      "evidence_classification": "COMBINED_CONFIRMED",
+      "channel_type": "INBOUND_CLIENT_CREATED",
+      "creator_side": "Browser Client",
+      "consumer_side": "Agent",
+      "ordered": true,
+      "ordered_evidence": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel in AMD64 and ARM64)",
+      "lane_a_binary_evidence": {
+        "amd64": {
+          "rodata_va": "EMBEDDED_AS_IMMEDIATE",
+          "dispatch_site": "0x9e2f40 (OnDataChannel callback 0x9e2f20)",
+          "caller_function": "main.(*IDhLgq).woxaqqFN5Km.func11"
+        },
+        "arm64": {
+          "rodata_va": "EMBEDDED_AS_IMMEDIATE",
+          "dispatch_site": "0x53f234 (OnDataChannel callback 0x53f210)",
+          "caller_function": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11"
+        }
+      },
+      "lane_d_frontend_evidence": {
+        "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:579-581, 1366",
+        "negotiation_method": "pc.createDataChannel('file-channel', { ordered: true })"
+      }
+    },
+    "ai-command-channel": {
+      "label": "ai-command-channel",
+      "evidence_classification": "COMBINED_CONFIRMED",
+      "channel_type": "INBOUND_CLIENT_CREATED",
+      "creator_side": "Browser Client",
+      "consumer_side": "Agent",
+      "ordered": true,
+      "ordered_evidence": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel in AMD64 and ARM64)",
+      "lane_a_binary_evidence": {
+        "amd64": {
+          "rodata_va": "0xb5f1c2",
+          "dispatch_site": "0x9e2f40 (OnDataChannel callback 0x9e2f20)",
+          "caller_function": "main.(*IDhLgq).woxaqqFN5Km.func11"
+        },
+        "arm64": {
+          "rodata_va": "0x6bd173",
+          "dispatch_site": "0x53f234 (OnDataChannel callback 0x53f210)",
+          "caller_function": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11"
+        }
+      },
+      "lane_d_frontend_evidence": {
+        "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:304-335, 358-361",
+        "negotiation_method": "pc.createDataChannel('ai-command-channel', { ordered: true })"
+      }
+    },
+    "adb-channel": {
+      "label": "adb-channel",
+      "evidence_classification": "COMBINED_CONFIRMED",
+      "channel_type": "INBOUND_CLIENT_CREATED",
+      "creator_side": "Browser Client",
+      "consumer_side": "Agent",
+      "ordered": true,
+      "ordered_evidence": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel in AMD64 and ARM64)",
+      "lane_a_binary_evidence": {
+        "amd64": {
+          "rodata_va": "EMBEDDED_AS_IMMEDIATE",
+          "dispatch_site": "0x9e2f40 (OnDataChannel callback 0x9e2f20)",
+          "caller_function": "main.(*IDhLgq).woxaqqFN5Km.func11"
+        },
+        "arm64": {
+          "rodata_va": "EMBEDDED_AS_IMMEDIATE",
+          "dispatch_site": "0x53f234 (OnDataChannel callback 0x53f210)",
+          "caller_function": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11"
+        }
+      },
+      "lane_d_frontend_evidence": {
+        "source_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1237-1250",
+        "negotiation_method": "pc.createDataChannel('adb-channel', { ordered: true })"
+      }
+    }
+  },
+  "historical_separated_strings": {
+    "control": {
+      "string": "control",
+      "evidence_classification": "STATIC_CONFIRMED",
+      "is_webrtc_datachannel": false,
+      "true_semantic_role": "IPC_SOCKET_SEMANTIC (Scrcpy helper control socket @uds_sys_c_ / ControlChannel.java, NOT WebRTC DataChannel)",
+      "rodata_matches_amd64": 53,
+      "rodata_matches_arm64": 53,
+      "rodata_first_va_amd64": "0xa10775",
+      "notes": "Machine re-derived in Phase 2C.5A. Confirmed separated from WebRTC DataChannels."
+    },
+    "group_control_event": {
+      "string": "group_control_event",
+      "evidence_classification": "STATIC_CONFIRMED",
+      "is_webrtc_datachannel": false,
+      "true_semantic_role": "AUXILIARY_FEATURE_LOG (Chinese log string '收到直控/群控事件', direct/group control CLI feature, NOT WebRTC DataChannel)",
+      "rodata_matches_amd64": 2,
+      "rodata_matches_arm64": 2,
+      "rodata_first_va_amd64": "0xb60102",
+      "notes": "Machine re-derived in Phase 2C.5A. Confirmed separated from WebRTC DataChannels."
+    },
+    "adb": {
+      "string": "adb",
+      "evidence_classification": "STATIC_CONFIRMED",
+      "is_webrtc_datachannel": false,
+      "true_semantic_role": "AUXILIARY_CLI_TOOL (Android ADB daemon/client invocation, NOT WebRTC DataChannel label)",
+      "rodata_matches_amd64": 4,
+      "rodata_matches_arm64": 3,
+      "rodata_first_va_amd64": "0xa17317",
+      "notes": "Machine re-derived in Phase 2C.5A. Confirmed separated from WebRTC DataChannels."
+    },
+    "shell": {
+      "string": "shell",
+      "evidence_classification": "STATIC_CONFIRMED",
+      "is_webrtc_datachannel": false,
+      "true_semantic_role": "OS_EXEC_PRIMITIVE (sh / system / exec.Command wrapper, NOT WebRTC DataChannel label)",
+      "rodata_matches_amd64": 15,
+      "rodata_matches_arm64": 15,
+      "rodata_first_va_amd64": "0xb55a7b",
+      "notes": "Machine re-derived in Phase 2C.5A. Confirmed separated from WebRTC DataChannels."
+    },
+    "heartbeat": {
+      "string": "heartbeat",
+      "evidence_classification": "STATIC_CONFIRMED",
+      "is_webrtc_datachannel": false,
+      "true_semantic_role": "TRANSPORT_WEBSOCKET_HEARTBEAT (WebSocket transport keepalive ping 30s/60s, NOT WebRTC DataChannel)",
+      "rodata_matches_amd64": 7,
+      "rodata_matches_arm64": 7,
+      "rodata_first_va_amd64": "0xa25d61",
+      "notes": "Machine re-derived in Phase 2C.5A. Confirmed separated from WebRTC DataChannels."
+    },
+    "HEARTBEAT-ACK": {
+      "string": "HEARTBEAT-ACK",
+      "evidence_classification": "STATIC_CONFIRMED",
+      "is_webrtc_datachannel": false,
+      "true_semantic_role": "TRANSPORT_PROTOCOL_ENUM (Transport protocol ACK enum Stringer, NOT WebRTC DataChannel)",
+      "rodata_matches_amd64": 1,
+      "rodata_matches_arm64": 1,
+      "rodata_first_va_amd64": "0xb5acd8",
+      "notes": "Machine re-derived in Phase 2C.5A. Confirmed separated from WebRTC DataChannels."
+    }
+  }
+}

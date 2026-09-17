@@ -1,0 +1,37 @@
+{
+  "evidence_classification": "COMBINED_CONFIRMED",
+  "dependency_name": "Pion WebRTC",
+  "exact_version": "v3.3.6",
+  "evidence_lanes": [
+    "Lane A (Agent Binaries)",
+    "Lane E (Public Pion Reference)"
+  ],
+  "lane_a_evidence": {
+    "amd64": {
+      "binary": "cloudphone-agent-amd64",
+      "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16",
+      "rodata_va": "0xb5f1b0",
+      "verbatim_string": "Pion WebRTC v3.3.6",
+      "garble_obfuscated_package": "v6LoFegGUKTA",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "arm64": {
+      "binary": "cloudphone-agent",
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "rodata_va": "0x6bd161",
+      "verbatim_string": "Pion WebRTC v3.3.6",
+      "garble_obfuscated_package": "IV04EXWpwj",
+      "classification": "STATIC_CONFIRMED"
+    }
+  },
+  "cross_build_correlation": {
+    "status": "EXACT_PARITY",
+    "version_match": true,
+    "classification": "CROSS_BUILD_CONFIRMED"
+  },
+  "boundary_verdict": {
+    "production_reconstruction_dependency": "NOT_ADDED_IN_PHASE_2C5A",
+    "signaling_server_dependency": "NONE (Signaling is WebSocket relay only)",
+    "agent_dependency": "Pion WebRTC v3.3.6 (P2P endpoint)"
+  }
+}

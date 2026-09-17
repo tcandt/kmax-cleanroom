@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "title": "WebRTC Agent Cross-Build Correlation Evidence",
+    "phase": "Phase 2C.5A"
+  },
+  "architectures": {
+    "amd64": {
+      "binary": "cloudphone-agent-amd64",
+      "size": 14663828,
+      "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16",
+      "pion_package": "v6LoFegGUKTA",
+      "session_func": "main.(*IDhLgq).woxaqqFN5Km (0x9df9c0)",
+      "signaling_func": "main.(*IDhLgq).f1PF7qVxR (0x9e59e0)",
+      "helper_func": "main.(*IDhLgq).wB52gd (0x9d0260)",
+      "track_constructor": "0x968320",
+      "sample_writer": "0x968cc0",
+      "rodata_h264": "0xb55a94",
+      "rodata_display_0": "0xb53f06",
+      "rodata_opus": "0xb55a9e",
+      "rodata_minptime": "0xb5776e",
+      "rodata_audio_0": "0xb510e3"
+    },
+    "arm64": {
+      "binary": "cloudphone-agent",
+      "size": 13828244,
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "pion_package": "IV04EXWpwj",
+      "session_func": "main.(*JJffa1S1Zv6).iIhwd_WXInS (0x53c730)",
+      "signaling_func": "main.(*JJffa1S1Zv6).wR5c1uXW (0x5418b0)",
+      "helper_func": "main.(*JJffa1S1Zv6).yG15f6X (0x529d40)",
+      "track_constructor": "0x4d3a80",
+      "sample_writer": "0x4d4210",
+      "rodata_h264": "0x6b3a01",
+      "rodata_display_0": "0x6b1e99",
+      "rodata_opus": "0x6b3a0b",
+      "rodata_minptime": "0x6b5764",
+      "rodata_audio_0": "0x6af015"
+    }
+  },
+  "correlation_metrics": {
+    "pion_version_string_match": true,
+    "datachannel_label_parity": "6/6 exact match (input-channel, clipboard-channel, camera-channel, file-channel, ai-command-channel, adb-channel)",
+    "outbound_channel_count": 3,
+    "inbound_channel_count": 3,
+    "media_tracks_count": 2,
+    "media_track_ids": [
+      "display_0",
+      "audio_0"
+    ],
+    "uds_socket_prefixes": [
+      "@uds_sys_v_",
+      "@uds_sys_a_",
+      "@uds_sys_c_",
+      "@uds_sys_t_"
+    ]
+  },
+  "classification": "CROSS_BUILD_CONFIRMED"
+}

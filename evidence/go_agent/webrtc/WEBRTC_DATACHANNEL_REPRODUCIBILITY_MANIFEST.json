@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "title": "WebRTC and DataChannel Forensic Reproducibility Manifest",
+    "phase": "Phase 2C.5A",
+    "total_artifacts": 14
+  },
+  "artifacts": {
+    "WEBRTC_DEPENDENCY_EVIDENCE.json": {
+      "sha256": "c0a575d59466cda3fd25f459f49c3de6ca654946b31e5433f9e0ceed383a8dc8",
+      "size_bytes": 1251
+    },
+    "WEBRTC_PEERCONNECTION_CALLGRAPH.json": {
+      "sha256": "e06055b3f2d6398c1fb6db0bfaa9d602d7ac1a28f9d8079e6850c6415e6b2b1b",
+      "size_bytes": 2003
+    },
+    "WEBRTC_PEERCONNECTION_STATE_MACHINE.json": {
+      "sha256": "41d3be2541108b006643454db5cae91c68c22ca12fc5318adda09df8250cd77e",
+      "size_bytes": 1246
+    },
+    "WEBRTC_CODEC_CAPABILITY_MATRIX.json": {
+      "sha256": "550ccab5b5cc2166ca2b2c7fded74e6ca5d6623b513477cd436de5a65ed19b0a",
+      "size_bytes": 1338
+    },
+    "MEDIA_TRACK_CONSTRUCTION_EVIDENCE.json": {
+      "sha256": "57e251cd6e370ee57da7e225ec61f234c93c56bea34c8428277f25d4d5832204",
+      "size_bytes": 1439
+    },
+    "DATACHANNEL_LABEL_EVIDENCE.json": {
+      "sha256": "34cd3fa2eb3239a459d6605929a392a847f7f96f968df498c89c8958665afa0b",
+      "size_bytes": 9487
+    },
+    "DATACHANNEL_FRAMING_MATRIX.json": {
+      "sha256": "ce6a38ebdc6e6b64e4f09bd57762db1978867c95272dc6f03d3c2a3320db542a",
+      "size_bytes": 2264
+    },
+    "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json": {
+      "sha256": "b018598632e9215e1219b31d92a6b6f2bfe2eda1954062917aadfaafa6be9880",
+      "size_bytes": 2363
+    },
+    "AGENT_HELPER_IPC_SOCKET_MATRIX.json": {
+      "sha256": "826c37f22eb6bda803a6fd3b9898f2c89d527d7e8ce0ad654a42d9690bdb11d5",
+      "size_bytes": 2908
+    },
+    "CONTROL_INPUT_PROTOCOL_CROSSMAP.json": {
+      "sha256": "802bc9a411e39335001630cf5eb95be933cb86eba6bf45ec085a300474cfa689",
+      "size_bytes": 1751
+    },
+    "MEDIA_PLANE_PIPELINE_EVIDENCE.json": {
+      "sha256": "32774e3dd68b5e1a5f8761ef35a05e89646efdba1a80cef55c961f95d67d3a17",
+      "size_bytes": 2659
+    },
+    "WEBRTC_AGENT_CROSS_BUILD_CORRELATION.json": {
+      "sha256": "8430d0936f78a59c57067da437ae3746338b53d884f4e3eea23fd30bff372604",
+      "size_bytes": 1975
+    },
+    "WEBRTC_TOPOLOGY_CROSSMAP.json": {
+      "sha256": "24f4a04bdb3956114a23f0c8fa2eaba5e3551ed58ed447c1e143f170c24fa7f2",
+      "size_bytes": 1600
+    },
+    "PHASE2C5A_FORENSIC_GATE_RESULT.json": {
+      "sha256": "f076af56a45fb1c1226833a162faf690e26a6f2c626fafe3e1179d0026a6c364",
+      "size_bytes": 3954
+    }
+  }
+}

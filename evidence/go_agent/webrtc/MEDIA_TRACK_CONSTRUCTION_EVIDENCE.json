@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "title": "Media Track Construction Forensic Evidence",
+    "phase": "Phase 2C.5A"
+  },
+  "tracks": {
+    "video_track": {
+      "track_id": "display_0",
+      "stream_id": "display_0",
+      "codec_mime": "video/H264",
+      "constructor": "NewTrackLocalStaticSample",
+      "constructor_va_amd64": "0x968320 (v6LoFegGUKTA.XWZubsbM)",
+      "constructor_va_arm64": "0x4d3a80 (IV04EXWpwj.Zd7s9uCRwk)",
+      "creation_site_amd64": "main.main (0x9bc7a8)",
+      "creation_site_arm64": "main.main (0x51e818)",
+      "sample_writer": "WriteSample (v6LoFegGUKTA.(*DoxIzQzmv).WriteSample 0x968cc0 AMD64 / 0x4d4210 ARM64)",
+      "sample_writer_callers": [
+        "main.(*IDhLgq).hPk0ZTim98p (0x9c7eb8, 0x9c7fa7, 0x9c8159)",
+        "main.(*IDhLgq).InjectCachedIDR (0x9cec16 - Keyframe injection)"
+      ],
+      "classification": "STATIC_CONFIRMED"
+    },
+    "audio_track": {
+      "track_id": "audio_0",
+      "stream_id": "audio_0",
+      "codec_mime": "audio/opus",
+      "fmtp": "minptime=10",
+      "constructor": "NewTrackLocalStaticSample",
+      "constructor_va_amd64": "0x968320",
+      "constructor_va_arm64": "0x4d3a80",
+      "creation_site_amd64": "main.main (0x9bc824)",
+      "creation_site_arm64": "main.main (0x51e880)",
+      "sample_writer": "WriteSample",
+      "sample_writer_callers": [
+        "main.(*IDhLgq).hpLLOr1Y0cv (0x9ca6da)"
+      ],
+      "classification": "STATIC_CONFIRMED"
+    }
+  }
+}

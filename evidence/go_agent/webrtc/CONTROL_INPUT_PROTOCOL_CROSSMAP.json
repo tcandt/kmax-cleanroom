@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "title": "Control Input Protocol Crossmap",
+    "phase": "Phase 2C.5A"
+  },
+  "protocol_translation": {
+    "ingress": {
+      "channel": "input-channel",
+      "transport": "WebRTC DataChannel (Ordered=true, reliable)",
+      "encoding": "JSON string",
+      "event_discriminators": [
+        "inject_touch",
+        "inject_text",
+        "inject_keycode",
+        "hard_keyboard",
+        "inject_scroll"
+      ]
+    },
+    "touch_translation_details": {
+      "input_json_fields": {
+        "action": "int (0=DOWN, 1=UP, 2=MOVE)",
+        "x": "int (x coordinate)",
+        "y": "int (y coordinate)",
+        "w": "int (screen width)",
+        "h": "int (screen height)",
+        "id": "int64 (pointer ID)",
+        "pressure": "int (pressure value)"
+      },
+      "output_scrcpy_binary_format": {
+        "byte_0": "Type (2 = INJECT_TOUCH_EVENT)",
+        "byte_1": "Action (dl = [rsp+0x310])",
+        "bytes_2_9": "Pointer ID (int64, bswap to Big Endian)",
+        "bytes_10_13": "X coordinate (int32, bswap to Big Endian)",
+        "bytes_14_17": "Y coordinate (int32, bswap to Big Endian)",
+        "bytes_18_19": "Screen width (int16, rol 8 to Big Endian)",
+        "bytes_20_21": "Screen height (int16, rol 8 to Big Endian)",
+        "bytes_22_23": "Pressure (0x0000 or 0xffff)",
+        "total_packet_size": "24 to 32 bytes (mov ecx, 0x20 in 0x9cfbfb)"
+      },
+      "disassembly_proof": "AMD64 0x9cfb54 - 0x9cfc0e (exact bswap / rol instructions writing to rax before call rdx)"
+    },
+    "egress": {
+      "destination": "Abstract Unix Domain Socket @uds_sys_t_<suffix>",
+      "consumer": "CoreService ControlChannel touchChannel (Java ControlMessageReader)"
+    }
+  },
+  "classification": "STATIC_CONFIRMED"
+}

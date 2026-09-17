@@ -1,0 +1,93 @@
+{
+  "metadata": {
+    "title": "DataChannel Message Type Forensic Evidence",
+    "phase": "Phase 2C.5A"
+  },
+  "input_channel_messages": {
+    "inject_touch": {
+      "fields": [
+        "action",
+        "x",
+        "y",
+        "width",
+        "height",
+        "id",
+        "pressure"
+      ],
+      "action_values": {
+        "DOWN": 0,
+        "UP": 1,
+        "MOVE": 2
+      },
+      "disassembly_xref": "AMD64 0x9cfb40 - 0x9cfc0e (converted to 32-byte big-endian scrcpy packet)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "inject_text": {
+      "fields": [
+        "text"
+      ],
+      "disassembly_xref": "AMD64 0x9e3a4d - 0x9e3ac0 (handler: main.(*IDhLgq).cMG2_76Q)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "inject_keycode": {
+      "fields": [
+        "action",
+        "keycode",
+        "repeat",
+        "meta"
+      ],
+      "disassembly_xref": "AMD64 0x9e3ace - 0x9e3b49 (handler: main.(*IDhLgq).rKbdAxdt)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "hard_keyboard": {
+      "fields": [
+        "enabled"
+      ],
+      "disassembly_xref": "AMD64 0x9e3b60 - 0x9e3bef (handler: main.(*IDhLgq).ibGYZ1JMSNE)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "inject_scroll": {
+      "fields": [
+        "x",
+        "y",
+        "width",
+        "height",
+        "scroll_h",
+        "scroll_v"
+      ],
+      "disassembly_xref": "AMD64 0x9e3c07 - 0x9e3d82 (handler: main.(*IDhLgq).yUpFvK)",
+      "classification": "STATIC_CONFIRMED"
+    }
+  },
+  "clipboard_channel_messages": {
+    "set_clipboard": {
+      "fields": [
+        "type",
+        "text",
+        "source",
+        "origin_client_id"
+      ],
+      "disassembly_xref": "AMD64 0x9e3860 - 0x9e38be (handler: main.(*IDhLgq).woxaqqFN5Km.func10)",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "get_clipboard": {
+      "fields": [
+        "type"
+      ],
+      "disassembly_xref": "AMD64 0x9e38ce - 0x9e38f6 (handler: main.(*IDhLgq).woxaqqFN5Km.func10)",
+      "classification": "STATIC_CONFIRMED"
+    }
+  },
+  "file_channel_messages": {
+    "start_upload": {
+      "fields": [
+        "filename",
+        "size",
+        "sha256",
+        "install"
+      ],
+      "disassembly_xref": "AMD64 0x9e9ab1 (log: [FileChannel] Start uploading to %s (size=%d, sha256=%s, install=%v))",
+      "classification": "STATIC_CONFIRMED"
+    }
+  }
+}

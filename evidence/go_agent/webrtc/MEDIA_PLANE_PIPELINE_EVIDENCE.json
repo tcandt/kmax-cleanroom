@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "title": "Media Plane Pipeline Staged Evidence",
+    "phase": "Phase 2C.5A"
+  },
+  "video_pipeline_stages": [
+    {
+      "stage": 1,
+      "name": "Android Display Capture",
+      "component": "Android OS SurfaceControl / DisplayManager",
+      "lane": "Lane B",
+      "classification": "STATIC_CONFIRMED (SurfaceCapture.java / ScreenCapture.java in libsys_core.so)"
+    },
+    {
+      "stage": 2,
+      "name": "Hardware H.264 Encoder",
+      "component": "Android MediaCodec via SurfaceEncoder.java",
+      "lane": "Lane B",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 3,
+      "name": "IPC Transport",
+      "component": "Abstract Unix Domain Socket @uds_sys_v_<suffix>",
+      "lane": "Lane A & B",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 4,
+      "name": "Agent NALU Parser & IDR Caching",
+      "component": "cloudphone-agent video reader (InjectCachedIDR / 0x9cec16)",
+      "lane": "Lane A",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 5,
+      "name": "Pion WebRTC Track Injection",
+      "component": "NewTrackLocalStaticSample -> WriteSample",
+      "lane": "Lane A",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 6,
+      "name": "RTP Packetization & SRTP Encryption",
+      "component": "Pion WebRTC DTLS/SRTP stack",
+      "lane": "Lane A & E",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 7,
+      "name": "Browser Demuxing & Decoding",
+      "component": "Browser WebRTC video element rendering",
+      "lane": "Lane D",
+      "classification": "REFERENCE_OBSERVED"
+    }
+  ],
+  "audio_pipeline_stages": [
+    {
+      "stage": 1,
+      "name": "Android Audio Record",
+      "component": "AudioRecord / Submix capture in helper",
+      "lane": "Lane B",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 2,
+      "name": "Opus Encoder",
+      "component": "Android MediaCodec Opus encoder",
+      "lane": "Lane B",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 3,
+      "name": "IPC Transport",
+      "component": "Abstract Unix Domain Socket @uds_sys_a_<suffix>",
+      "lane": "Lane A & B",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 4,
+      "name": "Agent Audio Parser",
+      "component": "cloudphone-agent audio reader (0x9ca6da)",
+      "lane": "Lane A",
+      "classification": "STATIC_CONFIRMED"
+    },
+    {
+      "stage": 5,
+      "name": "Pion WebRTC Track Injection",
+      "component": "WriteSample -> audio_0 track",
+      "lane": "Lane A",
+      "classification": "STATIC_CONFIRMED"
+    }
+  ]
+}

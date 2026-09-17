@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "title": "WebRTC PeerConnection Callgraph Forensic Evidence",
+    "phase": "Phase 2C.5A"
+  },
+  "agent_peerconnection_lifecycle": {
+    "entry_point": "main.(*IDhLgq).f1PF7qVxR (AMD64 0x9e59e0) / main.(*JJffa1S1Zv6).wR5c1uXW (ARM64)",
+    "step_1_helper_initialization": {
+      "function": "main.(*IDhLgq).wB52gd (0x9d0260)",
+      "action": "Ensure libsys_core.so helper process is running and UDS sockets @uds_sys_v_, @uds_sys_a_, @uds_sys_c_, @uds_sys_t_ are ready"
+    },
+    "step_2_peerconnection_setup": {
+      "function": "main.(*IDhLgq).woxaqqFN5Km (0x9df9c0)",
+      "action": "Initialize PeerConnection, add video/audio tracks, create 3 outbound DataChannels, register OnDataChannel callback"
+    },
+    "step_3_offer_creation": {
+      "function": "v6LoFegGUKTA.(*BtQfb9).CreateOffer (0x93d540)",
+      "caller": "main.(*IDhLgq).f1PF7qVxR (0x9e71d0)",
+      "action": "Agent generates SDP Offer as the WebRTC initiating party"
+    },
+    "step_4_local_description_set": {
+      "function": "v6LoFegGUKTA.(*BtQfb9).SetLocalDescription (0x93f7a0)",
+      "caller": "main.(*IDhLgq).f1PF7qVxR (0x9e738d)",
+      "action": "Agent sets local SDP description"
+    },
+    "step_5_signaling_offer_dispatch": {
+      "function": "main.(*IDhLgq).dizwnNrpwv (0x9c1540)",
+      "caller": "main.(*IDhLgq).f1PF7qVxR (0x9e74ce)",
+      "action": "Dispatches Offer over WebSocket signaling relay to browser client"
+    },
+    "step_6_remote_answer_handling": {
+      "function": "v6LoFegGUKTA.(*BtQfb9).SetRemoteDescription (0x93fd80)",
+      "caller": "main.(*IDhLgq).f1PF7qVxR (0x9e7920)",
+      "action": "Receives browser client SDP Answer from signaling server and applies it"
+    },
+    "step_7_ice_candidate_handling": {
+      "function": "v6LoFegGUKTA.(*BtQfb9).AddICECandidate (0x947140)",
+      "caller": "main.(*IDhLgq).f1PF7qVxR (0x9e7c80)",
+      "action": "Applies trickle ICE candidates received from browser client"
+    }
+  },
+  "classification": "STATIC_CONFIRMED"
+}
