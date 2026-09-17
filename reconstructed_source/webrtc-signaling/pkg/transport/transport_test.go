@@ -430,8 +430,8 @@ func TestRegisterAgentLifecycle(t *testing.T) {
 	if err := ws1.ReadJSON(&ack); err != nil {
 		t.Fatalf("read agent_register_ok error: %v", err)
 	}
-	if ack.MessageType != "agent_register_ok" || ack.Status != "ok" {
-		t.Errorf("expected agent_register_ok status ok, got %+v", ack)
+	if ack.MessageType != "agent_register_ok" || ack.Status != "valid" {
+		t.Errorf("expected agent_register_ok status valid, got %+v", ack)
 	}
 
 	// 2. Heartbeat keepalive updates registry timestamp
@@ -471,8 +471,8 @@ func TestRegisterAgentLifecycle(t *testing.T) {
 	if err := ws2.ReadJSON(&ack2); err != nil {
 		t.Fatalf("read duplicate ack error: %v", err)
 	}
-	if ack2.Status != "ok" {
-		t.Errorf("expected status ok on duplicate agent connection")
+	if ack2.Status != "valid" {
+		t.Errorf("expected status valid on duplicate agent connection, got %v", ack2.Status)
 	}
 
 	// Verify ws1 is dropped / closed

@@ -3061,14 +3061,23 @@ def verify_all():
     record_check("Phase 2C.4B Go Signaling Package Build Validation", go_build_passed,
                  "go build ./... in reconstructed_source/webrtc-signaling compiles cleanly with zero errors")
 
-    # 18.3 Transport Differential Parity Suite Execution
+    # 18.3 Phase 2C.4BR Transport Differential Parity & Fail-Closed Oracle Verification
     import tools.transport_differential_test as tdt
     diff_res = tdt.run_differential_suite()
-    diff_valid = (diff_res.get("failed") == 0 and
-                  diff_res.get("exact_parity_passed", 0) == diff_res.get("exact_parity_total", 1) and
-                  diff_res.get("exact_parity_passed", 0) > 0)
-    record_check("Phase 2C.4B Transport Differential Parity Suite", diff_valid,
-                 f"{diff_res.get('exact_parity_passed')}/{diff_res.get('exact_parity_total')} confirmed deterministic cases match original oracle with exact parity")
+    diff_valid = (
+        diff_res is not None and
+        diff_res.get("oracle_required") is True and
+        diff_res.get("oracle_available") is True and
+        diff_res.get("oracle_hash_verified") is True and
+        diff_res.get("oracle_health_verified") is True and
+        diff_res.get("reconstructed_health_verified") is True and
+        diff_res.get("exact_parity_total", 0) > 0 and
+        diff_res.get("exact_parity_passed", 0) == diff_res.get("exact_parity_total", 1) and
+        diff_res.get("failed") == 0 and
+        diff_res.get("verdict") == "PASS"
+    )
+    record_check("Phase 2C.4BR Transport Differential Parity & Fail-Closed Oracle Verification", diff_valid,
+                 f"{diff_res.get('exact_parity_passed')}/{diff_res.get('exact_parity_total')} exact parity cases passed with verified oracle identity, health, and 0 failures")
 
     # 18.4 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)

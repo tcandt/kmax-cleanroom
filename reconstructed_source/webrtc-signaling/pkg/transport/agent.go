@@ -94,7 +94,7 @@ func (h *Hub) HandleRegisterAgent(w http.ResponseWriter, r *http.Request) {
 			// Reply with agent_register_ok
 			ack := AgentRegisterOkMessage{
 				MessageType: "agent_register_ok",
-				Status:      "ok",
+				Status:      "valid",
 			}
 			_ = agentConn.WriteJSON(ack)
 

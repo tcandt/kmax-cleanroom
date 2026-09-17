@@ -73,6 +73,16 @@ func (h *Hub) CleanupClient(deviceID string, cc *ClientConn) {
 				dev.Clients = newClients
 				dev.Mu.Unlock()
 			}
+
+			// Notify agent of client disconnection matching original binary behavior
+			if ag, ok := h.GetAgentConn(deviceID); ok && ag != nil {
+				_ = ag.WriteJSON(map[string]interface{}{
+					"message_type": "client_disconnected",
+					"device_id":    deviceID,
+					"client_id":    cc.ClientID,
+				})
+			}
+
 			h.BroadcastDeviceListUpdate()
 		}
 	}
