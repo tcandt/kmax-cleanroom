@@ -1,0 +1,145 @@
+{
+  "description": "Comprehensive Transport Message Routing Matrix",
+  "phase": "2C.4A",
+  "matrix": [
+    {
+      "message": "register",
+      "sender": "Device",
+      "receiver": "Signaling Server",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "device_id",
+        "device_info"
+      ],
+      "routing": "Local registry update",
+      "response": "config",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "config",
+      "sender": "Signaling Server",
+      "receiver": "Device / Client",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "device_id",
+        "ice_servers"
+      ],
+      "routing": "Direct response to connecting peer",
+      "response": "None",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "agent_register",
+      "sender": "Agent",
+      "receiver": "Signaling Server",
+      "opcode": 1,
+      "envelope": [
+        "type",
+        "device_id",
+        "scrcpy_addr",
+        "is_webrtc"
+      ],
+      "routing": "Local session binding",
+      "response": "agent_register_ok",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "agent_register_ok",
+      "sender": "Signaling Server",
+      "receiver": "Agent",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "status"
+      ],
+      "routing": "Direct response",
+      "response": "None",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "connect",
+      "sender": "Client",
+      "receiver": "Signaling Server",
+      "opcode": 1,
+      "envelope": [
+        "type",
+        "device_id"
+      ],
+      "routing": "Local client session binding",
+      "response": "config + device_list_update",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "forward",
+      "sender": "Client",
+      "receiver": "Agent (via Server)",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "device_id",
+        "client_id",
+        "payload"
+      ],
+      "routing": "Relayed to agent mapped to device_id",
+      "response": "device_msg (via agent response)",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "forward",
+      "sender": "Agent",
+      "receiver": "Client (via Server)",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "device_id",
+        "client_id",
+        "payload"
+      ],
+      "routing": "Relayed to client matching client_id wrapped as device_msg",
+      "response": "None",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "device_msg",
+      "sender": "Signaling Server",
+      "receiver": "Client",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "device_id",
+        "payload"
+      ],
+      "routing": "Direct delivery to client",
+      "response": "None",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "device_list_update",
+      "sender": "Signaling Server",
+      "receiver": "All Clients (Broadcast)",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "devices"
+      ],
+      "routing": "Broadcast to all authenticated client sessions",
+      "response": "None",
+      "classification": "CONFIRMED"
+    },
+    {
+      "message": "heartbeat",
+      "sender": "Agent",
+      "receiver": "Signaling Server",
+      "opcode": 1,
+      "envelope": [
+        "message_type",
+        "device_id"
+      ],
+      "routing": "Local timestamp update in device registry",
+      "response": "None",
+      "classification": "CONFIRMED"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "description": "Transport Edge Cases, Protocol Violations, and Security Boundaries",
+  "phase": "2C.4A",
+  "edge_cases": {
+    "unmasked_client_frame": {
+      "response_frame_opcode": 8,
+      "closed_by_server": true,
+      "provenance": "DYNAMIC_ORACLE_DERIVED"
+    },
+    "ping_pong": {
+      "received_pong_opcode": 10,
+      "pong_success": true,
+      "provenance": "DYNAMIC_ORACLE_DERIVED"
+    }
+  },
+  "security_boundaries": {
+    "unmasked_client_frame": "Strictly rejected with RFC 6455 1002 protocol error",
+    "unauthenticated_client": "Rejected with HTTP 401 before upgrade",
+    "share_token_scope": "Enforces assigned device_id and access_mode restrictions",
+    "device_hijack_prevention": "Agent registration overrides existing agent session cleanly"
+  },
+  "provenance": "COMBINED_CONFIRMED"
+}

@@ -1,0 +1,144 @@
+{
+  "description": "Binary Branch & Disassembly Provenance for Transport Messages",
+  "phase": "2C.4A",
+  "messages": {
+    "register": {
+      "status": "CONFIRMED",
+      "role": "Device initial registration",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.rQffYkwYhw (movabs 'register')"
+    },
+    "config": {
+      "status": "CONFIRMED",
+      "role": "Server config push with ice_servers",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.id8ybRmw69lm / main.rQffYkwYhw"
+    },
+    "agent_register": {
+      "status": "CONFIRMED",
+      "role": "Agent initial registration",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.jdUaLc5NMO5 (movabs 'agent_re')"
+    },
+    "agent_register_ok": {
+      "status": "CONFIRMED",
+      "role": "Agent registration ACK",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.jdUaLc5NMO5"
+    },
+    "connect": {
+      "status": "CONFIRMED",
+      "role": "Client binding to device_id",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.id8ybRmw69lm (cmp 'connect')"
+    },
+    "forward": {
+      "status": "CONFIRMED",
+      "role": "Bidirectional payload forwarding",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.id8ybRmw69lm / main.jdUaLc5NMO5 (cmp 'forward')"
+    },
+    "device_msg": {
+      "status": "CONFIRMED",
+      "role": "Relayed agent payload to client",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.id8ybRmw69lm"
+    },
+    "device_list_update": {
+      "status": "CONFIRMED",
+      "role": "Broadcast device summary update",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.lv6Xh7"
+    },
+    "heartbeat": {
+      "status": "CONFIRMED",
+      "role": "Agent keepalive ping",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.jdUaLc5NMO5 (movabs 'heartbea')"
+    },
+    "error": {
+      "status": "CONFIRMED",
+      "role": "Error envelope notification",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.hPaJPN"
+    },
+    "unregister": {
+      "status": "STRING_CANDIDATE",
+      "role": "Device explicit unregistration",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.rQffYkwYhw (movabs 'unregist')"
+    },
+    "bridge_register": {
+      "status": "STRING_CANDIDATE",
+      "role": "Bridge device registration",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.rQffYkwYhw (movabs 'bridge_r')"
+    },
+    "task_progress": {
+      "status": "STRING_CANDIDATE",
+      "role": "Agent task execution progress",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.jdUaLc5NMO5 (movabs 'task_pro')"
+    },
+    "command_result": {
+      "status": "STRING_CANDIDATE",
+      "role": "Agent command execution result",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.jdUaLc5NMO5 (movabs 'command_')"
+    },
+    "device_metrics": {
+      "status": "STRING_CANDIDATE",
+      "role": "Agent system metrics report",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.jdUaLc5NMO5 (movabs 'device_m')"
+    },
+    "snapshot_report": {
+      "status": "STRING_CANDIDATE",
+      "role": "Agent snapshot completion report",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.jdUaLc5NMO5 (movabs 'snapshot')"
+    },
+    "command": {
+      "status": "STRING_CANDIDATE",
+      "role": "Client device command request",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.id8ybRmw69lm (cmp 'command')"
+    },
+    "request-offer": {
+      "status": "CONFIRMED",
+      "role": "WebRTC offer request payload",
+      "observed_in_oracle": true,
+      "disasm_xref": "main.id8ybRmw69lm (movabs 'request-')"
+    },
+    "quit_agent": {
+      "status": "STRING_CANDIDATE",
+      "role": "Client request to terminate agent",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.id8ybRmw69lm (movabs 'quit_age')"
+    },
+    "inject_data": {
+      "status": "STRING_CANDIDATE",
+      "role": "Client custom data injection",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.id8ybRmw69lm (movabs 'inject_d')"
+    },
+    "start_preview": {
+      "status": "STRING_CANDIDATE",
+      "role": "Client camera/screen preview start",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.id8ybRmw69lm (movabs 'start_pr')"
+    },
+    "stop_preview": {
+      "status": "STRING_CANDIDATE",
+      "role": "Client camera/screen preview stop",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.id8ybRmw69lm (movabs 'stop_pre')"
+    },
+    "touch": {
+      "status": "STRING_CANDIDATE",
+      "role": "Client touch injection event",
+      "observed_in_oracle": false,
+      "disasm_xref": "main.id8ybRmw69lm (cmp 'touch')"
+    }
+  }
+}

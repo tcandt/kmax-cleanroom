@@ -1,0 +1,30 @@
+{
+  "description": "Cross-Build Structural Correlation Across Linux AMD64, Windows AMD64, and Android ARM64",
+  "phase": "2C.4A",
+  "targets": {
+    "linux_amd64": {
+      "binary": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "handlers": {
+        "/register_device": "main.rQffYkwYhw (0x74e4a0)",
+        "/register_agent": "main.jdUaLc5NMO5 (0x754b40)",
+        "/connect_client": "main.id8ybRmw69lm (0x7507c0)"
+      }
+    },
+    "windows_amd64": {
+      "binary": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+      "handlers": {
+        "/register_device": "main.rQffYkwYhw",
+        "/register_agent": "main.jdUaLc5NMO5",
+        "/connect_client": "main.id8ybRmw69lm"
+      },
+      "dynamic_oracle_verified": true
+    },
+    "android_arm64": {
+      "binary": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "client_role": "Connects to /register_agent over WebSocket",
+      "pion_webrtc_embedded": true
+    }
+  },
+  "correlation_verdict": "IDENTICAL_ARCHITECTURE_ACROSS_BUILDS",
+  "provenance": "COMBINED_CONFIRMED"
+}

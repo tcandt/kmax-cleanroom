@@ -1,0 +1,70 @@
+{
+  "description": "Browser Client Connection and Device Multiplexing State Machine (/connect_client)",
+  "phase": "2C.4A",
+  "endpoint": "/connect_client",
+  "preconditions": "Valid user auth token or share token required BEFORE upgrade",
+  "states": [
+    "DISCONNECTED",
+    "AUTH_VERIFYING",
+    "HTTP_HANDSHAKE",
+    "CLIENT_CONNECTED_UNBOUND",
+    "CLIENT_BOUND_STREAMING",
+    "DISCONNECTING",
+    "CLEANUP"
+  ],
+  "transitions": [
+    {
+      "from": "DISCONNECTED",
+      "event": "TCP_CONNECT_GET_UPGRADE",
+      "to": "AUTH_VERIFYING"
+    },
+    {
+      "from": "AUTH_VERIFYING",
+      "event": "AUTH_FAILED",
+      "to": "DISCONNECTED",
+      "action": "Return HTTP 401 Unauthorized immediately"
+    },
+    {
+      "from": "AUTH_VERIFYING",
+      "event": "AUTH_SUCCESS",
+      "to": "HTTP_HANDSHAKE",
+      "action": "Return HTTP 101 Switching Protocols"
+    },
+    {
+      "from": "HTTP_HANDSHAKE",
+      "event": "UPGRADE_COMPLETE",
+      "to": "CLIENT_CONNECTED_UNBOUND"
+    },
+    {
+      "from": "CLIENT_CONNECTED_UNBOUND",
+      "event": "RECV_CONNECT_MESSAGE",
+      "to": "CLIENT_BOUND_STREAMING",
+      "action": "Validate device access, increment device client_count, allocate client_id, send config & device_list_update"
+    },
+    {
+      "from": "CLIENT_BOUND_STREAMING",
+      "event": "RECV_FORWARD_REQUEST_OFFER",
+      "to": "CLIENT_BOUND_STREAMING",
+      "action": "Relay request-offer to mapped agent"
+    },
+    {
+      "from": "CLIENT_BOUND_STREAMING",
+      "event": "RECV_FORWARD_ANSWER",
+      "to": "CLIENT_BOUND_STREAMING",
+      "action": "Relay WebRTC answer to mapped agent"
+    },
+    {
+      "from": "CLIENT_BOUND_STREAMING",
+      "event": "TCP_CLOSE_OR_ERROR",
+      "to": "DISCONNECTING"
+    },
+    {
+      "from": "DISCONNECTING",
+      "event": "TEARDOWN",
+      "to": "CLEANUP",
+      "action": "Decrement device client_count, remove from clients map, broadcast device_list_update"
+    }
+  ],
+  "duplicate_connection_behavior": "Allows multiple concurrent clients per device (each assigned distinct client_id)",
+  "provenance": "COMBINED_CONFIRMED"
+}

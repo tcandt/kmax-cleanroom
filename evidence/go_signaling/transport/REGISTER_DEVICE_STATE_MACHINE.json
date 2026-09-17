@@ -1,0 +1,57 @@
+{
+  "description": "Device Registration and WebSocket Lifecycle State Machine (/register_device)",
+  "phase": "2C.4A",
+  "endpoint": "/register_device",
+  "preconditions": "None (Public endpoint)",
+  "states": [
+    "DISCONNECTED",
+    "HTTP_HANDSHAKE",
+    "WS_CONNECTED_UNREGISTERED",
+    "REGISTERED_ACTIVE",
+    "DISCONNECTING",
+    "CLEANUP_OFFLINE"
+  ],
+  "transitions": [
+    {
+      "from": "DISCONNECTED",
+      "event": "TCP_CONNECT_GET_UPGRADE",
+      "to": "HTTP_HANDSHAKE"
+    },
+    {
+      "from": "HTTP_HANDSHAKE",
+      "event": "STATUS_101_SWITCHING_PROTOCOLS",
+      "to": "WS_CONNECTED_UNREGISTERED"
+    },
+    {
+      "from": "WS_CONNECTED_UNREGISTERED",
+      "event": "RECV_REGISTER_MESSAGE",
+      "to": "REGISTERED_ACTIVE",
+      "action": "Insert/Update in DeviceRegistry, set online=true, send config with ice_servers"
+    },
+    {
+      "from": "REGISTERED_ACTIVE",
+      "event": "RECV_FORWARD",
+      "to": "REGISTERED_ACTIVE",
+      "action": "Forward payload to client session"
+    },
+    {
+      "from": "REGISTERED_ACTIVE",
+      "event": "RECV_UNREGISTER",
+      "to": "CLEANUP_OFFLINE",
+      "action": "Remove from DeviceRegistry"
+    },
+    {
+      "from": "REGISTERED_ACTIVE",
+      "event": "TCP_CLOSE_OR_ERROR",
+      "to": "DISCONNECTING"
+    },
+    {
+      "from": "DISCONNECTING",
+      "event": "TEARDOWN",
+      "to": "CLEANUP_OFFLINE",
+      "action": "Mark online=false, record last_offline, broadcast device_list_update"
+    }
+  ],
+  "duplicate_connection_behavior": "Latest connection takes ownership; previous connection dropped",
+  "provenance": "COMBINED_CONFIRMED"
+}

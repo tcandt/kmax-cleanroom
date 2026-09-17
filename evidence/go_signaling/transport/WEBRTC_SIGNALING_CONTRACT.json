@@ -1,0 +1,70 @@
+{
+  "description": "WebRTC P2P Signaling Flow Contract over WebSocket",
+  "phase": "2C.4A",
+  "mediator": "Signaling Server (main.u8Z_Xk hub)",
+  "ice_servers": {
+    "default": [
+      {
+        "urls": [
+          "stun:stun.l.google.com:19302"
+        ]
+      }
+    ],
+    "delivery": "Pushed to client in config message upon successful connect"
+  },
+  "exchange_stages": [
+    {
+      "stage": 1,
+      "name": "Request Offer",
+      "sender": "Browser Client",
+      "receiver": "Agent",
+      "format": {
+        "message_type": "forward",
+        "payload": {
+          "type": "request-offer"
+        }
+      }
+    },
+    {
+      "stage": 2,
+      "name": "SDP Offer",
+      "sender": "Agent",
+      "receiver": "Browser Client",
+      "format": {
+        "message_type": "forward",
+        "client_id": 1,
+        "payload": {
+          "type": "offer",
+          "sdp": "..."
+        }
+      }
+    },
+    {
+      "stage": 3,
+      "name": "SDP Answer",
+      "sender": "Browser Client",
+      "receiver": "Agent",
+      "format": {
+        "message_type": "forward",
+        "payload": {
+          "type": "answer",
+          "sdp": "..."
+        }
+      }
+    },
+    {
+      "stage": 4,
+      "name": "Trickle ICE Candidate",
+      "sender": "Peer to Peer (via Server relay)",
+      "receiver": "Opposite Peer",
+      "format": {
+        "message_type": "forward",
+        "payload": {
+          "type": "candidate",
+          "candidate": "..."
+        }
+      }
+    }
+  ],
+  "provenance": "COMBINED_CONFIRMED"
+}

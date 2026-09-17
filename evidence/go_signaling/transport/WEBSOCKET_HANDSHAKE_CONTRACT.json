@@ -1,0 +1,45 @@
+{
+  "description": "WebSocket RFC 6455 Handshake & Framing Invariants",
+  "phase": "2C.4A",
+  "protocol": "WebSocket (RFC 6455)",
+  "version": "13",
+  "upgrader": {
+    "library": "github.com/gorilla/websocket",
+    "read_buffer_size": 1024,
+    "write_buffer_size": 1024,
+    "check_origin": "allow_all (returns true)",
+    "enable_compression": false,
+    "provenance": "STATIC_BINARY_DERIVED"
+  },
+  "framing": {
+    "client_to_server_masking": "mandatory (unmasked frame closed with RFC 6455 code 1002)",
+    "server_to_client_masking": "unmasked per RFC 6455 standard",
+    "ping_pong": "Opcode 9 Ping automatically replied with Opcode 10 Pong",
+    "close_handling": "Opcode 8 echoes close frame and tears down TCP socket",
+    "message_format": "Opcode 1 (UTF-8 Text) containing JSON documents"
+  },
+  "initial_frame_contract": {
+    "/register_device": {
+      "has_initial_server_frame": false,
+      "timeout_observed": true,
+      "payload_sha256": null,
+      "behavior": "SERVER_WAITS_FOR_FIRST_CLIENT_FRAME",
+      "provenance": "DYNAMIC_ORACLE_DERIVED"
+    },
+    "/register_agent": {
+      "has_initial_server_frame": false,
+      "timeout_observed": true,
+      "payload_sha256": null,
+      "behavior": "SERVER_WAITS_FOR_FIRST_CLIENT_FRAME",
+      "provenance": "DYNAMIC_ORACLE_DERIVED"
+    },
+    "/connect_client": {
+      "has_initial_server_frame": false,
+      "timeout_observed": true,
+      "payload_sha256": null,
+      "behavior": "SERVER_WAITS_FOR_FIRST_CLIENT_FRAME",
+      "provenance": "DYNAMIC_ORACLE_DERIVED"
+    }
+  },
+  "provenance": "COMBINED_CONFIRMED"
+}

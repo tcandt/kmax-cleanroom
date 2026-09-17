@@ -1,0 +1,16 @@
+{
+  "description": "Device, Agent, and Multi-Client Association Contract",
+  "phase": "2C.4A",
+  "association_key": "device_id (string)",
+  "relationship_topology": {
+    "device_record": "1 singleton per physical/emulated device in DeviceRegistry",
+    "agent_connection": "1 active WebSocket connection per device (/register_agent)",
+    "client_connections": "0 to N active WebSocket connections per device (/connect_client)",
+    "client_id_allocation": "Monotonically increasing integer per device session (1, 2, ...)"
+  },
+  "message_routing_flow": {
+    "client_to_agent": "Client sends forward -> Server stamps client_id -> Relays to Agent",
+    "agent_to_client": "Agent sends forward with target client_id -> Server unpackages -> Relays to Client as device_msg"
+  },
+  "provenance": "COMBINED_CONFIRMED"
+}

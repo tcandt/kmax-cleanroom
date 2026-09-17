@@ -1,0 +1,79 @@
+{
+  "description": "Wire Frame Envelopes and Payload Field Schema Evidence",
+  "phase": "2C.4A",
+  "schemas": {
+    "DeviceRegistration": {
+      "direction": "device -> server",
+      "fields": [
+        "message_type",
+        "device_id",
+        "device_info"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "ServerConfigAck": {
+      "direction": "server -> device / client",
+      "fields": [
+        "message_type",
+        "device_id",
+        "ice_servers"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "AgentRegistration": {
+      "direction": "agent -> server",
+      "fields": [
+        "type",
+        "device_id",
+        "scrcpy_addr",
+        "is_webrtc"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "AgentRegistrationAck": {
+      "direction": "server -> agent",
+      "fields": [
+        "message_type",
+        "status"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "ClientConnect": {
+      "direction": "client -> server",
+      "fields": [
+        "type",
+        "device_id"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "ForwardEnvelope": {
+      "direction": "client <-> server <-> agent",
+      "fields": [
+        "message_type",
+        "device_id",
+        "client_id",
+        "payload",
+        "command",
+        "request_id"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "DeviceMessage": {
+      "direction": "server -> client",
+      "fields": [
+        "message_type",
+        "device_id",
+        "payload"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "DeviceListUpdate": {
+      "direction": "server -> client (broadcast)",
+      "fields": [
+        "message_type",
+        "devices"
+      ],
+      "provenance": "COMBINED_CONFIRMED"
+    }
+  }
+}

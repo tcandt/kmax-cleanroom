@@ -1,0 +1,209 @@
+{
+  "TaskProgress": {
+    "va": "0x7f4be0",
+    "size": 72,
+    "field_count": 5,
+    "fields": [
+      {
+        "name": "Mu7_bd3fc1a",
+        "tag": "json:\"device_id\"",
+        "offset": 0,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "X_53jPB5",
+        "tag": "json:\"status\"",
+        "offset": 8,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "KqmlHXnfseFu",
+        "tag": "json:\"progress\"",
+        "offset": 16,
+        "type_va": "0x79e500"
+      },
+      {
+        "name": "OzY6sf",
+        "tag": "json:\"result\"",
+        "offset": 20,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "ZKtLYBxlAP",
+        "tag": "json:\"updated_at\"",
+        "offset": 28,
+        "type_va": "0x79e2c0"
+      }
+    ],
+    "semantic_name": "TaskProgress",
+    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED"
+  },
+  "Device": {
+    "va": "0x7ff0e0",
+    "size": 120,
+    "field_count": 7,
+    "fields": [
+      {
+        "name": "NOnUogldoZjn",
+        "tag": "json:\"device_id\"",
+        "offset": 0,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "Yq4QMsuW",
+        "tag": "json:\"device_info\"",
+        "offset": 8,
+        "type_va": "0x7ad300"
+      },
+      {
+        "name": "HkLpT8",
+        "tag": "json:\"online\"",
+        "offset": 16,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "AzWfQXm6",
+        "tag": "json:\"first_seen\"",
+        "offset": 20,
+        "type_va": "0x816e80"
+      },
+      {
+        "name": "A1BCftA3Oo",
+        "tag": "json:\"last_seen\"",
+        "offset": 32,
+        "type_va": "0x816e80"
+      },
+      {
+        "name": "ZAfO5Ejq6l6",
+        "tag": "json:\"client_count\"",
+        "offset": 44,
+        "type_va": "0x79e500"
+      },
+      {
+        "name": "TEZwlSS",
+        "tag": "json:\"clients,omitempty\"",
+        "offset": 48,
+        "type_va": "0x796960"
+      }
+    ],
+    "semantic_name": "Device",
+    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED"
+  },
+  "Share": {
+    "va": "0x80f700",
+    "size": 192,
+    "field_count": 18,
+    "fields": [
+      {
+        "name": "YAAH305",
+        "tag": "json:\"token_id\"",
+        "offset": 0,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "Q45msAArJ",
+        "tag": "json:\"card_code\"",
+        "offset": 8,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "ZuTGEwH_",
+        "tag": "json:\"device_id\"",
+        "offset": 16,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "Z3ypniy",
+        "tag": "json:\"creator\"",
+        "offset": 24,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "U5KigcLg8GuC",
+        "tag": "json:\"created_at\"",
+        "offset": 32,
+        "type_va": "0x816e80"
+      },
+      {
+        "name": "On9zW3fr3xq",
+        "tag": "json:\"expires_at\"",
+        "offset": 44,
+        "type_va": "0x816e80"
+      },
+      {
+        "name": "OgzTZQxn",
+        "tag": "json:\"access_mode\"",
+        "offset": 56,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "BUU6RQ",
+        "tag": "json:\"require_password\"",
+        "offset": 64,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "WVN3jZO3C",
+        "tag": "json:\"password_hash,omitempty\"",
+        "offset": 68,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "OEAjaJAXJ",
+        "tag": "json:\"allow_clipboard\"",
+        "offset": 76,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "Qlq9Lz_WAMNa",
+        "tag": "json:\"allow_file_tx\"",
+        "offset": 76,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "TkpOqDWT",
+        "tag": "json:\"forbid_bitrate\"",
+        "offset": 77,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "NPKv2lKLrmxk",
+        "tag": "json:\"forbid_fps\"",
+        "offset": 77,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "HiBWiwBHEKPM",
+        "tag": "json:\"forbid_resolution\"",
+        "offset": 78,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "ADE4a_iH1",
+        "tag": "json:\"forbid_audio\"",
+        "offset": 78,
+        "type_va": "0x79e6c0"
+      },
+      {
+        "name": "PFMzZQzyNpiO",
+        "tag": "json:\"guest_settings,omitempty\"",
+        "offset": 80,
+        "type_va": "0x7bf940"
+      },
+      {
+        "name": "ZjNTj0K6Mon",
+        "tag": "json:\"description\"",
+        "offset": 84,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "Cg3JpYG",
+        "tag": "json:\"use_count\"",
+        "offset": 92,
+        "type_va": "0x79e480"
+      }
+    ],
+    "semantic_name": "Share",
+    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED"
+  }
+}

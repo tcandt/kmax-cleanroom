@@ -1,0 +1,74 @@
+{
+  "ADMIN_HEADER": {
+    "path": "/connect_client",
+    "status_code": 101,
+    "status_line": "HTTP/1.1 101 Switching Protocols",
+    "matches_expected": true,
+    "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "ADMIN_QUERY": {
+    "path": "/connect_client?token=a8399a08515d102082bd7307f99f92bccb4e463ff51223ce72a0f9ed9641bb6b",
+    "status_code": 101,
+    "status_line": "HTTP/1.1 101 Switching Protocols",
+    "matches_expected": true,
+    "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "NORMAL_USER_HEADER": {
+    "path": "/connect_client",
+    "status_code": 101,
+    "status_line": "HTTP/1.1 101 Switching Protocols",
+    "matches_expected": true,
+    "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "NORMAL_USER_QUERY": {
+    "path": "/connect_client?token=0745d94ae4837793a482f3106acbb99cacdb5721254c943dc188de9d01d7b957",
+    "status_code": 101,
+    "status_line": "HTTP/1.1 101 Switching Protocols",
+    "matches_expected": true,
+    "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "SHARE_TOKEN_QUERY": {
+    "path": "/connect_client?share_token=st_64df9e3fdcc10bb17f599eb6c73e09be",
+    "status_code": 101,
+    "status_line": "HTTP/1.1 101 Switching Protocols",
+    "matches_expected": true,
+    "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "MISSING_TOKEN": {
+    "path": "/connect_client",
+    "status_code": 401,
+    "status_line": "HTTP/1.1 401 Unauthorized",
+    "matches_expected": true,
+    "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "INVALID_TOKEN": {
+    "path": "/connect_client?token=invalid_tok_123",
+    "status_code": 401,
+    "status_line": "HTTP/1.1 401 Unauthorized",
+    "matches_expected": true,
+    "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "DEVICE_UNAUTH_REGISTRATION": {
+    "path": "/register_device",
+    "status_code": 101,
+    "status_line": "HTTP/1.1 101 Switching Protocols",
+    "matches_expected": true,
+    "auth_timing": "UNAUTHENTICATED",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  },
+  "AGENT_UNAUTH_REGISTRATION": {
+    "path": "/register_agent",
+    "status_code": 101,
+    "status_line": "HTTP/1.1 101 Switching Protocols",
+    "matches_expected": true,
+    "auth_timing": "UNAUTHENTICATED",
+    "provenance": "DYNAMIC_ORACLE_DERIVED"
+  }
+}

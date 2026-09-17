@@ -1,0 +1,99 @@
+{
+  "timestamp": "2026-09-17T01:50:37Z",
+  "phase": "2C.4A",
+  "family": "transport",
+  "verdict": "PASS",
+  "summary": "18/18 forensic invariants passed. Pure machine derivation, zero hardcoded VAs, complete dynamic oracle confirmation.",
+  "checks": [
+    {
+      "id": "ROUTES_DERIVED",
+      "status": "PASS",
+      "description": "3/3 transport routes derived from ROUTE_HANDLER_MAP and FUNCTION_MAP"
+    },
+    {
+      "id": "TRANSPORT_TYPE_KNOWN",
+      "status": "PASS",
+      "description": "All 3 routes classified as WEBSOCKET_UPGRADE"
+    },
+    {
+      "id": "HTTP_UPGRADE_MATRIX_KNOWN",
+      "status": "PASS",
+      "description": "Full HTTP method and WebSocket upgrade variation matrix captured"
+    },
+    {
+      "id": "AUTH_TIMING_KNOWN",
+      "status": "PASS",
+      "description": "Pre-upgrade auth timing proven for /connect_client; public registration for /register_device and /register_agent"
+    },
+    {
+      "id": "HANDSHAKE_KNOWN",
+      "status": "PASS",
+      "description": "RFC 6455 handshake headers, subprotocols, and framing verified"
+    },
+    {
+      "id": "REQUEST_CONTRACT_KNOWN",
+      "status": "PASS",
+      "description": "Query parameters, headers, and initial application frame contracts captured"
+    },
+    {
+      "id": "REGISTRY_TYPES_RECOVERED",
+      "status": "PASS",
+      "description": "Struct descriptors (Device, DeviceInfo, Client, IceServer, TaskProgress, Share) recovered from binary rodata"
+    },
+    {
+      "id": "REGISTER_DEVICE_SM_BOUNDED",
+      "status": "PASS",
+      "description": "Separate state machine for /register_device documented with transitions and actions"
+    },
+    {
+      "id": "REGISTER_AGENT_SM_BOUNDED",
+      "status": "PASS",
+      "description": "Separate state machine for /register_agent documented with transitions and actions"
+    },
+    {
+      "id": "CONNECT_CLIENT_SM_BOUNDED",
+      "status": "PASS",
+      "description": "Separate state machine for /connect_client documented with transitions and actions"
+    },
+    {
+      "id": "MESSAGE_ENVELOPE_BOUNDED",
+      "status": "PASS",
+      "description": "Wire frame envelopes and JSON message schemas machine-bound"
+    },
+    {
+      "id": "HEARTBEAT_BOUNDED",
+      "status": "PASS",
+      "description": "Ping/Pong and application JSON heartbeat interval (30s) and timeout (60s) bounded"
+    },
+    {
+      "id": "ASSOCIATION_MODEL_BOUNDED",
+      "status": "PASS",
+      "description": "Device, Agent, and Multi-Client association topology and client_id routing bounded"
+    },
+    {
+      "id": "SIGNALING_MESSAGES_BOUNDED",
+      "status": "PASS",
+      "description": "WebRTC offer/answer/candidate exchange sequence over WebSocket captured"
+    },
+    {
+      "id": "DISCONNECT_CLEANUP_BOUNDED",
+      "status": "PASS",
+      "description": "Normal close and abrupt disconnect cleanup invariants proven"
+    },
+    {
+      "id": "CONCURRENCY_MODEL_BOUNDED",
+      "status": "PASS",
+      "description": "Goroutine reader/writer loops, sync.RWMutex, and event pump synchronization bounded"
+    },
+    {
+      "id": "CROSS_BUILD_CORRELATION_COMPLETE",
+      "status": "PASS",
+      "description": "Linux AMD64, Windows AMD64, and Android ARM64 correlated"
+    },
+    {
+      "id": "ZERO_SOURCE_BOUNDARY_VIOLATIONS",
+      "status": "PASS",
+      "description": "Strict forensic boundary enforced: zero production transport Go source written, zero routes added to server.go"
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "/register_device": {
+    "standard_http": {
+      "GET": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "POST": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "PUT": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "PATCH": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "DELETE": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "HEAD": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "OPTIONS": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      }
+    },
+    "upgrade_variations": {
+      "valid_upgrade": {
+        "status_code": 101,
+        "upgrade_success": true,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "missing_upgrade_header": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "invalid_upgrade_token": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "wrong_version_12": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "missing_websocket_key": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      }
+    }
+  },
+  "/register_agent": {
+    "standard_http": {
+      "GET": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "POST": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "PUT": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "PATCH": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "DELETE": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "HEAD": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "OPTIONS": {
+        "status_code": 400,
+        "status_line": "HTTP/1.1 400 Bad Request",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      }
+    },
+    "upgrade_variations": {
+      "valid_upgrade": {
+        "status_code": 101,
+        "upgrade_success": true,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "missing_upgrade_header": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "invalid_upgrade_token": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "wrong_version_12": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "missing_websocket_key": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      }
+    }
+  },
+  "/connect_client": {
+    "standard_http": {
+      "GET": {
+        "status_code": 401,
+        "status_line": "HTTP/1.1 401 Unauthorized",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "POST": {
+        "status_code": 401,
+        "status_line": "HTTP/1.1 401 Unauthorized",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "PUT": {
+        "status_code": 401,
+        "status_line": "HTTP/1.1 401 Unauthorized",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "PATCH": {
+        "status_code": 401,
+        "status_line": "HTTP/1.1 401 Unauthorized",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "DELETE": {
+        "status_code": 401,
+        "status_line": "HTTP/1.1 401 Unauthorized",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "HEAD": {
+        "status_code": 401,
+        "status_line": "HTTP/1.1 401 Unauthorized",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "OPTIONS": {
+        "status_code": 401,
+        "status_line": "HTTP/1.1 401 Unauthorized",
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      }
+    },
+    "upgrade_variations": {
+      "valid_upgrade": {
+        "status_code": 101,
+        "upgrade_success": true,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "missing_upgrade_header": {
+        "status_code": 401,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "invalid_upgrade_token": {
+        "status_code": 401,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "wrong_version_12": {
+        "status_code": 400,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      },
+      "missing_websocket_key": {
+        "status_code": 401,
+        "upgrade_success": false,
+        "provenance": "DYNAMIC_ORACLE_DERIVED"
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "description": "Transport Query Parameters, Headers, and Request Contracts",
+  "phase": "2C.4A",
+  "endpoints": {
+    "/register_device": {
+      "transport": "WEBSOCKET_UPGRADE",
+      "auth_required": false,
+      "supported_query_parameters": [
+        "device_id"
+      ],
+      "required_headers": [
+        "Upgrade",
+        "Connection",
+        "Sec-WebSocket-Key",
+        "Sec-WebSocket-Version"
+      ],
+      "initial_application_message": {
+        "format": "JSON text frame",
+        "fields": {
+          "message_type": "string (value: 'register')",
+          "device_id": "string",
+          "device_info": "optional object (model, os, ip, etc.)"
+        }
+      },
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "/register_agent": {
+      "transport": "WEBSOCKET_UPGRADE",
+      "auth_required": false,
+      "supported_query_parameters": [
+        "device_id"
+      ],
+      "required_headers": [
+        "Upgrade",
+        "Connection",
+        "Sec-WebSocket-Key",
+        "Sec-WebSocket-Version"
+      ],
+      "initial_application_message": {
+        "format": "JSON text frame",
+        "fields": {
+          "type": "string (value: 'agent_register')",
+          "device_id": "string",
+          "scrcpy_addr": "string",
+          "is_webrtc": "boolean"
+        }
+      },
+      "provenance": "COMBINED_CONFIRMED"
+    },
+    "/connect_client": {
+      "transport": "WEBSOCKET_UPGRADE",
+      "auth_required": true,
+      "auth_timing": "PRE_UPGRADE_VALIDATION",
+      "supported_query_parameters": [
+        "token",
+        "share_token",
+        "device_id"
+      ],
+      "supported_headers": [
+        "Authorization (Bearer <token>)"
+      ],
+      "required_headers": [
+        "Upgrade",
+        "Connection",
+        "Sec-WebSocket-Key",
+        "Sec-WebSocket-Version"
+      ],
+      "initial_application_message": {
+        "format": "JSON text frame",
+        "fields": {
+          "type": "string (value: 'connect')",
+          "device_id": "string"
+        }
+      },
+      "provenance": "COMBINED_CONFIRMED"
+    }
+  }
+}

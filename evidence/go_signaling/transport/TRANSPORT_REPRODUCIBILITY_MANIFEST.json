@@ -1,0 +1,169 @@
+{
+  "description": "Phase 2C.4A Canonical Transport Forensic Artifact Reproducibility Manifest",
+  "phase": "2C.4A",
+  "timestamp": "2026-09-17T01:50:37Z",
+  "canonical_denominator": 23,
+  "artifacts": [
+    {
+      "artifact": "TRANSPORT_ROUTE_FAMILY.json",
+      "size_bytes": 3568,
+      "sha256": "4a1ea6a27ce8040a802cdfe41df499ecf095c74acbcdd7b0a1d122f5ed2c916d",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_CLASSIFICATION_MATRIX.json",
+      "size_bytes": 932,
+      "sha256": "23165e7373db6476723e376f83e8bb37048fcea4a89a72a40c3a6226f6672034",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_METHOD_UPGRADE_MATRIX.json",
+      "size_bytes": 6623,
+      "sha256": "8f97d14660334093114efb8677781a8a9a1a747a858fe1028af728fd2e29d587",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_AUTH_MATRIX.json",
+      "size_bytes": 2581,
+      "sha256": "20157fab09508696724c7ae8f262a04018c90d94a0987f2e0736fa27d3b4e804",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_REQUEST_CONTRACT.json",
+      "size_bytes": 2145,
+      "sha256": "16a2c8c610c9c19c8a389fcfe9da45fed6a9517d79661343ecf61bfccfc4e497",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_TYPE_EVIDENCE.json",
+      "size_bytes": 1864,
+      "sha256": "50ea71478a5e31180d2a7cae83b73084d4204f2fdd5783c41caeb3d08efdc95c",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "WEBSOCKET_HANDSHAKE_CONTRACT.json",
+      "size_bytes": 1635,
+      "sha256": "b947ccc1f26bf519bf2514f78e5ff4ef71d23af23753b11268bbe73e02f83e1a",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_REGISTRY_TYPE_EVIDENCE.json",
+      "size_bytes": 4901,
+      "sha256": "7cf202486d04a06eba719a41d3b85b976756b0c4c72d6a8fcf8c4f67c97af846",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "REGISTER_DEVICE_STATE_MACHINE.json",
+      "size_bytes": 1676,
+      "sha256": "4756d4593f69fa34035244f8997593adcc1bd9efc7860cbf5a55bc76108760b1",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "REGISTER_AGENT_STATE_MACHINE.json",
+      "size_bytes": 1720,
+      "sha256": "b23ef83ae789f3ceb653fc7314630d6abc63ea05ceae62aea6cbbd2279e5e000",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "CONNECT_CLIENT_STATE_MACHINE.json",
+      "size_bytes": 2170,
+      "sha256": "9fc76b94f44ddf76de57aa31b8e80ffb836391d8600f673e1c1ae3a3a0d33368",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_MESSAGE_TYPE_EVIDENCE.json",
+      "size_bytes": 4832,
+      "sha256": "a3636f11ce4d3e0fd3b026d5a0e86b60c830f86890ae32e348db8dfe33739958",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_MESSAGE_MATRIX.json",
+      "size_bytes": 3669,
+      "sha256": "15626f8b89c746e49927dfa5a22a762afafa6a81fa18c6a0c658286db66e844a",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_HEARTBEAT_CONTRACT.json",
+      "size_bytes": 829,
+      "sha256": "cd2249c5ff4863cde38727531dc6114f1abf0a592bb793cc6caccf27b31e8478",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "DEVICE_AGENT_CLIENT_ASSOCIATION_CONTRACT.json",
+      "size_bytes": 830,
+      "sha256": "7a454f71739d8b7fc40ce94fa0f3b80aee97ce7a04dd726f6459ffdda7faae10",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "WEBRTC_SIGNALING_CONTRACT.json",
+      "size_bytes": 1593,
+      "sha256": "e23aef8e366f99c07ecadf5dca81fff74f85b1f8e94a209be0bfb2911b30f178",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "DATACHANNEL_TRANSPORT_CROSSMAP.json",
+      "size_bytes": 1404,
+      "sha256": "f32d44155cd5f2ee0fcc56c3fb97e22a8f41ef1bd2cf533c11dbc3d818b4cf72",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_DISCONNECT_CLEANUP_CONTRACT.json",
+      "size_bytes": 1290,
+      "sha256": "c7d312605a72b301ad84b27b09aa3b04c5007df0e245acc77c9dfb849753cf67",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_CONCURRENCY_CONTRACT.json",
+      "size_bytes": 753,
+      "sha256": "99c7c73e408b28ea499d1bf1bf8cbe576c9ed6286ea1b583ccfceec33011390e",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_EDGE_MATRIX.json",
+      "size_bytes": 839,
+      "sha256": "4ab864b774a93d31b4efdfd8f62cd5ceb8dbb72c4bfee435926a7235cf22ede5",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_CROSS_BUILD_CORRELATION.json",
+      "size_bytes": 1101,
+      "sha256": "9b82f857868bd93bdb416a3c2c903f7407bf78254f880368c66ad04bd50e5190",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_FUNCTION_SLICES.json",
+      "size_bytes": 1262,
+      "sha256": "2557cc87b11f1187c3af631b63298f9a8aa941b2b07d197c0a91cfe4272cc2f5",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    },
+    {
+      "artifact": "TRANSPORT_FORENSIC_GATE_RESULT.json",
+      "size_bytes": 3543,
+      "sha256": "be08ea40c50fb7e9664c4b9d50490bab695185cbb2aa338b06901d7359ac86b1",
+      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
+    }
+  ]
+}

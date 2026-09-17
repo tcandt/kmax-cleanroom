@@ -1,0 +1,42 @@
+{
+  "description": "Function Slices, Boundaries, and Callgraph Neighborhoods for Transport",
+  "phase": "2C.4A",
+  "handlers": {
+    "/register_device": {
+      "symbol": "main.rQffYkwYhw",
+      "va": "0x74e4a0",
+      "size_bytes": 6368,
+      "role": "WebSocket device registration and heartbeat",
+      "provenance": "STATIC_BINARY_DERIVED"
+    },
+    "/register_agent": {
+      "symbol": "main.jdUaLc5NMO5",
+      "va": "0x754b40",
+      "size_bytes": 11328,
+      "role": "WebSocket agent registration and WebRTC signaling relay",
+      "provenance": "STATIC_BINARY_DERIVED"
+    },
+    "/connect_client": {
+      "symbol": "main.id8ybRmw69lm",
+      "va": "0x7507c0",
+      "size_bytes": 14208,
+      "role": "WebSocket client connection, auth validation, and multi-client signaling",
+      "provenance": "STATIC_BINARY_DERIVED"
+    }
+  },
+  "hub_primitives": [
+    {
+      "symbol": "main.u8Z_Xk",
+      "role": "Device and client signaling hub"
+    },
+    {
+      "symbol": "main.d2Q7r7",
+      "role": "Broadcast device list updates to connected clients"
+    },
+    {
+      "symbol": "main.lv6Xh7",
+      "role": "Filter and format device list update message"
+    }
+  ],
+  "provenance": "STATIC_BINARY_DERIVED"
+}

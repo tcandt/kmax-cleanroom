@@ -1,0 +1,57 @@
+{
+  "description": "Agent Registration and WebRTC Signaling Relay State Machine (/register_agent)",
+  "phase": "2C.4A",
+  "endpoint": "/register_agent",
+  "preconditions": "None (Public endpoint)",
+  "states": [
+    "DISCONNECTED",
+    "HTTP_HANDSHAKE",
+    "AGENT_CONNECTED_UNREGISTERED",
+    "AGENT_REGISTERED_ACTIVE",
+    "DISCONNECTING",
+    "CLEANUP"
+  ],
+  "transitions": [
+    {
+      "from": "DISCONNECTED",
+      "event": "TCP_CONNECT_GET_UPGRADE",
+      "to": "HTTP_HANDSHAKE"
+    },
+    {
+      "from": "HTTP_HANDSHAKE",
+      "event": "STATUS_101_SWITCHING_PROTOCOLS",
+      "to": "AGENT_CONNECTED_UNREGISTERED"
+    },
+    {
+      "from": "AGENT_CONNECTED_UNREGISTERED",
+      "event": "RECV_AGENT_REGISTER",
+      "to": "AGENT_REGISTERED_ACTIVE",
+      "action": "Bind agent connection to device_id, reply with agent_register_ok"
+    },
+    {
+      "from": "AGENT_REGISTERED_ACTIVE",
+      "event": "RECV_HEARTBEAT",
+      "to": "AGENT_REGISTERED_ACTIVE",
+      "action": "Update last_seen timestamp in device registry"
+    },
+    {
+      "from": "AGENT_REGISTERED_ACTIVE",
+      "event": "RECV_FORWARD_OFFER_ANSWER",
+      "to": "AGENT_REGISTERED_ACTIVE",
+      "action": "Relay WebRTC offer/answer/candidate to mapped client"
+    },
+    {
+      "from": "AGENT_REGISTERED_ACTIVE",
+      "event": "TCP_CLOSE_OR_ERROR",
+      "to": "DISCONNECTING"
+    },
+    {
+      "from": "DISCONNECTING",
+      "event": "TEARDOWN",
+      "to": "CLEANUP",
+      "action": "Unbind agent from device_id, notify active client peers"
+    }
+  ],
+  "duplicate_connection_behavior": "Replaces existing agent connection for device_id",
+  "provenance": "COMBINED_CONFIRMED"
+}

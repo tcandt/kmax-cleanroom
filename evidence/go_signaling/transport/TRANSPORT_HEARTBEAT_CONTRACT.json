@@ -1,0 +1,24 @@
+{
+  "description": "Transport Keepalive & Heartbeat Contract",
+  "phase": "2C.4A",
+  "transport_keepalive": {
+    "type": "RFC 6455 Ping / Pong",
+    "ping_opcode": 9,
+    "pong_opcode": 10,
+    "handled_by": "Gorilla WebSocket connection loop",
+    "provenance": "COMBINED_CONFIRMED"
+  },
+  "application_heartbeat": {
+    "type": "Application JSON Text Frame",
+    "message_identifiers": [
+      "heartbeat"
+    ],
+    "sender": "Device Agent (/register_agent)",
+    "receiver": "Signaling Server",
+    "observed_interval_seconds": 30,
+    "stale_threshold_seconds": 60,
+    "state_mutation": "Updates Device.last_seen timestamp in global registry",
+    "stale_action": "Device marked online=false and broadcast emitted when heartbeat ceases beyond threshold",
+    "provenance": "COMBINED_CONFIRMED"
+  }
+}

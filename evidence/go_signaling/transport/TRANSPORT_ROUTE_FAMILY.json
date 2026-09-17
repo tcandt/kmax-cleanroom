@@ -1,0 +1,111 @@
+{
+  "description": "Transport, WebSocket Signaling, and Multiplexing Route Family",
+  "phase": "2C.4A",
+  "family": "transport",
+  "route_count": 3,
+  "routes": {
+    "/register_device": {
+      "path": "/register_device",
+      "handler_symbol": "main.rQffYkwYhw",
+      "handler_va": "0x74e4a0",
+      "registration_function": "http.HandleFunc (Y0caeZ_zze.XpauMa5YLU)",
+      "size_bytes": 6368,
+      "project_callees": [],
+      "library_callees": [
+        "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade",
+        "sqr5WlKaW.(*AbNC7zYqUFt).sQ1Wyiarc5U",
+        "runtime.newobject",
+        "runtime.gcWriteBarrier1",
+        "fZqVo7pKK.RuHIa4",
+        "fZqVo7pKK.AipSo2.Add",
+        "runtime.gcWriteBarrier2",
+        "qRQQBI0.Sxz7k1DW5",
+        "runtime.newproc",
+        "sync.(*D2KbQ7Jm).Lock"
+      ],
+      "referenced_strings": [
+        "Upgrade failed: %vMethod Not Allowed/api/tasks/detailsGET, P",
+        "message_type",
+        "device_id",
+        "client_id",
+        "payload",
+        "device_info",
+        "[License] Reject bridge device %s: max devices limit reached",
+        "error",
+        "scrcpy_addr",
+        "type"
+      ],
+      "wrapper_relationship": "http.HandlerFunc wrapper around package main handler function",
+      "provenance": "STATIC_BINARY_DERIVED"
+    },
+    "/register_agent": {
+      "path": "/register_agent",
+      "handler_symbol": "main.jdUaLc5NMO5",
+      "handler_va": "0x754b40",
+      "registration_function": "http.HandleFunc (Y0caeZ_zze.XpauMa5YLU)",
+      "size_bytes": 11328,
+      "project_callees": [],
+      "library_callees": [
+        "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade",
+        "runtime.newobject",
+        "runtime.gcWriteBarrier1",
+        "fZqVo7pKK.RuHIa4",
+        "fZqVo7pKK.AipSo2.Add",
+        "runtime.gcWriteBarrier2",
+        "qRQQBI0.Sxz7k1DW5",
+        "runtime.newproc",
+        "_iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage",
+        "sync.wC1Ayu5"
+      ],
+      "referenced_strings": [
+        "type",
+        "message_type",
+        "task_id",
+        "device_id",
+        "status",
+        "progress",
+        "result",
+        "2006-01-02T15:04:05Z07:00",
+        "scrcpy_addr",
+        "is_webrtc"
+      ],
+      "wrapper_relationship": "http.HandlerFunc wrapper around package main handler function",
+      "provenance": "STATIC_BINARY_DERIVED"
+    },
+    "/connect_client": {
+      "path": "/connect_client",
+      "handler_symbol": "main.id8ybRmw69lm",
+      "handler_va": "0x7507c0",
+      "registration_function": "http.HandleFunc (Y0caeZ_zze.XpauMa5YLU)",
+      "size_bytes": 14208,
+      "project_callees": [
+        "main.lYKp_Iuf",
+        "main.qCbJFL34",
+        "main.gkia2uz"
+      ],
+      "library_callees": [
+        "runtime.concatstring2",
+        "ikG9yFZB.Iw0ORK5lLe",
+        "runtime.newobject",
+        "runtime.mapassign_faststr",
+        "runtime.gcWriteBarrier2",
+        "Y0caeZ_zze.AFewevPD9",
+        "runtime.deferreturn"
+      ],
+      "referenced_strings": [
+        "share:",
+        "Access-Control-Allow-Origin",
+        "Conflict: this share is already in use by another guest",
+        "Unauthorized",
+        "message_type",
+        "type",
+        "device_id",
+        "WebClient connected to device %s (Fat: %v)[Signaling] Bound ",
+        "ice_servers",
+        "device_info"
+      ],
+      "wrapper_relationship": "http.HandlerFunc wrapper around package main handler function",
+      "provenance": "STATIC_BINARY_DERIVED"
+    }
+  }
+}

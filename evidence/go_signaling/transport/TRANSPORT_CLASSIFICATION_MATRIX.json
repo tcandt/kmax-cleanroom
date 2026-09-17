@@ -1,0 +1,26 @@
+{
+  "description": "Formal Transport Protocol Classification for Signaling Endpoints",
+  "phase": "2C.4A",
+  "routes": {
+    "/register_device": {
+      "route": "/register_device",
+      "transport_class": "WEBSOCKET_UPGRADE",
+      "upgrader": "github.com/gorilla/websocket",
+      "evidence_class": "COMBINED_CONFIRMED"
+    },
+    "/register_agent": {
+      "route": "/register_agent",
+      "transport_class": "WEBSOCKET_UPGRADE",
+      "upgrader": "github.com/gorilla/websocket",
+      "evidence_class": "COMBINED_CONFIRMED"
+    },
+    "/connect_client": {
+      "route": "/connect_client",
+      "transport_class": "WEBSOCKET_UPGRADE",
+      "upgrader": "github.com/gorilla/websocket",
+      "evidence_class": "COMBINED_CONFIRMED"
+    }
+  },
+  "summary": "All 3 transport routes classify strictly as WEBSOCKET_UPGRADE (RFC 6455 over Gorilla WebSocket Upgrader)",
+  "provenance": "COMBINED_CONFIRMED"
+}

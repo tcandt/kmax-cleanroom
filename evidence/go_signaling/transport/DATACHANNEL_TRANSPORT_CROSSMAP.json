@@ -1,0 +1,45 @@
+{
+  "description": "Separation of WebSocket Signaling Transport vs WebRTC DataChannel Plane",
+  "phase": "2C.4A",
+  "signaling_transport": {
+    "protocol": "WebSocket (RFC 6455)",
+    "endpoints": [
+      "/register_device",
+      "/register_agent",
+      "/connect_client"
+    ],
+    "payloads": [
+      "offer",
+      "answer",
+      "candidate",
+      "request-offer",
+      "config",
+      "device_list_update"
+    ],
+    "handling": "Handled and routed by webrtc-signaling server"
+  },
+  "datachannel_plane": {
+    "protocol": "WebRTC SCTP DataChannels (Peer-to-Peer)",
+    "channels": [
+      {
+        "label": "control",
+        "purpose": "Multi-device touch and key event framing, clipboard injection"
+      },
+      {
+        "label": "adb",
+        "purpose": "Transparent ADB bridge between web terminal and adbd"
+      },
+      {
+        "label": "shell",
+        "purpose": "Interactive PTY shell execution stream"
+      },
+      {
+        "label": "heartbeat",
+        "purpose": "Keepalive and latency measurement (HEARTBEAT-ACK)"
+      }
+    ],
+    "handling": "Exchanged directly between Browser and Android Agent over WebRTC peer connection (bypasses signaling server once connected)",
+    "forensic_status": "EVIDENCE_ONLY (DataChannels are strictly excluded from Phase 2C.4 reconstruction)"
+  },
+  "provenance": "STATIC_BINARY_DERIVED"
+}

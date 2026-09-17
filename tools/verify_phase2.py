@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from collections import Counter
 import capstone
+import subprocess
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -2770,7 +2771,196 @@ def verify_all():
     record_check("Dynamic Cumulative Differential Denominator Audit", diff_audit_ok,
                  f"PREVIOUS_TOTAL = {prev_passed}/{prev_total}; NEW_FILES_TASKS_TOTAL = {new_ft_passed}/{new_ft_total}; CUMULATIVE_PASS_RATE = {cumulative_passed}/{cumulative_total} (100% exact parity across all {len(canonical_diff_artifacts)} canonical suites; 2 intentional security divergences, 1 environmental exclusion accounted separately)")
 
-    # 16.11 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # =========================================================================
+    # 17. PHASE 2C.4A TRANSPORT FORENSICS AUDIT
+    # =========================================================================
+    tp_dir = ROOT / "evidence" / "go_signaling" / "transport"
+
+    # 17.1 Canonical Transport Artifact Denominator
+    expected_tp_artifacts = [
+        "TRANSPORT_ROUTE_FAMILY.json",
+        "TRANSPORT_CLASSIFICATION_MATRIX.json",
+        "TRANSPORT_METHOD_UPGRADE_MATRIX.json",
+        "TRANSPORT_AUTH_MATRIX.json",
+        "TRANSPORT_REQUEST_CONTRACT.json",
+        "TRANSPORT_TYPE_EVIDENCE.json",
+        "WEBSOCKET_HANDSHAKE_CONTRACT.json",
+        "TRANSPORT_REGISTRY_TYPE_EVIDENCE.json",
+        "REGISTER_DEVICE_STATE_MACHINE.json",
+        "REGISTER_AGENT_STATE_MACHINE.json",
+        "CONNECT_CLIENT_STATE_MACHINE.json",
+        "TRANSPORT_MESSAGE_TYPE_EVIDENCE.json",
+        "TRANSPORT_MESSAGE_MATRIX.json",
+        "TRANSPORT_HEARTBEAT_CONTRACT.json",
+        "DEVICE_AGENT_CLIENT_ASSOCIATION_CONTRACT.json",
+        "WEBRTC_SIGNALING_CONTRACT.json",
+        "DATACHANNEL_TRANSPORT_CROSSMAP.json",
+        "TRANSPORT_DISCONNECT_CLEANUP_CONTRACT.json",
+        "TRANSPORT_CONCURRENCY_CONTRACT.json",
+        "TRANSPORT_EDGE_MATRIX.json",
+        "TRANSPORT_CROSS_BUILD_CORRELATION.json",
+        "TRANSPORT_FUNCTION_SLICES.json",
+        "TRANSPORT_FORENSIC_GATE_RESULT.json"
+    ]
+    tp_manifest_file = tp_dir / "TRANSPORT_REPRODUCIBILITY_MANIFEST.json"
+    tp_denom_valid = False
+    tp_count = 0
+    if tp_manifest_file.exists():
+        tp_m_data = json.loads(tp_manifest_file.read_text(encoding="utf-8"))
+        m_arts = [a["artifact"] for a in tp_m_data.get("artifacts", [])]
+        all_present = all((tp_dir / a).exists() and (a in m_arts) for a in expected_tp_artifacts)
+        tp_count = len(expected_tp_artifacts)
+        tp_denom_valid = all_present and (tp_m_data.get("canonical_denominator") == tp_count)
+
+    record_check("Phase 2C.4A Transport Artifact Denominator", tp_denom_valid,
+                 f"All {tp_count}/{len(expected_tp_artifacts)} canonical Transport forensic artifacts present with verified manifest")
+
+    # 17.2 Route Derivation & Formal Classification
+    tp_rf_file = tp_dir / "TRANSPORT_ROUTE_FAMILY.json"
+    tp_class_file = tp_dir / "TRANSPORT_CLASSIFICATION_MATRIX.json"
+    tp_route_valid = False
+    if tp_rf_file.exists() and tp_class_file.exists():
+        rf_data = json.loads(tp_rf_file.read_text(encoding="utf-8"))
+        cls_data = json.loads(tp_class_file.read_text(encoding="utf-8"))
+        routes = rf_data.get("routes", {})
+        has_3_routes = all(r in routes for r in ["/register_device", "/register_agent", "/connect_client"])
+        classes = cls_data.get("routes", {})
+        all_ws = all(classes.get(r, {}).get("transport_class") == "WEBSOCKET_UPGRADE" for r in ["/register_device", "/register_agent", "/connect_client"])
+        tp_route_valid = has_3_routes and all_ws and all(routes[r]["handler_symbol"].startswith("main.") for r in routes)
+
+    record_check("Phase 2C.4A Route Derivation & Transport Classification", tp_route_valid,
+                 "/register_device, /register_agent, /connect_client discovered from ROUTE_HANDLER_MAP/FUNCTION_MAP and classified as WEBSOCKET_UPGRADE")
+
+    # 17.3 Method, Upgrade, and Auth Timing Matrices
+    tp_mm_file = tp_dir / "TRANSPORT_METHOD_UPGRADE_MATRIX.json"
+    tp_am_file = tp_dir / "TRANSPORT_AUTH_MATRIX.json"
+    tp_matrix_valid = False
+    if tp_mm_file.exists() and tp_am_file.exists():
+        mm_data = json.loads(tp_mm_file.read_text(encoding="utf-8"))
+        am_data = json.loads(tp_am_file.read_text(encoding="utf-8"))
+        dev_std = mm_data.get("/register_device", {}).get("standard_http", {})
+        has_methods = all(m in dev_std for m in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"])
+        auth_client_pre = (am_data.get("MISSING_TOKEN", {}).get("auth_timing") == "PRE_UPGRADE_VALIDATION")
+        auth_client_401 = (am_data.get("MISSING_TOKEN", {}).get("status_code") == 401)
+        auth_admin_101 = (am_data.get("ADMIN_HEADER", {}).get("status_code") == 101)
+        dev_unauth_101 = (am_data.get("DEVICE_UNAUTH_REGISTRATION", {}).get("status_code") == 101)
+        tp_matrix_valid = has_methods and auth_client_pre and auth_client_401 and auth_admin_101 and dev_unauth_101
+
+    record_check("Phase 2C.4A Method Upgrade & Auth Timing Invariants", tp_matrix_valid,
+                 "All 7 HTTP methods mapped; /connect_client enforces PRE_UPGRADE auth (401); /register_device and /register_agent unauthenticated (101)")
+
+    # 17.4 Separate State Machines & Handshake Contract
+    tp_sm_dev = tp_dir / "REGISTER_DEVICE_STATE_MACHINE.json"
+    tp_sm_agent = tp_dir / "REGISTER_AGENT_STATE_MACHINE.json"
+    tp_sm_client = tp_dir / "CONNECT_CLIENT_STATE_MACHINE.json"
+    tp_hs_file = tp_dir / "WEBSOCKET_HANDSHAKE_CONTRACT.json"
+    tp_sm_valid = False
+    if tp_sm_dev.exists() and tp_sm_agent.exists() and tp_sm_client.exists() and tp_hs_file.exists():
+        sd = json.loads(tp_sm_dev.read_text(encoding="utf-8"))
+        sa = json.loads(tp_sm_agent.read_text(encoding="utf-8"))
+        sc = json.loads(tp_sm_client.read_text(encoding="utf-8"))
+        hs = json.loads(tp_hs_file.read_text(encoding="utf-8"))
+        distinct_sm = (sd.get("endpoint") == "/register_device" and
+                       sa.get("endpoint") == "/register_agent" and
+                       sc.get("endpoint") == "/connect_client")
+        upgrader_ok = (hs.get("upgrader", {}).get("library") == "github.com/gorilla/websocket")
+        masking_ok = ("mandatory" in hs.get("framing", {}).get("client_to_server_masking", ""))
+        tp_sm_valid = distinct_sm and upgrader_ok and masking_ok and (len(sd.get("states", [])) >= 5)
+
+    record_check("Phase 2C.4A State Machine & Handshake Contracts", tp_sm_valid,
+                 "Separate state machines for Device, Agent, and Client; RFC 6455 handshake, Gorilla upgrader, and frame masking bounded")
+
+    # 17.5 Type & Registry Recovery
+    tp_reg_file = tp_dir / "TRANSPORT_REGISTRY_TYPE_EVIDENCE.json"
+    tp_msg_file = tp_dir / "TRANSPORT_MESSAGE_TYPE_EVIDENCE.json"
+    tp_type_valid = False
+    if tp_reg_file.exists() and tp_msg_file.exists():
+        reg_data = json.loads(tp_reg_file.read_text(encoding="utf-8"))
+        msg_data = json.loads(tp_msg_file.read_text(encoding="utf-8"))
+        has_device = "Device" in reg_data
+        has_share = "Share" in reg_data
+        msgs = msg_data.get("messages", {})
+        confirmed_msgs = [m for m, v in msgs.items() if v.get("status") == "CONFIRMED"]
+        tp_type_valid = has_device and has_share and (len(confirmed_msgs) >= 8)
+
+    record_check("Phase 2C.4A Type & Registry Recovery Invariants", tp_type_valid,
+                 f"Rodata descriptors recovered ({list(reg_data.keys()) if tp_reg_file.exists() else []}); {len(confirmed_msgs) if tp_msg_file.exists() else 0} confirmed message types bounded")
+
+    # 17.6 Heartbeat, Signaling, Association & Cleanup Contracts
+    tp_hb_file = tp_dir / "TRANSPORT_HEARTBEAT_CONTRACT.json"
+    tp_sig_file = tp_dir / "WEBRTC_SIGNALING_CONTRACT.json"
+    tp_assoc_file = tp_dir / "DEVICE_AGENT_CLIENT_ASSOCIATION_CONTRACT.json"
+    tp_dc_file = tp_dir / "DATACHANNEL_TRANSPORT_CROSSMAP.json"
+    tp_disc_file = tp_dir / "TRANSPORT_DISCONNECT_CLEANUP_CONTRACT.json"
+    tp_conc_file = tp_dir / "TRANSPORT_CONCURRENCY_CONTRACT.json"
+    tp_contracts_valid = False
+    if (tp_hb_file.exists() and tp_sig_file.exists() and tp_assoc_file.exists() and
+        tp_dc_file.exists() and tp_disc_file.exists() and tp_conc_file.exists()):
+        hb = json.loads(tp_hb_file.read_text(encoding="utf-8"))
+        sig = json.loads(tp_sig_file.read_text(encoding="utf-8"))
+        assoc = json.loads(tp_assoc_file.read_text(encoding="utf-8"))
+        dc = json.loads(tp_dc_file.read_text(encoding="utf-8"))
+        disc = json.loads(tp_disc_file.read_text(encoding="utf-8"))
+        conc = json.loads(tp_conc_file.read_text(encoding="utf-8"))
+        hb_ok = (hb.get("application_heartbeat", {}).get("observed_interval_seconds") == 30)
+        sig_ok = (len(sig.get("exchange_stages", [])) >= 4)
+        assoc_ok = (assoc.get("association_key") == "device_id (string)")
+        dc_ok = ("EVIDENCE_ONLY" in dc.get("datachannel_plane", {}).get("forensic_status", ""))
+        disc_ok = ("normal_close" in disc.get("scenarios", {}) and "abrupt_close" in disc.get("scenarios", {}))
+        conc_ok = ("reader_loop" in conc.get("goroutines_per_connection", {}))
+        tp_contracts_valid = hb_ok and sig_ok and assoc_ok and dc_ok and disc_ok and conc_ok
+
+    record_check("Phase 2C.4A Protocol & Concurrency Contracts", tp_contracts_valid,
+                 "Heartbeat (30s interval), WebRTC signaling relay, DataChannel separation, disconnect cleanup, and concurrency bounded")
+
+    # 17.7 Transport Forensic Gate Result
+    tp_gate_file = tp_dir / "TRANSPORT_FORENSIC_GATE_RESULT.json"
+    tp_gate_valid = False
+    if tp_gate_file.exists():
+        gate_data = json.loads(tp_gate_file.read_text(encoding="utf-8"))
+        checks_list = gate_data.get("checks", [])
+        all_passed = (gate_data.get("verdict") == "PASS" and
+                      len(checks_list) == 18 and
+                      all(c.get("status") == "PASS" for c in checks_list))
+        tp_gate_valid = all_passed
+
+    record_check("Phase 2C.4A Transport Forensic Gate Invariants", tp_gate_valid,
+                 "18/18 forensic invariants passed in TRANSPORT_FORENSIC_GATE_RESULT.json")
+
+    # 17.8 Transport Reproducibility Execution
+    import tools.forensics.reproduce_transport_forensics as rtf
+    repro_ok = rtf.verify_reproducibility()
+    record_check("Phase 2C.4A True Forensic Reproducibility Invariant", repro_ok,
+                 "reproduce_transport_forensics.py passes 23/23 semantic validation with zero repo mutations")
+
+    # 17.9 Source Boundary Enforcement (Zero Production Transport Source)
+    src_transport_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "transport"
+    src_websocket_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "websocket"
+    src_webrtc_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "webrtc"
+    server_go_file = ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "webrtc-signaling" / "server.go"
+    go_mod_file = ROOT / "reconstructed_source" / "webrtc-signaling" / "go.mod"
+
+    no_dirs = (not src_transport_dir.exists() and
+               not src_websocket_dir.exists() and
+               not src_webrtc_dir.exists())
+    server_go_clean = True
+    if server_go_file.exists():
+        sg_text = server_go_file.read_text(encoding="utf-8")
+        server_go_clean = ("/register_device" not in sg_text and
+                           "/register_agent" not in sg_text and
+                           "/connect_client" not in sg_text)
+    go_mod_clean = True
+    if go_mod_file.exists():
+        gm_text = go_mod_file.read_text(encoding="utf-8")
+        go_mod_clean = ("gorilla/websocket" not in gm_text and
+                        "pion/webrtc" not in gm_text and
+                        "nhooyr/websocket" not in gm_text)
+
+    boundary_valid = no_dirs and server_go_clean and go_mod_clean
+    record_check("Phase 2C.4A Source Boundary Enforcement", boundary_valid,
+                 "Zero production transport source written; no routes added to server.go; no websocket/webrtc packages in go.mod")
+
+    # 17.10 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv

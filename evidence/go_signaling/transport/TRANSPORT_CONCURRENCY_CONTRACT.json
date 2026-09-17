@@ -1,0 +1,14 @@
+{
+  "description": "Transport Concurrency, Goroutine Lifecycle, and Synchronization Contract",
+  "phase": "2C.4A",
+  "goroutines_per_connection": {
+    "reader_loop": "1 dedicated goroutine per WebSocket executing Conn.ReadMessage()",
+    "writer_loop": "1 dedicated goroutine or serialized mutex-guarded write pump per WebSocket"
+  },
+  "hub_primitives": {
+    "hub_pump": "Dedicated signaling hub goroutine (main.u8Z_Xk) managing client/agent event registration and dispatch",
+    "synchronization": "sync.RWMutex protecting device, client, and agent maps against concurrent mutations",
+    "write_serialization": "sync.Mutex protecting concurrent writes to individual WebSocket connections"
+  },
+  "provenance": "STATIC_BINARY_DERIVED"
+}
