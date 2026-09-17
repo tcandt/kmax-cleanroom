@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B3 File-Channel Source Provenance Mapping",
+    "phase": "Phase 2C.5B3",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "governing_contract": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json"
+  },
+  "provenance_classes": {
+    "STATIC_CONFIRMED": "Directly proven by original Go binary disassembly, rodata strings, or callgraph analysis",
+    "CROSS_COMPONENT_CONFIRMED": "Proven by bidirectional correspondence between original binary and protocol peers",
+    "RUNTIME_RECONSTRUCTED_E2E": "Validated by real Pion WebRTC SCTP DataChannel transmission in reconstructed runtime",
+    "REFERENCE_ONLY": "Derived from reference web-app frontend composables (does not claim original binary parity)",
+    "IMPLEMENTATION_CHOICE": "Clean-room architectural abstractions, test doubles, or defensive security hardening",
+    "PHASE_SCOPE_GUARD": "Deliberate phase isolation guards keeping deferred channels or actions strictly inert",
+    "ENVIRONMENT_UNAVAILABLE": "Requires authentic Android OS runtime environment unavailable in host execution"
+  },
+  "symbol_provenance_mappings": [
+    {
+      "symbol": "ChannelFile",
+      "target_file": "pkg/webrtc/datachannel.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "DATACHANNEL_LABEL_EVIDENCE.json confirmed_webrtc_channels.file-channel; Disassembly AMD64 0x9e2f40, ARM64 0x53f234"
+    },
+    {
+      "symbol": "FileMetadata",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json file_channel_messages.start_upload; Disassembly AMD64 0x9e9ab1"
+    },
+    {
+      "symbol": "CmdStartUpload",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "STRINGS.json line 23985 log: [FileChannel] Start uploading to %s (size=%d, sha256=%s, install=%v)"
+    },
+    {
+      "symbol": "DefaultDestinationDir",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "STRINGS.json lines 23933, 23973 (/data/local/tmp/install_%s.apk, [FileChannel] Failed to copy APK to /data/local/tmp: %v)"
+    },
+    {
+      "symbol": "FileSink",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "Architectural abstraction decoupling DataChannel handler from filesystem scattering"
+    },
+    {
+      "symbol": "MemoryFileSink",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "In-memory test double preventing host filesystem modification during unit and E2E tests"
+    },
+    {
+      "symbol": "LocalFileSink",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "Sandboxed filesystem sink with directory containment"
+    },
+    {
+      "symbol": "SanitizeFilename",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "Defensive path traversal sanitization invariant"
+    },
+    {
+      "symbol": "FileChannelHandler",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "Explicit state machine managing streaming upload lifecycle (IDLE, METADATA_ACCEPTED, RECEIVING, COMPLETE, ERROR)"
+    },
+    {
+      "symbol": "PostUploadActionHandler",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "Clean-room event callback decoupling file transfer from package installation"
+    },
+    {
+      "symbol": "RegisterFileChannel",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "GENERATED_ADAPTER",
+      "evidence": "PeerSession adapter wiring file-channel OnMessage handler"
+    },
+    {
+      "symbol": "DeferredPackageInstallation",
+      "target_file": "pkg/webrtc/file.go",
+      "provenance": "PHASE_SCOPE_GUARD",
+      "evidence": "pm install and package execution strictly deferred to prevent unauthorized execution in Phase B3"
+    },
+    {
+      "symbol": "DeferredChannelsInert",
+      "target_file": "pkg/webrtc/datachannel.go",
+      "provenance": "PHASE_SCOPE_GUARD",
+      "evidence": "Channels camera-channel, ai-command-channel, and adb-channel remain strictly inert"
+    },
+    {
+      "symbol": "FrontendFramingCompatibility",
+      "target_file": "tests/webrtc_e2e_test.go",
+      "provenance": "REFERENCE_ONLY",
+      "evidence": "useWebRTC.js:1361-1385 (sendFileChannelCmd JSON text + sendFileChannelChunk arraybuffer)"
+    },
+    {
+      "symbol": "OriginalAgentRuntimeParity",
+      "target_file": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json",
+      "provenance": "ENVIRONMENT_UNAVAILABLE",
+      "evidence": "Android OS execution environment unavailable in host execution"
+    }
+  ]
+}

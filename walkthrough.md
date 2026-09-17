@@ -778,11 +778,52 @@ Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
    - Transport differential: 48/48: PASS
    - Master verifier (`verify_phase2.py`): PASS across all sections and 19 mutation tests.
 
+---
 
+# Walkthrough: Phase 2C.5B3 — WebRTC File-Channel Clean-Room Reconstruction
 
+**Date**: 2026-09-17  
+**Status**: CLOSED & VERIFIED (Gate Check: PASS)  
+**Contract Frozen Hash**: `1ff71090f6a16de538cad6cf93fc4096d34a913bed4008d1172f41b83da8e17b`  
+**Classification**: Clean-room behavioral/protocol reconstruction  
 
+## 1. Scope Boundary & Core Deliverables
 
-
-
-
-
+1. **Implementation Contract First**:
+   - Authored and frozen `evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json` prior to production modifications.
+   - Frozen SHA-256: `1ff71090f6a16de538cad6cf93fc4096d34a913bed4008d1172f41b83da8e17b`.
+   - 16 formal requirements (`FILE-B3-01` through `FILE-B3-16`).
+2. **Hybrid Framing & File-Channel Protocol**:
+   - Implemented `reconstructed_source/cloudphone-agent/pkg/webrtc/file.go`:
+     - Metadata frame: Text JSON (`start_upload` with `filename`, `size`, `sha256`, `install`).
+     - Data chunk frames: Raw binary (`ArrayBuffer`).
+     - Rejection of binary chunks before metadata frame.
+3. **Deterministic State Machine**:
+   - `IDLE` $\rightarrow$ `METADATA_ACCEPTED` $\rightarrow$ `RECEIVING` $\rightarrow$ `COMPLETE`.
+   - Handled zero-byte transfers, checksum mismatches, size overflows, and unexpected closures without panics.
+4. **Safe `FileSink` Boundary & Path Traversal Sanitization**:
+   - Decoupled `FileSink` interface (`Begin`, `WriteChunk`, `Complete`, `Abort`).
+   - `MemoryFileSink` for memory-only tests; `LocalFileSink` for sandboxed temporary filesystem operations.
+   - `SanitizeFilename`: strips directory traversal (`../`), path separators (`/`, `\`), Windows drive specifiers (`C:`), UNC shares, and NUL bytes.
+5. **Decoupled Package Installation Hook**:
+   - `PostUploadActionHandler` event boundary triggered on clean completion.
+   - Package manager execution (`pm install`, shell) strictly deferred (`PHASE_SCOPE_GUARD`); 0 `os/exec` calls.
+6. **Real SCTP WebRTC DataChannel E2E Integration**:
+   - Real SCTP DataChannel E2E test (`TestWebRTCDataChannelsE2E/file_upload`) with browser Pion peer.
+   - Transmitted JSON metadata frame + multi-part binary chunks over SCTP.
+   - Verified byte-exact payload reconstruction in `FileSink`, SHA-256 hash match, and post-action hook.
+7. **Differential Derivation & Negative Mutation Suite**:
+   - `tools/derive_b3_differential.py` dynamically evaluates 22 dimensions across 10 counter families:
+     - `original_static_evidence`: 9/9 PASS
+     - `exact_framing`: 3/3 PASS
+     - `reconstructed_runtime_e2e`: 1/1 PASS
+     - `original_agent_runtime_parity`: 0/0 (1 `ENVIRONMENT_UNAVAILABLE`)
+     - `phase_scope_guard`: 2/2 PASS
+     - `reference_only`: 1/1 PASS
+     - `implementation_choice`: 5/5 PASS
+     - `failed_total`: 0
+     - Overall Verdict: `PASS_PHASE_2C5B3_CLOSED`
+   - 6 automated negative mutation tests verified.
+8. **Master Verifier Section 22 Integration**:
+   - Integrated B3 checks into `tools/verify_phase2.py`: contract frozen SHA, safe `FileSink` boundary, deferred installer invariant, real SCTP E2E, path traversal defensiveness, and differential result derivation.
+   - Full master verifier: 22/22 sections PASS.

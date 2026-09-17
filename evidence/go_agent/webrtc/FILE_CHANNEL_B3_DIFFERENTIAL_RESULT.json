@@ -1,0 +1,502 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B3 File-Channel Protocol Differential Result",
+    "phase": "Phase 2C.5B3",
+    "canonical_timestamp": "2026-09-17T20:30:00Z",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "derivation_tool": "tools/derive_b3_differential.py",
+    "engine": "evidence-executed"
+  },
+  "counters": {
+    "original_static_evidence_total": 9,
+    "original_static_evidence_passed": 9,
+    "exact_framing_total": 3,
+    "exact_framing_passed": 3,
+    "reconstructed_runtime_e2e_total": 1,
+    "reconstructed_runtime_e2e_passed": 1,
+    "original_agent_runtime_parity_total": 0,
+    "original_agent_runtime_parity_passed": 0,
+    "phase_scope_guard_total": 2,
+    "phase_scope_guard_passed": 2,
+    "reference_only_total": 1,
+    "reference_only_passed": 1,
+    "implementation_choice_total": 5,
+    "implementation_choice_passed": 5,
+    "environment_unavailable_total": 1,
+    "verified_divergence_total": 0,
+    "failed_total": 0
+  },
+  "overall_verdict": "PASS_PHASE_2C5B3_CLOSED",
+  "evaluated_dimensions": [
+    {
+      "id": "FILE-B3-DIM-01",
+      "name": "file_channel_label",
+      "contract_ids": [
+        "FILE-B3-01"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (confirmed_webrtc_channels.file-channel.label)",
+      "runtime_basis": "pc.OnDataChannel accepts label 'file-channel'",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/file-channel/label",
+          "expected": "file-channel",
+          "expected_classification": "COMBINED_CONFIRMED",
+          "classification_json_pointer": "/confirmed_webrtc_channels/file-channel/evidence_classification"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-02",
+      "name": "file_channel_ordered",
+      "contract_ids": [
+        "FILE-B3-02"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
+      "runtime_basis": "file-channel negotiated with ordered=true",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/file-channel/ordered",
+          "expected": true
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-03",
+      "name": "start_upload_discriminator",
+      "contract_ids": [
+        "FILE-B3-03"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (file_channel_messages.start_upload)",
+      "runtime_basis": "FileMetadata unmarshals start_upload discriminator",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+          "json_pointer": "/file_channel_messages/start_upload/classification",
+          "expected": "STATIC_CONFIRMED"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-04",
+      "name": "start_upload_fields",
+      "contract_ids": [
+        "FILE-B3-03"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (fields: filename, size, sha256, install)",
+      "runtime_basis": "FileMetadata struct fields parity",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+          "json_pointer": "/file_channel_messages/start_upload/fields",
+          "expected": [
+            "filename",
+            "size",
+            "sha256",
+            "install"
+          ]
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-05",
+      "name": "start_upload_disassembly_xref",
+      "contract_ids": [
+        "FILE-B3-03"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json log: [FileChannel] Start uploading to %s (size=%d, sha256=%s, install=%v)",
+      "runtime_basis": "Disassembly format string log confirmed",
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "[FileChannel] Start uploading to %s (size=%d, sha256=%s, install=%v)"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-06",
+      "name": "hybrid_framing_matrix",
+      "contract_ids": [
+        "FILE-B3-04"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_FRAMING_MATRIX.json (HYBRID_METADATA_JSON_AND_BINARY_CHUNKS)",
+      "runtime_basis": "Text metadata followed by raw binary chunk reception",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+          "json_pointer": "/channels/file-channel/payload_encoding",
+          "expected": "HYBRID_METADATA_JSON_AND_BINARY_CHUNKS"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-07",
+      "name": "sha256_verification_strings",
+      "contract_ids": [
+        "FILE-B3-05"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json log: [FileChannel] SHA-256 integrity check passed: %s",
+      "runtime_basis": "Streaming SHA-256 calculation and verification",
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "[FileChannel] SHA-256 integrity check passed: %s"
+        },
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "[FileChannel] Upload integrity check FAILED: %v"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 2
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-08",
+      "name": "size_accounting_strings",
+      "contract_ids": [
+        "FILE-B3-06"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json log: [FileChannel] Upload finished: %s (%d bytes)",
+      "runtime_basis": "Cumulative byte tracking and completion on total == declared size",
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "[FileChannel] Upload finished: %s (%d bytes)"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-09",
+      "name": "default_destination_staging_path",
+      "contract_ids": [
+        "FILE-B3-07"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json (/data/local/tmp/install_%s.apk, [FileChannel] Failed to copy APK to /data/local/tmp: %v)",
+      "runtime_basis": "DefaultDestinationDir constant confirms /data/local/tmp",
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "/data/local/tmp/install_%s.apk"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-10",
+      "name": "exact_binary_framing_single_chunk",
+      "contract_ids": [
+        "FILE-B3-03",
+        "FILE-B3-04"
+      ],
+      "classification": "EXACT_FRAMING",
+      "evidence_basis": "TestFileChannelTransferFlow/single_chunk_small",
+      "runtime_basis": "Golden single-chunk upload byte parity",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelTransferFlow",
+        "subtest_name": "TestFileChannelTransferFlow/single_chunk_small"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_subtest",
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelTransferFlow/single_chunk_small",
+        "action": "pass"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-11",
+      "name": "exact_binary_framing_multi_chunk",
+      "contract_ids": [
+        "FILE-B3-04",
+        "FILE-B3-06"
+      ],
+      "classification": "EXACT_FRAMING",
+      "evidence_basis": "TestFileChannelTransferFlow/multi_chunk_exact",
+      "runtime_basis": "Golden multi-chunk upload byte parity",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelTransferFlow",
+        "subtest_name": "TestFileChannelTransferFlow/multi_chunk_exact"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_subtest",
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelTransferFlow/multi_chunk_exact",
+        "action": "pass"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-12",
+      "name": "exact_binary_framing_large_payload",
+      "contract_ids": [
+        "FILE-B3-04",
+        "FILE-B3-05"
+      ],
+      "classification": "EXACT_FRAMING",
+      "evidence_basis": "TestFileChannelTransferFlow/multi_chunk_large",
+      "runtime_basis": "64KB multi-chunk stream with SHA-256 verification",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelTransferFlow",
+        "subtest_name": "TestFileChannelTransferFlow/multi_chunk_large"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_subtest",
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelTransferFlow/multi_chunk_large",
+        "action": "pass"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-13",
+      "name": "reconstructed_runtime_sctp_file_upload_e2e",
+      "contract_ids": [
+        "FILE-B3-01",
+        "FILE-B3-02",
+        "FILE-B3-03",
+        "FILE-B3-04",
+        "FILE-B3-05",
+        "FILE-B3-06"
+      ],
+      "classification": "RUNTIME_RECONSTRUCTED_E2E",
+      "evidence_basis": "TestWebRTCDataChannelsE2E/file_upload in tests/webrtc_e2e_test.go",
+      "runtime_basis": "Browser Pion peer transmits metadata + chunks over real SCTP file-channel",
+      "go_test_target": {
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest_name": "TestWebRTCDataChannelsE2E/file_upload"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_sctp_e2e_subtest",
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest": "TestWebRTCDataChannelsE2E/file_upload",
+        "action": "pass"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-14",
+      "name": "protocol_state_machine_lifecycle",
+      "contract_ids": [
+        "FILE-B3-08"
+      ],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "Explicit state transitions: IDLE -> METADATA_ACCEPTED -> RECEIVING -> COMPLETE",
+      "runtime_basis": "TestFileChannelStateViolations rejects orphan chunks and duplicate starts",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelStateViolations"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Architectural abstraction / security sanitization verified"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-15",
+      "name": "filesink_abstraction_interface",
+      "contract_ids": [
+        "FILE-B3-09"
+      ],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "FileSink interface abstraction (Begin, WriteChunk, Complete, Abort)",
+      "runtime_basis": "TestLocalFileSinkTemporarySandbox in pkg/webrtc",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestLocalFileSinkTemporarySandbox"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Architectural abstraction / security sanitization verified"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-16",
+      "name": "memory_filesink_test_double",
+      "contract_ids": [
+        "FILE-B3-10"
+      ],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "MemoryFileSink in-memory buffer test double",
+      "runtime_basis": "TestFileChannelZeroByteUpload runs entirely in-memory",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestFileChannelZeroByteUpload"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Architectural abstraction / security sanitization verified"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-17",
+      "name": "defensive_path_sanitization",
+      "contract_ids": [
+        "FILE-B3-11"
+      ],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "SanitizeFilename strips ../, absolute paths, Windows drive letters, UNC, NUL",
+      "runtime_basis": "TestPathSanitizationDefensive verifies 15 security test cases",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestPathSanitizationDefensive"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Architectural abstraction / security sanitization verified"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-18",
+      "name": "post_upload_action_boundary",
+      "contract_ids": [
+        "FILE-B3-12"
+      ],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "PostUploadActionHandler event callback on install=true",
+      "runtime_basis": "TestPostUploadActionBoundary verifies event hook invocation",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestPostUploadActionBoundary"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Architectural abstraction / security sanitization verified"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-19",
+      "name": "package_installer_execution_deferred",
+      "contract_ids": [
+        "FILE-B3-13"
+      ],
+      "classification": "PHASE_SCOPE_GUARD",
+      "evidence_basis": "pm install execution strictly deferred to subsequent phases",
+      "runtime_basis": "Whole-tree boundary scanner verifies zero command execution in production code",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_phase_scope_scanner",
+        "target": "D:/KMAX-CLEANROOM/reconstructed_source/cloudphone-agent/pkg",
+        "violations_count": 0
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-20",
+      "name": "deferred_channels_strict_isolation",
+      "contract_ids": [
+        "FILE-B3-14"
+      ],
+      "classification": "PHASE_SCOPE_GUARD",
+      "evidence_basis": "Channels camera-channel, ai-command-channel, adb-channel strictly inert",
+      "runtime_basis": "Whole-tree boundary scanner verifies camera, ai-command, adb inert in pkg/",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_phase_scope_scanner",
+        "target": "D:/KMAX-CLEANROOM/reconstructed_source/cloudphone-agent/pkg",
+        "violations_count": 0
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-21",
+      "name": "frontend_framing_protocol_compatibility",
+      "contract_ids": [
+        "FILE-B3-15"
+      ],
+      "classification": "REFERENCE_ONLY",
+      "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1366 (fileChannel.send(JSON.stringify(cmd)))",
+      "runtime_basis": "Reference frontend sends JSON text cmd and ArrayBuffer chunks",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "reference_needle": "fileChannel.send(JSON.stringify(cmd))",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "reference_only_validation",
+        "note": "Provenance classification validated against reference web-app composable"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-22",
+      "name": "original_agent_filechannel_runtime_parity",
+      "contract_ids": [
+        "FILE-B3-16"
+      ],
+      "classification": "ENVIRONMENT_UNAVAILABLE",
+      "evidence_basis": "Authentic Android Agent runtime execution",
+      "runtime_basis": "Host environment is Windows AMD64 desktop without Android emulator / app_process",
+      "result": "ENVIRONMENT_UNAVAILABLE",
+      "execution_evidence": {
+        "type": "android_prerequisite_matrix",
+        "prerequisites": {
+          "original_agent_artifact_available": true,
+          "compatible_android_target_available": false,
+          "app_process_available": false,
+          "helper_artifact_available": true,
+          "execution_context_shell_uid_2000": false,
+          "abstract_uds_support": false,
+          "safe_launch_capability": false
+        },
+        "diagnostic": "Android runtime unavailable: missing ['abstract_uds_support', 'app_process_available', 'compatible_android_target_available', 'execution_context_shell_uid_2000', 'safe_launch_capability']"
+      }
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B3 File-Channel Test Matrix",
+    "phase": "Phase 2C.5B3",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "governing_contract": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json"
+  },
+  "test_cases": [
+    {
+      "contract_id": "FILE-B3-01",
+      "test_name": "TestFileChannelRegistrationStaticAndRuntime",
+      "package": "./pkg/webrtc",
+      "test_type": "STATIC_VERIFICATION_AND_UNIT",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "ChannelFile",
+      "description": "Verifies inbound file-channel label recognition and registration"
+    },
+    {
+      "contract_id": "FILE-B3-02",
+      "test_name": "TestWebRTCDataChannelsE2E",
+      "package": "./tests",
+      "test_type": "SCTP_E2E_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "ordered=true",
+      "description": "Verifies client-created file-channel with ordered=true over genuine SCTP"
+    },
+    {
+      "contract_id": "FILE-B3-03",
+      "test_name": "TestFileChannelMetadataParsing",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "FileMetadata",
+      "description": "Verifies start_upload JSON parsing with filename, size, sha256, and install fields"
+    },
+    {
+      "contract_id": "FILE-B3-04",
+      "test_name": "TestFileChannelTransferFlow",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "HandleMessage",
+      "description": "Verifies binary chunk streaming reception and forwarding to FileSink"
+    },
+    {
+      "contract_id": "FILE-B3-05",
+      "test_name": "TestFileChannelChecksumMismatch",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "sha256.New",
+      "description": "Verifies streaming SHA-256 calculation and integrity verification"
+    },
+    {
+      "contract_id": "FILE-B3-06",
+      "test_name": "TestFileChannelSizeMismatch",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "receivedBytes",
+      "description": "Verifies size accounting, short upload detection, and overflow rejection"
+    },
+    {
+      "contract_id": "FILE-B3-07",
+      "test_name": "TestDefaultDestinationStaticEvidence",
+      "package": "./pkg/webrtc",
+      "test_type": "STATIC_VERIFICATION",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "DefaultDestinationDir",
+      "description": "Verifies target destination /data/local/tmp from binary disassembly"
+    },
+    {
+      "contract_id": "FILE-B3-08",
+      "test_name": "TestFileChannelStateViolations",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "target_symbol": "FileTransferState",
+      "description": "Verifies explicit state machine transitions and illegal sequence rejection"
+    },
+    {
+      "contract_id": "FILE-B3-09",
+      "test_name": "TestFileChannelTransferFlow",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "target_symbol": "FileSink",
+      "description": "Verifies abstract FileSink interface (Begin, WriteChunk, Complete, Abort)"
+    },
+    {
+      "contract_id": "FILE-B3-10",
+      "test_name": "TestLocalFileSinkTemporarySandbox",
+      "package": "./pkg/webrtc",
+      "test_type": "SANDBOX_UNIT_TEST",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "target_symbol": "MemoryFileSink/LocalFileSink",
+      "description": "Verifies in-memory test double and sandboxed directory writes"
+    },
+    {
+      "contract_id": "FILE-B3-11",
+      "test_name": "TestPathSanitizationDefensive",
+      "package": "./pkg/webrtc",
+      "test_type": "SECURITY_UNIT_TEST",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "target_symbol": "SanitizeFilename",
+      "description": "Verifies hardening against ../ traversal, absolute roots, UNC, and NUL characters"
+    },
+    {
+      "contract_id": "FILE-B3-12",
+      "test_name": "TestPostUploadActionBoundary",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "target_symbol": "PostUploadActionHandler",
+      "description": "Verifies install=true post-upload event callback without package installation"
+    },
+    {
+      "contract_id": "FILE-B3-13",
+      "test_name": "scan_deferred_channels_isolation",
+      "package": "tools/audit",
+      "test_type": "STATIC_BOUNDARY_SCAN",
+      "evidence_class": "PHASE_SCOPE_GUARD",
+      "target_symbol": "exec.Command",
+      "description": "Verifies zero package manager or shell execution in production codebase"
+    },
+    {
+      "contract_id": "FILE-B3-14",
+      "test_name": "scan_deferred_channels_isolation",
+      "package": "tools/audit",
+      "test_type": "STATIC_BOUNDARY_SCAN",
+      "evidence_class": "PHASE_SCOPE_GUARD",
+      "target_symbol": "CameraChannel/AICommandChannel/ADBChannel",
+      "description": "Verifies camera-channel, ai-command-channel, and adb-channel remain strictly inert"
+    },
+    {
+      "contract_id": "FILE-B3-15",
+      "test_name": "TestWebRTCDataChannelsE2E/file_upload",
+      "package": "./tests",
+      "test_type": "SCTP_E2E_TEST",
+      "evidence_class": "REFERENCE_ONLY",
+      "target_symbol": "sendFileChannelCmd",
+      "description": "Verifies client framing compatibility (JSON text metadata, binary chunk frames)"
+    },
+    {
+      "contract_id": "FILE-B3-16",
+      "test_name": "android_prerequisite_matrix",
+      "package": "tools/audit",
+      "test_type": "ENVIRONMENT_AUDIT",
+      "evidence_class": "ENVIRONMENT_UNAVAILABLE",
+      "target_symbol": "AndroidOS",
+      "description": "Documents unavailability of authentic Android OS agent execution environment"
+    }
+  ]
+}

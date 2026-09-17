@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B3 WebRTC File DataChannel Protocol Specification",
+    "phase": "Phase 2C.5B3",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "channel_label": "file-channel",
+    "governing_docs": [
+      "evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "evidence/go_agent/STRINGS.json",
+      "evidence/reference/raw/web-app/src/composables/useWebRTC.js"
+    ]
+  },
+  "channel_properties": {
+    "label": "file-channel",
+    "channel_type": "INBOUND_CLIENT_CREATED",
+    "creator_side": "Browser Client",
+    "consumer_side": "Agent",
+    "ordered": true,
+    "ordered_evidence": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer in AMD64 and ARM64)",
+    "framing": "HYBRID_METADATA_JSON_AND_BINARY_CHUNKS",
+    "binary_type": "arraybuffer",
+    "default_destination_directory": "/data/local/tmp"
+  },
+  "message_types": {
+    "start_upload": {
+      "framing": "JSON_TEXT",
+      "discriminator": "start_upload",
+      "fields": {
+        "type": { "type": "string", "required": true, "expected": "start_upload" },
+        "filename": { "type": "string", "required": true, "description": "Destination filename; sanitized defensively against path traversal" },
+        "size": { "type": "integer", "required": true, "description": "Total declared payload size in bytes" },
+        "sha256": { "type": "string", "required": false, "description": "64-character lowercase hex digest of payload SHA-256" },
+        "install": { "type": "boolean", "required": false, "description": "Post-upload APK install flag; triggers event hook, execution deferred" }
+      },
+      "disassembly_xref": "AMD64 0x9e9ab1 (log: [FileChannel] Start uploading to %s (size=%d, sha256=%s, install=%v))",
+      "classification": "STATIC_CONFIRMED"
+    },
+    "binary_chunk": {
+      "framing": "RAW_BINARY",
+      "format": "[]byte / ArrayBuffer",
+      "description": "Arbitrary byte chunks streamed across SCTP DataChannel",
+      "accounting": "Agent accumulates received byte count; calculates streaming SHA-256 digest; writes to FileSink",
+      "classification": "STATIC_CONFIRMED"
+    }
+  },
+  "lifecycle_state_machine": {
+    "states": [
+      "IDLE",
+      "METADATA_ACCEPTED",
+      "RECEIVING",
+      "COMPLETE",
+      "ERROR"
+    ],
+    "transitions": [
+      { "from": "IDLE", "event": "start_upload (size > 0)", "to": "METADATA_ACCEPTED" },
+      { "from": "IDLE", "event": "start_upload (size == 0)", "to": "COMPLETE" },
+      { "from": "METADATA_ACCEPTED", "event": "binary_chunk (received < size)", "to": "RECEIVING" },
+      { "from": "METADATA_ACCEPTED", "event": "binary_chunk (received == size && valid sha)", "to": "COMPLETE" },
+      { "from": "RECEIVING", "event": "binary_chunk (received < size)", "to": "RECEIVING" },
+      { "from": "RECEIVING", "event": "binary_chunk (received == size && valid sha)", "to": "COMPLETE" },
+      { "from": "RECEIVING", "event": "binary_chunk (received == size && invalid sha)", "to": "ERROR" },
+      { "from": "RECEIVING", "event": "binary_chunk (received > size)", "to": "ERROR" },
+      { "from": "*", "event": "malformed JSON / unexpected command / illegal transition", "to": "ERROR" }
+    ],
+    "classification": "IMPLEMENTATION_CHOICE"
+  },
+  "safe_boundaries": {
+    "file_sink": {
+      "interface": "FileSink",
+      "methods": [
+        "Begin(metadata FileMetadata) error",
+        "WriteChunk(chunk []byte) error",
+        "Complete() error",
+        "Abort() error"
+      ],
+      "implementations": [
+        "MemoryFileSink (in-memory buffer for unit/E2E tests)",
+        "LocalFileSink (sandboxed filesystem writes with directory containment)"
+      ],
+      "classification": "IMPLEMENTATION_CHOICE"
+    },
+    "path_sanitization": {
+      "function": "SanitizeFilename(filename string) (string, error)",
+      "protections": [
+        "Directory traversal (../, ..\\)",
+        "Absolute filesystem roots (/, \\)",
+        "Windows drive prefixes (C:, D:)",
+        "UNC paths (\\\\server\\share)",
+        "Embedded NUL bytes (\\x00)"
+      ],
+      "classification": "IMPLEMENTATION_CHOICE"
+    },
+    "install_action_boundary": {
+      "hook": "PostUploadActionHandler",
+      "trigger": "Invoked on completion when metadata.Install == true and checksum passes",
+      "execution_status": "DEFERRED",
+      "note": "Package installation execution (pm install, pm uninstall, shell execution) is strictly deferred to subsequent phases",
+      "classification": "PHASE_SCOPE_GUARD"
+    }
+  }
+}

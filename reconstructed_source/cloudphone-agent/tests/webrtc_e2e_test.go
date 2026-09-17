@@ -10,7 +10,11 @@
 package tests
 
 import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -578,12 +582,29 @@ func TestWebRTCDataChannelsE2E(t *testing.T) {
 	var (
 		clientInputDC   *webrtc.DataChannel
 		clientClipDC    *webrtc.DataChannel
+		clientFileDC    *webrtc.DataChannel
 		inputDCOpen     = make(chan struct{}, 1)
 		clipDCOpen      = make(chan struct{}, 1)
+		fileDCOpen      = make(chan struct{}, 1)
 		clipMsgReceived = make(chan []byte, 5)
 		clientConnected = make(chan struct{}, 1)
 		dcMu            sync.Mutex
 	)
+
+	// Inbound file-channel created by client peer with ordered=true
+	orderedFile := true
+	clientFileDC, err = clientPC.CreateDataChannel(agentwebrtc.ChannelFile, &webrtc.DataChannelInit{
+		Ordered: &orderedFile,
+	})
+	if err != nil {
+		t.Fatalf("failed to create client file-channel: %v", err)
+	}
+	clientFileDC.OnOpen(func() {
+		select {
+		case fileDCOpen <- struct{}{}:
+		default:
+		}
+	})
 
 	clientPC.OnDataChannel(func(dc *webrtc.DataChannel) {
 		dcMu.Lock()
@@ -620,9 +641,22 @@ func TestWebRTCDataChannelsE2E(t *testing.T) {
 		}
 	})
 
-	// 2. Initialize Agent PeerSession with ControlSink and ClipboardProvider
+	// 2. Initialize Agent PeerSession with ControlSink, ClipboardProvider, and FileSink
 	controlSink := agentwebrtc.NewMemoryControlSink()
 	clipboardProvider := agentwebrtc.NewMemoryClipboardProvider()
+	fileSink := agentwebrtc.NewMemoryFileSink()
+
+	var (
+		postActionInvoked bool
+		postActionTarget  string
+		postActionMu      sync.Mutex
+	)
+	fileHandler := agentwebrtc.NewFileChannelHandler(fileSink, func(meta agentwebrtc.FileMetadata, path string) {
+		postActionMu.Lock()
+		defer postActionMu.Unlock()
+		postActionInvoked = true
+		postActionTarget = path
+	})
 
 	session, err := agentwebrtc.NewPeerSession(200, "dev-e2e-dc", nil)
 	if err != nil {
@@ -632,6 +666,7 @@ func TestWebRTCDataChannelsE2E(t *testing.T) {
 
 	session.SetControlSink(controlSink)
 	session.SetClipboardProvider(clipboardProvider)
+	agentwebrtc.RegisterFileChannel(session, fileHandler)
 
 	// Wire ICE trickle between Agent and Client
 	clientPC.OnICECandidate(func(c *webrtc.ICECandidate) {
@@ -690,6 +725,13 @@ func TestWebRTCDataChannelsE2E(t *testing.T) {
 		t.Log("[PASS] Browser client clipboard-channel reached OPEN")
 	case <-time.After(5 * time.Second):
 		t.Fatalf("timeout waiting for clipboard-channel open on client")
+	}
+
+	select {
+	case <-fileDCOpen:
+		t.Log("[PASS] Browser client file-channel reached OPEN")
+	case <-time.After(5 * time.Second):
+		t.Fatalf("timeout waiting for file-channel open on client")
 	}
 
 	// 6. Test Input Channel E2E: Browser sends inject_touch over SCTP DataChannel
@@ -788,5 +830,69 @@ func TestWebRTCDataChannelsE2E(t *testing.T) {
 		}
 		t.Log("[PASS] clipboard-channel get_clipboard SCTP E2E verified: Agent -> Browser response confirmed")
 	})
+
+	// 9. Test File Channel E2E: Real SCTP multi-chunk file upload with SHA-256 verification
+	t.Run("file_upload", func(t *testing.T) {
+		payload := []byte("cleanroom-reconstructed-file-channel-payload-content-1234567890")
+		hSum := sha256.Sum256(payload)
+		shaHex := hex.EncodeToString(hSum[:])
+
+		startJSON := fmt.Sprintf(`{"type":"start_upload","filename":"test_e2e_app.apk","size":%d,"sha256":"%s","install":true}`,
+			len(payload), shaHex)
+
+		// 1. Framing Boundary: Send metadata as text/JSON over genuine SCTP
+		if err := clientFileDC.SendText(startJSON); err != nil {
+			t.Fatalf("failed to send start_upload text frame: %v", err)
+		}
+
+		// Allow agent state machine to transition to METADATA_ACCEPTED
+		time.Sleep(30 * time.Millisecond)
+
+		// 2. Framing Boundary: Send file chunks as binary over genuine SCTP
+		chunk1 := payload[:20]
+		chunk2 := payload[20:45]
+		chunk3 := payload[45:]
+
+		for _, chunk := range [][]byte{chunk1, chunk2, chunk3} {
+			if err := clientFileDC.Send(chunk); err != nil {
+				t.Fatalf("failed to send binary chunk over SCTP: %v", err)
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+
+		// Wait for completion
+		deadline := time.Now().Add(3 * time.Second)
+		var completed bool
+		for time.Now().Before(deadline) {
+			if fileHandler.GetState() == agentwebrtc.FileTransferStateComplete && fileSink.IsCompleted() {
+				completed = true
+				break
+			}
+			time.Sleep(20 * time.Millisecond)
+		}
+
+		if !completed {
+			t.Fatalf("file transfer did not complete within deadline, state=%s", fileHandler.GetState())
+		}
+
+		// Exact byte reconstruction verification
+		reconstructed := fileSink.GetBytes()
+		if !bytes.Equal(reconstructed, payload) {
+			t.Fatalf("reconstructed byte mismatch! Expected %d bytes, got %d bytes", len(payload), len(reconstructed))
+		}
+
+		// PostUploadAction verification (boundary without executing installer)
+		postActionMu.Lock()
+		invoked := postActionInvoked
+		target := postActionTarget
+		postActionMu.Unlock()
+
+		if !invoked || target != "test_e2e_app.apk" {
+			t.Fatalf("expected PostUploadAction invoked for test_e2e_app.apk, got invoked=%v target=%q", invoked, target)
+		}
+
+		t.Log("[PASS] file-channel real SCTP E2E: metadata JSON frame -> agent file-channel handler -> binary chunks -> FileSink -> exact reconstructed payload -> clean completion")
+	})
 }
+
 

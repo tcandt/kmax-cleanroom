@@ -545,16 +545,32 @@ func TestMultiClientAndSignalingRelay(t *testing.T) {
 		t.Fatalf("client 2 connect write error: %v", err)
 	}
 
-	var c2Config transport.ConfigMessage
-	if err := client2WS.ReadJSON(&c2Config); err != nil {
-		t.Fatalf("client 2 config read error: %v", err)
+	// Helper to skip asynchronous device_list_update and wait for config
+	for {
+		var raw json.RawMessage
+		if err := client2WS.ReadJSON(&raw); err != nil {
+			t.Fatalf("client 2 config read error: %v", err)
+		}
+		var gen transport.GenericInboundEnvelope
+		_ = json.Unmarshal(raw, &gen)
+		if gen.MessageType == "config" {
+			break
+		}
 	}
 
-	// Verify Device ClientCount == 2 in registry
+	// Verify Device ClientCount == 2 in registry (polling with deadline to allow async server goroutine)
 	dev, _ := devReg.GetDevice("dev-multiplex-1")
-	dev.Mu.RLock()
-	clientCount := dev.ClientCount
-	dev.Mu.RUnlock()
+	deadline := time.Now().Add(1 * time.Second)
+	var clientCount int
+	for time.Now().Before(deadline) {
+		dev.Mu.RLock()
+		clientCount = dev.ClientCount
+		dev.Mu.RUnlock()
+		if clientCount == 2 {
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
 	if clientCount != 2 {
 		t.Errorf("expected client_count 2, got %d", clientCount)
 	}

@@ -1,0 +1,194 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B3 WebRTC File DataChannel Implementation Contract",
+    "phase": "Phase 2C.5B3",
+    "status": "FROZEN_PRE_IMPLEMENTATION",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "governing_docs": [
+      "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "evidence/go_agent/STRINGS.json",
+      "evidence/go_agent/webrtc/WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json",
+      "evidence/reference/raw/web-app/src/composables/useWebRTC.js"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "FILE-B3-01",
+      "requirement": "Inbound File-Channel Registration and Ownership",
+      "observable_behavior": "Agent registers OnDataChannel listener recognizing inbound client-created DataChannel labeled 'file-channel'",
+      "source_artifact": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "source_field_or_case": "confirmed_webrtc_channels.file-channel",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static disassembly proves OnDataChannel callback closure at AMD64 0x9e2f20/0x9e2f40 and ARM64 0x53f210/0x53f234"
+    },
+    {
+      "id": "FILE-B3-02",
+      "requirement": "Ordered Delivery Configuration",
+      "observable_behavior": "DataChannel 'file-channel' is negotiated with ordered=true delivery",
+      "source_artifact": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "source_field_or_case": "confirmed_webrtc_channels.file-channel.ordered",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static disassembly proves ordered=1 byte pointer; corroborated by frontend pc.createDataChannel('file-channel', { ordered: true })"
+    },
+    {
+      "id": "FILE-B3-03",
+      "requirement": "Metadata Ingress Frame (start_upload)",
+      "observable_behavior": "Upload begins with a JSON text frame on file-channel containing type 'start_upload' and fields 'filename' (string), 'size' (integer), 'sha256' (hex string), and 'install' (boolean)",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "file_channel_messages.start_upload",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static disassembly at AMD64 0x9e9ab1 logs: [FileChannel] Start uploading to %s (size=%d, sha256=%s, install=%v)"
+    },
+    {
+      "id": "FILE-B3-04",
+      "requirement": "Binary Chunk Streaming Reception",
+      "observable_behavior": "Subsequent frames on file-channel are received as raw binary chunks ([]byte) and forwarded to the active file transfer sink",
+      "source_artifact": "DATACHANNEL_FRAMING_MATRIX.json",
+      "source_field_or_case": "channels.file-channel.payload_encoding",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Framing matrix confirms HYBRID_METADATA_JSON_AND_BINARY_CHUNKS; log: [FileChannel] Error writing to file: %v"
+    },
+    {
+      "id": "FILE-B3-05",
+      "requirement": "Streaming SHA-256 Checksum Calculation & Integrity Check",
+      "observable_behavior": "Agent calculates streaming SHA-256 over incoming binary chunks; upon receiving declared size, verifies hash against metadata sha256",
+      "source_artifact": "STRINGS.json",
+      "source_field_or_case": "FileChannel log strings",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static strings prove [FileChannel] SHA-256 integrity check passed: %s and [FileChannel] Upload integrity check FAILED: %v"
+    },
+    {
+      "id": "FILE-B3-06",
+      "requirement": "Declared Size Accounting & Transfer Completion",
+      "observable_behavior": "Agent tracks accumulated chunk byte count against metadata size. When cumulative received bytes equal declared size, transfer completes; overflow or early termination aborts transfer",
+      "source_artifact": "STRINGS.json",
+      "source_field_or_case": "FileChannel log strings",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static string confirms [FileChannel] Upload finished: %s (%d bytes)"
+    },
+    {
+      "id": "FILE-B3-07",
+      "requirement": "Original Target Destination Path",
+      "observable_behavior": "Original binary targets destination directory /data/local/tmp for file staging and temp APK files",
+      "source_artifact": "STRINGS.json",
+      "source_field_or_case": "Target destination path strings",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static strings confirm /data/local/tmp/install_%s.apk and [FileChannel] Failed to copy APK to /data/local/tmp: %v"
+    },
+    {
+      "id": "FILE-B3-08",
+      "requirement": "Protocol State Machine Lifecycle",
+      "observable_behavior": "File-channel handler enforces state machine transitions: IDLE -> METADATA_ACCEPTED -> RECEIVING -> COMPLETE (or ERROR). Chunks before metadata, duplicate metadata, or premature termination transition to ERROR",
+      "source_artifact": "DATACHANNEL_FRAMING_MATRIX.json",
+      "source_field_or_case": "channels.file-channel",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "Explicit 4-state state machine is an implementation choice for robust session lifecycle management"
+    },
+    {
+      "id": "FILE-B3-09",
+      "requirement": "Safe FileSink Abstraction Boundary",
+      "observable_behavior": "Handlers interface through an abstract FileSink interface exposing Begin(metadata), WriteChunk(bytes), Complete(), and Abort() without direct filesystem scattering",
+      "source_artifact": "DATACHANNEL_FRAMING_MATRIX.json",
+      "source_field_or_case": "channels.file-channel.target_downstream",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "FileSink interface decoupling is an architectural implementation choice allowing test sandbox injection"
+    },
+    {
+      "id": "FILE-B3-10",
+      "requirement": "In-Memory & Sandboxed Test Doubles",
+      "observable_behavior": "Test doubles provide in-memory byte accumulation (MemoryFileSink) and temporary directory isolation, preventing test writes outside sandbox",
+      "source_artifact": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json",
+      "source_field_or_case": "Testing hygiene",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "MemoryFileSink test double enables safe unit and E2E verification without disk contamination"
+    },
+    {
+      "id": "FILE-B3-11",
+      "requirement": "Defensive Path Traversal & Malformed Name Sanitization",
+      "observable_behavior": "Filenames containing directory traversal sequences (..), absolute paths, Windows drive letters, UNC paths, or NUL characters are sanitized/rejected to prevent filesystem escape",
+      "source_artifact": "STRINGS.json",
+      "source_field_or_case": "Sanitization invariant",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "SanitizeFilename implementation choice hardens against directory traversal"
+    },
+    {
+      "id": "FILE-B3-12",
+      "requirement": "Post-Upload Install Event Boundary",
+      "observable_behavior": "When install=true in metadata and checksum verification succeeds, file channel notifies a PostUploadActionRequested hook/channel with the completed file path",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "file_channel_messages.start_upload.fields",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "Event hook decouples file transfer protocol completion from subsequent package manager execution"
+    },
+    {
+      "id": "FILE-B3-13",
+      "requirement": "Package Installer Execution Strictly Deferred",
+      "observable_behavior": "No shell execution, pm install, pm uninstall, or package manager commands are invoked during Phase 2C.5B3. Package installation logic remains strictly deferred",
+      "source_artifact": "STRINGS.json",
+      "source_field_or_case": "pm install strings",
+      "evidence_class": "PHASE_SCOPE_GUARD",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "Phase 2C.5B3 is restricted to file transfer protocol parity; execution of pm commands is deferred"
+    },
+    {
+      "id": "FILE-B3-14",
+      "requirement": "Deferred Channels Strict Inert Boundary",
+      "observable_behavior": "Channels 'camera-channel', 'ai-command-channel', and 'adb-channel' remain strictly deferred with inert lifecycle hooks only",
+      "source_artifact": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json",
+      "source_field_or_case": "CORE-08",
+      "evidence_class": "PHASE_SCOPE_GUARD",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "Accidental implementation of business logic on deferred channels is strictly prohibited in B3"
+    },
+    {
+      "id": "FILE-B3-15",
+      "requirement": "Frontend Framing Protocol Compatibility",
+      "observable_behavior": "Client initiates transfer via sendFileChannelCmd({type: 'start_upload', filename, size, sha256, install}) and sendFileChannelChunk(arrayBuffer) as observed in reference frontend",
+      "source_artifact": "useWebRTC.js",
+      "source_field_or_case": "lines 1361-1385",
+      "evidence_class": "REFERENCE_ONLY",
+      "confidence": "HIGH",
+      "mandatory_for_parity": false,
+      "notes": "Reference-only client behavior from web-app useWebRTC.js"
+    },
+    {
+      "id": "FILE-B3-16",
+      "requirement": "Original Android Agent Runtime Parity Oracle",
+      "observable_behavior": "Executing original compiled Android agent binary against authentic Android OS environment",
+      "source_artifact": "DATACHANNEL_FRAMING_MATRIX.json",
+      "source_field_or_case": "channels.file-channel.target_downstream",
+      "evidence_class": "ENVIRONMENT_UNAVAILABLE",
+      "confidence": "LOW",
+      "mandatory_for_parity": false,
+      "notes": "Authentic Android execution environment is unavailable in host CI/CD environment"
+    }
+  ]
+}

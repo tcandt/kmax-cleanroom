@@ -142,11 +142,12 @@ def validate_evidence_ref(ref: Dict[str, Any], repo_root: Path) -> Tuple[bool, s
 def scan_deferred_channels_isolation(agent_pkg_dir: Path) -> List[str]:
     """
     Examines all production non-test Go files under cloudphone-agent/pkg.
-    Ensures camera-channel, file-channel, ai-command-channel, and adb-channel
-    are strictly isolated without active business logic.
+    Phase-scope guard:
+      - Phase B3 active: input-channel, clipboard-channel, file-channel
+      - Strictly deferred: camera-channel, ai-command-channel, adb-channel
     """
     violations = []
-    deferred_vars = ["CameraChannel", "FileChannel", "AICommandChannel", "ADBChannel", "camCh"]
+    deferred_vars = ["CameraChannel", "AICommandChannel", "ADBChannel", "camCh"]
 
     if not agent_pkg_dir.exists():
         return [f"Agent package directory missing: {agent_pkg_dir}"]
@@ -166,21 +167,14 @@ def scan_deferred_channels_isolation(agent_pkg_dir: Path) -> List[str]:
             if kw in content:
                 violations.append(f"{go_file.name}: contains camera business logic '{kw}'")
 
-        # 3. Check for file transfer / payload parser / file write business logic
-        for kw in ["SaveFile", "ParseFileChunk", "FileTransfer", "FileReceiver"]:
-            if kw in content:
-                violations.append(f"{go_file.name}: contains file transfer business logic '{kw}'")
-        if "os.Create(" in content or "os.WriteFile(" in content or "ioutil.WriteFile(" in content:
-            violations.append(f"{go_file.name}: contains direct file write call")
-
-        # 4. Check for AI command execution business logic
+        # 3. Check for AI command execution business logic
         for kw in ["ExecuteAICommand", "ParseAICommand", "RunAICommand"]:
             if kw in content:
                 violations.append(f"{go_file.name}: contains AI command business logic '{kw}'")
         if "os/exec" in content or "exec.Command(" in content:
             violations.append(f"{go_file.name}: contains command execution call")
 
-        # 5. Check for ADB sockets/bridges
+        # 4. Check for ADB sockets/bridges
         for kw in ["AdbBridge", "AdbSocket", "ConnectAdb", "ForwardAdb"]:
             if kw in content:
                 violations.append(f"{go_file.name}: contains ADB business logic '{kw}'")
