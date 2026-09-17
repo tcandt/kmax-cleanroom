@@ -42,7 +42,11 @@ import (
 // Confidence: HIGH
 func (s *Server) SetSharesStore(ss *storage.SharesStore) {
 	s.sharesStore = ss
+	if s.transportHub != nil {
+		s.transportHub.SetSharesStore(ss)
+	}
 }
+
 
 // CLEANROOM-PROVENANCE:
 // Classification: GENERATED_ADAPTER

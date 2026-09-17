@@ -214,15 +214,19 @@ def verify_all():
         "webrtc-signaling/pkg/httpapi/",
         "webrtc-signaling/pkg/devices/",
         "webrtc-signaling/pkg/license/",
-        "webrtc-signaling/cmd/http-server/"
+        "webrtc-signaling/cmd/http-server/",
+        "webrtc-signaling/pkg/transport/"
     )
     disallowed_files = []
     forbidden_symbols_found = []
 
-    # Check for premature networking, webrtc stack, websocket, transport endpoints
-    FORBIDDEN_IMPORTS_AND_SYMBOLS = [
-        '"github.com/pion/webrtc', "NewPeerConnection(",
-        "/register_agent", "/connect_client", '"gorilla/websocket"', '"nhooyr.io/websocket"'
+    # Pion WebRTC / PeerConnection / alternate WS stacks are strictly forbidden everywhere
+    STRICTLY_FORBIDDEN_EVERYWHERE = [
+        '"github.com/pion/webrtc', "NewPeerConnection(", '"nhooyr.io/websocket"'
+    ]
+    # Transport tokens are forbidden outside pkg/transport and server.go
+    TRANSPORT_FORBIDDEN_OUTSIDE_TRANSPORT = [
+        "/register_agent", "/connect_client", '"gorilla/websocket"'
     ]
 
     for gf in go_files:
@@ -231,9 +235,14 @@ def verify_all():
             disallowed_files.append(rel)
         with open(gf, "r", encoding="utf-8") as f:
             content = f.read()
-            for kw in FORBIDDEN_IMPORTS_AND_SYMBOLS:
+            for kw in STRICTLY_FORBIDDEN_EVERYWHERE:
                 if kw in content:
                     forbidden_symbols_found.append((rel, kw))
+            is_transport = rel.startswith("webrtc-signaling/pkg/transport/") or rel.endswith("server.go")
+            if not is_transport:
+                for kw in TRANSPORT_FORBIDDEN_OUTSIDE_TRANSPORT:
+                    if kw in content:
+                        forbidden_symbols_found.append((rel, kw))
 
     scope_passed = len(disallowed_files) == 0 and len(forbidden_symbols_found) == 0
     record_check("Phase 2C.3 Source Scope Boundary",
@@ -2220,10 +2229,12 @@ def verify_all():
 
     # 13.10 Cleanroom Scope & Provenance Isolation Guard
     recon_dir = ROOT / "reconstructed_source" / "webrtc-signaling"
-    forbidden_tokens = [
-        "websocket.Upgrader",
+    strictly_forbidden_everywhere = [
         "github.com/pion/webrtc",
         "nhooyr.io/websocket",
+    ]
+    transport_tokens = [
+        "websocket.Upgrader",
         "gorilla/websocket",
         "/register_agent",
         "/connect_client",
@@ -2231,13 +2242,19 @@ def verify_all():
     ]
     found_forbidden = []
     for gp in recon_dir.rglob("*.go"):
+        rel_path = gp.relative_to(recon_dir)
         content = gp.read_text(encoding="utf-8")
-        for tok in forbidden_tokens:
+        for tok in strictly_forbidden_everywhere:
             if tok in content:
-                found_forbidden.append((str(gp.name), tok))
+                found_forbidden.append((str(rel_path), tok))
+        is_transport_source = ("pkg" in rel_path.parts and "transport" in rel_path.parts) or gp.name == "server.go"
+        if not is_transport_source:
+            for tok in transport_tokens:
+                if tok in content:
+                    found_forbidden.append((str(rel_path), tok))
     scope_guard_valid = len(found_forbidden) == 0
     record_check("Phase 2C.3F Cleanroom Scope & Zero Forbidden Technology", scope_guard_valid,
-                 f"0 production WebSocket/WebRTC packages, 0 Transports ({len(found_forbidden)} violations)")
+                 f"0 production WebRTC/DataChannel packages; transport isolated to pkg/transport ({len(found_forbidden)} violations)")
 
     # 14. Phase 2C.3G Server Configuration REST Route Family Auditing
     sc_dir = ROOT / "evidence" / "go_signaling" / "server_config"
@@ -2997,40 +3014,70 @@ def verify_all():
     record_check("Phase 2C.4AR2 True Forensic Reproducibility Invariant", repro_ok,
                  "reproduce_transport_forensics.py passes 23/23 semantic validation with zero repo mutations")
 
-    # 17.13 Source Boundary Enforcement (Zero Production Transport Source)
+    # 17.13 Phase 2C.4B Clean-Room Transport Reconstruction & Strict Boundary Enforcement
     src_transport_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "transport"
-    src_websocket_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "websocket"
     src_webrtc_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "webrtc"
-    server_go_file = ROOT / "reconstructed_source" / "webrtc-signaling" / "cmd" / "webrtc-signaling" / "server.go"
+    src_datachannel_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "datachannel"
     go_mod_file = ROOT / "reconstructed_source" / "webrtc-signaling" / "go.mod"
 
-    no_dirs = (not src_transport_dir.exists() and
-               not src_websocket_dir.exists() and
-               not src_webrtc_dir.exists())
-    server_go_clean = True
-    if server_go_file.exists():
-        sg_text = server_go_file.read_text(encoding="utf-8")
-        server_go_clean = ("/register_device" not in sg_text and
-                           "/register_agent" not in sg_text and
-                           "/connect_client" not in sg_text)
+    req_files = ["types.go", "hub.go", "device.go", "agent.go", "client.go", "cleanup.go", "relay.go"]
+    has_transport = src_transport_dir.exists() and all((src_transport_dir / f).exists() for f in req_files)
+
+    prov_ok = True
+    if has_transport:
+        for f in req_files:
+            content = (src_transport_dir / f).read_text(encoding="utf-8")
+            if "// CLEANROOM-PROVENANCE:" not in content:
+                prov_ok = False
+            if "DIRECT_DECOMPILE" in content:
+                prov_ok = False
+
+    boundary_clean = (not src_webrtc_dir.exists() and not src_datachannel_dir.exists())
     go_mod_clean = True
     if go_mod_file.exists():
         gm_text = go_mod_file.read_text(encoding="utf-8")
-        go_mod_clean = ("gorilla/websocket" not in gm_text and
-                        "pion/webrtc" not in gm_text and
-                        "nhooyr/websocket" not in gm_text)
+        go_mod_clean = ("pion/webrtc" not in gm_text and
+                        "THIRD_PARTY_BEHAVIORAL_DEPENDENCY" in gm_text and
+                        "github.com/gorilla/websocket" in gm_text)
 
-    boundary_valid = no_dirs and server_go_clean and go_mod_clean
-    record_check("Phase 2C.4AR2 Source Boundary Enforcement", boundary_valid,
-                 "Zero production transport source written; no routes added to server.go; no websocket/webrtc packages in go.mod")
+    boundary_valid = has_transport and prov_ok and boundary_clean and go_mod_clean
+    record_check("Phase 2C.4B Clean-Room Transport Reconstruction & Strict Boundary Enforcement", boundary_valid,
+                 "Clean-room transport package created with provenances; WebRTC PeerConnection/DataChannels remain strictly evidence-only")
 
-    # 17.14 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # 18. PHASE 2C.4B TRANSPORT IMPLEMENTATION & DIFFERENTIAL PARITY AUDIT
+    # 18.1 Go Transport Unit Tests
+    go_test_res = subprocess.run(["go", "test", "-v", "./pkg/transport/..."],
+                                 cwd=str(ROOT / "reconstructed_source" / "webrtc-signaling"),
+                                 capture_output=True, text=True)
+    go_test_passed = (go_test_res.returncode == 0) and ("PASS" in go_test_res.stdout)
+    record_check("Phase 2C.4B Go Transport Unit & Lifecycle Tests", go_test_passed,
+                 "go test ./pkg/transport/... executes all method matrices, auth variations, state machines, and relays with PASS")
+
+    # 18.2 Go Signaling Package Build Validation
+    go_build_res = subprocess.run(["go", "build", "./..."],
+                                  cwd=str(ROOT / "reconstructed_source" / "webrtc-signaling"),
+                                  capture_output=True, text=True)
+    go_build_passed = (go_build_res.returncode == 0)
+    record_check("Phase 2C.4B Go Signaling Package Build Validation", go_build_passed,
+                 "go build ./... in reconstructed_source/webrtc-signaling compiles cleanly with zero errors")
+
+    # 18.3 Transport Differential Parity Suite Execution
+    import tools.transport_differential_test as tdt
+    diff_res = tdt.run_differential_suite()
+    diff_valid = (diff_res.get("failed") == 0 and
+                  diff_res.get("exact_parity_passed", 0) == diff_res.get("exact_parity_total", 1) and
+                  diff_res.get("exact_parity_passed", 0) > 0)
+    record_check("Phase 2C.4B Transport Differential Parity Suite", diff_valid,
+                 f"{diff_res.get('exact_parity_passed')}/{diff_res.get('exact_parity_total')} confirmed deterministic cases match original oracle with exact parity")
+
+    # 18.4 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv
     clean_tree = is_clean or allow_dirty
     record_check("Master Verifier Non-Mutating Audit Invariant", clean_tree,
                  "git status --porcelain is strictly empty; verification and reproducers cause zero repository mutations")
+
 
     # Summary
     all_passed = all(c["passed"] for c in checks)

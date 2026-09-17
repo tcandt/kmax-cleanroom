@@ -1533,6 +1533,26 @@ def evaluate_forensic_gate(
     no_dirs = (not src_transport_dir.exists() and not src_websocket_dir.exists() and not src_webrtc_dir.exists())
     server_clean = not server_go_file.exists() or not any(r in server_go_file.read_text(encoding="utf-8") for r in exp_routes)
     go_mod_clean = not go_mod_file.exists() or not any(pkg in go_mod_file.read_text(encoding="utf-8") for pkg in ["gorilla/websocket", "pion/webrtc", "nhooyr/websocket"])
+
+    # If the repository has advanced to Phase 2C.4B (where pkg/transport was reconstructed with approval),
+    # verify that the frozen forensic baseline at commit c7e82c1 strictly satisfied zero transport source,
+    # and that WebRTC PeerConnection/DataChannels remain zero in the working tree.
+    if not no_dirs or not go_mod_clean:
+        try:
+            baseline_commit = "c7e82c1c8e6a26fa1008aef47831aee2c9d98258"
+            ls_res = subprocess.run(["git", "ls-tree", f"{baseline_commit}:reconstructed_source/webrtc-signaling/pkg"],
+                                    cwd=str(REPO_ROOT), capture_output=True, text=True)
+            gm_res = subprocess.run(["git", "show", f"{baseline_commit}:reconstructed_source/webrtc-signaling/go.mod"],
+                                    cwd=str(REPO_ROOT), capture_output=True, text=True)
+            base_no_tp = ("transport" not in ls_res.stdout) if ls_res.returncode == 0 else False
+            base_no_ws = ("gorilla/websocket" not in gm_res.stdout and "pion/webrtc" not in gm_res.stdout) if gm_res.returncode == 0 else False
+            curr_webrtc_clean = (not src_webrtc_dir.exists() and not (REPO_ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "datachannel").exists())
+            if base_no_tp and base_no_ws and curr_webrtc_clean:
+                no_dirs = True
+                go_mod_clean = True
+        except Exception:
+            pass
+
     boundary_ok = no_dirs and server_clean and go_mod_clean
 
     checks.append({

@@ -16,6 +16,7 @@ import (
 	"cloudphone-signaling/pkg/devices"
 	"cloudphone-signaling/pkg/license"
 	"cloudphone-signaling/pkg/storage"
+	"cloudphone-signaling/pkg/transport"
 	"cloudphone-signaling/pkg/types"
 )
 
@@ -29,6 +30,9 @@ type Server struct {
 	tagsStore      *storage.TagsStore
 	sharesStore    *storage.SharesStore
 	shortcutsStore *storage.ShortcutsStore
+
+	// Transport WebSocket Hub (Phase 2C.4B)
+	transportHub *transport.Hub
 
 	// Server Configuration state (Phase 2C.3G)
 	iceServersMu      sync.RWMutex
@@ -85,8 +89,17 @@ func NewServer(authenticator *auth.Authenticator, noAuth bool, deviceReg ...*dev
 		snapshotMgr: storage.NewSnapshotManager(),
 	}
 
+	// Initialize Transport WebSocket Hub (Phase 2C.4B)
+	s.transportHub = transport.NewHub(s.deviceReg, s.auth, s.sharesStore, s.iceServers)
+
+	// Register transport WebSocket routes matching original binary (Phase 2C.4B)
+	s.mux.HandleFunc("/register_device", s.transportHub.HandleRegisterDevice)
+	s.mux.HandleFunc("/register_agent", s.transportHub.HandleRegisterAgent)
+	s.mux.HandleFunc("/connect_client", s.transportHub.HandleConnectClient)
+
 	// Register auth routes matching original binary
 	s.mux.HandleFunc("/api/login", s.HandleLogin)
+
 	s.mux.HandleFunc("/api/logout", s.HandleLogout)
 	s.mux.HandleFunc("/api/auth-status", s.HandleAuthStatus)
 	s.mux.HandleFunc("/api/me", s.HandleMe)

@@ -1,0 +1,385 @@
+{
+  "contract_name": "TRANSPORT_IMPLEMENTATION_CONTRACT",
+  "phase": "2C.4B",
+  "purpose": "Derived pre-implementation contract snapshot specifying observable requirements and evidence-backed constraints for clean-room transport reconstruction",
+  "frozen_forensic_commit": "c7e82c1c8e6a26fa1008aef47831aee2c9d98258",
+  "epistemic_classification_model": {
+    "CONFIRMED_STATIC": "Extracted from binary symbol, disassembly, or .rodata type descriptors",
+    "CONFIRMED_ORACLE": "Directly observed and validated against the original binary running under oracle probes",
+    "COMBINED_CONFIRMED": "Corroborated by both static disassembly and dynamic oracle observation",
+    "IMPLEMENTATION_CHOICE": "Engineering design decisions made for clean-room implementation; never claimed as recovered original implementation",
+    "UNKNOWN": "Behaviors or fields where evidence is incomplete or inconclusive; remains conservative"
+  },
+  "routes": {
+    "/register_device": {
+      "path": "/register_device",
+      "transport_class": "WEBSOCKET_UPGRADE",
+      "auth_required": false,
+      "auth_evidence": {
+        "artifact": "TRANSPORT_AUTH_MATRIX.json",
+        "case_id": "TR-AUTH-DEV-PUBLIC",
+        "classification": "COMBINED_CONFIRMED"
+      },
+      "handler_symbol": "main.rQffYkwYhw",
+      "upgrader": "Gorilla WebSocket Upgrader",
+      "timing": {
+        "read_deadline_seconds": 60,
+        "evidence": {
+          "artifact": "TRANSPORT_HEARTBEAT_CONTRACT.json",
+          "disasm_va": "0x74e62e",
+          "classification": "COMBINED_CONFIRMED"
+        }
+      },
+      "duplicate_connection_semantics": {
+        "rule": "Latest device connection replaces or updates active device registration in registry",
+        "evidence": {
+          "artifact": "REGISTER_DEVICE_STATE_MACHINE.json",
+          "classification": "COMBINED_CONFIRMED"
+        }
+      }
+    },
+    "/register_agent": {
+      "path": "/register_agent",
+      "transport_class": "WEBSOCKET_UPGRADE",
+      "auth_required": false,
+      "auth_evidence": {
+        "artifact": "TRANSPORT_AUTH_MATRIX.json",
+        "case_id": "TR-AUTH-AGENT-PUBLIC",
+        "classification": "COMBINED_CONFIRMED"
+      },
+      "handler_symbol": "main.jdUaLc5NMO5",
+      "upgrader": "Gorilla WebSocket Upgrader",
+      "timing": {
+        "heartbeat_interval_seconds": 30,
+        "read_deadline_seconds": 60,
+        "evidence": {
+          "artifact": "TRANSPORT_HEARTBEAT_CONTRACT.json",
+          "disasm_va": "0x754c1d",
+          "classification": "COMBINED_CONFIRMED"
+        }
+      },
+      "duplicate_connection_semantics": {
+        "rule": "Latest agent connection replaces existing agent session for the device_id",
+        "evidence": {
+          "artifact": "REGISTER_AGENT_STATE_MACHINE.json",
+          "classification": "COMBINED_CONFIRMED"
+        }
+      }
+    },
+    "/connect_client": {
+      "path": "/connect_client",
+      "transport_class": "WEBSOCKET_UPGRADE",
+      "auth_required": true,
+      "auth_timing": "PRE_UPGRADE_VALIDATION",
+      "credential_sources": [
+        {
+          "type": "AUTHORIZATION_HEADER",
+          "format": "Bearer <token>",
+          "case_id": "TR-AUTH-ADMIN-HEADER",
+          "classification": "COMBINED_CONFIRMED"
+        },
+        {
+          "type": "QUERY_PARAM_TOKEN",
+          "format": "?token=<token>",
+          "case_id": "TR-AUTH-ADMIN-QUERY",
+          "classification": "COMBINED_CONFIRMED"
+        },
+        {
+          "type": "QUERY_PARAM_SHARE_TOKEN",
+          "format": "?share_token=<share_token>",
+          "case_id": "TR-AUTH-SHARE-QUERY",
+          "classification": "COMBINED_CONFIRMED"
+        }
+      ],
+      "unauthorized_behavior": {
+        "status_code": 401,
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": 13,
+        "body": "Unauthorized\n",
+        "case_ids": [
+          "TR-AUTH-MISSING-TOKEN",
+          "TR-AUTH-INVALID-TOKEN"
+        ],
+        "classification": "COMBINED_CONFIRMED"
+      },
+      "handler_symbol": "main.id8ybRmw69lm",
+      "upgrader": "Gorilla WebSocket Upgrader",
+      "timing": {
+        "read_deadline_seconds": 60,
+        "evidence": {
+          "artifact": "TRANSPORT_HEARTBEAT_CONTRACT.json",
+          "disasm_va": "0x750b5d",
+          "classification": "COMBINED_CONFIRMED"
+        }
+      },
+      "multi_client_multiplexing": {
+        "rule": "Supports 0 to N concurrent clients per device; each client is assigned a unique client_id",
+        "client_id_representation": "uint32 / integer in JSON envelopes",
+        "allocation_strategy": {
+          "implementation_choice": "Monotonically increasing atomic counter starting at 1 per device session",
+          "contract_requirement": "Uniqueness and bidirectional routing parity; sequence values are IMPLEMENTATION_CHOICE",
+          "classification": "IMPLEMENTATION_CHOICE"
+        },
+        "evidence": {
+          "artifact": "DEVICE_AGENT_CLIENT_ASSOCIATION_CONTRACT.json",
+          "classification": "COMBINED_CONFIRMED"
+        }
+      }
+    }
+  },
+  "http_method_upgrade_matrix": {
+    "supported_methods": [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "HEAD",
+      "OPTIONS"
+    ],
+    "standard_http_response": {
+      "non_upgrade_status_code": 400,
+      "unauthenticated_connect_client_status_code": 401,
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "upgrade_header_variations": {
+      "valid_upgrade": {
+        "status_code": 101,
+        "headers": {
+          "Connection": "Upgrade",
+          "Upgrade": "websocket"
+        },
+        "sec_websocket_accept": "RFC6455 SHA1 base64 hash of Sec-WebSocket-Key + 258EAFA5-E914-47DA-95CA-C5AB0DC85B11",
+        "classification": "COMBINED_CONFIRMED"
+      },
+      "missing_upgrade": {
+        "status_code": 400,
+        "classification": "COMBINED_CONFIRMED"
+      },
+      "wrong_version": {
+        "status_code": 400,
+        "classification": "COMBINED_CONFIRMED"
+      }
+    }
+  },
+  "message_envelopes": {
+    "register": {
+      "sender": "Device",
+      "receiver": "Signaling Server",
+      "fields": {
+        "message_type": {
+          "type": "string",
+          "value": "register",
+          "status": "CONFIRMED"
+        },
+        "device_id": {
+          "type": "string",
+          "status": "CONFIRMED"
+        },
+        "device_info": {
+          "type": "any",
+          "status": "CONFIRMED"
+        }
+      },
+      "response": "config",
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "config": {
+      "sender": "Signaling Server",
+      "receiver": "Device / Client",
+      "fields": {
+        "message_type": {
+          "type": "string",
+          "value": "config",
+          "status": "CONFIRMED"
+        },
+        "device_id": {
+          "type": "string",
+          "status": "CONFIRMED"
+        },
+        "ice_servers": {
+          "type": "[]types.ICEServer",
+          "status": "CONFIRMED"
+        }
+      },
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "agent_register": {
+      "sender": "Agent",
+      "receiver": "Signaling Server",
+      "fields": {
+        "type": {
+          "type": "string",
+          "value": "agent_register",
+          "status": "CONFIRMED"
+        },
+        "device_id": {
+          "type": "string",
+          "status": "CONFIRMED"
+        },
+        "scrcpy_addr": {
+          "type": "string",
+          "status": "CONFIRMED"
+        },
+        "is_webrtc": {
+          "type": "bool",
+          "status": "CONFIRMED"
+        }
+      },
+      "response": "agent_register_ok",
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "agent_register_ok": {
+      "sender": "Signaling Server",
+      "receiver": "Agent",
+      "fields": {
+        "message_type": {
+          "type": "string",
+          "value": "agent_register_ok",
+          "status": "CONFIRMED"
+        },
+        "status": {
+          "type": "string",
+          "value": "ok",
+          "status": "CONFIRMED"
+        }
+      },
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "connect": {
+      "sender": "Client",
+      "receiver": "Signaling Server",
+      "fields": {
+        "type": {
+          "type": "string",
+          "value": "connect",
+          "status": "CONFIRMED"
+        },
+        "device_id": {
+          "type": "string",
+          "status": "CONFIRMED"
+        }
+      },
+      "response": "config + device_list_update",
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "forward": {
+      "sender": "Client / Agent",
+      "receiver": "Agent / Client (via Server)",
+      "fields": {
+        "message_type": {
+          "type": "string",
+          "value": "forward",
+          "status": "CONFIRMED"
+        },
+        "device_id": {
+          "type": "string",
+          "status": "CONFIRMED"
+        },
+        "client_id": {
+          "type": "uint32",
+          "status": "CONFIRMED"
+        },
+        "payload": {
+          "type": "json.RawMessage",
+          "status": "CONFIRMED"
+        }
+      },
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "device_msg": {
+      "sender": "Signaling Server",
+      "receiver": "Client",
+      "fields": {
+        "message_type": {
+          "type": "string",
+          "value": "device_msg",
+          "status": "CONFIRMED"
+        },
+        "device_id": {
+          "type": "string",
+          "status": "CONFIRMED"
+        },
+        "payload": {
+          "type": "json.RawMessage",
+          "status": "CONFIRMED"
+        }
+      },
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "device_list_update": {
+      "sender": "Signaling Server",
+      "receiver": "All Clients (Broadcast)",
+      "fields": {
+        "message_type": {
+          "type": "string",
+          "value": "device_list_update",
+          "status": "CONFIRMED"
+        },
+        "devices": {
+          "type": "[]types.DeviceDTO",
+          "status": "CONFIRMED"
+        }
+      },
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "heartbeat": {
+      "sender": "Agent",
+      "receiver": "Signaling Server",
+      "fields": {
+        "message_type": {
+          "type": "string",
+          "value": "heartbeat",
+          "status": "CONFIRMED"
+        },
+        "device_id": {
+          "type": "string",
+          "status": "CONFIRMED"
+        }
+      },
+      "effect": "Refreshes read deadline to +60s and updates last_seen in DeviceRegistry",
+      "classification": "COMBINED_CONFIRMED"
+    }
+  },
+  "signaling_relay_flow": {
+    "request_offer": {
+      "flow": "Client -> Server (forward) -> Agent (forward with client_id)",
+      "payload_type": "request-offer",
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "offer": {
+      "flow": "Agent -> Server (forward with target client_id) -> Client (device_msg)",
+      "payload_type": "offer",
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "answer": {
+      "flow": "Client -> Server (forward) -> Agent (forward with client_id)",
+      "payload_type": "answer",
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "candidate": {
+      "flow": "Bidirectional between Client and Agent via Server relay",
+      "payload_type": "candidate",
+      "classification": "COMBINED_CONFIRMED"
+    }
+  },
+  "concurrency_and_cleanup": {
+    "concurrency_model": {
+      "goroutines_per_conn": "1 read loop goroutine; writes serialized via sync.Mutex",
+      "hub_synchronization": "sync.RWMutex protecting device, client, and agent maps",
+      "classification": "COMBINED_CONFIRMED"
+    },
+    "cleanup_idempotency": {
+      "mechanism": "sync.Once per connection instance",
+      "mechanism_classification": "IMPLEMENTATION_CHOICE",
+      "observable_requirements": [
+        "idempotent cleanup",
+        "no negative client count",
+        "no stale routing entry",
+        "no duplicate disconnect side effects",
+        "no concurrent WebSocket writes"
+      ],
+      "classification": "COMBINED_CONFIRMED"
+    }
+  }
+}
