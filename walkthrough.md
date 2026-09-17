@@ -722,6 +722,63 @@ Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
 8. **Full Regression Verification**:
    - All uncached unit tests, race tests, forensic reproducers (14/14 WebRTC, 23/23 Transport), transport differential (48/48), and master verifier (21/21 sections) passed cleanly on clean tree.
 
+---
+
+# Phase 2C.5B2R4 Walkthrough: Contract Errata & Effective Parity Closure
+
+**Date**: 2026-09-17  
+**Status**: CLOSED & VERIFIED (Gate Check: PASS)  
+**Base Remote Commit**: `6ef5852e745a8734200f4d7f879dff0ece330317`  
+**Contract Frozen Hash**: `3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7`  
+**Classification**: Clean-room behavioral/protocol contract errata & effective parity closure  
+
+## 1. Remediation Scope & Implemented Deliverables
+
+1. **Formal Contract Errata Amendment (`DATACHANNEL_B2_CONTRACT_ERRATA.json`)**:
+   - Created formal errata document recording historical pre-implementation over-classifications for `DC-B2-05`, `DC-B2-11`, `DC-B2-12`, `DC-B2-13`, `DC-B2-14`, `DC-B2-15`, `DC-B2-16`.
+   - Anchored to the frozen base contract SHA-256 (`3d7ebd83a675b2eb...`), preserving pre-implementation historical provenance without rewriting history.
+2. **Effective Contract View Compiler (`tools/audit/build_b2_effective_contract.py`)**:
+   - Synthesizes an effective in-memory contract view combining the frozen base contract with the formal errata.
+   - Segregates authentic original parity claims from `reference_only_parts`, `implementation_choice_parts`, and `phase_scope_parts`.
+3. **Contract Consistency Auditor (`tools/audit/validate_b2_contract_consistency.py`)**:
+   - Audits all 16 requirements against underlying forensic artifacts.
+   - Strictly prohibits unproven fields (`paste`), frontend aliases (`touch`), adapter interfaces (`ControlSink`, `ClipboardProvider`), and defensive hardening from contaminating original protocol parity claims.
+4. **Disaggregated Differential Counter Families**:
+   - Upgraded `tools/derive_b2_differential.py` to evaluate 27 dimensions across 9 discrete counter families:
+     - `original_static_evidence`: 9/9 PASS
+     - `exact_binary_frame`: 5/5 PASS
+     - `reconstructed_runtime_e2e`: 3/3 PASS
+     - `original_agent_runtime_parity`: 0/0 (Android runtime required)
+     - `phase_scope_guard`: 1/1 PASS
+     - `reference_only`: 4/4 PASS
+     - `implementation_choice`: 4/4 PASS
+     - `environment_unavailable`: 1
+     - `verified_divergence`: 0
+     - `failed_total`: 0
+5. **Narrowed Clipboard Dimension Claims**:
+   - Narrowed `DC-B2-DIM-14` to `get_clipboard_request_framing` matching exact proven evidence (`get_clipboard.fields = ['type']`).
+   - Created `DC-B2-DIM-27` (`clipboard_response_envelope_client_schema`) classified strictly as `REFERENCE_ONLY` for frontend client callback corroboration.
+6. **Dynamic Android Prerequisite Matrix**:
+   - `evaluate_android_runtime_prerequisites()` in `tools/audit/b2_common.py` dynamically evaluates repository artifacts (`cloudphone-agent` binary and helper components), ensuring portability to future Android execution environments.
+7. **Production Source Freeze Maintained**:
+   - Audited all 7 production source files (`control.go`, `clipboard.go`, `datachannel.go`, `peer.go`, `agent.go`, `go.mod`, `go.sum`). All hashes identical to frozen baseline; zero production protocol modifications made.
+8. **Extended Negative Mutation Suite (19 Cases: A–S)**:
+   - Preserved R3 Cases A–N.
+   - Added contract-level negative cases:
+     - Case O: Unsupported original field in artifact rejected by consistency auditor.
+     - Case P: `REFERENCE_ONLY` evidence relabeled `STATIC_CONFIRMED` rejected.
+     - Case Q: Effective contract dropping mandatory original behavior rejected.
+     - Case R: Errata referencing wrong base contract SHA rejected.
+     - Case S: Base frozen contract modification rejected by frozen SHA-256 check.
+9. **Full Regression Verification**:
+   - `validate_b2_contract_consistency.py`: PASS (16/16)
+   - `derive_b2_differential.py --check`: PASS (27/27)
+   - `cloudphone-agent` & `webrtc-signaling`: `go test -count=1 ./...` and `go test -race -count=1 ./...`: PASS (0 data races)
+   - Forensic reproducers: 14/14 WebRTC, 23/23 Transport: PASS
+   - Transport differential: 48/48: PASS
+   - Master verifier (`verify_phase2.py`): PASS across all sections and 19 mutation tests.
+
+
 
 
 

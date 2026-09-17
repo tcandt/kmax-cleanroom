@@ -1,0 +1,125 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B2 WebRTC DataChannel Contract Formal Errata and Provenance Amendment",
+    "phase": "Phase 2C.5B2R4",
+    "base_contract_path": "evidence/go_agent/webrtc/DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json",
+    "base_contract_sha256": "3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7",
+    "base_contract_status": "FROZEN_PRE_IMPLEMENTATION",
+    "errata_phase": "Phase 2C.5B2R4",
+    "reason": "Correction of historical pre-implementation over-classification. Formally segregates authentic original binary protocol parity from frontend reference compatibility, Go adapter implementation choices, defensive robustness, and phase boundary guards.",
+    "effective_contract_rules": [
+      "Base contract DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json remains strictly frozen and immutable to preserve pre-implementation historical provenance.",
+      "Original protocol parity claims must be exclusively grounded in authentic original binary/forensic artifacts.",
+      "Frontend reference compatibility (useWebRTC.js) must be classified as REFERENCE_ONLY and excluded from original parity counters.",
+      "Go adapter interfaces (ControlSink, ClipboardProvider) and defensive hardening must be classified as IMPLEMENTATION_CHOICE and excluded from original parity counters.",
+      "Phase scope invariants (deferred channels inert) must be classified as PHASE_SCOPE_GUARD and excluded from original parity counters.",
+      "Effective contract view is dynamically computed by combining the frozen base contract with this formal errata document."
+    ]
+  },
+  "corrections": [
+    {
+      "contract_id": "DC-B2-05",
+      "original_claim": "Messages with discriminator 'inject_touch' (or 'touch') are parsed with action, pointer id, x, y, width, height, and pressure (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Grouping 'inject_touch' and alias 'touch' together under STATIC_CONFIRMED falsely claims the 'touch' alias is an authentic original binary protocol requirement, whereas only 'inject_touch' appears in original binary rodata and disassembly.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9cfb40 - 0x9cfc0e, input_channel_messages.inject_touch)",
+      "corrected_original_parity_claim": "Messages with discriminator 'inject_touch' are parsed with action, pointer id, x, y, width, height, and pressure into touch events.",
+      "non_original_compatibility_behavior": "Handling the alias discriminator 'touch' and fields seq, client_ts_ms for frontend compatibility (REFERENCE_ONLY).",
+      "effective_evidence_class": "STATIC_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "reference_only_parts": [
+        "touch_alias_discriminator",
+        "seq_field",
+        "client_ts_ms_field"
+      ],
+      "rationale": "Forensic disassembly proves the original Android Agent only binds and expects 'inject_touch'. The alias 'touch' was introduced in frontend composable useWebRTC.js:1032 for browser compatibility."
+    },
+    {
+      "contract_id": "DC-B2-11",
+      "original_claim": "Agent writes serialized scrcpy control frames to a narrow ControlSink interface abstracting the @uds_sys_t_ IPC socket (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "The Go ControlSink interface is an architectural clean-room reconstruction choice. While downstream transmission of 32-byte frames to @uds_sys_t_ is an original system requirement, the interface abstraction itself is not original protocol parity.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/AGENT_HELPER_IPC_SOCKET_MATRIX.json (abstract_uds_sockets.@uds_sys_t_)",
+      "corrected_original_parity_claim": "Serialized 32-byte scrcpy control frames are emitted to the downstream control boundary matching @uds_sys_t_ binary framing.",
+      "non_original_compatibility_behavior": "Go ControlSink interface and MemoryControlSink in-memory adapter (IMPLEMENTATION_CHOICE).",
+      "effective_evidence_class": "IMPLEMENTATION_CHOICE",
+      "effective_mandatory_for_original_parity": false,
+      "implementation_choice_parts": [
+        "ControlSink_go_interface",
+        "MemoryControlSink_adapter"
+      ],
+      "rationale": "Interfaces created to enable decoupled in-memory testing are implementation choices rather than protocol parity facts."
+    },
+    {
+      "contract_id": "DC-B2-12",
+      "original_claim": "Messages on clipboard-channel with type 'set_clipboard' extract text, paste flag, and origin_client_id, passing to ClipboardProvider (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Claiming the 'paste' flag as STATIC_CONFIRMED mandatory parity contradicts original binary evidence DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json, which lists set_clipboard fields as ['type', 'text', 'source', 'origin_client_id']. 'paste' is absent from original Agent binary handlers.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3860, clipboard_channel_messages.set_clipboard)",
+      "corrected_original_parity_claim": "Messages with type 'set_clipboard' extract text, source, and origin_client_id and update the clipboard state.",
+      "non_original_compatibility_behavior": "Optional extraction of paste and suppress_broadcast fields from frontend client (REFERENCE_ONLY).",
+      "effective_evidence_class": "STATIC_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "reference_only_parts": [
+        "paste_field",
+        "suppress_broadcast_field"
+      ],
+      "rationale": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json explicitly lists set_clipboard fields as ['type', 'text', 'source', 'origin_client_id']. The 'paste' field originated from useWebRTC.js:1200."
+    },
+    {
+      "contract_id": "DC-B2-13",
+      "original_claim": "Messages on clipboard-channel with type 'get_clipboard' retrieve text from ClipboardProvider and transmit JSON response {type: 'clipboard', text, source: 'device', origin_client_id: null} (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Claiming the entire client-expected response schema as STATIC_CONFIRMED original protocol evidence is unsupported; original forensic artifacts only prove the get_clipboard request field ['type'] and handler VA, while the full response schema is a client-side contract corroborated by frontend useWebRTC.js:773-778.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e38ce, clipboard_channel_messages.get_clipboard)",
+      "corrected_original_parity_claim": "Messages with type 'get_clipboard' trigger a clipboard text response frame on clipboard-channel containing the current clipboard text.",
+      "non_original_compatibility_behavior": "Frontend response envelope format {type: 'clipboard', text, source: 'device', origin_client_id: null} (REFERENCE_ONLY / COMBINED_CORROBORATION).",
+      "effective_evidence_class": "STATIC_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "reference_only_parts": [
+        "full_client_response_envelope_corroboration"
+      ],
+      "rationale": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json confirms the ingress get_clipboard message discriminator. The full egress envelope structure is verified via reference frontend useWebRTC.js."
+    },
+    {
+      "contract_id": "DC-B2-14",
+      "original_claim": "Clipboard operations interact via a narrow ClipboardProvider interface (Get/Set) without requiring live Android ClipboardManager in tests (COMBINED_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "The Go ClipboardProvider interface and in-memory mock are architectural reconstruction choices to decouple tests from Android Binder IPC. They do not constitute original protocol parity.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json (channels.clipboard-channel.target_downstream)",
+      "corrected_original_parity_claim": "Clipboard get/set operations target the downstream Android ClipboardManager / System Service boundary.",
+      "non_original_compatibility_behavior": "Go ClipboardProvider interface and MemoryClipboardProvider in-memory mock (IMPLEMENTATION_CHOICE).",
+      "effective_evidence_class": "IMPLEMENTATION_CHOICE",
+      "effective_mandatory_for_original_parity": false,
+      "implementation_choice_parts": [
+        "ClipboardProvider_go_interface",
+        "MemoryClipboardProvider_mock"
+      ],
+      "rationale": "Decoupling Binder services via a Go interface is a clean-room implementation choice, not original binary protocol parity."
+    },
+    {
+      "contract_id": "DC-B2-15",
+      "original_claim": "Malformed JSON, invalid types, empty strings, truncated payloads, and unknown event discriminators are dropped gracefully without panic (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Classifying defensive reconstructed parser robustness as STATIC_CONFIRMED mandatory parity conflates sound defensive engineering with literal original binary parity.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-08)",
+      "corrected_original_parity_claim": "Agent handles malformed or out-of-spec input without goroutine panics.",
+      "non_original_compatibility_behavior": "Defensive size limits (262130 bytes) and defensive inbound peer notification handling (IMPLEMENTATION_CHOICE).",
+      "effective_evidence_class": "IMPLEMENTATION_CHOICE",
+      "effective_mandatory_for_original_parity": false,
+      "implementation_choice_parts": [
+        "defensive_payload_bound_262130",
+        "peer_notification_defensive_drop"
+      ],
+      "rationale": "Defensive programming and fuzzing limits are clean-room implementation choices."
+    },
+    {
+      "contract_id": "DC-B2-16",
+      "original_claim": "Channels 'camera-channel', 'file-channel', 'ai-command-channel', and 'adb-channel' remain deferred with inert lifecycle hooks only (COMBINED_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Classifying deferred channel inactivity as mandatory original protocol parity is logically flawed; keeping future channels inert is a clean-room reconstruction phase-scope guard, not an original protocol feature.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-08)",
+      "corrected_original_parity_claim": "Reconstructed Agent enforces phase isolation by attaching only inert lifecycle hooks to non-B2 channels.",
+      "non_original_compatibility_behavior": "Phase-scope guard enforced by whole-tree static scanner (PHASE_SCOPE_GUARD).",
+      "effective_evidence_class": "PHASE_SCOPE_GUARD",
+      "effective_mandatory_for_original_parity": false,
+      "phase_scope_parts": [
+        "deferred_channels_isolation_audit"
+      ],
+      "rationale": "Deferring channels to subsequent phases (B3, B4, B5) is a reconstruction workflow boundary, not a behavior of the original system."
+    }
+  ]
+}

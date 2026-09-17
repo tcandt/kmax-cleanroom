@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
 tools/derive_b2_differential.py
-Phase 2C.5B2R3 Machine Derivation & Evidence-Executed Evaluator of DataChannel Differential Results.
+Phase 2C.5B2R4 Machine Derivation & Evidence-Executed Evaluator of DataChannel Differential Results.
 
-Derives DATACHANNEL_B2_DIFFERENTIAL_RESULT.json directly from executable evidence:
+Derives DATACHANNEL_B2_DIFFERENTIAL_RESULT.json directly from executable evidence and effective contract:
+- Validates mandatory coverage against the effective contract view (built via build_b2_effective_contract).
 - Structured evidence_refs with RFC 6901 JSON pointer evaluation and type safety.
 - Executed Go tests with machine-readable -json event parsing for golden frames and SCTP subtests.
-- Whole-tree static boundary scanning for deferred-channel isolation.
+- Whole-tree static boundary scanning for deferred-channel isolation (PHASE_SCOPE_GUARD).
 - Bounded prerequisite matrix for Android original runtime evaluation.
+- Cleanly disaggregated counter families separating original parity from reference compatibility and Go adapters.
 - Deterministic semantic output supporting --check and --output flags.
 """
 
@@ -30,6 +32,7 @@ from tools.audit.b2_common import (
     validate_evidence_ref,
     validate_path_safety,
 )
+from tools.audit.build_b2_effective_contract import build_effective_contract
 
 ALLOWED_CLASSIFICATIONS = {
     "STATIC_PROTOCOL_EVIDENCE",
@@ -39,6 +42,7 @@ ALLOWED_CLASSIFICATIONS = {
     "SEMANTIC_PARITY",
     "REFERENCE_ONLY",
     "IMPLEMENTATION_CHOICE",
+    "PHASE_SCOPE_GUARD",
     "ENVIRONMENT_UNAVAILABLE",
     "VERIFIED_DIVERGENCE",
     "FAILED",
@@ -218,6 +222,11 @@ RAW_DIMENSIONS = [
                 "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
                 "json_pointer": "/clipboard_channel_messages/set_clipboard/classification",
                 "expected": "STATIC_CONFIRMED",
+            },
+            {
+                "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+                "json_pointer": "/clipboard_channel_messages/set_clipboard/fields/0",
+                "expected": "type",
             }
         ],
     },
@@ -238,16 +247,21 @@ RAW_DIMENSIONS = [
     },
     {
         "id": "DC-B2-DIM-14",
-        "name": "clipboard_response_schema",
+        "name": "get_clipboard_request_framing",
         "contract_ids": ["DC-B2-13"],
         "classification": "STATIC_PROTOCOL_EVIDENCE",
-        "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json, useWebRTC.js:773-778",
-        "runtime_basis": "TestGetClipboard sends {type: 'clipboard', text, source: 'device', origin_client_id: null}",
+        "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e38ce, get_clipboard.fields = ['type'])",
+        "runtime_basis": "TestGetClipboard parses {type: 'get_clipboard'}",
         "evidence_refs": [
             {
                 "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
                 "json_pointer": "/clipboard_channel_messages/get_clipboard/fields/0",
                 "expected": "type",
+            },
+            {
+                "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+                "json_pointer": "/clipboard_channel_messages/get_clipboard/classification",
+                "expected": "STATIC_CONFIRMED",
             }
         ],
     },
@@ -294,8 +308,8 @@ RAW_DIMENSIONS = [
         "id": "DC-B2-DIM-18",
         "name": "deferred_channels_isolation",
         "contract_ids": ["DC-B2-16"],
-        "classification": "SEMANTIC_PARITY",
-        "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-08)",
+        "classification": "PHASE_SCOPE_GUARD",
+        "evidence_basis": "DATACHANNEL_B2_CONTRACT_ERRATA.json (DC-B2-16 Phase Scope Guard)",
         "runtime_basis": "Whole-tree boundary scanner verifies camera, file, ai-command, adb inert in pkg/",
     },
     {
@@ -306,6 +320,7 @@ RAW_DIMENSIONS = [
         "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1032 ('type': 'touch')",
         "runtime_basis": "TestHandleInputMessageEndToEnd/touch_alias_type",
         "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+        "reference_needle": "type: 'touch'",
     },
     {
         "id": "DC-B2-DIM-20",
@@ -315,6 +330,7 @@ RAW_DIMENSIONS = [
         "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1034-1035 (seq, client_ts_ms)",
         "runtime_basis": "TouchEvent struct unmarshals without error",
         "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+        "reference_needle": "client_ts_ms: clientTsMs",
     },
     {
         "id": "DC-B2-DIM-21",
@@ -324,6 +340,7 @@ RAW_DIMENSIONS = [
         "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1200-1202 (paste, suppress_broadcast)",
         "runtime_basis": "SetClipboardMessage struct unmarshals without error",
         "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+        "reference_needle": "paste: Boolean(normalized.paste)",
     },
     {
         "id": "DC-B2-DIM-22",
@@ -354,7 +371,7 @@ RAW_DIMENSIONS = [
         "name": "control_sink_adapter",
         "contract_ids": ["DC-B2-11"],
         "classification": "IMPLEMENTATION_CHOICE",
-        "evidence_basis": "Boundary abstraction for @uds_sys_t_",
+        "evidence_basis": "Boundary abstraction for @uds_sys_t_ (DATACHANNEL_B2_CONTRACT_ERRATA.json DC-B2-11)",
         "runtime_basis": "MemoryControlSink in-memory test implementation",
     },
     {
@@ -362,25 +379,31 @@ RAW_DIMENSIONS = [
         "name": "clipboard_provider_adapter",
         "contract_ids": ["DC-B2-14"],
         "classification": "IMPLEMENTATION_CHOICE",
-        "evidence_basis": "Boundary abstraction for Android ClipboardManager",
+        "evidence_basis": "Boundary abstraction for Android ClipboardManager (DATACHANNEL_B2_CONTRACT_ERRATA.json DC-B2-14)",
         "runtime_basis": "MemoryClipboardProvider in-memory test implementation",
     },
     {
         "id": "DC-B2-DIM-26",
         "name": "original_agent_datachannel_runtime_parity",
-        "contract_ids": ["DC-B2-01", "DC-B2-02", "DC-B2-11", "DC-B2-14"],
+        "contract_ids": ["DC-B2-01", "DC-B2-02"],
         "classification": "ENVIRONMENT_UNAVAILABLE",
         "evidence_basis": "Android runtime requiring the original Agent/helper execution context, including shell UID 2000 and abstract UDS endpoints",
         "runtime_basis": "Host environment is Windows AMD64 desktop without Android emulator / app_process",
+    },
+    {
+        "id": "DC-B2-DIM-27",
+        "name": "clipboard_response_envelope_client_schema",
+        "contract_ids": ["DC-B2-13"],
+        "classification": "REFERENCE_ONLY",
+        "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:773-778 ({type: 'clipboard', text, source: 'device', origin_client_id: null})",
+        "runtime_basis": "TestGetClipboard validates response schema matching useWebRTC.js onmessage expectations",
+        "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+        "reference_needle": "msg.source || 'device'",
     },
 ]
 
 
 def execute_go_tests_suite(agent_dir: Path, pkg: str, run_pattern: str) -> Dict[str, Any]:
-    """
-    Executes Go tests using -json machine-readable reporting with timeout.
-    Returns parsed events and process exit code.
-    """
     cmd = ["go", "test", "-json", "-count=1", f"-run={run_pattern}", pkg]
     try:
         proc = subprocess.run(
@@ -410,15 +433,10 @@ def evaluate_dimension_result(
     test_results_cache: Dict[str, Any],
     repo_root: Path,
 ) -> Tuple[str, Dict[str, Any]]:
-    """
-    Evaluates a single dimension result using genuine executable or structural evidence.
-    Returns (result, execution_evidence).
-    """
     cls = dim["classification"]
-    did = dim["id"]
 
     if cls == "ENVIRONMENT_UNAVAILABLE":
-        prereq_res = evaluate_android_runtime_prerequisites()
+        prereq_res = evaluate_android_runtime_prerequisites(repo_root)
         return prereq_res["verdict"], {
             "type": "android_prerequisite_matrix",
             "prerequisites": prereq_res["prerequisites"],
@@ -515,7 +533,7 @@ def evaluate_dimension_result(
             "elapsed": sub_info.get("elapsed"),
         }
 
-    if cls == "SEMANTIC_PARITY":
+    if cls in ("PHASE_SCOPE_GUARD", "SEMANTIC_PARITY"):
         agent_pkg_dir = repo_root / "reconstructed_source" / "cloudphone-agent" / "pkg"
         violations = scan_deferred_channels_isolation(agent_pkg_dir)
         if violations:
@@ -524,17 +542,22 @@ def evaluate_dimension_result(
                 "violations": violations,
             }
         return "PASS", {
-            "type": "executed_whole_tree_scanner",
+            "type": "executed_phase_scope_scanner",
             "target": str(agent_pkg_dir.as_posix()),
             "violations_count": 0,
         }
 
     if cls == "REFERENCE_ONLY":
         ref_src = dim.get("reference_source")
+        needle = dim.get("reference_needle")
         if ref_src:
             ref_path = repo_root / ref_src
             if not ref_path.exists():
                 return "FAILED", {"error": f"Reference source missing: {ref_src}"}
+            if needle:
+                content = ref_path.read_text(encoding="utf-8")
+                if needle not in content:
+                    return "FAILED", {"error": f"Reference needle {needle!r} missing in {ref_src}"}
         return "PASS", {
             "type": "reference_only_validation",
             "note": "Provenance classification and compatibility behavior were validated (does not contribute to original protocol parity)",
@@ -549,7 +572,6 @@ def evaluate_dimension_result(
             cached = test_results_cache.get(cache_key)
             if not cached:
                 agent_dir = repo_root / "reconstructed_source" / "cloudphone-agent"
-                # Subtest pattern handling
                 pattern = f"^{test_name}$" if "/" not in test_name else f"^{test_name.split('/')[0]}/{test_name.split('/')[1]}$"
                 cached = execute_go_tests_suite(agent_dir, pkg, pattern)
                 test_results_cache[cache_key] = cached
@@ -571,16 +593,15 @@ def compute_and_validate_dimensions(
     if test_results_cache is None:
         test_results_cache = {}
 
-    contract_path = repo_root / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json"
-    if not contract_path.exists():
-        raise FileNotFoundError(f"Contract file missing: {contract_path}")
-
-    contract = json.loads(contract_path.read_text(encoding="utf-8"))
-    valid_contract_ids = {r["id"] for r in contract.get("requirements", [])}
-    mandatory_contract_ids = {r["id"] for r in contract.get("requirements", []) if r.get("mandatory_for_parity") is True}
+    # Build effective contract view dynamically
+    effective_contract = build_effective_contract(repo_root)
+    eff_reqs = effective_contract.get("effective_requirements", [])
+    valid_contract_ids = {r["base_contract_id"] for r in eff_reqs}
+    mandatory_parity_cids = {r["base_contract_id"] for r in eff_reqs if r.get("effective_mandatory_for_original_parity") is True}
 
     seen_ids = set()
     covered_contract_ids = set()
+    covered_parity_cids = set()
     evaluated_dims = []
 
     for d in raw_dims:
@@ -602,6 +623,8 @@ def compute_and_validate_dimensions(
             if cid not in valid_contract_ids:
                 raise ValueError(f"Dimension {dim_id} references unknown contract ID '{cid}'")
             covered_contract_ids.add(cid)
+            if cls in {"STATIC_PROTOCOL_EVIDENCE", "EXACT_BINARY_FRAME", "RUNTIME_RECONSTRUCTED_E2E"}:
+                covered_parity_cids.add(cid)
 
         if not d.get("evidence_basis"):
             raise ValueError(f"Dimension {dim_id} has empty evidence_basis")
@@ -618,25 +641,27 @@ def compute_and_validate_dimensions(
         eval_d["execution_evidence"] = exec_evidence
         evaluated_dims.append(eval_d)
 
-    # Validate mandatory contract coverage
-    uncovered = mandatory_contract_ids - covered_contract_ids
-    if uncovered:
-        raise ValueError(f"Missing coverage for mandatory contract requirements: {sorted(uncovered)}")
+    # Validate mandatory contract coverage against effective original parity requirements
+    uncovered_parity = mandatory_parity_cids - covered_parity_cids
+    if uncovered_parity:
+        raise ValueError(f"Missing coverage for mandatory original-parity requirements: {sorted(uncovered_parity)}")
 
-    # Compute counters
+    # Compute clean disaggregated counters
     counters = {
-        "static_protocol_evidence_total": sum(1 for d in evaluated_dims if d["classification"] == "STATIC_PROTOCOL_EVIDENCE"),
-        "static_protocol_evidence_passed": sum(1 for d in evaluated_dims if d["classification"] == "STATIC_PROTOCOL_EVIDENCE" and d["result"] == "PASS"),
+        "original_static_evidence_total": sum(1 for d in evaluated_dims if d["classification"] == "STATIC_PROTOCOL_EVIDENCE"),
+        "original_static_evidence_passed": sum(1 for d in evaluated_dims if d["classification"] == "STATIC_PROTOCOL_EVIDENCE" and d["result"] == "PASS"),
         "exact_binary_frame_total": sum(1 for d in evaluated_dims if d["classification"] == "EXACT_BINARY_FRAME"),
         "exact_binary_frame_passed": sum(1 for d in evaluated_dims if d["classification"] == "EXACT_BINARY_FRAME" and d["result"] == "PASS"),
         "reconstructed_runtime_e2e_total": sum(1 for d in evaluated_dims if d["classification"] == "RUNTIME_RECONSTRUCTED_E2E"),
         "reconstructed_runtime_e2e_passed": sum(1 for d in evaluated_dims if d["classification"] == "RUNTIME_RECONSTRUCTED_E2E" and d["result"] == "PASS"),
         "original_agent_runtime_parity_total": sum(1 for d in evaluated_dims if d["classification"] == "ORIGINAL_AGENT_RUNTIME_PARITY"),
         "original_agent_runtime_parity_passed": sum(1 for d in evaluated_dims if d["classification"] == "ORIGINAL_AGENT_RUNTIME_PARITY" and d["result"] == "PASS"),
-        "semantic_parity_total": sum(1 for d in evaluated_dims if d["classification"] == "SEMANTIC_PARITY"),
-        "semantic_parity_passed": sum(1 for d in evaluated_dims if d["classification"] == "SEMANTIC_PARITY" and d["result"] == "PASS"),
+        "phase_scope_guard_total": sum(1 for d in evaluated_dims if d["classification"] == "PHASE_SCOPE_GUARD"),
+        "phase_scope_guard_passed": sum(1 for d in evaluated_dims if d["classification"] == "PHASE_SCOPE_GUARD" and d["result"] == "PASS"),
         "reference_only_total": sum(1 for d in evaluated_dims if d["classification"] == "REFERENCE_ONLY"),
+        "reference_only_passed": sum(1 for d in evaluated_dims if d["classification"] == "REFERENCE_ONLY" and d["result"] == "PASS"),
         "implementation_choice_total": sum(1 for d in evaluated_dims if d["classification"] == "IMPLEMENTATION_CHOICE"),
+        "implementation_choice_passed": sum(1 for d in evaluated_dims if d["classification"] == "IMPLEMENTATION_CHOICE" and d["result"] == "PASS"),
         "environment_unavailable_total": sum(1 for d in evaluated_dims if d["classification"] == "ENVIRONMENT_UNAVAILABLE"),
         "verified_divergence_total": sum(1 for d in evaluated_dims if d["classification"] == "VERIFIED_DIVERGENCE"),
         "failed_total": sum(1 for d in evaluated_dims if d["result"] == "FAILED" or d["classification"] == "FAILED"),
@@ -644,13 +669,15 @@ def compute_and_validate_dimensions(
 
     # Strict fail-closed closure logic
     is_closed = (
-        counters["static_protocol_evidence_total"] > 0 and
-        counters["static_protocol_evidence_passed"] == counters["static_protocol_evidence_total"] and
+        counters["original_static_evidence_total"] > 0 and
+        counters["original_static_evidence_passed"] == counters["original_static_evidence_total"] and
         counters["exact_binary_frame_total"] > 0 and
         counters["exact_binary_frame_passed"] == counters["exact_binary_frame_total"] and
         counters["reconstructed_runtime_e2e_total"] > 0 and
         counters["reconstructed_runtime_e2e_passed"] == counters["reconstructed_runtime_e2e_total"] and
-        counters["semantic_parity_passed"] == counters["semantic_parity_total"] and
+        counters["phase_scope_guard_passed"] == counters["phase_scope_guard_total"] and
+        counters["implementation_choice_passed"] == counters["implementation_choice_total"] and
+        counters["reference_only_passed"] == counters["reference_only_total"] and
         counters["failed_total"] == 0 and
         (counters["original_agent_runtime_parity_total"] == 0 or
          counters["original_agent_runtime_parity_passed"] == counters["original_agent_runtime_parity_total"])
@@ -668,10 +695,11 @@ def generate_differential_payload(
     return {
         "metadata": {
             "title": "Phase 2C.5B2 DataChannel Protocol Differential Result",
-            "phase": "Phase 2C.5B2R3",
-            "canonical_timestamp": "2026-09-17T19:20:00Z",
+            "phase": "Phase 2C.5B2R4",
+            "canonical_timestamp": "2026-09-17T20:00:00Z",
             "classification": "Clean-room behavioral/protocol reconstruction",
             "derivation_tool": "tools/derive_b2_differential.py",
+            "contract_mode": "effective_contract_with_errata",
             "engine": "evidence-executed",
         },
         "counters": counters,
@@ -681,14 +709,14 @@ def generate_differential_payload(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Phase 2C.5B2R3 Evidence-Executed Differential Deriver")
+    parser = argparse.ArgumentParser(description="Phase 2C.5B2R4 Evidence-Executed Differential Deriver")
     parser.add_argument("--output", type=str, help="Target output file path for generated JSON")
     parser.add_argument("--check", action="store_true", help="Audit mode: verify regeneration against canonical without modifying canonical")
     args = parser.parse_args()
 
     canonical_path = ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_DIFFERENTIAL_RESULT.json"
 
-    print("[*] Deriving Phase 2C.5B2 DataChannel differential from executable evidence...")
+    print("[*] Deriving Phase 2C.5B2 DataChannel differential from executable evidence and effective contract...")
     payload = generate_differential_payload(RAW_DIMENSIONS, repo_root=ROOT)
     verdict = payload["overall_verdict"]
     counters = payload["counters"]
@@ -707,7 +735,6 @@ def main():
             print(f"[FAIL] Canonical differential result does not exist: {canonical_path}", file=sys.stderr)
             sys.exit(1)
 
-        # Write to target_path if specified
         if args.output:
             target_path.parent.mkdir(parents=True, exist_ok=True)
             target_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
@@ -715,13 +742,10 @@ def main():
 
         canonical_data = json.loads(canonical_path.read_text(encoding="utf-8"))
 
-        # Semantic normalized comparison
-        # Compare counters, overall_verdict, and evaluated_dimensions (excluding volatile duration if any)
         def normalize_payload(p):
             dims = []
             for d in p.get("evaluated_dimensions", []):
                 d_copy = dict(d)
-                # Keep deterministic
                 if "execution_evidence" in d_copy:
                     ev = dict(d_copy["execution_evidence"])
                     ev.pop("elapsed", None)

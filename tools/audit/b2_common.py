@@ -12,7 +12,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 ALLOWED_REPO_ROOT_PREFIXES = ("evidence/", "raw_extraction/", "reports/")
 
@@ -238,11 +238,15 @@ def parse_go_test_json(stdout: str) -> Dict[str, Any]:
     }
 
 
-def evaluate_android_runtime_prerequisites() -> Dict[str, Any]:
+def evaluate_android_runtime_prerequisites(repo_root: Optional[Path] = None) -> Dict[str, Any]:
     """
-    Evaluates authentic Android runtime prerequisites independently.
-    Does not assume availability from host platform alone.
+    Evaluates authentic Android runtime prerequisites dynamically.
+    Evaluates repository artifact availability, target OS platform,
+    app_process, shell UID 2000 context, abstract UDS capability, and safe launch.
     """
+    if repo_root is None:
+        repo_root = Path(__file__).resolve().parent.parent.parent
+
     prereqs = {
         "original_agent_artifact_available": False,
         "compatible_android_target_available": False,
@@ -253,13 +257,49 @@ def evaluate_android_runtime_prerequisites() -> Dict[str, Any]:
         "safe_launch_capability": False,
     }
 
+    # 1. Evaluate canonical original Agent artifact in repository
+    agent_elf = repo_root / "cloudphone-v0.3.6 (1)" / "android" / "cloudphone-agent"
+    if agent_elf.exists() and agent_elf.stat().st_size > 0:
+        prereqs["original_agent_artifact_available"] = True
+
+    # 2. Evaluate original helper artifacts in repository
+    helper_dir = repo_root / "raw_extraction" / "android"
+    if helper_dir.exists() and any(helper_dir.iterdir()):
+        prereqs["helper_artifact_available"] = True
+
+    # 3. Evaluate target execution environment (requires Linux/Android)
     is_linux = sys.platform.startswith("linux")
     if is_linux:
+        # Check app_process binary
         if os.path.exists("/system/bin/app_process") or os.path.exists("/system/bin/app_process64"):
             prereqs["app_process_available"] = True
+
+        # Check Android shell environment and socket directory
         if os.path.exists("/system/bin/sh") and os.path.exists("/dev/socket"):
             prereqs["compatible_android_target_available"] = True
-            prereqs["abstract_uds_support"] = True
+
+        # Check shell UID 2000 execution context
+        try:
+            if os.getuid() == 2000 or os.geteuid() == 2000:
+                prereqs["execution_context_shell_uid_2000"] = True
+        except AttributeError:
+            pass
+
+        # Check abstract UDS socket capability
+        try:
+            import socket
+            if hasattr(socket, "AF_UNIX"):
+                s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                s.close()
+                prereqs["abstract_uds_support"] = True
+        except Exception:
+            pass
+
+        prereqs["safe_launch_capability"] = (
+            prereqs["original_agent_artifact_available"]
+            and prereqs["app_process_available"]
+            and prereqs["compatible_android_target_available"]
+        )
 
     is_available = all(prereqs.values())
     return {
@@ -269,6 +309,6 @@ def evaluate_android_runtime_prerequisites() -> Dict[str, Any]:
         "diagnostic": (
             "Genuine Android runtime environment available"
             if is_available else
-            "Android runtime requiring original Agent/helper execution context (shell UID 2000, app_process, abstract UDS) is unavailable on current host"
+            f"Android runtime unavailable: missing {sorted([k for k, v in prereqs.items() if not v])}"
         ),
     }

@@ -1,25 +1,28 @@
 {
   "metadata": {
     "title": "Phase 2C.5B2 DataChannel Protocol Differential Result",
-    "phase": "Phase 2C.5B2R3",
-    "canonical_timestamp": "2026-09-17T19:20:00Z",
+    "phase": "Phase 2C.5B2R4",
+    "canonical_timestamp": "2026-09-17T20:00:00Z",
     "classification": "Clean-room behavioral/protocol reconstruction",
     "derivation_tool": "tools/derive_b2_differential.py",
+    "contract_mode": "effective_contract_with_errata",
     "engine": "evidence-executed"
   },
   "counters": {
-    "static_protocol_evidence_total": 9,
-    "static_protocol_evidence_passed": 9,
+    "original_static_evidence_total": 9,
+    "original_static_evidence_passed": 9,
     "exact_binary_frame_total": 5,
     "exact_binary_frame_passed": 5,
     "reconstructed_runtime_e2e_total": 3,
     "reconstructed_runtime_e2e_passed": 3,
     "original_agent_runtime_parity_total": 0,
     "original_agent_runtime_parity_passed": 0,
-    "semantic_parity_total": 1,
-    "semantic_parity_passed": 1,
-    "reference_only_total": 3,
+    "phase_scope_guard_total": 1,
+    "phase_scope_guard_passed": 1,
+    "reference_only_total": 4,
+    "reference_only_passed": 4,
     "implementation_choice_total": 4,
+    "implementation_choice_passed": 4,
     "environment_unavailable_total": 1,
     "verified_divergence_total": 0,
     "failed_total": 0
@@ -292,12 +295,17 @@
           "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
           "json_pointer": "/clipboard_channel_messages/set_clipboard/classification",
           "expected": "STATIC_CONFIRMED"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+          "json_pointer": "/clipboard_channel_messages/set_clipboard/fields/0",
+          "expected": "type"
         }
       ],
       "result": "PASS",
       "execution_evidence": {
         "type": "structured_evidence_ref",
-        "validated_count": 1
+        "validated_count": 2
       }
     },
     {
@@ -324,24 +332,29 @@
     },
     {
       "id": "DC-B2-DIM-14",
-      "name": "clipboard_response_schema",
+      "name": "get_clipboard_request_framing",
       "contract_ids": [
         "DC-B2-13"
       ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
-      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json, useWebRTC.js:773-778",
-      "runtime_basis": "TestGetClipboard sends {type: 'clipboard', text, source: 'device', origin_client_id: null}",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e38ce, get_clipboard.fields = ['type'])",
+      "runtime_basis": "TestGetClipboard parses {type: 'get_clipboard'}",
       "evidence_refs": [
         {
           "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
           "json_pointer": "/clipboard_channel_messages/get_clipboard/fields/0",
           "expected": "type"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+          "json_pointer": "/clipboard_channel_messages/get_clipboard/classification",
+          "expected": "STATIC_CONFIRMED"
         }
       ],
       "result": "PASS",
       "execution_evidence": {
         "type": "structured_evidence_ref",
-        "validated_count": 1
+        "validated_count": 2
       }
     },
     {
@@ -429,12 +442,12 @@
       "contract_ids": [
         "DC-B2-16"
       ],
-      "classification": "SEMANTIC_PARITY",
-      "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-08)",
+      "classification": "PHASE_SCOPE_GUARD",
+      "evidence_basis": "DATACHANNEL_B2_CONTRACT_ERRATA.json (DC-B2-16 Phase Scope Guard)",
       "runtime_basis": "Whole-tree boundary scanner verifies camera, file, ai-command, adb inert in pkg/",
       "result": "PASS",
       "execution_evidence": {
-        "type": "executed_whole_tree_scanner",
+        "type": "executed_phase_scope_scanner",
         "target": "D:/KMAX-CLEANROOM/reconstructed_source/cloudphone-agent/pkg",
         "violations_count": 0
       }
@@ -449,6 +462,7 @@
       "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1032 ('type': 'touch')",
       "runtime_basis": "TestHandleInputMessageEndToEnd/touch_alias_type",
       "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "reference_needle": "type: 'touch'",
       "result": "PASS",
       "execution_evidence": {
         "type": "reference_only_validation",
@@ -465,6 +479,7 @@
       "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1034-1035 (seq, client_ts_ms)",
       "runtime_basis": "TouchEvent struct unmarshals without error",
       "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "reference_needle": "client_ts_ms: clientTsMs",
       "result": "PASS",
       "execution_evidence": {
         "type": "reference_only_validation",
@@ -481,6 +496,7 @@
       "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1200-1202 (paste, suppress_broadcast)",
       "runtime_basis": "SetClipboardMessage struct unmarshals without error",
       "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "reference_needle": "paste: Boolean(normalized.paste)",
       "result": "PASS",
       "execution_evidence": {
         "type": "reference_only_validation",
@@ -532,7 +548,7 @@
         "DC-B2-11"
       ],
       "classification": "IMPLEMENTATION_CHOICE",
-      "evidence_basis": "Boundary abstraction for @uds_sys_t_",
+      "evidence_basis": "Boundary abstraction for @uds_sys_t_ (DATACHANNEL_B2_CONTRACT_ERRATA.json DC-B2-11)",
       "runtime_basis": "MemoryControlSink in-memory test implementation",
       "result": "PASS",
       "execution_evidence": {
@@ -547,7 +563,7 @@
         "DC-B2-14"
       ],
       "classification": "IMPLEMENTATION_CHOICE",
-      "evidence_basis": "Boundary abstraction for Android ClipboardManager",
+      "evidence_basis": "Boundary abstraction for Android ClipboardManager (DATACHANNEL_B2_CONTRACT_ERRATA.json DC-B2-14)",
       "runtime_basis": "MemoryClipboardProvider in-memory test implementation",
       "result": "PASS",
       "execution_evidence": {
@@ -560,9 +576,7 @@
       "name": "original_agent_datachannel_runtime_parity",
       "contract_ids": [
         "DC-B2-01",
-        "DC-B2-02",
-        "DC-B2-11",
-        "DC-B2-14"
+        "DC-B2-02"
       ],
       "classification": "ENVIRONMENT_UNAVAILABLE",
       "evidence_basis": "Android runtime requiring the original Agent/helper execution context, including shell UID 2000 and abstract UDS endpoints",
@@ -571,15 +585,32 @@
       "execution_evidence": {
         "type": "android_prerequisite_matrix",
         "prerequisites": {
-          "original_agent_artifact_available": false,
+          "original_agent_artifact_available": true,
           "compatible_android_target_available": false,
           "app_process_available": false,
-          "helper_artifact_available": false,
+          "helper_artifact_available": true,
           "execution_context_shell_uid_2000": false,
           "abstract_uds_support": false,
           "safe_launch_capability": false
         },
-        "diagnostic": "Android runtime requiring original Agent/helper execution context (shell UID 2000, app_process, abstract UDS) is unavailable on current host"
+        "diagnostic": "Android runtime unavailable: missing ['abstract_uds_support', 'app_process_available', 'compatible_android_target_available', 'execution_context_shell_uid_2000', 'safe_launch_capability']"
+      }
+    },
+    {
+      "id": "DC-B2-DIM-27",
+      "name": "clipboard_response_envelope_client_schema",
+      "contract_ids": [
+        "DC-B2-13"
+      ],
+      "classification": "REFERENCE_ONLY",
+      "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:773-778 ({type: 'clipboard', text, source: 'device', origin_client_id: null})",
+      "runtime_basis": "TestGetClipboard validates response schema matching useWebRTC.js onmessage expectations",
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "reference_needle": "msg.source || 'device'",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "reference_only_validation",
+        "note": "Provenance classification and compatibility behavior were validated (does not contribute to original protocol parity)"
       }
     }
   ]

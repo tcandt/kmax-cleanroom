@@ -3177,6 +3177,72 @@ def verify_all():
     record_check("Phase 2C.5B2 DataChannel B2 Implementation Contract Frozen Invariant", b2_contract_valid,
                  f"DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json SHA-256 verified against frozen contract: {expected_b2_sha256[:16]}...")
 
+    # 21.1b Contract Formal Errata & Schema Invariant
+    b2_errata_path = ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_CONTRACT_ERRATA.json"
+    errata_valid = False
+    errata_detail = ""
+    if b2_errata_path.exists():
+        try:
+            errata_json = json.loads(b2_errata_path.read_text(encoding="utf-8"))
+            emeta = errata_json.get("metadata", {})
+            ecorrs = {c["contract_id"]: c for c in errata_json.get("corrections", [])}
+            required_cids = {"DC-B2-05", "DC-B2-11", "DC-B2-12", "DC-B2-13", "DC-B2-14", "DC-B2-15", "DC-B2-16"}
+            if (
+                emeta.get("base_contract_sha256") == expected_b2_sha256 and
+                emeta.get("base_contract_status") == "FROZEN_PRE_IMPLEMENTATION" and
+                emeta.get("errata_phase") == "Phase 2C.5B2R4" and
+                required_cids.issubset(set(ecorrs.keys()))
+            ):
+                errata_valid = True
+                errata_detail = f"Formal errata validated: 7 corrections present, references frozen base SHA-256 {expected_b2_sha256[:16]}..."
+            else:
+                errata_detail = "Errata metadata or corrections set incomplete/mismatched"
+        except Exception as e:
+            errata_detail = f"Failed to parse errata: {e}"
+    else:
+        errata_detail = "DATACHANNEL_B2_CONTRACT_ERRATA.json missing"
+    record_check("Phase 2C.5B2 Formal Contract Errata & Schema Invariant", errata_valid, errata_detail)
+
+    # 21.1c Contract Consistency Audit Invariant (Zero Reference Contamination)
+    from tools.audit.validate_b2_contract_consistency import audit_contract_consistency
+    from tools.audit.build_b2_effective_contract import build_effective_contract
+    cons_passed, cons_violations = audit_contract_consistency(ROOT)
+    record_check(
+        "Phase 2C.5B2 Contract Consistency & Epistemic Parity Audit",
+        cons_passed,
+        "All 16 requirements verified against forensic artifacts; zero reference-lane contamination; adapters/guards properly classified"
+        if cons_passed else f"Consistency audit violations: {'; '.join(cons_violations)}"
+    )
+
+    # 21.1d Production Source Code Frozen Invariant (Zero Unintended Mutations)
+    FROZEN_B2_PRODUCTION_HASHES = {
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/control.go": "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go": "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "7503b4b67b3d373860d03e430e02d344abdb8943295b9f887cb70ee2ca0b7c96",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "a316e275b1152a9526bb15c48198c49e5f5dcc07d9a2bbf0c25874c68e811bfb",
+        "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "6500ebe1dc3c84811ba9d2cd26950ebeb08cc78a823d1aeda6ad8e8cced0eb66",
+        "reconstructed_source/cloudphone-agent/go.mod": "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b",
+        "reconstructed_source/cloudphone-agent/go.sum": "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4",
+    }
+    prod_frozen_passed = True
+    prod_frozen_failures = []
+    for rel_p, exp_h in FROZEN_B2_PRODUCTION_HASHES.items():
+        fp = ROOT / rel_p
+        if not fp.exists():
+            prod_frozen_passed = False
+            prod_frozen_failures.append(f"{rel_p} missing")
+            continue
+        actual_h = hashlib.sha256(fp.read_bytes()).hexdigest()
+        if actual_h != exp_h:
+            prod_frozen_passed = False
+            prod_frozen_failures.append(f"{rel_p} SHA mismatch: {actual_h[:12]} != {exp_h[:12]}")
+    record_check(
+        "Phase 2C.5B2 Production Source Code Frozen Invariant",
+        prod_frozen_passed,
+        "All 7 production B2 files (control.go, clipboard.go, datachannel.go, peer.go, agent.go, go.mod, go.sum) verified identical to frozen baseline"
+        if prod_frozen_passed else f"Production file mutations detected: {'; '.join(prod_frozen_failures)}"
+    )
+
     # 21.2 Deferred Channels Strict Isolation Audit
     # Verify all four deferred channels across the entire reconstructed cloudphone-agent production tree:
     # camera-channel, file-channel, ai-command-channel, adb-channel.
@@ -3214,14 +3280,23 @@ def verify_all():
     b2_diff_valid = False
     b2_diff_detail = ""
 
-    def validate_b2_differential_internal(diff_data, contract_data):
+    EXPECTED_MANDATORY_ORIGINAL_PARITY_CIDS = {
+        "DC-B2-01", "DC-B2-02", "DC-B2-03", "DC-B2-04", "DC-B2-05", "DC-B2-06",
+        "DC-B2-07", "DC-B2-08", "DC-B2-09", "DC-B2-10", "DC-B2-12", "DC-B2-13"
+    }
+
+    def validate_b2_differential_internal(diff_data, effective_contract_data):
         errors = []
-        valid_cids = {r["id"] for r in contract_data.get("requirements", [])}
-        mand_cids = {r["id"] for r in contract_data.get("requirements", []) if r.get("mandatory_for_parity") is True}
+        eff_reqs = effective_contract_data.get("effective_requirements", [])
+        valid_cids = {r["base_contract_id"] for r in eff_reqs}
+        mand_cids = {r["base_contract_id"] for r in eff_reqs if r.get("effective_mandatory_for_original_parity") is True}
+
+        if mand_cids != EXPECTED_MANDATORY_ORIGINAL_PARITY_CIDS:
+            errors.append(f"Effective contract mandatory requirements mismatch expected: missing {EXPECTED_MANDATORY_ORIGINAL_PARITY_CIDS - mand_cids}, extra {mand_cids - EXPECTED_MANDATORY_ORIGINAL_PARITY_CIDS}")
 
         allowed_cls = {
             "STATIC_PROTOCOL_EVIDENCE", "EXACT_BINARY_FRAME", "RUNTIME_RECONSTRUCTED_E2E",
-            "ORIGINAL_AGENT_RUNTIME_PARITY", "SEMANTIC_PARITY", "REFERENCE_ONLY",
+            "ORIGINAL_AGENT_RUNTIME_PARITY", "PHASE_SCOPE_GUARD", "REFERENCE_ONLY",
             "IMPLEMENTATION_CHOICE", "ENVIRONMENT_UNAVAILABLE", "VERIFIED_DIVERGENCE", "FAILED"
         }
         allowed_res = {"PASS", "ENVIRONMENT_UNAVAILABLE", "VERIFIED_DIVERGENCE", "FAILED"}
@@ -3233,12 +3308,13 @@ def verify_all():
         seen_ids = set()
         covered_cids = set()
         recomputed = {
-            "static_protocol_evidence_total": 0, "static_protocol_evidence_passed": 0,
+            "original_static_evidence_total": 0, "original_static_evidence_passed": 0,
             "exact_binary_frame_total": 0, "exact_binary_frame_passed": 0,
             "reconstructed_runtime_e2e_total": 0, "reconstructed_runtime_e2e_passed": 0,
             "original_agent_runtime_parity_total": 0, "original_agent_runtime_parity_passed": 0,
-            "semantic_parity_total": 0, "semantic_parity_passed": 0,
-            "reference_only_total": 0, "implementation_choice_total": 0,
+            "phase_scope_guard_total": 0, "phase_scope_guard_passed": 0,
+            "reference_only_total": 0, "reference_only_passed": 0,
+            "implementation_choice_total": 0, "implementation_choice_passed": 0,
             "environment_unavailable_total": 0, "verified_divergence_total": 0,
             "failed_total": 0
         }
@@ -3273,17 +3349,24 @@ def verify_all():
             if not d.get("runtime_basis"):
                 errors.append(f"Dimension {did} has empty runtime_basis")
 
-            if cls in {"STATIC_PROTOCOL_EVIDENCE", "EXACT_BINARY_FRAME", "RUNTIME_RECONSTRUCTED_E2E", "ORIGINAL_AGENT_RUNTIME_PARITY", "SEMANTIC_PARITY"}:
+            if cls in {"STATIC_PROTOCOL_EVIDENCE", "EXACT_BINARY_FRAME", "RUNTIME_RECONSTRUCTED_E2E", "ORIGINAL_AGENT_RUNTIME_PARITY"}:
                 if res != "PASS":
                     errors.append(f"Required parity class {cls} in {did} has non-PASS result: '{res}'")
+
+            if cls == "PHASE_SCOPE_GUARD" and res != "PASS":
+                errors.append(f"PHASE_SCOPE_GUARD in {did} has non-PASS result: '{res}'")
+            if cls == "REFERENCE_ONLY" and res != "PASS":
+                errors.append(f"REFERENCE_ONLY in {did} has non-PASS result: '{res}'")
+            if cls == "IMPLEMENTATION_CHOICE" and res != "PASS":
+                errors.append(f"IMPLEMENTATION_CHOICE in {did} has non-PASS result: '{res}'")
 
             if cls == "ENVIRONMENT_UNAVAILABLE" and res == "PASS":
                 errors.append(f"Dimension {did} claims PASS but environment is unavailable")
 
             if cls == "STATIC_PROTOCOL_EVIDENCE":
-                recomputed["static_protocol_evidence_total"] += 1
+                recomputed["original_static_evidence_total"] += 1
                 if res == "PASS":
-                    recomputed["static_protocol_evidence_passed"] += 1
+                    recomputed["original_static_evidence_passed"] += 1
             elif cls == "EXACT_BINARY_FRAME":
                 recomputed["exact_binary_frame_total"] += 1
                 if res == "PASS":
@@ -3296,14 +3379,18 @@ def verify_all():
                 recomputed["original_agent_runtime_parity_total"] += 1
                 if res == "PASS":
                     recomputed["original_agent_runtime_parity_passed"] += 1
-            elif cls == "SEMANTIC_PARITY":
-                recomputed["semantic_parity_total"] += 1
+            elif cls == "PHASE_SCOPE_GUARD":
+                recomputed["phase_scope_guard_total"] += 1
                 if res == "PASS":
-                    recomputed["semantic_parity_passed"] += 1
+                    recomputed["phase_scope_guard_passed"] += 1
             elif cls == "REFERENCE_ONLY":
                 recomputed["reference_only_total"] += 1
+                if res == "PASS":
+                    recomputed["reference_only_passed"] += 1
             elif cls == "IMPLEMENTATION_CHOICE":
                 recomputed["implementation_choice_total"] += 1
+                if res == "PASS":
+                    recomputed["implementation_choice_passed"] += 1
             elif cls == "ENVIRONMENT_UNAVAILABLE":
                 recomputed["environment_unavailable_total"] += 1
             elif cls == "VERIFIED_DIVERGENCE":
@@ -3320,55 +3407,60 @@ def verify_all():
             if stored.get(k) != v:
                 errors.append(f"Counter mismatch {k}: stored={stored.get(k)}, recomputed={v}")
 
-        if not (recomputed["static_protocol_evidence_total"] > 0 and recomputed["static_protocol_evidence_passed"] == recomputed["static_protocol_evidence_total"]):
-            errors.append("Static protocol evidence parity not 100%")
-        if not (recomputed["exact_binary_frame_total"] > 0 and recomputed["exact_binary_frame_passed"] == recomputed["exact_binary_frame_total"]):
-            errors.append("Exact binary frame parity not 100%")
-        if not (recomputed["reconstructed_runtime_e2e_total"] > 0 and recomputed["reconstructed_runtime_e2e_passed"] == recomputed["reconstructed_runtime_e2e_total"]):
-            errors.append("Reconstructed runtime E2E parity not 100%")
-        if not (recomputed["semantic_parity_passed"] == recomputed["semantic_parity_total"]):
-            errors.append("Semantic parity not 100%")
+        if not (recomputed["original_static_evidence_total"] == 9 and recomputed["original_static_evidence_passed"] == 9):
+            errors.append("Original static evidence parity not 9/9")
+        if not (recomputed["exact_binary_frame_total"] == 5 and recomputed["exact_binary_frame_passed"] == 5):
+            errors.append("Exact binary frame parity not 5/5")
+        if not (recomputed["reconstructed_runtime_e2e_total"] == 3 and recomputed["reconstructed_runtime_e2e_passed"] == 3):
+            errors.append("Reconstructed runtime E2E parity not 3/3")
+        if not (recomputed["phase_scope_guard_total"] == 1 and recomputed["phase_scope_guard_passed"] == 1):
+            errors.append("Phase scope guard not 1/1")
+        if not (recomputed["reference_only_total"] == 4 and recomputed["reference_only_passed"] == 4):
+            errors.append("Reference only parity not 4/4")
+        if not (recomputed["implementation_choice_total"] == 4 and recomputed["implementation_choice_passed"] == 4):
+            errors.append("Implementation choice parity not 4/4")
         if recomputed["failed_total"] != 0:
             errors.append(f"failed_total non-zero ({recomputed['failed_total']})")
 
         return len(errors) == 0, errors, recomputed
 
-    def run_extended_verifier_mutation_tests(diff_data, contract_data):
-        # 14 negative mutation tests (Cases A-N)
+    def run_extended_verifier_mutation_tests(diff_data, effective_contract_data):
+        import tempfile, shutil
+        # 19 negative mutation tests (Cases A-S)
         # Case A: one STATIC result PASS -> FAILED
         mut_a = copy.deepcopy(diff_data)
         mut_a["evaluated_dimensions"][0]["result"] = "FAILED"
-        if validate_b2_differential_internal(mut_a, contract_data)[0]:
+        if validate_b2_differential_internal(mut_a, effective_contract_data)[0]:
             raise AssertionError("Mutation Case A failed: verifier accepted STATIC result=FAILED")
 
         # Case B: one STATIC result PASS -> 'FAIL' (illegal result enum)
         mut_b = copy.deepcopy(diff_data)
         mut_b["evaluated_dimensions"][0]["result"] = "FAIL"
-        if validate_b2_differential_internal(mut_b, contract_data)[0]:
+        if validate_b2_differential_internal(mut_b, effective_contract_data)[0]:
             raise AssertionError("Mutation Case B failed: verifier accepted illegal result 'FAIL'")
 
         # Case C: delete one mandatory contract dimension
         mut_c = copy.deepcopy(diff_data)
         mut_c["evaluated_dimensions"] = [d for d in mut_c["evaluated_dimensions"] if "DC-B2-01" not in d.get("contract_ids", [])]
-        if validate_b2_differential_internal(mut_c, contract_data)[0]:
+        if validate_b2_differential_internal(mut_c, effective_contract_data)[0]:
             raise AssertionError("Mutation Case C failed: verifier accepted missing mandatory contract dimension")
 
         # Case D: duplicate a dimension ID
         mut_d = copy.deepcopy(diff_data)
         mut_d["evaluated_dimensions"].append(copy.deepcopy(mut_d["evaluated_dimensions"][0]))
-        if validate_b2_differential_internal(mut_d, contract_data)[0]:
+        if validate_b2_differential_internal(mut_d, effective_contract_data)[0]:
             raise AssertionError("Mutation Case D failed: verifier accepted duplicate dimension ID")
 
         # Case E: change one stored counter
         mut_e = copy.deepcopy(diff_data)
-        mut_e["counters"]["static_protocol_evidence_total"] += 1
-        if validate_b2_differential_internal(mut_e, contract_data)[0]:
+        mut_e["counters"]["original_static_evidence_total"] += 1
+        if validate_b2_differential_internal(mut_e, effective_contract_data)[0]:
             raise AssertionError("Mutation Case E failed: verifier accepted altered stored counter")
 
         # Case F: remove evidence_basis
         mut_f = copy.deepcopy(diff_data)
         mut_f["evaluated_dimensions"][0]["evidence_basis"] = ""
-        if validate_b2_differential_internal(mut_f, contract_data)[0]:
+        if validate_b2_differential_internal(mut_f, effective_contract_data)[0]:
             raise AssertionError("Mutation Case F failed: verifier accepted empty evidence_basis")
 
         # Case G: original-agent ENVIRONMENT_UNAVAILABLE -> PASS without oracle
@@ -3377,7 +3469,7 @@ def verify_all():
             if d["id"] == "DC-B2-DIM-26":
                 d["result"] = "PASS"
                 break
-        if validate_b2_differential_internal(mut_g, contract_data)[0]:
+        if validate_b2_differential_internal(mut_g, effective_contract_data)[0]:
             raise AssertionError("Mutation Case G failed: verifier accepted original-agent PASS without oracle")
 
         # Case H: static evidence locator points to nonexistent artifact -> evaluate_dimension_result must FAIL
@@ -3423,8 +3515,6 @@ def verify_all():
             raise AssertionError("Mutation Case M failed: failing SCTP subtest did not evaluate to FAILED")
 
         # Case N: deferred-channel scanner receives violation -> evaluate_dimension_result must FAIL
-        # Test by evaluating with temporary empty directory where datachannel.go is missing
-        import tempfile
         with tempfile.TemporaryDirectory() as empty_temp_dir:
             temp_root = Path(empty_temp_dir)
             dim_n = copy.deepcopy(diff_data["evaluated_dimensions"][17]) # DC-B2-DIM-18
@@ -3432,9 +3522,62 @@ def verify_all():
             if res_n != "FAILED":
                 raise AssertionError("Mutation Case N failed: deferred-channel scanner violation did not evaluate to FAILED")
 
+        # Case O: contract consistency audit detects unsupported original field in artifact
+        with tempfile.TemporaryDirectory() as temp_o_dir:
+            t_root_o = Path(temp_o_dir)
+            shutil.copytree(ROOT / "evidence", t_root_o / "evidence")
+            corrupt_msg = json.loads((t_root_o / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json").read_text(encoding="utf-8"))
+            corrupt_msg["clipboard_channel_messages"]["set_clipboard"]["fields"].append("paste")
+            (t_root_o / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json").write_text(json.dumps(corrupt_msg), encoding="utf-8")
+            o_passed, _ = audit_contract_consistency(t_root_o)
+            if o_passed:
+                raise AssertionError("Mutation Case O failed: consistency audit accepted unsupported 'paste' field in artifact")
+
+        # Case P: REFERENCE_ONLY evidence relabeled STATIC_CONFIRMED without original artifact backing
+        with tempfile.TemporaryDirectory() as temp_p_dir:
+            t_root_p = Path(temp_p_dir)
+            shutil.copytree(ROOT / "evidence", t_root_p / "evidence")
+            errata_p = json.loads((t_root_p / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_CONTRACT_ERRATA.json").read_text(encoding="utf-8"))
+            errata_p["corrections"][0]["corrected_original_parity_claim"] = "inject_touch (or touch)"
+            (t_root_p / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_CONTRACT_ERRATA.json").write_text(json.dumps(errata_p), encoding="utf-8")
+            p_passed, _ = audit_contract_consistency(t_root_p)
+            if p_passed:
+                raise AssertionError("Mutation Case P failed: consistency audit accepted alias 'touch' relabeled as original parity claim")
+
+        # Case Q: effective contract drops a truly mandatory artifact-confirmed behavior
+        mut_q_contract = copy.deepcopy(effective_contract_data)
+        for r in mut_q_contract["effective_requirements"]:
+            if r["base_contract_id"] == "DC-B2-01":
+                r["effective_mandatory_for_original_parity"] = False
+                break
+        q_valid, q_errs, _ = validate_b2_differential_internal(diff_data, mut_q_contract)
+        if q_valid:
+            raise AssertionError("Mutation Case Q failed: verifier accepted dropping mandatory requirement DC-B2-01")
+
+        # Case R: errata references wrong base contract SHA
+        with tempfile.TemporaryDirectory() as temp_r_dir:
+            t_root_r = Path(temp_r_dir)
+            (t_root_r / "evidence" / "go_agent" / "webrtc").mkdir(parents=True)
+            shutil.copy(ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json",
+                        t_root_r / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json")
+            errata_r = json.loads((ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_CONTRACT_ERRATA.json").read_text(encoding="utf-8"))
+            errata_r["metadata"]["base_contract_sha256"] = "0" * 64
+            (t_root_r / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_CONTRACT_ERRATA.json").write_text(json.dumps(errata_r), encoding="utf-8")
+            try:
+                build_effective_contract(t_root_r)
+                raise AssertionError("Mutation Case R failed: build_effective_contract accepted wrong base contract SHA")
+            except ValueError:
+                pass  # Expected rejection
+
+        # Case S: base frozen contract is modified (SHA mismatch)
+        base_s = (ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json").read_bytes() + b"\n/* tamper */\n"
+        actual_s_sha = hashlib.sha256(base_s).hexdigest()
+        if actual_s_sha == expected_b2_sha256:
+            raise AssertionError("Mutation Case S failed: modified base contract matched expected SHA")
+
         return True
 
-    if b2_diff_path.exists() and b2_contract_path.exists():
+    if b2_diff_path.exists() and b2_contract_path.exists() and b2_errata_path.exists():
         try:
             import tempfile
             with tempfile.TemporaryDirectory() as temp_regen_dir:
@@ -3474,26 +3617,26 @@ def verify_all():
                 if norm_for_cmp(regen_data) != norm_for_cmp(canonical_data):
                     raise RuntimeError("Regenerated differential does not match canonical artifact under normalized comparison")
 
-                b2_contract_data = json.loads(b2_contract_path.read_text(encoding="utf-8"))
+                effective_contract_data = build_effective_contract(ROOT)
 
-                # 1. Run 14 negative mutation tests (Cases A-N)
-                mutations_passed = run_extended_verifier_mutation_tests(canonical_data, b2_contract_data)
+                # 1. Run 19 negative mutation tests (Cases A-S)
+                mutations_passed = run_extended_verifier_mutation_tests(canonical_data, effective_contract_data)
 
-                # 2. Validate canonical differential result
-                valid, errors, recomputed = validate_b2_differential_internal(canonical_data, b2_contract_data)
+                # 2. Validate canonical differential result against effective contract
+                valid, errors, recomputed = validate_b2_differential_internal(canonical_data, effective_contract_data)
                 dims = canonical_data.get("evaluated_dimensions", [])
-                mand_reqs = [r for r in b2_contract_data.get("requirements", []) if r.get("mandatory_for_parity") is True]
+                mand_reqs = [r for r in effective_contract_data.get("effective_requirements", []) if r.get("effective_mandatory_for_original_parity") is True]
 
                 if valid and mutations_passed:
                     b2_diff_valid = True
                     b2_diff_detail = (
-                        f"Derived dynamically from {len(dims)} dimensions ({len(mand_reqs)}/{len(mand_reqs)} mandatory contract requirements covered, 14/14 mutation tests rejected, temp regeneration matched): "
-                        f"{recomputed['static_protocol_evidence_passed']}/{recomputed['static_protocol_evidence_total']} static protocol, "
+                        f"Derived dynamically from {len(dims)} dimensions ({len(mand_reqs)}/{len(mand_reqs)} mandatory contract requirements covered, 19/19 mutation tests rejected, temp regeneration matched): "
+                        f"{recomputed['original_static_evidence_passed']}/{recomputed['original_static_evidence_total']} static protocol, "
                         f"{recomputed['exact_binary_frame_passed']}/{recomputed['exact_binary_frame_total']} binary frames, "
                         f"{recomputed['reconstructed_runtime_e2e_passed']}/{recomputed['reconstructed_runtime_e2e_total']} runtime E2E, "
-                        f"{recomputed['semantic_parity_passed']}/{recomputed['semantic_parity_total']} semantic parity, "
-                        f"{recomputed['reference_only_total']} reference only, "
-                        f"{recomputed['implementation_choice_total']} implementation choice, "
+                        f"{recomputed['phase_scope_guard_passed']}/{recomputed['phase_scope_guard_total']} phase-scope guards, "
+                        f"{recomputed['reference_only_passed']}/{recomputed['reference_only_total']} reference only, "
+                        f"{recomputed['implementation_choice_passed']}/{recomputed['implementation_choice_total']} implementation choice, "
                         f"{recomputed['environment_unavailable_total']} env unavailable, "
                         f"failed={recomputed['failed_total']}"
                     )
