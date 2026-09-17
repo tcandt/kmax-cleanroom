@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B3 File-Channel Implementation Contract Formal Errata and Provenance Amendment",
+    "phase": "Phase 2C.5B3R",
+    "base_contract_path": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json",
+    "base_contract_sha256": "1ff71090f6a16de538cad6cf93fc4096d34a913bed4008d1172f41b83da8e17b",
+    "base_contract_status": "FROZEN_PRE_IMPLEMENTATION",
+    "errata_phase": "Phase 2C.5B3R",
+    "reason": "Correction of historical pre-implementation over-classification. Formally segregates authentic original binary protocol parity from architectural Go implementation choices, defensive hardening, and staging path specificity.",
+    "effective_contract_rules": [
+      "Base contract FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json remains strictly frozen and immutable to preserve pre-implementation historical provenance.",
+      "Original protocol parity claims must be strictly grounded in authentic original binary/forensic evidence.",
+      "Streaming hash accumulation and exact trigger timing are classified as IMPLEMENTATION_CHOICE and separated from static integrity check presence.",
+      "Defensive overflow abortion and early termination handling are classified as IMPLEMENTATION_CHOICE and separated from completed byte tracking.",
+      "Staging path /data/local/tmp is strictly confirmed for APK installation workflows, while generic file sink base directory is classified as IMPLEMENTATION_CHOICE.",
+      "Effective contract view is dynamically computed by combining the frozen base contract with this formal errata document."
+    ]
+  },
+  "corrections": [
+    {
+      "contract_id": "FILE-B3-05",
+      "original_claim": "Streaming SHA-256 Checksum Calculation & Integrity Check: Agent computes running SHA-256 hash across incoming chunks. Upon receiving total declared bytes, computed hash is compared against metadata sha256; mismatches abort transfer (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Log strings prove an integrity check exists, but do not by themselves prove the streaming hasher implementation or the exact lifecycle trigger timing at received == declared size.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_PROTOCOL_SPEC.json (FileChannel log strings)",
+      "corrected_original_parity_claim": "File channel implements SHA-256 integrity verification validating uploaded data against metadata sha256.",
+      "non_original_compatibility_behavior": "Streaming SHA-256 accumulation, exact trigger lifecycle upon received == declared size, and hash mismatch abort transition (IMPLEMENTATION_CHOICE).",
+      "effective_evidence_class": "STATIC_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "implementation_choice_parts": [
+        "streaming_hasher_lifecycle",
+        "exact_trigger_at_total_declared_bytes",
+        "hash_mismatch_abort_transition"
+      ],
+      "rationale": "Static strings prove integrity check existence ('[FileChannel] SHA-256 integrity check passed: %s' and '[FileChannel] Upload integrity check FAILED: %v'). The streaming hasher state machine and exact lifecycle trigger timing are architectural implementation choices."
+    },
+    {
+      "contract_id": "FILE-B3-06",
+      "original_claim": "Declared Size Accounting & Transfer Completion: Agent tracks accumulated chunk byte count against metadata size. When cumulative received bytes equal declared size, transfer completes; overflow or early termination aborts transfer (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "The log string '[FileChannel] Upload finished: %s (%d bytes)' proves that upload tracks and reports completed byte count, but does not by itself prove overflow abortion, early termination abort, or duplicate metadata handling.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_PROTOCOL_SPEC.json (FileChannel log strings)",
+      "corrected_original_parity_claim": "File upload tracks and reports completed byte count upon transfer completion.",
+      "non_original_compatibility_behavior": "Defensive overflow rejection (received > declared), early DataChannel close abort, and duplicate start_upload handling (IMPLEMENTATION_CHOICE).",
+      "effective_evidence_class": "STATIC_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "implementation_choice_parts": [
+        "overflow_rejection",
+        "early_close_abort",
+        "duplicate_metadata_handling"
+      ],
+      "rationale": "Tracking and logging the completed byte count is proven by binary format string, whereas defensive abortion on overflow, early closure cleanup, and duplicate metadata rejection are defensive implementation choices."
+    },
+    {
+      "contract_id": "FILE-B3-07",
+      "original_claim": "Original Target Destination Path: Original binary targets destination directory /data/local/tmp for file staging and temp APK files (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Strings '/data/local/tmp/install_%s.apk' and '[FileChannel] Failed to copy APK to /data/local/tmp: %v' confirm /data/local/tmp as a staging location for APK installation workflows, but asserting it as the generic destination directory for every uploaded file without dataflow proof is an over-classification.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_PROTOCOL_SPEC.json (APK staging strings)",
+      "corrected_original_parity_claim": "Original agent workflow uses /data/local/tmp as a confirmed staging location for uploaded APKs targeted for installation.",
+      "non_original_compatibility_behavior": "Generic destination directory for all non-APK file transfers and configurable BaseDir in LocalFileSink (IMPLEMENTATION_CHOICE).",
+      "effective_evidence_class": "STATIC_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "implementation_choice_parts": [
+        "generic_destination_directory",
+        "configurable_basedir_in_LocalFileSink"
+      ],
+      "rationale": "Forensic strings explicitly tie /data/local/tmp to APK staging and install copy operations. LocalFileSink configurable base directory is an implementation choice allowing test sandbox isolation."
+    }
+  ]
+}

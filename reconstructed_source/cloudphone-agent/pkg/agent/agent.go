@@ -20,6 +20,10 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
+// FileSinkFactory constructs an isolated FileSink for a newly negotiated PeerSession.
+// Classification: GENERATED_ADAPTER.
+type FileSinkFactory func(clientID uint32) agentwebrtc.FileSink
+
 // Coordinator orchestrates WebRTC sessions and binds them to the signaling transport.
 // Classification: RECONSTRUCTED_FROM_BINARY.
 type Coordinator struct {
@@ -33,6 +37,8 @@ type Coordinator struct {
 
 	controlSink       agentwebrtc.ControlSink
 	clipboardProvider agentwebrtc.ClipboardProvider
+	fileSinkFactory   FileSinkFactory
+	postUploadAction  agentwebrtc.PostUploadActionHandler
 
 	closed bool
 }
@@ -75,6 +81,22 @@ func (c *Coordinator) SetClipboardProvider(provider agentwebrtc.ClipboardProvide
 	for _, s := range c.sessions {
 		s.SetClipboardProvider(provider)
 	}
+}
+
+// SetFileSinkFactory configures the per-session FileSink factory on the coordinator.
+// Classification: GENERATED_ADAPTER.
+func (c *Coordinator) SetFileSinkFactory(factory FileSinkFactory) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.fileSinkFactory = factory
+}
+
+// SetPostUploadActionHandler configures the post-upload install action handler.
+// Classification: GENERATED_ADAPTER.
+func (c *Coordinator) SetPostUploadActionHandler(handler agentwebrtc.PostUploadActionHandler) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.postUploadAction = handler
 }
 
 // HandleConfig updates the ICE servers dynamically pushed from signaling.
@@ -125,6 +147,8 @@ func (c *Coordinator) handleRequestOffer(clientID uint32) {
 	sigClient := c.signalingClient
 	sink := c.controlSink
 	provider := c.clipboardProvider
+	sinkFactory := c.fileSinkFactory
+	postAction := c.postUploadAction
 	c.mu.Unlock()
 
 	session, err := agentwebrtc.NewPeerSession(clientID, c.DeviceID, iceServers)
@@ -137,6 +161,10 @@ func (c *Coordinator) handleRequestOffer(clientID uint32) {
 	}
 	if provider != nil {
 		session.SetClipboardProvider(provider)
+	}
+	if sinkFactory != nil {
+		sessionSink := sinkFactory(clientID)
+		session.SetFileHandler(agentwebrtc.NewFileChannelHandler(sessionSink, postAction))
 	}
 
 	// Attach local ICE candidate listener to dispatch trickle ICE to signaling

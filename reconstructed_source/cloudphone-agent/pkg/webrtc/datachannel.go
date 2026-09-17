@@ -50,6 +50,7 @@ type DataChannels struct {
 
 	ControlSink       ControlSink
 	ClipboardProvider ClipboardProvider
+	FileHandler       *FileChannelHandler
 }
 
 // NewDataChannels initializes the container for the 6 confirmed DataChannels.
@@ -72,6 +73,17 @@ func (dc *DataChannels) SetClipboardProvider(provider ClipboardProvider) {
 	dc.ClipboardProvider = provider
 }
 
+// SetFileHandler configures the handler for incoming file-channel uploads.
+// Classification: GENERATED_ADAPTER.
+func (dc *DataChannels) SetFileHandler(handler *FileChannelHandler) {
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
+	dc.FileHandler = handler
+	if handler != nil && dc.FileChannel != nil {
+		handler.Attach(dc.FileChannel)
+	}
+}
+
 // SetupOutboundChannels creates the 3 Agent-initiated DataChannels with ordered=true
 // before the local SDP offer is created, matching original binary assembly.
 // Classification: RECONSTRUCTED_FROM_BINARY.
@@ -84,7 +96,7 @@ func (dc *DataChannels) SetupOutboundChannels(pc *webrtc.PeerConnection) error {
 		Ordered: &ordered,
 	}
 
-	// 1. input-channel (Active in B2: translates JSON to scrcpy binary control frames)
+	// 1. input-channel (Active in B2: translates JSON to 32-byte scrcpy binary frames)
 	inputCh, err := pc.CreateDataChannel(ChannelInput, initOptions)
 	if err != nil {
 		return fmt.Errorf("failed to create %s: %w", ChannelInput, err)
@@ -131,6 +143,7 @@ func (dc *DataChannels) SetupOutboundChannels(pc *webrtc.PeerConnection) error {
 
 // RegisterInboundHandler sets up the pc.OnDataChannel listener to register incoming
 // browser-initiated DataChannels (file-channel, ai-command-channel, adb-channel).
+// This is the ONE authoritative pc.OnDataChannel listener.
 // Classification: RECONSTRUCTED_FROM_BINARY.
 func (dc *DataChannels) RegisterInboundHandler(pc *webrtc.PeerConnection) {
 	pc.OnDataChannel(func(remoteDC *webrtc.DataChannel) {
@@ -143,6 +156,9 @@ func (dc *DataChannels) RegisterInboundHandler(pc *webrtc.PeerConnection) {
 		switch label {
 		case ChannelFile:
 			dc.FileChannel = remoteDC
+			if dc.FileHandler != nil {
+				dc.FileHandler.Attach(remoteDC)
+			}
 		case ChannelAICommand:
 			dc.AICommandChannel = remoteDC
 		case ChannelADB:

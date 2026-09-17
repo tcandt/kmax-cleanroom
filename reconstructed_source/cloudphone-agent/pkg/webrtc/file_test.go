@@ -96,8 +96,9 @@ func TestFileChannelTransferFlow(t *testing.T) {
 
 			sink := NewMemoryFileSink()
 			var postActionCalled bool
-			h := NewFileChannelHandler(sink, func(meta FileMetadata, path string) {
+			h := NewFileChannelHandler(sink, func(meta FileMetadata, path string) error {
 				postActionCalled = true
+				return nil
 			})
 
 			metaJSON := fmt.Sprintf(`{"type":"start_upload","filename":"%s.bin","size":%d,"sha256":"%s","install":true}`,
@@ -141,8 +142,9 @@ func TestFileChannelTransferFlow(t *testing.T) {
 func TestFileChannelZeroByteUpload(t *testing.T) {
 	sink := NewMemoryFileSink()
 	var postActionCalled bool
-	h := NewFileChannelHandler(sink, func(meta FileMetadata, path string) {
+	h := NewFileChannelHandler(sink, func(meta FileMetadata, path string) error {
 		postActionCalled = true
+		return nil
 	})
 
 	emptyHash := sha256.Sum256([]byte{})
@@ -181,8 +183,9 @@ func TestFileChannelChecksumMismatch(t *testing.T) {
 
 	sink := NewMemoryFileSink()
 	var postActionCalled bool
-	h := NewFileChannelHandler(sink, func(meta FileMetadata, path string) {
+	h := NewFileChannelHandler(sink, func(meta FileMetadata, path string) error {
 		postActionCalled = true
+		return nil
 	})
 
 	metaJSON := fmt.Sprintf(`{"type":"start_upload","filename":"corrupt.bin","size":%d,"sha256":"%s","install":true}`,
@@ -197,8 +200,8 @@ func TestFileChannelChecksumMismatch(t *testing.T) {
 		t.Fatalf("expected checksum mismatch error, got nil")
 	}
 
-	if !strings.Contains(err.Error(), "checksum mismatch") {
-		t.Fatalf("expected checksum mismatch error message, got: %v", err)
+	if !strings.Contains(err.Error(), "hash mismatch") && !strings.Contains(err.Error(), "checksum mismatch") {
+		t.Fatalf("expected hash mismatch error message, got: %v", err)
 	}
 
 	if h.GetState() != FileTransferStateError {
@@ -275,6 +278,41 @@ func TestFileChannelStateViolations(t *testing.T) {
 	}
 }
 
+// TestFileChannelStrictFraming verifies strict distinction between text metadata and binary data frames.
+func TestFileChannelStrictFraming(t *testing.T) {
+	sink := NewMemoryFileSink()
+	h := NewFileChannelHandler(sink, nil)
+
+	// 1. Binary frame attempting to transmit start_upload JSON in IDLE state must be rejected
+	binaryMeta := []byte(`{"type":"start_upload","filename":"test.bin","size":10,"sha256":""}`)
+	err := h.HandleMessage(binaryMeta, false) // isString == false
+	if err == nil {
+		t.Fatalf("expected error when sending JSON metadata as binary frame")
+	}
+	if h.GetState() != FileTransferStateError {
+		t.Fatalf("expected state ERROR when binary frame received in IDLE, got: %s", h.GetState())
+	}
+
+	// 2. Text frame containing metadata accepted in IDLE state
+	h2 := NewFileChannelHandler(NewMemoryFileSink(), nil)
+	textMeta := `{"type":"start_upload","filename":"test.bin","size":10,"sha256":""}`
+	if err := h2.HandleMessage([]byte(textMeta), true); err != nil {
+		t.Fatalf("unexpected error on text metadata: %v", err)
+	}
+	if h2.GetState() != FileTransferStateMetadataAccepted {
+		t.Fatalf("expected METADATA_ACCEPTED, got: %s", h2.GetState())
+	}
+
+	// 3. Text frame sent during RECEIVING state must be rejected (must be binary)
+	err = h2.HandleMessage([]byte("illegal text chunk"), true) // isString == true
+	if err == nil {
+		t.Fatalf("expected error when sending text frame during chunk transfer")
+	}
+	if h2.GetState() != FileTransferStateError {
+		t.Fatalf("expected state ERROR after text chunk violation, got: %s", h2.GetState())
+	}
+}
+
 // TestPathSanitizationDefensive tests directory traversal prevention.
 func TestPathSanitizationDefensive(t *testing.T) {
 	tests := []struct {
@@ -322,10 +360,7 @@ func TestPathSanitizationDefensive(t *testing.T) {
 // TestLocalFileSinkTemporarySandbox verifies LocalFileSink writes only inside isolated sandbox.
 func TestLocalFileSinkTemporarySandbox(t *testing.T) {
 	tempDir := t.TempDir()
-	sink, err := NewLocalFileSink(tempDir)
-	if err != nil {
-		t.Fatalf("NewLocalFileSink failed: %v", err)
-	}
+	sink := NewLocalFileSink(tempDir)
 
 	meta := FileMetadata{
 		Type:     CmdStartUpload,
@@ -357,8 +392,13 @@ func TestLocalFileSinkTemporarySandbox(t *testing.T) {
 		t.Fatalf("written file content mismatch")
 	}
 
+	// Test Target method
+	if sink.Target() != writtenPath {
+		t.Fatalf("expected Target() %q, got %q", writtenPath, sink.Target())
+	}
+
 	// Test Abort removes active file
-	sink2, _ := NewLocalFileSink(tempDir)
+	sink2 := NewLocalFileSink(tempDir)
 	meta2 := FileMetadata{
 		Type:     CmdStartUpload,
 		Filename: "aborted_test.bin",
@@ -374,29 +414,47 @@ func TestLocalFileSinkTemporarySandbox(t *testing.T) {
 	}
 }
 
-// TestPostUploadActionBoundary verifies install flag boundary semantics.
+// TestPostUploadActionBoundary verifies install flag boundary semantics and unambiguous target path.
 func TestPostUploadActionBoundary(t *testing.T) {
 	data := []byte("apk binary simulation")
 	hSum := sha256.Sum256(data)
 	hHex := hex.EncodeToString(hSum[:])
 
-	// Case 1: install=true invokes postAction
+	// Case 1: MemoryFileSink with install=true invokes postAction with memory target
 	var installTarget string
-	h1 := NewFileChannelHandler(NewMemoryFileSink(), func(meta FileMetadata, path string) {
-		installTarget = path
+	h1 := NewFileChannelHandler(NewMemoryFileSink(), func(meta FileMetadata, target string) error {
+		installTarget = target
+		return nil
 	})
 	meta1 := fmt.Sprintf(`{"type":"start_upload","filename":"test.apk","size":%d,"sha256":"%s","install":true}`, len(data), hHex)
 	_ = h1.HandleMessage([]byte(meta1), true)
 	_ = h1.HandleMessage(data, false)
 
-	if installTarget != "test.apk" {
-		t.Fatalf("expected postAction target 'test.apk', got: %q", installTarget)
+	if installTarget != "memory://test.apk" {
+		t.Fatalf("expected postAction target 'memory://test.apk', got: %q", installTarget)
 	}
 
-	// Case 2: install=false does NOT invoke postAction
+	// Case 2: LocalFileSink with install=true invokes postAction with actual sandbox target path
+	tempDir := t.TempDir()
+	localSink := NewLocalFileSink(tempDir)
+	var localTarget string
+	hLocal := NewFileChannelHandler(localSink, func(meta FileMetadata, target string) error {
+		localTarget = target
+		return nil
+	})
+	_ = hLocal.HandleMessage([]byte(meta1), true)
+	_ = hLocal.HandleMessage(data, false)
+
+	expectedLocalPath := filepath.Join(tempDir, "test.apk")
+	if localTarget != expectedLocalPath {
+		t.Fatalf("expected postAction local target %q, got: %q", expectedLocalPath, localTarget)
+	}
+
+	// Case 3: install=false does NOT invoke postAction
 	var installTarget2 string
-	h2 := NewFileChannelHandler(NewMemoryFileSink(), func(meta FileMetadata, path string) {
-		installTarget2 = path
+	h2 := NewFileChannelHandler(NewMemoryFileSink(), func(meta FileMetadata, target string) error {
+		installTarget2 = target
+		return nil
 	})
 	meta2 := fmt.Sprintf(`{"type":"start_upload","filename":"test.apk","size":%d,"sha256":"%s","install":false}`, len(data), hHex)
 	_ = h2.HandleMessage([]byte(meta2), true)

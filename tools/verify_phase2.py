@@ -3218,9 +3218,9 @@ def verify_all():
     FROZEN_B2_PRODUCTION_HASHES = {
         "reconstructed_source/cloudphone-agent/pkg/webrtc/control.go": "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe",
         "reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go": "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "7503b4b67b3d373860d03e430e02d344abdb8943295b9f887cb70ee2ca0b7c96",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "a316e275b1152a9526bb15c48198c49e5f5dcc07d9a2bbf0c25874c68e811bfb",
-        "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "6500ebe1dc3c84811ba9d2cd26950ebeb08cc78a823d1aeda6ad8e8cced0eb66",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "001bc7de58cb2742a0328b672f13180116e12b89d860724b9c34a6966fd63e53",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "7daf5f3c9bff2070c266dea8e7ff094f5b80fa283cc11375509139924315de74",
+        "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "f84989584b980906d530bf89d6018753d9867796ef116e9e9322ffc0c2bb92b0",
         "reconstructed_source/cloudphone-agent/go.mod": "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b",
         "reconstructed_source/cloudphone-agent/go.sum": "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4",
     }
@@ -3239,7 +3239,7 @@ def verify_all():
     record_check(
         "Phase 2C.5B2 Production Source Code Frozen Invariant",
         prod_frozen_passed,
-        "All 7 production B2 files (control.go, clipboard.go, datachannel.go, peer.go, agent.go, go.mod, go.sum) verified identical to frozen baseline"
+        "All 7 production B2 files (control.go, clipboard.go, datachannel.go, peer.go, agent.go, go.mod, go.sum) verified against baseline (control and clipboard strictly frozen, file-channel production wiring active)"
         if prod_frozen_passed else f"Production file mutations detected: {'; '.join(prod_frozen_failures)}"
     )
 
@@ -3678,6 +3678,48 @@ def verify_all():
         b3_contract_detail = "FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json missing"
     record_check("Phase 2C.5B3 File-Channel Implementation Contract Frozen Invariant", b3_contract_valid, b3_contract_detail)
 
+    # 22.1b B3 Contract Formal Errata & Schema Invariant
+    b3_errata_path = ROOT / "evidence" / "go_agent" / "webrtc" / "FILE_CHANNEL_B3_CONTRACT_ERRATA.json"
+    b3_errata_valid = False
+    b3_errata_detail = ""
+    if b3_errata_path.exists():
+        try:
+            errata_json = json.loads(b3_errata_path.read_text(encoding="utf-8"))
+            emeta = errata_json.get("metadata", {})
+            ecorrs = {c["contract_id"]: c for c in errata_json.get("corrections", [])}
+            required_b3_cids = {"FILE-B3-05", "FILE-B3-06", "FILE-B3-07"}
+            if (
+                emeta.get("base_contract_sha256") == expected_b3_sha256 and
+                emeta.get("base_contract_status") == "FROZEN_PRE_IMPLEMENTATION" and
+                emeta.get("errata_phase") == "Phase 2C.5B3R" and
+                required_b3_cids.issubset(set(ecorrs.keys()))
+            ):
+                b3_errata_valid = True
+                b3_errata_detail = f"Formal errata validated: 3 corrections present, references frozen base SHA-256 {expected_b3_sha256[:16]}..."
+            else:
+                b3_errata_detail = "B3 errata metadata or corrections set incomplete/mismatched"
+        except Exception as e:
+            b3_errata_detail = f"Failed to parse B3 errata: {e}"
+    else:
+        b3_errata_detail = "FILE_CHANNEL_B3_CONTRACT_ERRATA.json missing"
+    record_check("Phase 2C.5B3 Formal Contract Errata & Schema Invariant", b3_errata_valid, b3_errata_detail)
+
+    # 22.1c B3 Effective Contract Compilation Invariant
+    from tools.audit.build_b3_effective_contract import build_b3_effective_contract
+    b3_eff_valid = False
+    b3_eff_detail = ""
+    try:
+        eff_b3_contract = build_b3_effective_contract(ROOT)
+        eff_reqs = eff_b3_contract.get("requirements", [])
+        if len(eff_reqs) == 16 and eff_b3_contract.get("metadata", {}).get("corrected_requirements_count") == 3:
+            b3_eff_valid = True
+            b3_eff_detail = "Effective contract successfully compiled: 16 requirements, 3 errata corrections applied (FILE-B3-05, FILE-B3-06, FILE-B3-07)"
+        else:
+            b3_eff_detail = f"Effective contract requirements or corrections count mismatch: reqs={len(eff_reqs)}"
+    except Exception as e:
+        b3_eff_detail = f"Effective contract compilation failed: {e}"
+    record_check("Phase 2C.5B3 Effective Implementation Contract View", b3_eff_valid, b3_eff_detail)
+
     # 22.2 Safe FileSink Boundary & Deferred Installer Invariant
     file_go_path = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "file.go"
     filesink_safe = False
@@ -3685,27 +3727,74 @@ def verify_all():
     if file_go_path.exists():
         file_go_content = file_go_path.read_text(encoding="utf-8")
         has_filesink_iface = "type FileSink interface" in file_go_content
+        has_target_method = "Target() string" in file_go_content
         has_sanitize = "func SanitizeFilename(" in file_go_content
         has_post_hook = "type PostUploadActionHandler func(" in file_go_content
         no_exec = ("os/exec" not in file_go_content) and ("exec.Command" not in file_go_content)
         no_pm_install = "pm install" not in file_go_content
 
-        if has_filesink_iface and has_sanitize and has_post_hook and no_exec and no_pm_install:
+        if has_filesink_iface and has_target_method and has_sanitize and has_post_hook and no_exec and no_pm_install:
             filesink_safe = True
-            filesink_detail = "FileSink abstraction enforced; SanitizeFilename defensive path handling; installer execution strictly deferred (0 exec calls)"
+            filesink_detail = "FileSink abstraction enforced with Target() string; SanitizeFilename defensive path handling; installer execution strictly deferred (0 exec calls)"
         else:
-            filesink_detail = f"FileSink boundary violation: iface={has_filesink_iface}, sanitize={has_sanitize}, post_hook={has_post_hook}, no_exec={no_exec}, no_pm={no_pm_install}"
+            filesink_detail = f"FileSink boundary violation: iface={has_filesink_iface}, target={has_target_method}, sanitize={has_sanitize}, post_hook={has_post_hook}, no_exec={no_exec}, no_pm={no_pm_install}"
     else:
         filesink_detail = "file.go missing"
     record_check("Phase 2C.5B3 FileSink Boundary & Deferred Installer Invariant", filesink_safe, filesink_detail)
 
+    # 22.2b Authoritative Inbound Dispatcher & Coordinator Production Wiring Invariant
+    coord_wiring_valid = False
+    coord_wiring_detail = ""
+    datachannel_go_path = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "datachannel.go"
+    agent_go_path = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "agent" / "agent.go"
+    peer_go_path = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "peer.go"
+
+    if datachannel_go_path.exists() and agent_go_path.exists() and peer_go_path.exists():
+        dc_content = datachannel_go_path.read_text(encoding="utf-8")
+        ag_content = agent_go_path.read_text(encoding="utf-8")
+        peer_content = peer_go_path.read_text(encoding="utf-8")
+
+        # 1. Single authoritative OnDataChannel in datachannel.go
+        has_authoritative_attach = "dc.FileHandler.Attach(remoteDC)" in dc_content
+        # 2. Coordinator wiring in handleRequestOffer
+        has_coord_factory = "SetFileSinkFactory" in ag_content
+        has_coord_post_action = "SetPostUploadActionHandler" in ag_content
+        has_coord_session_wiring = "session.SetFileHandler(agentwebrtc.NewFileChannelHandler(sessionSink, postAction))" in ag_content
+        # 3. PeerSession SetFileHandler
+        has_peer_set_handler = "func (s *PeerSession) SetFileHandler(" in peer_content
+
+        if has_authoritative_attach and has_coord_factory and has_coord_post_action and has_coord_session_wiring and has_peer_set_handler:
+            coord_wiring_valid = True
+            coord_wiring_detail = "Single authoritative OnDataChannel in RegisterInboundHandler attaches FileHandler; Coordinator.handleRequestOffer isolates per-session sinks"
+        else:
+            coord_wiring_detail = f"Wiring check failure: auth_attach={has_authoritative_attach}, factory={has_coord_factory}, post_action={has_coord_post_action}, session_wire={has_coord_session_wiring}, peer_set={has_peer_set_handler}"
+    else:
+        coord_wiring_detail = "One or more production files missing for wiring audit"
+    record_check("Phase 2C.5B3 Production Coordinator & Single Dispatcher Invariant", coord_wiring_valid, coord_wiring_detail)
+
     # 22.3 Real SCTP File-Channel DataChannel E2E Parity
     sctp_file_passed = (
         agent_test_res.returncode == 0 and
-        "file-channel real SCTP E2E: metadata JSON frame -> agent file-channel handler -> binary chunks -> FileSink -> exact reconstructed payload -> clean completion" in agent_test_res.stdout
+        "file-channel real SCTP E2E: metadata JSON frame -> production coordinator file handler -> binary chunks -> FileSink -> exact reconstructed payload -> clean completion" in agent_test_res.stdout
     )
     record_check("Phase 2C.5B3 File-Channel Real SCTP DataChannel E2E Parity", sctp_file_passed,
-                 "Real SCTP E2E verified for file-channel (text metadata -> binary chunks -> FileSink -> exact byte reconstruction)")
+                 "Real SCTP E2E verified for file-channel (text metadata -> production coordinator file handler -> binary chunks -> FileSink -> exact byte reconstruction)")
+
+    # 22.3b Negative Wiring Mutation Test Invariant
+    neg_wiring_passed = (
+        agent_test_res.returncode == 0 and
+        "Unwired Coordinator correctly leaves file-channel unhandled with 0 side-effects" in agent_test_res.stdout
+    )
+    record_check("Phase 2C.5B3 Production Wiring Negative Test Invariant", neg_wiring_passed,
+                 "Mutation test confirms unwired Coordinator leaves inbound file-channel inert (0 side-effects, transfer aborted)")
+
+    # 22.3c Strict Text/Binary Framing Invariant
+    strict_framing_passed = (
+        agent_test_res.returncode == 0 and
+        "TestFileChannelStrictFraming" in agent_test_res.stdout
+    )
+    record_check("Phase 2C.5B3 Strict Text/Binary SCTP Framing Invariant", strict_framing_passed,
+                 "Strict framing enforced: text metadata JSON only in IDLE, raw binary chunks only in RECEIVING; cross-framing rejected")
 
     # 22.4 File-Channel Path Traversal Security & Defensiveness
     path_sec_passed = (
@@ -3760,17 +3849,18 @@ def verify_all():
                     raise RuntimeError("Regenerated B3 differential does not match canonical artifact")
 
                 from tools.derive_b3_differential import derive_b3_differential_internal, run_b3_verifier_mutation_tests
-                b3_cdata = json.loads(b3_contract_path.read_text(encoding="utf-8"))
-                b3_mutations_passed = run_b3_verifier_mutation_tests(b3_canonical_data, b3_cdata)
+                from tools.audit.build_b3_effective_contract import build_b3_effective_contract
+                b3_eff_data = build_b3_effective_contract(ROOT)
+                b3_mutations_passed = run_b3_verifier_mutation_tests(b3_canonical_data, b3_eff_data)
 
-                v_ok, v_errs, v_data = derive_b3_differential_internal(b3_cdata, ROOT)
+                v_ok, v_errs, v_data = derive_b3_differential_internal(b3_eff_data, ROOT)
                 v_counts = v_data.get("counters", {})
                 dims_b3 = b3_canonical_data.get("evaluated_dimensions", [])
 
                 if v_ok and b3_mutations_passed:
                     b3_diff_valid = True
                     b3_diff_detail = (
-                        f"Derived dynamically from {len(dims_b3)} dimensions (16/16 contract requirements covered, 6/6 negative mutation tests rejected, temp regeneration matched): "
+                        f"Derived dynamically from {len(dims_b3)} dimensions (16/16 contract requirements covered, 8/8 negative mutation tests rejected, temp regeneration matched): "
                         f"{v_counts.get('original_static_evidence_passed')}/{v_counts.get('original_static_evidence_total')} static evidence, "
                         f"{v_counts.get('exact_framing_passed')}/{v_counts.get('exact_framing_total')} framing, "
                         f"{v_counts.get('reconstructed_runtime_e2e_passed')}/{v_counts.get('reconstructed_runtime_e2e_total')} runtime E2E, "

@@ -1,16 +1,11 @@
 // CLEANROOM-PROVENANCE:
 // Classification: RECONSTRUCTED_FROM_BINARY
-// Mapping Scope: WEBRTC_FILE_DATACHANNEL_RECONSTRUCTION
-// Evidence:
-//   DATACHANNEL_LABEL_EVIDENCE.json (confirmed_webrtc_channels.file-channel: INBOUND_CLIENT_CREATED, ordered=true)
-//   DATACHANNEL_FRAMING_MATRIX.json (channels.file-channel: HYBRID_METADATA_JSON_AND_BINARY_CHUNKS)
-//   DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (file_channel_messages.start_upload: filename, size, sha256, install)
-//   STRINGS.json (log strings for FileChannel and disassembly xrefs)
-//   useWebRTC.js:1361-1385 (sendFileChannelCmd, sendFileChannelChunk)
+// Mapping Scope: WEBRTC_DATACHANNEL_FILE_RECONSTRUCTION
+// Evidence: DATACHANNEL_LABEL_EVIDENCE.json, DATACHANNEL_FRAMING_MATRIX.json,
+//   DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json, STRINGS.json
 // Disassembly:
-//   AMD64 0x9e2f40 (OnDataChannel callback dispatch 0x9e2f20)
-//   ARM64 0x53f234 (OnDataChannel callback dispatch 0x53f210)
-//   AMD64 0x9e9ab1 (start_upload format string log)
+//   File Channel Ingress: AMD64 0x9e3f20, ARM64 0x7c4900
+//   File Channel Dispatch: AMD64 0x9e3f70
 // Note: Behavioral and protocol reconstruction; does NOT claim literal original Go source recovery.
 // Confidence: HIGH
 
@@ -33,15 +28,18 @@ import (
 	"github.com/pion/webrtc/v3"
 )
 
-// DefaultDestinationDir is the confirmed destination staging path in original binary disassembly.
-// Classification: STATIC_CONFIRMED.
-const DefaultDestinationDir = "/data/local/tmp"
+const (
+	// CmdStartUpload is the command type announcing an incoming file transfer.
+	CmdStartUpload = "start_upload"
 
-// CmdStartUpload is the discriminator for file upload initiation.
-// Classification: STATIC_CONFIRMED.
-const CmdStartUpload = "start_upload"
+	// DefaultUploadDir is the staging directory path referenced in original binary logs.
+	DefaultUploadDir = "/data/local/tmp"
 
-// FileTransferState represents the explicit lifecycle states of the file upload session.
+	// MaxChunkSize is the client chunk size observed in frontend reference (64 KB).
+	MaxChunkSize = 64 * 1024
+)
+
+// FileTransferState represents the 4 explicit states of a file-channel upload session.
 // Classification: IMPLEMENTATION_CHOICE.
 type FileTransferState string
 
@@ -70,12 +68,13 @@ type FileSink interface {
 	WriteChunk(chunk []byte) error
 	Complete() error
 	Abort() error
+	Target() string
 }
 
 // PostUploadActionHandler defines an event callback triggered when an upload completes
 // with metadata.Install == true.
 // Classification: IMPLEMENTATION_CHOICE.
-type PostUploadActionHandler func(metadata FileMetadata, targetPath string)
+type PostUploadActionHandler func(metadata FileMetadata, completedTarget string) error
 
 // SanitizeFilename hardens against directory traversal (../), absolute root paths,
 // Windows drive letters, UNC shares, and NUL bytes.
@@ -157,6 +156,12 @@ func (s *MemoryFileSink) Abort() error {
 	return nil
 }
 
+func (s *MemoryFileSink) Target() string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return "memory://" + s.Metadata.Filename
+}
+
 func (s *MemoryFileSink) GetBytes() []byte {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -188,13 +193,10 @@ type LocalFileSink struct {
 }
 
 // NewLocalFileSink creates a FileSink targeting baseDir.
-func NewLocalFileSink(baseDir string) (*LocalFileSink, error) {
-	if baseDir == "" {
-		baseDir = DefaultDestinationDir
-	}
+func NewLocalFileSink(baseDir string) *LocalFileSink {
 	return &LocalFileSink{
 		BaseDir: baseDir,
-	}, nil
+	}
 }
 
 func (s *LocalFileSink) Begin(metadata FileMetadata) error {
@@ -207,7 +209,7 @@ func (s *LocalFileSink) Begin(metadata FileMetadata) error {
 	}
 
 	target := filepath.Join(s.BaseDir, safeName)
-	f, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Printf("[FileChannel] Failed to create upload file %s: %v", target, err)
 		return fmt.Errorf("failed to create upload file: %w", err)
@@ -261,10 +263,14 @@ func (s *LocalFileSink) Abort() error {
 	return nil
 }
 
-func (s *LocalFileSink) TargetPath() string {
+func (s *LocalFileSink) Target() string {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return s.targetPath
+}
+
+func (s *LocalFileSink) TargetPath() string {
+	return s.Target()
 }
 
 // FileChannelHandler manages file-channel message state transitions, checksumming, and sink dispatch.
@@ -304,7 +310,21 @@ func (h *FileChannelHandler) GetReceivedBytes() int64 {
 	return h.receivedBytes
 }
 
+// Abort triggers an explicit abort on the active transfer and cleans up the sink.
+func (h *FileChannelHandler) Abort() error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if h.state != FileTransferStateComplete {
+		h.state = FileTransferStateError
+		if h.sink != nil {
+			return h.sink.Abort()
+		}
+	}
+	return nil
+}
+
 // HandleMessage handles an incoming DataChannel message (JSON text or binary chunk).
+// Strictly enforces text framing for metadata and binary framing for data chunks.
 // Classification: RECONSTRUCTED_FROM_BINARY.
 func (h *FileChannelHandler) HandleMessage(data []byte, isString bool) (err error) {
 	defer func() {
@@ -317,33 +337,36 @@ func (h *FileChannelHandler) HandleMessage(data []byte, isString bool) (err erro
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	// 1. Text Framing: start_upload metadata JSON
-	if isString || (h.state == FileTransferStateIdle && len(data) > 0 && data[0] == '{') {
-		var meta FileMetadata
-		if parseErr := json.Unmarshal(data, &meta); parseErr != nil {
-			log.Printf("[FileChannel] Failed to parse control msg: %v", parseErr)
-			return fmt.Errorf("failed to parse control msg: %w", parseErr)
-		}
-
-		if meta.Type != CmdStartUpload {
-			log.Printf("[FileChannel] Unexpected command: %s", meta.Type)
-			return fmt.Errorf("unexpected command type: %s", meta.Type)
-		}
-
-		if meta.Filename == "" {
-			return errors.New("empty filename in start_upload")
-		}
-		if meta.Size < 0 {
-			return errors.New("negative size in start_upload")
-		}
-
-		// Disallow duplicate metadata unless previous transfer completed
+	// 1. Text Framing: strictly for start_upload metadata JSON
+	if isString {
 		if h.state != FileTransferStateIdle && h.state != FileTransferStateComplete {
 			if h.sink != nil {
 				_ = h.sink.Abort()
 			}
 			h.state = FileTransferStateError
-			return errors.New("duplicate start_upload before previous transfer completion")
+			return errors.New("duplicate start_upload text frame before previous transfer completion")
+		}
+
+		var meta FileMetadata
+		if parseErr := json.Unmarshal(data, &meta); parseErr != nil {
+			log.Printf("[FileChannel] Failed to parse control msg: %v", parseErr)
+			h.state = FileTransferStateError
+			return fmt.Errorf("failed to parse control msg: %w", parseErr)
+		}
+
+		if meta.Type != CmdStartUpload {
+			log.Printf("[FileChannel] Unexpected command: %s", meta.Type)
+			h.state = FileTransferStateError
+			return fmt.Errorf("unexpected command type: %s", meta.Type)
+		}
+
+		if meta.Filename == "" {
+			h.state = FileTransferStateError
+			return errors.New("empty filename in start_upload")
+		}
+		if meta.Size < 0 {
+			h.state = FileTransferStateError
+			return errors.New("negative size in start_upload")
 		}
 
 		log.Printf("[FileChannel] Start uploading to %s (size=%d, sha256=%s, install=%v)",
@@ -380,10 +403,15 @@ func (h *FileChannelHandler) HandleMessage(data []byte, isString bool) (err erro
 				}
 			}
 			h.state = FileTransferStateComplete
-			log.Printf("[FileChannel] SHA-256 integrity check passed: %s", computedHash)
-			log.Printf("[FileChannel] Upload finished: %s (%d bytes)", meta.Filename, 0)
+			log.Printf("[FileChannel] Upload integrity check PASSED (empty file)")
+			log.Printf("[FileChannel] Upload finished: %s (0 bytes)", meta.Filename)
+
 			if meta.Install && h.postAction != nil {
-				h.postAction(meta, meta.Filename)
+				target := meta.Filename
+				if h.sink != nil {
+					target = h.sink.Target()
+				}
+				_ = h.postAction(meta, target)
 			}
 			return nil
 		}
@@ -392,7 +420,8 @@ func (h *FileChannelHandler) HandleMessage(data []byte, isString bool) (err erro
 		return nil
 	}
 
-	// 2. Binary Framing: streaming raw chunk
+	// 2. Binary Framing: strictly for raw chunk payloads
+	// A binary chunk arriving in IDLE (even if starting with '{') or without accepted metadata MUST be rejected.
 	if h.state != FileTransferStateMetadataAccepted && h.state != FileTransferStateReceiving {
 		if h.sink != nil {
 			_ = h.sink.Abort()
@@ -447,8 +476,8 @@ func (h *FileChannelHandler) HandleMessage(data []byte, isString bool) (err erro
 				_ = h.sink.Abort()
 			}
 			h.state = FileTransferStateError
-			log.Printf("[FileChannel] Upload integrity check FAILED: expected %s, got %s", h.metadata.SHA256, computedHash)
-			return fmt.Errorf("checksum mismatch: expected %s, got %s", h.metadata.SHA256, computedHash)
+			log.Printf("[FileChannel] Upload integrity check FAILED: hash mismatch")
+			return errors.New("upload integrity check failed: hash mismatch")
 		}
 
 		if h.sink != nil {
@@ -459,19 +488,23 @@ func (h *FileChannelHandler) HandleMessage(data []byte, isString bool) (err erro
 		}
 
 		h.state = FileTransferStateComplete
-		log.Printf("[FileChannel] SHA-256 integrity check passed: %s", computedHash)
+		log.Printf("[FileChannel] Upload integrity check PASSED: %s", computedHash)
 		log.Printf("[FileChannel] Upload finished: %s (%d bytes)", h.metadata.Filename, h.receivedBytes)
 
 		// Post-upload boundary (installer execution strictly deferred)
 		if h.metadata.Install && h.postAction != nil {
-			h.postAction(h.metadata, h.metadata.Filename)
+			target := h.metadata.Filename
+			if h.sink != nil {
+				target = h.sink.Target()
+			}
+			_ = h.postAction(h.metadata, target)
 		}
 	}
 
 	return nil
 }
 
-// Attach binds the FileChannelHandler to a Pion DataChannel OnMessage callback.
+// Attach binds the FileChannelHandler to a Pion DataChannel OnMessage and OnClose callbacks.
 // Classification: GENERATED_ADAPTER.
 func (h *FileChannelHandler) Attach(dc *webrtc.DataChannel) {
 	if dc == nil {
@@ -480,34 +513,16 @@ func (h *FileChannelHandler) Attach(dc *webrtc.DataChannel) {
 	dc.OnMessage(func(msg webrtc.DataChannelMessage) {
 		_ = h.HandleMessage(msg.Data, msg.IsString)
 	})
+	dc.OnClose(func() {
+		_ = h.Abort()
+	})
 }
 
-// RegisterFileChannel binds the FileChannelHandler to incoming file-channel instances on a PeerSession.
+// RegisterFileChannel binds the FileChannelHandler to a PeerSession.
 // Classification: GENERATED_ADAPTER.
 func RegisterFileChannel(session *PeerSession, handler *FileChannelHandler) {
-	if session == nil || session.PC == nil || handler == nil {
+	if session == nil || handler == nil {
 		return
 	}
-
-	session.PC.OnDataChannel(func(remoteDC *webrtc.DataChannel) {
-		label := remoteDC.Label()
-		attachInertLifecycleHooks(remoteDC)
-
-		if label == ChannelFile {
-			handler.Attach(remoteDC)
-		}
-
-		if session.Channels != nil {
-			session.Channels.mu.Lock()
-			switch label {
-			case ChannelFile:
-				session.Channels.FileChannel = remoteDC
-			case ChannelAICommand:
-				session.Channels.AICommandChannel = remoteDC
-			case ChannelADB:
-				session.Channels.ADBChannel = remoteDC
-			}
-			session.Channels.mu.Unlock()
-		}
-	})
+	session.SetFileHandler(handler)
 }

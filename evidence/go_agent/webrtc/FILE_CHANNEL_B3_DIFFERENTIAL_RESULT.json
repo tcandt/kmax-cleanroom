@@ -1,19 +1,21 @@
 {
   "metadata": {
-    "title": "Phase 2C.5B3 File-Channel Protocol Differential Result",
-    "phase": "Phase 2C.5B3",
-    "canonical_timestamp": "2026-09-17T20:30:00Z",
+    "title": "Phase 2C.5B3R File-Channel Protocol Differential Result",
+    "phase": "Phase 2C.5B3R",
+    "canonical_timestamp": "2026-09-17T21:30:00Z",
     "classification": "Clean-room behavioral/protocol reconstruction",
     "derivation_tool": "tools/derive_b3_differential.py",
-    "engine": "evidence-executed"
+    "engine": "evidence-executed",
+    "base_contract_sha256": "1ff71090f6a16de538cad6cf93fc4096d34a913bed4008d1172f41b83da8e17b",
+    "errata_file": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_CONTRACT_ERRATA.json"
   },
   "counters": {
     "original_static_evidence_total": 9,
     "original_static_evidence_passed": 9,
     "exact_framing_total": 3,
     "exact_framing_passed": 3,
-    "reconstructed_runtime_e2e_total": 1,
-    "reconstructed_runtime_e2e_passed": 1,
+    "reconstructed_runtime_e2e_total": 2,
+    "reconstructed_runtime_e2e_passed": 2,
     "original_agent_runtime_parity_total": 0,
     "original_agent_runtime_parity_passed": 0,
     "phase_scope_guard_total": 2,
@@ -173,8 +175,8 @@
         "FILE-B3-05"
       ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
-      "evidence_basis": "STRINGS.json log: [FileChannel] SHA-256 integrity check passed: %s",
-      "runtime_basis": "Streaming SHA-256 calculation and verification",
+      "evidence_basis": "STRINGS.json logs: [FileChannel] SHA-256 integrity check passed / Upload integrity check FAILED (STATIC_CONFIRMED: integrity verification exists; streaming/timing: IMPLEMENTATION_CHOICE)",
+      "runtime_basis": "TestFileChannelIntegrityCheckPasses and TestFileChannelChecksumMismatch",
       "string_refs": [
         {
           "artifact": "evidence/go_agent/STRINGS.json",
@@ -198,7 +200,7 @@
         "FILE-B3-06"
       ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
-      "evidence_basis": "STRINGS.json log: [FileChannel] Upload finished: %s (%d bytes)",
+      "evidence_basis": "STRINGS.json log: [FileChannel] Upload finished: %s (%d bytes) (STATIC_CONFIRMED: byte tracking; overflow/abort: IMPLEMENTATION_CHOICE)",
       "runtime_basis": "Cumulative byte tracking and completion on total == declared size",
       "string_refs": [
         {
@@ -219,8 +221,8 @@
         "FILE-B3-07"
       ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
-      "evidence_basis": "STRINGS.json (/data/local/tmp/install_%s.apk, [FileChannel] Failed to copy APK to /data/local/tmp: %v)",
-      "runtime_basis": "DefaultDestinationDir constant confirms /data/local/tmp",
+      "evidence_basis": "STRINGS.json log: /data/local/tmp/install_%s.apk (STATIC_CONFIRMED: APK install staging path; baseDir: IMPLEMENTATION_CHOICE)",
+      "runtime_basis": "Confirmed APK staging directory /data/local/tmp; configurable BaseDir for LocalFileSink",
       "string_refs": [
         {
           "artifact": "evidence/go_agent/STRINGS.json",
@@ -496,6 +498,30 @@
           "safe_launch_capability": false
         },
         "diagnostic": "Android runtime unavailable: missing ['abstract_uds_support', 'app_process_available', 'compatible_android_target_available', 'execution_context_shell_uid_2000', 'safe_launch_capability']"
+      }
+    },
+    {
+      "id": "FILE-B3-DIM-23",
+      "name": "production_coordinator_wiring_and_negative_test",
+      "contract_ids": [
+        "FILE-B3-01",
+        "FILE-B3-09"
+      ],
+      "classification": "RUNTIME_RECONSTRUCTED_E2E",
+      "evidence_basis": "Coordinator.handleRequestOffer wires FileChannelHandler per session via SetFileSinkFactory; single authoritative OnDataChannel in RegisterInboundHandler",
+      "runtime_basis": "TestWebRTCDataChannelsE2E (production wiring) and TestWebRTCDataChannelsE2E_UnwiredFileChannelFails (negative wiring test)",
+      "go_test_target": {
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails",
+        "subtest_name": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_sctp_e2e_subtest",
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails",
+        "subtest": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails",
+        "action": "pass"
       }
     }
   ]

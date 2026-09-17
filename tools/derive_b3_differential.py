@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 AGENT_DIR = ROOT / "reconstructed_source" / "cloudphone-agent"
 B3_CONTRACT_PATH = ROOT / "evidence" / "go_agent" / "webrtc" / "FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json"
+B3_ERRATA_PATH = ROOT / "evidence" / "go_agent" / "webrtc" / "FILE_CHANNEL_B3_CONTRACT_ERRATA.json"
 B3_DIFF_PATH = ROOT / "evidence" / "go_agent" / "webrtc" / "FILE_CHANNEL_B3_DIFFERENTIAL_RESULT.json"
 
 from tools.audit.b2_common import (
@@ -35,6 +36,7 @@ from tools.audit.b2_common import (
     evaluate_android_runtime_prerequisites,
     resolve_json_pointer,
 )
+from tools.audit.build_b3_effective_contract import build_b3_effective_contract
 
 def load_json(p: Path) -> Dict[str, Any]:
     return json.loads(p.read_text(encoding="utf-8"))
@@ -140,8 +142,8 @@ B3_DIMENSIONS_SPEC = [
         "name": "sha256_verification_strings",
         "contract_ids": ["FILE-B3-05"],
         "classification": "STATIC_PROTOCOL_EVIDENCE",
-        "evidence_basis": "STRINGS.json log: [FileChannel] SHA-256 integrity check passed: %s",
-        "runtime_basis": "Streaming SHA-256 calculation and verification",
+        "evidence_basis": "STRINGS.json logs: [FileChannel] SHA-256 integrity check passed / Upload integrity check FAILED (STATIC_CONFIRMED: integrity verification exists; streaming/timing: IMPLEMENTATION_CHOICE)",
+        "runtime_basis": "TestFileChannelIntegrityCheckPasses and TestFileChannelChecksumMismatch",
         "string_refs": [
             {
                 "artifact": "evidence/go_agent/STRINGS.json",
@@ -158,7 +160,7 @@ B3_DIMENSIONS_SPEC = [
         "name": "size_accounting_strings",
         "contract_ids": ["FILE-B3-06"],
         "classification": "STATIC_PROTOCOL_EVIDENCE",
-        "evidence_basis": "STRINGS.json log: [FileChannel] Upload finished: %s (%d bytes)",
+        "evidence_basis": "STRINGS.json log: [FileChannel] Upload finished: %s (%d bytes) (STATIC_CONFIRMED: byte tracking; overflow/abort: IMPLEMENTATION_CHOICE)",
         "runtime_basis": "Cumulative byte tracking and completion on total == declared size",
         "string_refs": [
             {
@@ -172,8 +174,8 @@ B3_DIMENSIONS_SPEC = [
         "name": "default_destination_staging_path",
         "contract_ids": ["FILE-B3-07"],
         "classification": "STATIC_PROTOCOL_EVIDENCE",
-        "evidence_basis": "STRINGS.json (/data/local/tmp/install_%s.apk, [FileChannel] Failed to copy APK to /data/local/tmp: %v)",
-        "runtime_basis": "DefaultDestinationDir constant confirms /data/local/tmp",
+        "evidence_basis": "STRINGS.json log: /data/local/tmp/install_%s.apk (STATIC_CONFIRMED: APK install staging path; baseDir: IMPLEMENTATION_CHOICE)",
+        "runtime_basis": "Confirmed APK staging directory /data/local/tmp; configurable BaseDir for LocalFileSink",
         "string_refs": [
             {
                 "artifact": "evidence/go_agent/STRINGS.json",
@@ -327,6 +329,19 @@ B3_DIMENSIONS_SPEC = [
         "evidence_basis": "Authentic Android Agent runtime execution",
         "runtime_basis": "Host environment is Windows AMD64 desktop without Android emulator / app_process",
         "result": "ENVIRONMENT_UNAVAILABLE",
+    },
+    {
+        "id": "FILE-B3-DIM-23",
+        "name": "production_coordinator_wiring_and_negative_test",
+        "contract_ids": ["FILE-B3-01", "FILE-B3-09"],
+        "classification": "RUNTIME_RECONSTRUCTED_E2E",
+        "evidence_basis": "Coordinator.handleRequestOffer wires FileChannelHandler per session via SetFileSinkFactory; single authoritative OnDataChannel in RegisterInboundHandler",
+        "runtime_basis": "TestWebRTCDataChannelsE2E (production wiring) and TestWebRTCDataChannelsE2E_UnwiredFileChannelFails (negative wiring test)",
+        "go_test_target": {
+            "pkg": "./tests",
+            "parent_test": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails",
+            "subtest_name": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails",
+        },
     },
 ]
 
@@ -616,12 +631,14 @@ def derive_b3_differential_internal(contract_data: Dict[str, Any], repo_root: Pa
 
     result_data = {
         "metadata": {
-            "title": "Phase 2C.5B3 File-Channel Protocol Differential Result",
-            "phase": "Phase 2C.5B3",
-            "canonical_timestamp": "2026-09-17T20:30:00Z",
+            "title": "Phase 2C.5B3R File-Channel Protocol Differential Result",
+            "phase": "Phase 2C.5B3R",
+            "canonical_timestamp": "2026-09-17T21:30:00Z",
             "classification": "Clean-room behavioral/protocol reconstruction",
             "derivation_tool": "tools/derive_b3_differential.py",
             "engine": "evidence-executed",
+            "base_contract_sha256": "1ff71090f6a16de538cad6cf93fc4096d34a913bed4008d1172f41b83da8e17b",
+            "errata_file": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_CONTRACT_ERRATA.json",
         },
         "counters": counters,
         "overall_verdict": overall_verdict,
@@ -697,6 +714,29 @@ def run_b3_verifier_mutation_tests(canonical_diff: Dict[str, Any], contract_data
     if v6b:
         raise AssertionError("Mutation Case 6 failed: uncovered mandatory requirement did not evaluate to FAILED")
 
+    # Case 7: Unwired coordinator negative test execution
+    mut7 = {
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails",
+        "test_name": "TestWebRTCDataChannelsE2E_UnwiredFileChannelFails",
+    }
+    res7 = execute_go_test_target(mut7["pkg"], mut7["test_name"], ROOT)
+    if res7.get("exit_code") != 0 or not res7.get("package_passed"):
+        raise AssertionError("Mutation Case 7 failed: negative unwired wiring test failed execution")
+
+    # Case 8: Simulated unwired coordinator failure in E2E
+    failing_cache_8 = {
+        "./tests::TestWebRTCDataChannelsE2E_UnwiredFileChannelFails": {
+            "exit_code": 1,
+            "package_passed": False,
+            "tests": {"TestWebRTCDataChannelsE2E_UnwiredFileChannelFails": {"action": "fail"}},
+        }
+    }
+    mut8 = copy.deepcopy(B3_DIMENSIONS_SPEC[22]) # FILE-B3-DIM-23
+    res8, _ = evaluate_b3_dimension(mut8, failing_cache_8, ROOT)
+    if res8 != "FAILED":
+        raise AssertionError("Mutation Case 8 failed: failing unwired negative test did not evaluate to FAILED")
+
     return True
 
 
@@ -706,10 +746,11 @@ def main():
     parser.add_argument("--check", action="store_true", help="Validate regenerated differential against canonical artifact")
     args = parser.parse_args()
 
-    print("[*] Deriving Phase 2C.5B3 File-Channel differential from executable evidence...")
-    contract_data = load_json(B3_CONTRACT_PATH)
+    effective_contract_data = build_b3_effective_contract(ROOT)
+    corrected_count = effective_contract_data.get("metadata", {}).get("corrected_requirements_count", 0)
+    print(f"[+] Compiled effective B3 contract ({len(effective_contract_data.get('requirements', []))} requirements, {corrected_count} errata corrections)")
 
-    valid, errors, diff_data = derive_b3_differential_internal(contract_data, ROOT)
+    valid, errors, diff_data = derive_b3_differential_internal(effective_contract_data, ROOT)
     print(f"[+] Derivation complete. Overall Verdict: {diff_data['overall_verdict']}")
     print(f"[+] Counters: {json.dumps(diff_data['counters'], indent=2)}")
 
@@ -721,9 +762,9 @@ def main():
 
     # Run mutation tests
     print("[*] Running B3 verifier negative mutation test suite...")
-    mut_passed = run_b3_verifier_mutation_tests(diff_data, contract_data)
+    mut_passed = run_b3_verifier_mutation_tests(diff_data, effective_contract_data)
     if mut_passed:
-        print("[PASS] All 6 negative mutation test cases rejected successfully.")
+        print("[PASS] All 8 negative mutation test cases rejected successfully.")
 
     target_path = Path(args.output) if args.output else B3_DIFF_PATH
 

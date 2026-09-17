@@ -287,3 +287,13 @@ func (s *PeerSession) SetClipboardProvider(provider ClipboardProvider) {
 	}
 }
 
+// SetFileHandler binds a FileChannelHandler to the session's DataChannels container.
+// Classification: GENERATED_ADAPTER.
+func (s *PeerSession) SetFileHandler(handler *FileChannelHandler) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.Channels != nil {
+		s.Channels.SetFileHandler(handler)
+	}
+}
+
