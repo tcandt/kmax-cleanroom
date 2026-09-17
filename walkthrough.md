@@ -683,6 +683,46 @@ Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
 6. **Terminology Correction**:
    - Corrected inaccurate "root UID 2000" references to "shell UID 2000".
 
+---
+
+# Phase 2C.5B2R3 Walkthrough: Evidence-Executed Differential Derivation Closure
+
+**Date**: 2026-09-17  
+**Status**: CLOSED & VERIFIED (Gate Check: PASS)  
+**Contract Frozen Hash**: `3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7`  
+**Classification**: Clean-room behavioral/protocol audit & evidence-executed derivation closure  
+
+## 1. Remediation Scope & Implemented Deliverables
+
+1. **Zero Production Modifications & Source Freeze**:
+   - All 7 production source and dependency files (`control.go`, `clipboard.go`, `datachannel.go`, `peer.go`, `agent.go`, `go.mod`, `go.sum`) remained 100% frozen with identical pre-R3 SHA-256 hashes.
+2. **Attributable SCTP Subtest Refactoring**:
+   - Refactored `TestWebRTCDataChannelsE2E` in `tests/webrtc_e2e_test.go` into three attributable subtests:
+     - `TestWebRTCDataChannelsE2E/input`: Real SCTP browser-to-agent touch event verified in `ControlSink` (32-byte scrcpy frame).
+     - `TestWebRTCDataChannelsE2E/clipboard_set`: Real SCTP browser-to-agent `set_clipboard` verified in `ClipboardProvider`.
+     - `TestWebRTCDataChannelsE2E/clipboard_get`: Real SCTP bidirectional `get_clipboard` verified with agent response frame delivered to browser.
+   - The real SCTP data channel path was strictly preserved without weakening assertions.
+3. **Structured RFC 6901 Evidence References**:
+   - Replaced prose-based evidence checking with structured `evidence_refs` containing `artifact`, `json_pointer`, and type-safe `expected` values.
+   - Implemented RFC 6901 pointer unescaping (`~1` $\rightarrow$ `/`, `~0` $\rightarrow$ `~`) and strict boundary checking.
+4. **Machine-Executed Test Verification**:
+   - `tools/derive_b2_differential.py` executes `go test -json -count=1` for both golden tests (5/5) and SCTP subtests (3/3).
+   - PASS is awarded only when process exit code is 0, package passed, and the exact mapped test/subtest records `Action: pass`.
+5. **Shared Pure Audit Library (`tools/audit/b2_common.py`)**:
+   - Created pure functions shared between generator and master verifier:
+     - `resolve_json_pointer`: RFC 6901 resolver.
+     - `validate_evidence_ref`: Path security, JSON parsing, type safety, classification validation.
+     - `scan_deferred_channels_isolation`: Whole-tree scanner across non-test production Go files.
+     - `evaluate_android_runtime_prerequisites`: 7-point prerequisite matrix evaluation.
+6. **Master Verifier Temp Regeneration & Extended Mutations (Cases A-N)**:
+   - Section 21.4 regenerates differential into a temporary directory via `tools/derive_b2_differential.py --check --output <temp>` and performs normalized comparison against canonical evidence.
+   - Executes 14 negative mutation tests (Cases A-N) covering static errors, golden test failures, SCTP subtest failures, and scanner violations—all in memory without mutating canonical repository files.
+7. **Toolchain Provenance Status Check**:
+   - Section 21.5 validates discovered compiler hash and basename against `evidence/metadata/TOOLCHAIN.json`, confirming `SAME_CANONICAL_TOOLCHAIN`.
+8. **Full Regression Verification**:
+   - All uncached unit tests, race tests, forensic reproducers (14/14 WebRTC, 23/23 Transport), transport differential (48/48), and master verifier (21/21 sections) passed cleanly on clean tree.
+
+
 
 
 

@@ -693,90 +693,100 @@ func TestWebRTCDataChannelsE2E(t *testing.T) {
 	}
 
 	// 6. Test Input Channel E2E: Browser sends inject_touch over SCTP DataChannel
-	touchPayload := `{"type":"inject_touch","action":0,"id":42,"x":200,"y":300,"w":1080,"h":1920}`
-	dcMu.Lock()
-	inDC := clientInputDC
-	dcMu.Unlock()
+	t.Run("input", func(t *testing.T) {
+		touchPayload := `{"type":"inject_touch","action":0,"id":42,"x":200,"y":300,"w":1080,"h":1920}`
+		dcMu.Lock()
+		inDC := clientInputDC
+		dcMu.Unlock()
 
-	if err := inDC.SendText(touchPayload); err != nil {
-		t.Fatalf("failed to send touch message over client input-channel: %v", err)
-	}
-
-	// Wait for control sink to receive decoded binary frame
-	var receivedMsg []byte
-	deadline := time.Now().Add(3 * time.Second)
-	for time.Now().Before(deadline) {
-		msgs := controlSink.GetMessages()
-		if len(msgs) > 0 {
-			receivedMsg = msgs[0]
-			break
+		if err := inDC.SendText(touchPayload); err != nil {
+			t.Fatalf("failed to send touch message over client input-channel: %v", err)
 		}
-		time.Sleep(20 * time.Millisecond)
-	}
 
-	if len(receivedMsg) != 32 {
-		t.Fatalf("expected 32-byte scrcpy touch frame in ControlSink, got length %d", len(receivedMsg))
-	}
-	if receivedMsg[0] != agentwebrtc.ScrcpyTypeInjectTouchEvent {
-		t.Fatalf("expected message type %d, got %d", agentwebrtc.ScrcpyTypeInjectTouchEvent, receivedMsg[0])
-	}
-	if receivedMsg[1] != 0 { // action DOWN
-		t.Fatalf("expected action 0 (DOWN), got %d", receivedMsg[1])
-	}
-	t.Log("[PASS] input-channel SCTP E2E: Browser JSON -> Agent -> ControlSink verified with exact 32-byte scrcpy frame")
+		// Wait for control sink to receive decoded binary frame
+		var receivedMsg []byte
+		deadline := time.Now().Add(3 * time.Second)
+		for time.Now().Before(deadline) {
+			msgs := controlSink.GetMessages()
+			if len(msgs) > 0 {
+				receivedMsg = msgs[0]
+				break
+			}
+			time.Sleep(20 * time.Millisecond)
+		}
+
+		if len(receivedMsg) != 32 {
+			t.Fatalf("expected 32-byte scrcpy touch frame in ControlSink, got length %d", len(receivedMsg))
+		}
+		if receivedMsg[0] != agentwebrtc.ScrcpyTypeInjectTouchEvent {
+			t.Fatalf("expected message type %d, got %d", agentwebrtc.ScrcpyTypeInjectTouchEvent, receivedMsg[0])
+		}
+		if receivedMsg[1] != 0 { // action DOWN
+			t.Fatalf("expected action 0 (DOWN), got %d", receivedMsg[1])
+		}
+		t.Log("[PASS] input-channel SCTP E2E: Browser JSON -> Agent -> ControlSink verified with exact 32-byte scrcpy frame")
+	})
 
 	// 7. Test Clipboard Channel E2E: set_clipboard
-	dcMu.Lock()
-	clDC := clientClipDC
-	dcMu.Unlock()
+	t.Run("clipboard_set", func(t *testing.T) {
+		dcMu.Lock()
+		clDC := clientClipDC
+		dcMu.Unlock()
 
-	setPayload := `{"type":"set_clipboard","text":"Hello From Browser SCTP","paste":true,"origin_client_id":"cli-888"}`
-	if err := clDC.SendText(setPayload); err != nil {
-		t.Fatalf("failed to send set_clipboard: %v", err)
-	}
-
-	// Wait for clipboardProvider to receive update
-	deadline = time.Now().Add(3 * time.Second)
-	var textRecv string
-	for time.Now().Before(deadline) {
-		text, _, _, sets, _ := clipboardProvider.Stats()
-		if sets > 0 {
-			textRecv = text
-			break
+		setPayload := `{"type":"set_clipboard","text":"Hello From Browser SCTP","paste":true,"origin_client_id":"cli-888"}`
+		if err := clDC.SendText(setPayload); err != nil {
+			t.Fatalf("failed to send set_clipboard: %v", err)
 		}
-		time.Sleep(20 * time.Millisecond)
-	}
-	if textRecv != "Hello From Browser SCTP" {
-		t.Fatalf("expected 'Hello From Browser SCTP' in ClipboardProvider, got %q", textRecv)
-	}
-	t.Log("[PASS] clipboard-channel set_clipboard SCTP E2E verified in ClipboardProvider")
+
+		// Wait for clipboardProvider to receive update
+		deadline := time.Now().Add(3 * time.Second)
+		var textRecv string
+		for time.Now().Before(deadline) {
+			text, _, _, sets, _ := clipboardProvider.Stats()
+			if sets > 0 {
+				textRecv = text
+				break
+			}
+			time.Sleep(20 * time.Millisecond)
+		}
+		if textRecv != "Hello From Browser SCTP" {
+			t.Fatalf("expected 'Hello From Browser SCTP' in ClipboardProvider, got %q", textRecv)
+		}
+		t.Log("[PASS] clipboard-channel set_clipboard SCTP E2E verified in ClipboardProvider")
+	})
 
 	// 8. Test Clipboard Channel E2E: get_clipboard
-	getPayload := `{"type":"get_clipboard"}`
-	if err := clDC.SendText(getPayload); err != nil {
-		t.Fatalf("failed to send get_clipboard: %v", err)
-	}
+	t.Run("clipboard_get", func(t *testing.T) {
+		dcMu.Lock()
+		clDC := clientClipDC
+		dcMu.Unlock()
 
-	var rawResp []byte
-	select {
-	case rawResp = <-clipMsgReceived:
-	case <-time.After(3 * time.Second):
-		t.Fatalf("timeout waiting for get_clipboard response frame from Agent")
-	}
+		getPayload := `{"type":"get_clipboard"}`
+		if err := clDC.SendText(getPayload); err != nil {
+			t.Fatalf("failed to send get_clipboard: %v", err)
+		}
 
-	var resp agentwebrtc.ClipboardResponseMessage
-	if err := json.Unmarshal(rawResp, &resp); err != nil {
-		t.Fatalf("failed to unmarshal clipboard response frame: %v", err)
-	}
-	if resp.Type != "clipboard" {
-		t.Fatalf("expected response type 'clipboard', got %q", resp.Type)
-	}
-	if resp.Text != "Hello From Browser SCTP" {
-		t.Fatalf("expected text 'Hello From Browser SCTP', got %q", resp.Text)
-	}
-	if resp.Source != "device" {
-		t.Fatalf("expected source 'device', got %q", resp.Source)
-	}
-	t.Log("[PASS] clipboard-channel get_clipboard SCTP E2E verified: Agent -> Browser response confirmed")
+		var rawResp []byte
+		select {
+		case rawResp = <-clipMsgReceived:
+		case <-time.After(3 * time.Second):
+			t.Fatalf("timeout waiting for get_clipboard response frame from Agent")
+		}
+
+		var resp agentwebrtc.ClipboardResponseMessage
+		if err := json.Unmarshal(rawResp, &resp); err != nil {
+			t.Fatalf("failed to unmarshal clipboard response frame: %v", err)
+		}
+		if resp.Type != "clipboard" {
+			t.Fatalf("expected response type 'clipboard', got %q", resp.Type)
+		}
+		if resp.Text != "Hello From Browser SCTP" {
+			t.Fatalf("expected text 'Hello From Browser SCTP', got %q", resp.Text)
+		}
+		if resp.Source != "device" {
+			t.Fatalf("expected source 'device', got %q", resp.Source)
+		}
+		t.Log("[PASS] clipboard-channel get_clipboard SCTP E2E verified: Agent -> Browser response confirmed")
+	})
 }
 

@@ -3180,64 +3180,17 @@ def verify_all():
     # 21.2 Deferred Channels Strict Isolation Audit
     # Verify all four deferred channels across the entire reconstructed cloudphone-agent production tree:
     # camera-channel, file-channel, ai-command-channel, adb-channel.
-    # Must NOT contain business: OnMessage handlers, payload parsers, file writes,
-    # camera processing, command execution, ADB sockets/bridges during B2.
+    # Uses shared pure scanner from tools.audit.b2_common.
+    from tools.audit.b2_common import (
+        scan_deferred_channels_isolation,
+        evaluate_android_runtime_prerequisites,
+        resolve_json_pointer,
+        validate_evidence_ref,
+    )
+    from tools.derive_b2_differential import evaluate_dimension_result
+
     agent_pkg_dir = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg"
-    deferred_violations = []
-
-    deferred_vars = ["CameraChannel", "FileChannel", "AICommandChannel", "ADBChannel", "camCh"]
-
-    # Scan all production Go files (excluding _test.go)
-    for go_file in agent_pkg_dir.rglob("*.go"):
-        if go_file.name.endswith("_test.go"):
-            continue
-        content = go_file.read_text(encoding="utf-8")
-
-        # 1. Check for OnMessage on deferred channels
-        for dvar in deferred_vars:
-            if f"{dvar}.OnMessage" in content:
-                deferred_violations.append(f"{go_file.name}: contains {dvar}.OnMessage handler")
-
-        # 2. Check for camera processing business logic
-        for kw in ["ProcessCameraFrame", "VirtualCamera", "CameraProcessor", "H264Camera", "OnCameraFrame"]:
-            if kw in content:
-                deferred_violations.append(f"{go_file.name}: contains camera business logic '{kw}'")
-
-        # 3. Check for file transfer / payload parser / file write business logic
-        for kw in ["SaveFile", "ParseFileChunk", "FileTransfer", "FileReceiver"]:
-            if kw in content:
-                deferred_violations.append(f"{go_file.name}: contains file transfer business logic '{kw}'")
-        if "os.Create(" in content or "os.WriteFile(" in content or "ioutil.WriteFile(" in content:
-            deferred_violations.append(f"{go_file.name}: contains direct file write call")
-
-        # 4. Check for AI command execution business logic
-        for kw in ["ExecuteAICommand", "ParseAICommand", "RunAICommand"]:
-            if kw in content:
-                deferred_violations.append(f"{go_file.name}: contains AI command business logic '{kw}'")
-        if "os/exec" in content or "exec.Command(" in content:
-            deferred_violations.append(f"{go_file.name}: contains command execution call")
-
-        # 5. Check for ADB sockets/bridges
-        for kw in ["AdbBridge", "AdbSocket", "ConnectAdb", "ForwardAdb"]:
-            if kw in content:
-                deferred_violations.append(f"{go_file.name}: contains ADB business logic '{kw}'")
-
-    # Specifically check datachannel.go inbound handler attaches only inert hooks without OnMessage
-    datachannel_go = agent_pkg_dir / "webrtc" / "datachannel.go"
-    if datachannel_go.exists():
-        dc_lines = datachannel_go.read_text(encoding="utf-8").splitlines()
-        on_message_targets = []
-        for line in dc_lines:
-            if ".OnMessage(" in line:
-                target = line.split(".OnMessage(")[0].strip()
-                on_message_targets.append(target)
-        # In B2, only inputCh and clipCh may attach OnMessage
-        invalid_on_messages = [t for t in on_message_targets if t not in ["inputCh", "clipCh"]]
-        if invalid_on_messages:
-            deferred_violations.append(f"datachannel.go: unexpected OnMessage registered on: {invalid_on_messages}")
-    else:
-        deferred_violations.append("datachannel.go missing")
-
+    deferred_violations = scan_deferred_channels_isolation(agent_pkg_dir)
     deferred_isolated = (len(deferred_violations) == 0)
     deferred_detail = (
         "camera-channel, file-channel, ai-command-channel, and adb-channel verified strictly inert across all production files"
@@ -3380,8 +3333,8 @@ def verify_all():
 
         return len(errors) == 0, errors, recomputed
 
-    def run_verifier_mutation_tests(diff_data, contract_data):
-        # 7 negative mutation tests (Cases A-G)
+    def run_extended_verifier_mutation_tests(diff_data, contract_data):
+        # 14 negative mutation tests (Cases A-N)
         # Case A: one STATIC result PASS -> FAILED
         mut_a = copy.deepcopy(diff_data)
         mut_a["evaluated_dimensions"][0]["result"] = "FAILED"
@@ -3427,37 +3380,126 @@ def verify_all():
         if validate_b2_differential_internal(mut_g, contract_data)[0]:
             raise AssertionError("Mutation Case G failed: verifier accepted original-agent PASS without oracle")
 
+        # Case H: static evidence locator points to nonexistent artifact -> evaluate_dimension_result must FAIL
+        dim_h = copy.deepcopy(diff_data["evaluated_dimensions"][0])
+        dim_h["evidence_refs"] = [{"artifact": "evidence/nonexistent_artifact_xyz.json", "json_pointer": "/label", "expected": "foo"}]
+        res_h, _ = evaluate_dimension_result(dim_h, {}, ROOT)
+        if res_h != "FAILED":
+            raise AssertionError("Mutation Case H failed: nonexistent artifact did not evaluate to FAILED")
+
+        # Case I: static json_pointer points to nonexistent field -> evaluate_dimension_result must FAIL
+        dim_i = copy.deepcopy(diff_data["evaluated_dimensions"][0])
+        dim_i["evidence_refs"] = [{"artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json", "json_pointer": "/nonexistent/field/xyz", "expected": "foo"}]
+        res_i, _ = evaluate_dimension_result(dim_i, {}, ROOT)
+        if res_i != "FAILED":
+            raise AssertionError("Mutation Case I failed: nonexistent json_pointer did not evaluate to FAILED")
+
+        # Case J: static expected value mismatch -> evaluate_dimension_result must FAIL
+        dim_j = copy.deepcopy(diff_data["evaluated_dimensions"][0])
+        dim_j["evidence_refs"] = [{"artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json", "json_pointer": "/confirmed_webrtc_channels/input-channel/label", "expected": "wrong_expected_label"}]
+        res_j, _ = evaluate_dimension_result(dim_j, {}, ROOT)
+        if res_j != "FAILED":
+            raise AssertionError("Mutation Case J failed: expected value mismatch did not evaluate to FAILED")
+
+        # Case K: golden test execution failure -> evaluate_dimension_result must FAIL
+        dim_k = copy.deepcopy(diff_data["evaluated_dimensions"][6]) # DC-B2-DIM-07
+        failing_cache_k = {"./pkg/webrtc::TestGoldenTouchEvent": {"exit_code": 1, "package_passed": False, "tests": {"TestGoldenTouchEvent": {"action": "fail"}}}}
+        res_k, _ = evaluate_dimension_result(dim_k, failing_cache_k, ROOT)
+        if res_k != "FAILED":
+            raise AssertionError("Mutation Case K failed: failing golden test did not evaluate to FAILED")
+
+        # Case L: expected golden test absent from test results -> evaluate_dimension_result must FAIL
+        dim_l = copy.deepcopy(diff_data["evaluated_dimensions"][6]) # DC-B2-DIM-07
+        missing_test_cache_l = {"./pkg/webrtc::TestGoldenTouchEvent": {"exit_code": 0, "package_passed": True, "tests": {}}}
+        res_l, _ = evaluate_dimension_result(dim_l, missing_test_cache_l, ROOT)
+        if res_l != "FAILED":
+            raise AssertionError("Mutation Case L failed: missing golden test did not evaluate to FAILED")
+
+        # Case M: SCTP E2E required subtest fails -> evaluate_dimension_result must FAIL
+        dim_m = copy.deepcopy(diff_data["evaluated_dimensions"][14]) # DC-B2-DIM-15 input_sctp_e2e
+        failing_e2e_cache_m = {"./tests::TestWebRTCDataChannelsE2E": {"exit_code": 0, "package_passed": True, "tests": {"TestWebRTCDataChannelsE2E": {"action": "pass"}, "TestWebRTCDataChannelsE2E/input": {"action": "fail"}}}}
+        res_m, _ = evaluate_dimension_result(dim_m, failing_e2e_cache_m, ROOT)
+        if res_m != "FAILED":
+            raise AssertionError("Mutation Case M failed: failing SCTP subtest did not evaluate to FAILED")
+
+        # Case N: deferred-channel scanner receives violation -> evaluate_dimension_result must FAIL
+        # Test by evaluating with temporary empty directory where datachannel.go is missing
+        import tempfile
+        with tempfile.TemporaryDirectory() as empty_temp_dir:
+            temp_root = Path(empty_temp_dir)
+            dim_n = copy.deepcopy(diff_data["evaluated_dimensions"][17]) # DC-B2-DIM-18
+            res_n, _ = evaluate_dimension_result(dim_n, {}, temp_root)
+            if res_n != "FAILED":
+                raise AssertionError("Mutation Case N failed: deferred-channel scanner violation did not evaluate to FAILED")
+
         return True
 
     if b2_diff_path.exists() and b2_contract_path.exists():
         try:
-            b2_diff_data = json.loads(b2_diff_path.read_text(encoding="utf-8"))
-            b2_contract_data = json.loads(b2_contract_path.read_text(encoding="utf-8"))
-
-            # 1. Run negative mutation suite
-            mutations_passed = run_verifier_mutation_tests(b2_diff_data, b2_contract_data)
-
-            # 2. Validate canonical differential result
-            valid, errors, recomputed = validate_b2_differential_internal(b2_diff_data, b2_contract_data)
-            dims = b2_diff_data.get("evaluated_dimensions", [])
-            mand_reqs = [r for r in b2_contract_data.get("requirements", []) if r.get("mandatory_for_parity") is True]
-
-            if valid and mutations_passed:
-                b2_diff_valid = True
-                b2_diff_detail = (
-                    f"Derived dynamically from {len(dims)} dimensions ({len(mand_reqs)}/{len(mand_reqs)} mandatory contract requirements covered, 7/7 mutation tests rejected): "
-                    f"{recomputed['static_protocol_evidence_passed']}/{recomputed['static_protocol_evidence_total']} static protocol, "
-                    f"{recomputed['exact_binary_frame_passed']}/{recomputed['exact_binary_frame_total']} binary frames, "
-                    f"{recomputed['reconstructed_runtime_e2e_passed']}/{recomputed['reconstructed_runtime_e2e_total']} runtime E2E, "
-                    f"{recomputed['semantic_parity_passed']}/{recomputed['semantic_parity_total']} semantic parity, "
-                    f"{recomputed['reference_only_total']} reference only, "
-                    f"{recomputed['implementation_choice_total']} implementation choice, "
-                    f"{recomputed['environment_unavailable_total']} env unavailable, "
-                    f"failed={recomputed['failed_total']}"
+            import tempfile
+            with tempfile.TemporaryDirectory() as temp_regen_dir:
+                temp_regen_path = Path(temp_regen_dir) / "DATACHANNEL_B2_DIFFERENTIAL_RESULT.json"
+                # Master verifier independently invokes derivation tool in audit mode (--check --output)
+                regen_proc = subprocess.run(
+                    [sys.executable, str(ROOT / "tools" / "derive_b2_differential.py"), "--check", "--output", str(temp_regen_path)],
+                    cwd=str(ROOT),
+                    capture_output=True,
+                    text=True
                 )
-            else:
-                b2_diff_valid = False
-                b2_diff_detail = f"Validation failed: {'; '.join(errors)}"
+                if regen_proc.returncode != 0:
+                    raise RuntimeError(f"Derivation tool failed in --check mode (exit code {regen_proc.returncode}): {regen_proc.stderr or regen_proc.stdout}")
+
+                if not temp_regen_path.exists():
+                    raise RuntimeError(f"Derivation tool did not produce output at temporary path: {temp_regen_path}")
+
+                regen_data = json.loads(temp_regen_path.read_text(encoding="utf-8"))
+                canonical_data = json.loads(b2_diff_path.read_text(encoding="utf-8"))
+
+                # Semantic normalized comparison
+                def norm_for_cmp(p):
+                    dims = []
+                    for d in p.get("evaluated_dimensions", []):
+                        dc = dict(d)
+                        if "execution_evidence" in dc:
+                            ev = dict(dc["execution_evidence"])
+                            ev.pop("elapsed", None)
+                            dc["execution_evidence"] = ev
+                        dims.append(dc)
+                    return {
+                        "counters": p.get("counters"),
+                        "overall_verdict": p.get("overall_verdict"),
+                        "evaluated_dimensions": dims,
+                    }
+
+                if norm_for_cmp(regen_data) != norm_for_cmp(canonical_data):
+                    raise RuntimeError("Regenerated differential does not match canonical artifact under normalized comparison")
+
+                b2_contract_data = json.loads(b2_contract_path.read_text(encoding="utf-8"))
+
+                # 1. Run 14 negative mutation tests (Cases A-N)
+                mutations_passed = run_extended_verifier_mutation_tests(canonical_data, b2_contract_data)
+
+                # 2. Validate canonical differential result
+                valid, errors, recomputed = validate_b2_differential_internal(canonical_data, b2_contract_data)
+                dims = canonical_data.get("evaluated_dimensions", [])
+                mand_reqs = [r for r in b2_contract_data.get("requirements", []) if r.get("mandatory_for_parity") is True]
+
+                if valid and mutations_passed:
+                    b2_diff_valid = True
+                    b2_diff_detail = (
+                        f"Derived dynamically from {len(dims)} dimensions ({len(mand_reqs)}/{len(mand_reqs)} mandatory contract requirements covered, 14/14 mutation tests rejected, temp regeneration matched): "
+                        f"{recomputed['static_protocol_evidence_passed']}/{recomputed['static_protocol_evidence_total']} static protocol, "
+                        f"{recomputed['exact_binary_frame_passed']}/{recomputed['exact_binary_frame_total']} binary frames, "
+                        f"{recomputed['reconstructed_runtime_e2e_passed']}/{recomputed['reconstructed_runtime_e2e_total']} runtime E2E, "
+                        f"{recomputed['semantic_parity_passed']}/{recomputed['semantic_parity_total']} semantic parity, "
+                        f"{recomputed['reference_only_total']} reference only, "
+                        f"{recomputed['implementation_choice_total']} implementation choice, "
+                        f"{recomputed['environment_unavailable_total']} env unavailable, "
+                        f"failed={recomputed['failed_total']}"
+                    )
+                else:
+                    b2_diff_valid = False
+                    b2_diff_detail = f"Validation failed: {'; '.join(errors)}"
         except Exception as e:
             b2_diff_valid = False
             b2_diff_detail = f"Exception validating differential: {e}"
@@ -3522,6 +3564,23 @@ def verify_all():
     race_passed = False
     race_detail = ""
 
+    # Check toolchain provenance against evidence/metadata/TOOLCHAIN.json
+    toolchain_provenance_status = "TOOLCHAIN_UNAVAILABLE"
+    toolchain_json_path = ROOT / "evidence" / "metadata" / "TOOLCHAIN.json"
+    if compiler_path and toolchain_json_path.exists():
+        try:
+            tmeta = json.loads(toolchain_json_path.read_text(encoding="utf-8"))
+            with open(compiler_path, "rb") as cf:
+                actual_compiler_sha = hashlib.sha256(cf.read()).hexdigest()
+            canon_sha = tmeta.get("compiler_sha256")
+            canon_base = tmeta.get("compiler_executable_basename")
+            if actual_compiler_sha == canon_sha and compiler_name == canon_base:
+                toolchain_provenance_status = "SAME_CANONICAL_TOOLCHAIN"
+            else:
+                toolchain_provenance_status = "DIFFERENT_VERIFIED_TOOLCHAIN"
+        except Exception:
+            toolchain_provenance_status = "TOOLCHAIN_MISMATCH"
+
     if not compiler_path:
         race_passed = False
         race_detail = "TOOLCHAIN_UNAVAILABLE: No race-capable CGO compiler (gcc/clang) discovered in CC, PATH, registry, or toolchain metadata"
@@ -3541,7 +3600,7 @@ def verify_all():
 
         race_passed = (agent_race_res.returncode == 0) and (sig_race_res.returncode == 0)
         if race_passed:
-            race_detail = f"go test -race -count=1 ./... passed cleanly with zero data races in cloudphone-agent and webrtc-signaling (compiler: {compiler_name} via {discovery_method})"
+            race_detail = f"go test -race -count=1 ./... passed cleanly with zero data races in cloudphone-agent and webrtc-signaling (compiler: {compiler_name} via {discovery_method}, provenance: {toolchain_provenance_status})"
         else:
             err_msg = (sig_race_res.stderr or sig_race_res.stdout) if sig_race_res.returncode != 0 else (agent_race_res.stderr or agent_race_res.stdout)
             race_detail = f"Race test failure: agent_code={agent_race_res.returncode}, sig_code={sig_race_res.returncode}: {err_msg.strip()[:200]}"

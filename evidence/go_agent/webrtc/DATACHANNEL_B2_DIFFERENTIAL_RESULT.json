@@ -1,10 +1,11 @@
 {
   "metadata": {
-    "title": "Phase 2C.5B2R DataChannel Protocol Differential Result",
-    "phase": "Phase 2C.5B2R",
-    "evaluation_timestamp": "2026-09-17T18:50:00Z",
+    "title": "Phase 2C.5B2 DataChannel Protocol Differential Result",
+    "phase": "Phase 2C.5B2R3",
+    "canonical_timestamp": "2026-09-17T19:20:00Z",
     "classification": "Clean-room behavioral/protocol reconstruction",
-    "derivation_tool": "tools/derive_b2_differential.py"
+    "derivation_tool": "tools/derive_b2_differential.py",
+    "engine": "evidence-executed"
   },
   "counters": {
     "static_protocol_evidence_total": 9,
@@ -23,7 +24,7 @@
     "verified_divergence_total": 0,
     "failed_total": 0
   },
-  "overall_verdict": "PASS_PHASE_2C5B2R_CLOSED",
+  "overall_verdict": "PASS_PHASE_2C5B2_CLOSED",
   "evaluated_dimensions": [
     {
       "id": "DC-B2-DIM-01",
@@ -34,7 +35,20 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (AMD64 0xb5a5af / ARM64 0x6b8548)",
       "runtime_basis": "pc.CreateDataChannel('input-channel')",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/input-channel/label",
+          "expected": "input-channel",
+          "expected_classification": "COMBINED_CONFIRMED",
+          "classification_json_pointer": "/confirmed_webrtc_channels/input-channel/evidence_classification"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-02",
@@ -45,7 +59,18 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
       "runtime_basis": "DataChannelInit.Ordered = true",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/input-channel/ordered",
+          "expected": true
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-03",
@@ -56,7 +81,18 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_FRAMING_MATRIX.json (channels.input-channel.payload_encoding = JSON_TEXT)",
       "runtime_basis": "HandleInputMessage parses JSON string",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+          "json_pointer": "/channels/input-channel/payload_encoding",
+          "expected": "JSON_TEXT"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-04",
@@ -67,7 +103,20 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (AMD64 0xb5e208 / ARM64 0x6bc175)",
       "runtime_basis": "pc.CreateDataChannel('clipboard-channel')",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/clipboard-channel/label",
+          "expected": "clipboard-channel",
+          "expected_classification": "COMBINED_CONFIRMED",
+          "classification_json_pointer": "/confirmed_webrtc_channels/clipboard-channel/evidence_classification"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-05",
@@ -78,7 +127,18 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
       "runtime_basis": "DataChannelInit.Ordered = true",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/clipboard-channel/ordered",
+          "expected": true
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-06",
@@ -89,7 +149,18 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_FRAMING_MATRIX.json (channels.clipboard-channel.payload_encoding = JSON_TEXT)",
       "runtime_basis": "HandleClipboardMessage parses JSON string",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+          "json_pointer": "/channels/clipboard-channel/payload_encoding",
+          "expected": "JSON_TEXT"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-07",
@@ -100,8 +171,20 @@
       ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "CONTROL_INPUT_PROTOCOL_CROSSMAP.json (AMD64 0x9cfb54-0x9cfc0e bswap/rol, ecx=0x20)",
-      "runtime_basis": "TestGoldenTouchEvent",
-      "result": "PASS"
+      "runtime_basis": "TestGoldenTouchEvent in pkg/webrtc",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestGoldenTouchEvent"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_test",
+        "command": "go test -json -count=1 -run=^TestGoldenTouchEvent$ ./pkg/webrtc",
+        "exit_code": 0,
+        "test": "TestGoldenTouchEvent",
+        "action": "pass",
+        "elapsed": 0
+      }
     },
     {
       "id": "DC-B2-DIM-08",
@@ -111,8 +194,20 @@
       ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3ace, ControlMessageReader.java:69)",
-      "runtime_basis": "TestGoldenKeycodeEvent",
-      "result": "PASS"
+      "runtime_basis": "TestGoldenKeycodeEvent in pkg/webrtc",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestGoldenKeycodeEvent"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_test",
+        "command": "go test -json -count=1 -run=^TestGoldenKeycodeEvent$ ./pkg/webrtc",
+        "exit_code": 0,
+        "test": "TestGoldenKeycodeEvent",
+        "action": "pass",
+        "elapsed": 0
+      }
     },
     {
       "id": "DC-B2-DIM-09",
@@ -122,8 +217,20 @@
       ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3a4d, ControlMessageReader.java:95)",
-      "runtime_basis": "TestGoldenTextEvent",
-      "result": "PASS"
+      "runtime_basis": "TestGoldenTextEvent in pkg/webrtc",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestGoldenTextEvent"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_test",
+        "command": "go test -json -count=1 -run=^TestGoldenTextEvent$ ./pkg/webrtc",
+        "exit_code": 0,
+        "test": "TestGoldenTextEvent",
+        "action": "pass",
+        "elapsed": 0
+      }
     },
     {
       "id": "DC-B2-DIM-10",
@@ -133,8 +240,20 @@
       ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3c07, ControlMessageReader.java:103)",
-      "runtime_basis": "TestGoldenScrollEvent",
-      "result": "PASS"
+      "runtime_basis": "TestGoldenScrollEvent in pkg/webrtc",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestGoldenScrollEvent"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_test",
+        "command": "go test -json -count=1 -run=^TestGoldenScrollEvent$ ./pkg/webrtc",
+        "exit_code": 0,
+        "test": "TestGoldenScrollEvent",
+        "action": "pass",
+        "elapsed": 0
+      }
     },
     {
       "id": "DC-B2-DIM-11",
@@ -144,8 +263,20 @@
       ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3b60, ControlMessageReader.java:40)",
-      "runtime_basis": "TestGoldenHardKeyboardEvent",
-      "result": "PASS"
+      "runtime_basis": "TestGoldenHardKeyboardEvent in pkg/webrtc",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestGoldenHardKeyboardEvent"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_go_test",
+        "command": "go test -json -count=1 -run=^TestGoldenHardKeyboardEvent$ ./pkg/webrtc",
+        "exit_code": 0,
+        "test": "TestGoldenHardKeyboardEvent",
+        "action": "pass",
+        "elapsed": 0
+      }
     },
     {
       "id": "DC-B2-DIM-12",
@@ -154,9 +285,20 @@
         "DC-B2-12"
       ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
-      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3860, string origin_client_id at 0xb5...)",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3860, string origin_client_id)",
       "runtime_basis": "TestSetClipboard",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+          "json_pointer": "/clipboard_channel_messages/set_clipboard/classification",
+          "expected": "STATIC_CONFIRMED"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-13",
@@ -167,7 +309,18 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e38ce)",
       "runtime_basis": "TestGetClipboard",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+          "json_pointer": "/clipboard_channel_messages/get_clipboard/classification",
+          "expected": "STATIC_CONFIRMED"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-14",
@@ -178,7 +331,18 @@
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json, useWebRTC.js:773-778",
       "runtime_basis": "TestGetClipboard sends {type: 'clipboard', text, source: 'device', origin_client_id: null}",
-      "result": "PASS"
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+          "json_pointer": "/clipboard_channel_messages/get_clipboard/fields/0",
+          "expected": "type"
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "structured_evidence_ref",
+        "validated_count": 1
+      }
     },
     {
       "id": "DC-B2-DIM-15",
@@ -190,8 +354,22 @@
       ],
       "classification": "RUNTIME_RECONSTRUCTED_E2E",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
-      "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ControlSink exact 32-byte frame)",
-      "result": "PASS"
+      "runtime_basis": "TestWebRTCDataChannelsE2E/input (Browser SCTP -> Agent -> ControlSink exact 32-byte frame)",
+      "go_test_target": {
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest_name": "TestWebRTCDataChannelsE2E/input"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_sctp_subtest",
+        "command": "go test -json -count=1 -run=^TestWebRTCDataChannelsE2E$ ./tests",
+        "exit_code": 0,
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest": "TestWebRTCDataChannelsE2E/input",
+        "action": "pass",
+        "elapsed": 0.02
+      }
     },
     {
       "id": "DC-B2-DIM-16",
@@ -202,8 +380,22 @@
       ],
       "classification": "RUNTIME_RECONSTRUCTED_E2E",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
-      "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ClipboardProvider.Set)",
-      "result": "PASS"
+      "runtime_basis": "TestWebRTCDataChannelsE2E/clipboard_set (Browser SCTP -> Agent -> ClipboardProvider.Set)",
+      "go_test_target": {
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest_name": "TestWebRTCDataChannelsE2E/clipboard_set"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_sctp_subtest",
+        "command": "go test -json -count=1 -run=^TestWebRTCDataChannelsE2E$ ./tests",
+        "exit_code": 0,
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest": "TestWebRTCDataChannelsE2E/clipboard_set",
+        "action": "pass",
+        "elapsed": 0.02
+      }
     },
     {
       "id": "DC-B2-DIM-17",
@@ -214,8 +406,22 @@
       ],
       "classification": "RUNTIME_RECONSTRUCTED_E2E",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
-      "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ClipboardProvider.Get -> Response)",
-      "result": "PASS"
+      "runtime_basis": "TestWebRTCDataChannelsE2E/clipboard_get (Browser SCTP -> Agent -> ClipboardProvider.Get -> Response)",
+      "go_test_target": {
+        "pkg": "./tests",
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest_name": "TestWebRTCDataChannelsE2E/clipboard_get"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_sctp_subtest",
+        "command": "go test -json -count=1 -run=^TestWebRTCDataChannelsE2E$ ./tests",
+        "exit_code": 0,
+        "parent_test": "TestWebRTCDataChannelsE2E",
+        "subtest": "TestWebRTCDataChannelsE2E/clipboard_get",
+        "action": "pass",
+        "elapsed": 0
+      }
     },
     {
       "id": "DC-B2-DIM-18",
@@ -225,8 +431,13 @@
       ],
       "classification": "SEMANTIC_PARITY",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-08)",
-      "runtime_basis": "Master Verifier scans entire cloudphone-agent production tree for zero deferred channel logic",
-      "result": "PASS"
+      "runtime_basis": "Whole-tree boundary scanner verifies camera, file, ai-command, adb inert in pkg/",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "executed_whole_tree_scanner",
+        "target": "D:/KMAX-CLEANROOM/reconstructed_source/cloudphone-agent/pkg",
+        "violations_count": 0
+      }
     },
     {
       "id": "DC-B2-DIM-19",
@@ -235,9 +446,14 @@
         "DC-B2-05"
       ],
       "classification": "REFERENCE_ONLY",
-      "evidence_basis": "useWebRTC.js:1032 ('type': 'touch')",
+      "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1032 ('type': 'touch')",
       "runtime_basis": "TestHandleInputMessageEndToEnd/touch_alias_type",
-      "result": "PASS"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "reference_only_validation",
+        "note": "Provenance classification and compatibility behavior were validated (does not contribute to original protocol parity)"
+      }
     },
     {
       "id": "DC-B2-DIM-20",
@@ -246,9 +462,14 @@
         "DC-B2-05"
       ],
       "classification": "REFERENCE_ONLY",
-      "evidence_basis": "useWebRTC.js:1034-1035 (seq, client_ts_ms)",
+      "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1034-1035 (seq, client_ts_ms)",
       "runtime_basis": "TouchEvent struct unmarshals without error",
-      "result": "PASS"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "reference_only_validation",
+        "note": "Provenance classification and compatibility behavior were validated (does not contribute to original protocol parity)"
+      }
     },
     {
       "id": "DC-B2-DIM-21",
@@ -257,9 +478,14 @@
         "DC-B2-12"
       ],
       "classification": "REFERENCE_ONLY",
-      "evidence_basis": "useWebRTC.js:1200-1202 (paste, suppress_broadcast)",
+      "evidence_basis": "evidence/reference/raw/web-app/src/composables/useWebRTC.js:1200-1202 (paste, suppress_broadcast)",
       "runtime_basis": "SetClipboardMessage struct unmarshals without error",
-      "result": "PASS"
+      "reference_source": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "reference_only_validation",
+        "note": "Provenance classification and compatibility behavior were validated (does not contribute to original protocol parity)"
+      }
     },
     {
       "id": "DC-B2-DIM-22",
@@ -269,8 +495,16 @@
       ],
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "Defensive handling of inbound 'clipboard' frames",
-      "runtime_basis": "TestPeerClipboardNotification",
-      "result": "PASS"
+      "runtime_basis": "TestPeerClipboardNotification in pkg/webrtc",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestPeerClipboardNotification"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Provenance classification and compatibility adapter behavior were validated (does not contribute to original protocol parity)"
+      }
     },
     {
       "id": "DC-B2-DIM-23",
@@ -281,7 +515,15 @@
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "ControlMessageReader.CLIPBOARD_TEXT_MAX_LENGTH (262130) + JSON buffer envelope",
       "runtime_basis": "TestClipboardParserRobustnessAndFuzz/oversized_payload",
-      "result": "PASS"
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestClipboardParserRobustnessAndFuzz/oversized_payload"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Provenance classification and compatibility adapter behavior were validated (does not contribute to original protocol parity)"
+      }
     },
     {
       "id": "DC-B2-DIM-24",
@@ -292,7 +534,11 @@
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "Boundary abstraction for @uds_sys_t_",
       "runtime_basis": "MemoryControlSink in-memory test implementation",
-      "result": "PASS"
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Provenance classification and compatibility adapter behavior were validated (does not contribute to original protocol parity)"
+      }
     },
     {
       "id": "DC-B2-DIM-25",
@@ -303,7 +549,11 @@
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "Boundary abstraction for Android ClipboardManager",
       "runtime_basis": "MemoryClipboardProvider in-memory test implementation",
-      "result": "PASS"
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Provenance classification and compatibility adapter behavior were validated (does not contribute to original protocol parity)"
+      }
     },
     {
       "id": "DC-B2-DIM-26",
@@ -317,7 +567,20 @@
       "classification": "ENVIRONMENT_UNAVAILABLE",
       "evidence_basis": "Android runtime requiring the original Agent/helper execution context, including shell UID 2000 and abstract UDS endpoints",
       "runtime_basis": "Host environment is Windows AMD64 desktop without Android emulator / app_process",
-      "result": "ENVIRONMENT_UNAVAILABLE"
+      "result": "ENVIRONMENT_UNAVAILABLE",
+      "execution_evidence": {
+        "type": "android_prerequisite_matrix",
+        "prerequisites": {
+          "original_agent_artifact_available": false,
+          "compatible_android_target_available": false,
+          "app_process_available": false,
+          "helper_artifact_available": false,
+          "execution_context_shell_uid_2000": false,
+          "abstract_uds_support": false,
+          "safe_launch_capability": false
+        },
+        "diagnostic": "Android runtime requiring original Agent/helper execution context (shell UID 2000, app_process, abstract UDS) is unavailable on current host"
+      }
     }
   ]
 }
