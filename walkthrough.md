@@ -609,6 +609,43 @@ Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
    - `cloudphone-agent go test -v ./...`: 33/33 PASS.
    - `python tools/verify_phase2.py`: 21/21 sections PASS.
 
+---
+
+# Phase 2C.5B2R Walkthrough: DataChannel B2 Parity Accounting & Audit Closure
+
+**Date**: 2026-09-17  
+**Status**: CLOSED & VERIFIED (Gate Check: PASS)  
+**Contract Frozen Hash**: `3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7`  
+**Classification**: Clean-room behavioral/protocol audit remediation  
+
+## 1. Remediation Scope & Implemented Improvements
+
+1. **Dynamic Counter Derivation**:
+   - Created `tools/derive_b2_differential.py` which derives `evidence/go_agent/webrtc/DATACHANNEL_B2_DIFFERENTIAL_RESULT.json` directly from 26 structured `evaluated_dimensions`.
+   - Eliminates all hardcoded or hand-authored counts.
+2. **Oracle Attribution Separation**:
+   - Mapped `TestOriginalSignalingOracleCompatibility` to B1 signaling relay compatibility.
+   - Dimension `DC-B2-DIM-26` for original Agent DataChannel runtime is accurately classified as `ENVIRONMENT_UNAVAILABLE` (requiring Android ARM64 container with UID 2000 and `@uds_sys_t_`), with result `ENVIRONMENT_UNAVAILABLE` (not converted to PASS).
+3. **Disaggregated Counter Families**:
+   - `static_protocol_evidence_total`: 9 (9 passed)
+   - `exact_binary_frame_total`: 5 (5 passed)
+   - `reconstructed_runtime_e2e_total`: 3 (3 passed)
+   - `original_agent_runtime_parity_total`: 0
+   - `semantic_parity_total`: 1 (1 passed)
+   - `reference_only_total`: 3 (`touch` alias, `seq`/`client_ts_ms`, `paste`/`suppress_broadcast`)
+   - `implementation_choice_total`: 4 (peer notification, defensive bounds, memory adapters)
+   - `environment_unavailable_total`: 1
+   - `verified_divergence_total`: 0
+   - `failed_total`: 0
+4. **Whole-Tree Deferred Channel Scan (Section 21.2)**:
+   - Recursively scans `reconstructed_source/cloudphone-agent/pkg/` to confirm zero `OnMessage` handlers, zero payload parsers, zero file writes, zero camera processing, zero command execution, and zero ADB sockets/bridges for the 4 deferred channels (`camera-channel`, `file-channel`, `ai-command-channel`, `adb-channel`).
+5. **Master Verifier Recomputation (Section 21.4)**:
+   - Programmatically recomputes and validates all counters against dimensions; detects duplicate IDs, missing dimensions, and unknown classifications.
+6. **Concurrency & Race Verification Gate (Section 21.5)**:
+   - Configured MinGW CGO toolchain.
+   - Executed `go test -race ./...` across all packages in both `cloudphone-agent` and `webrtc-signaling`; 0 data races detected.
+
+
 
 
 

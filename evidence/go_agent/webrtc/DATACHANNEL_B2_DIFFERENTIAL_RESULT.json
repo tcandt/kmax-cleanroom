@@ -1,45 +1,237 @@
 {
   "metadata": {
-    "title": "Phase 2C.5B2 DataChannel Protocol Differential Result",
-    "phase": "Phase 2C.5B2",
-    "evaluation_timestamp": "2026-09-17T17:55:00Z",
-    "classification": "Clean-room behavioral/protocol reconstruction"
+    "title": "Phase 2C.5B2R DataChannel Protocol Differential Result",
+    "phase": "Phase 2C.5B2R",
+    "evaluation_timestamp": "2026-09-17T18:15:00Z",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "derivation_tool": "tools/derive_b2_differential.py"
   },
   "counters": {
-    "exact_protocol_parity_total": 16,
-    "exact_protocol_parity_passed": 16,
+    "static_protocol_evidence_total": 9,
+    "static_protocol_evidence_passed": 9,
     "exact_binary_frame_total": 5,
     "exact_binary_frame_passed": 5,
-    "semantic_parity_total": 4,
-    "semantic_parity_passed": 4,
-    "runtime_e2e_total": 4,
-    "runtime_e2e_passed": 4,
+    "reconstructed_runtime_e2e_total": 3,
+    "reconstructed_runtime_e2e_passed": 3,
+    "original_agent_runtime_parity_total": 0,
+    "original_agent_runtime_parity_passed": 0,
+    "semantic_parity_total": 1,
+    "semantic_parity_passed": 1,
+    "reference_only_total": 3,
+    "implementation_choice_total": 4,
+    "environment_unavailable_total": 1,
     "verified_divergence_total": 0,
-    "environment_unavailable_total": 0,
-    "implementation_choice_tests": 8,
     "failed_total": 0
   },
-  "overall_verdict": "PASS_PHASE_2C5B2_CLOSED",
-  "evaluated_dimensions": {
-    "input_channel_label": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "input_channel_ordered": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "input_channel_framing": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "clipboard_channel_label": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "clipboard_channel_ordered": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "clipboard_channel_framing": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "touch_binary_frame_32bytes": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
-    "keycode_binary_frame_14bytes": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
-    "text_binary_frame_5plusN": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
-    "scroll_binary_frame_21bytes": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
-    "hard_keyboard_frame_1byte": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
-    "set_clipboard_handling": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "get_clipboard_handling": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "clipboard_response_schema": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "input_sctp_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
-    "clipboard_set_sctp_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
-    "clipboard_get_sctp_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
-    "real_peerconnection_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
-    "original_oracle_level_c": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
-    "deferred_channels_isolation": { "classification": "SEMANTIC_PARITY", "result": "PASS" }
-  }
+  "overall_verdict": "PASS_PHASE_2C5B2R_CLOSED",
+  "evaluated_dimensions": [
+    {
+      "id": "DC-B2-DIM-01",
+      "name": "input_channel_label",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (AMD64 0xb5a5af / ARM64 0x6b8548)",
+      "runtime_basis": "pc.CreateDataChannel('input-channel')",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-02",
+      "name": "input_channel_ordered",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
+      "runtime_basis": "DataChannelInit.Ordered = true",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-03",
+      "name": "input_channel_json_framing",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_FRAMING_MATRIX.json (channels.input-channel.payload_encoding = JSON_TEXT)",
+      "runtime_basis": "HandleInputMessage parses JSON string",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-04",
+      "name": "clipboard_channel_label",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (AMD64 0xb5e208 / ARM64 0x6bc175)",
+      "runtime_basis": "pc.CreateDataChannel('clipboard-channel')",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-05",
+      "name": "clipboard_channel_ordered",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
+      "runtime_basis": "DataChannelInit.Ordered = true",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-06",
+      "name": "clipboard_channel_json_framing",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_FRAMING_MATRIX.json (channels.clipboard-channel.payload_encoding = JSON_TEXT)",
+      "runtime_basis": "HandleClipboardMessage parses JSON string",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-07",
+      "name": "touch_binary_frame_32bytes",
+      "classification": "EXACT_BINARY_FRAME",
+      "evidence_basis": "CONTROL_INPUT_PROTOCOL_CROSSMAP.json (AMD64 0x9cfb54-0x9cfc0e bswap/rol, ecx=0x20)",
+      "runtime_basis": "TestGoldenTouchEvent",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-08",
+      "name": "keycode_binary_frame_14bytes",
+      "classification": "EXACT_BINARY_FRAME",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3ace, ControlMessageReader.java:69)",
+      "runtime_basis": "TestGoldenKeycodeEvent",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-09",
+      "name": "text_binary_frame_5plusN",
+      "classification": "EXACT_BINARY_FRAME",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3a4d, ControlMessageReader.java:95)",
+      "runtime_basis": "TestGoldenTextEvent",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-10",
+      "name": "scroll_binary_frame_21bytes",
+      "classification": "EXACT_BINARY_FRAME",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3c07, ControlMessageReader.java:103)",
+      "runtime_basis": "TestGoldenScrollEvent",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-11",
+      "name": "hard_keyboard_frame_1byte",
+      "classification": "EXACT_BINARY_FRAME",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3b60, ControlMessageReader.java:40)",
+      "runtime_basis": "TestGoldenHardKeyboardEvent",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-12",
+      "name": "set_clipboard_handling",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3860, string origin_client_id at 0xb5...)",
+      "runtime_basis": "TestSetClipboard",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-13",
+      "name": "get_clipboard_handling",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e38ce)",
+      "runtime_basis": "TestGetClipboard",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-14",
+      "name": "clipboard_response_schema",
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json, useWebRTC.js:773-778",
+      "runtime_basis": "TestGetClipboard sends {type: 'clipboard', text, source: 'device', origin_client_id: null}",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-15",
+      "name": "input_sctp_e2e",
+      "classification": "RUNTIME_RECONSTRUCTED_E2E",
+      "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
+      "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ControlSink exact 32-byte frame)",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-16",
+      "name": "clipboard_set_sctp_e2e",
+      "classification": "RUNTIME_RECONSTRUCTED_E2E",
+      "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
+      "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ClipboardProvider.Set)",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-17",
+      "name": "clipboard_get_sctp_e2e",
+      "classification": "RUNTIME_RECONSTRUCTED_E2E",
+      "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
+      "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ClipboardProvider.Get -> Response)",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-18",
+      "name": "deferred_channels_isolation",
+      "classification": "SEMANTIC_PARITY",
+      "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-08)",
+      "runtime_basis": "Master Verifier scans entire cloudphone-agent production tree for zero deferred channel logic",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-19",
+      "name": "touch_alias_compatibility",
+      "classification": "REFERENCE_ONLY",
+      "evidence_basis": "useWebRTC.js:1032 ('type': 'touch')",
+      "runtime_basis": "TestHandleInputMessageEndToEnd/touch_alias_type",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-20",
+      "name": "touch_seq_client_ts_fields",
+      "classification": "REFERENCE_ONLY",
+      "evidence_basis": "useWebRTC.js:1034-1035 (seq, client_ts_ms)",
+      "runtime_basis": "TouchEvent struct unmarshals without error",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-21",
+      "name": "clipboard_paste_suppress_broadcast_fields",
+      "classification": "REFERENCE_ONLY",
+      "evidence_basis": "useWebRTC.js:1200-1202 (paste, suppress_broadcast)",
+      "runtime_basis": "SetClipboardMessage struct unmarshals without error",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-22",
+      "name": "clipboard_peer_notification_inbound",
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "Defensive handling of inbound 'clipboard' frames",
+      "runtime_basis": "TestPeerClipboardNotification",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-23",
+      "name": "defensive_payload_bound",
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "ControlMessageReader.CLIPBOARD_TEXT_MAX_LENGTH (262130) + JSON buffer envelope",
+      "runtime_basis": "TestClipboardParserRobustnessAndFuzz/oversized_payload",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-24",
+      "name": "control_sink_adapter",
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "Boundary abstraction for @uds_sys_t_",
+      "runtime_basis": "MemoryControlSink in-memory test implementation",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-25",
+      "name": "clipboard_provider_adapter",
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "Boundary abstraction for Android ClipboardManager",
+      "runtime_basis": "MemoryClipboardProvider in-memory test implementation",
+      "result": "PASS"
+    },
+    {
+      "id": "DC-B2-DIM-26",
+      "name": "original_agent_datachannel_runtime_parity",
+      "classification": "ENVIRONMENT_UNAVAILABLE",
+      "evidence_basis": "Requires Android container runtime with root UID 2000 and abstract UDS @uds_sys_t_",
+      "runtime_basis": "Host environment is Windows AMD64 desktop without Android emulator / app_process",
+      "result": "ENVIRONMENT_UNAVAILABLE"
+    }
+  ]
 }

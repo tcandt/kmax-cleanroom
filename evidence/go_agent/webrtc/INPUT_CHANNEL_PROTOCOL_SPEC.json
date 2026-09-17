@@ -2,7 +2,7 @@
   "metadata": {
     "title": "Input Channel Protocol Specification",
     "channel_label": "input-channel",
-    "phase": "Phase 2C.5B2",
+    "phase": "Phase 2C.5B2R",
     "classification": "RECONSTRUCTED_FROM_PROTOCOL",
     "transport": "WebRTC SCTP DataChannel (Ordered=true, Reliable)",
     "framing": "JSON_TEXT",
@@ -16,23 +16,38 @@
       "raw_extraction/android/jadx/sources/com/android/helper/control/ControlMessageReader.java"
     ]
   },
+  "provenance_classification": {
+    "recovered_discriminators": {
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "items": ["inject_touch", "inject_keycode", "inject_text", "inject_scroll", "hard_keyboard"],
+      "evidence": "Agent binary disassembly string checks at AMD64 0x9e39c0 (func8)"
+    },
+    "reference_only_compatibility": {
+      "classification": "REFERENCE_ONLY",
+      "items": ["type: 'touch' (alias for inject_touch)", "seq", "client_ts_ms", "w/h aliases"],
+      "evidence": "Observed in distributed frontend reference useWebRTC.js:1031-1044; retained for browser compatibility"
+    }
+  },
   "messages": {
     "inject_touch": {
       "discriminator": "inject_touch",
+      "discriminator_classification": "STATIC_PROTOCOL_EVIDENCE",
       "description": "Touch input event injected into Android InputManager via scrcpy protocol",
       "json_schema": {
         "type": "object",
-        "required": ["action", "x", "y", "width", "height"],
+        "required": ["action", "x", "y"],
         "properties": {
           "type": { "type": "string", "enum": ["inject_touch", "touch"] },
           "action": { "type": "integer", "enum": [0, 1, 2], "description": "0=DOWN, 1=UP, 2=MOVE" },
           "id": { "type": "integer", "default": 0, "description": "Pointer ID (int64)" },
-          "seq": { "type": "integer", "description": "Optional sequence number" },
-          "client_ts_ms": { "type": "integer", "description": "Optional client timestamp in milliseconds" },
+          "seq": { "type": "integer", "classification": "REFERENCE_ONLY", "description": "Optional sequence number" },
+          "client_ts_ms": { "type": "integer", "classification": "REFERENCE_ONLY", "description": "Optional client timestamp in milliseconds" },
           "x": { "type": "integer", "description": "X coordinate in screen pixels" },
           "y": { "type": "integer", "description": "Y coordinate in screen pixels" },
-          "width": { "type": "integer", "aliases": ["w"], "description": "Screen width in pixels" },
-          "height": { "type": "integer", "aliases": ["h"], "description": "Screen height in pixels" },
+          "width": { "type": "integer", "description": "Screen width in pixels" },
+          "height": { "type": "integer", "description": "Screen height in pixels" },
+          "w": { "type": "integer", "classification": "REFERENCE_ONLY", "description": "Alias for width" },
+          "h": { "type": "integer", "classification": "REFERENCE_ONLY", "description": "Alias for height" },
           "pressure": { "type": "number", "default": 1.0, "description": "Touch pressure (0 for UP, 1.0 or 0xffff for DOWN/MOVE)" }
         }
       },
@@ -55,6 +70,7 @@
     },
     "inject_keycode": {
       "discriminator": "inject_keycode",
+      "discriminator_classification": "STATIC_PROTOCOL_EVIDENCE",
       "description": "Key event injection (KeyEvent.ACTION_DOWN / ACTION_UP)",
       "json_schema": {
         "type": "object",
@@ -81,6 +97,7 @@
     },
     "inject_text": {
       "discriminator": "inject_text",
+      "discriminator_classification": "STATIC_PROTOCOL_EVIDENCE",
       "description": "Direct text string injection",
       "json_schema": {
         "type": "object",
@@ -102,6 +119,7 @@
     },
     "inject_scroll": {
       "discriminator": "inject_scroll",
+      "discriminator_classification": "STATIC_PROTOCOL_EVIDENCE",
       "description": "Scroll wheel / gesture event injection",
       "json_schema": {
         "type": "object",
@@ -110,8 +128,10 @@
           "type": { "type": "string", "enum": ["inject_scroll"] },
           "x": { "type": "integer", "description": "X coordinate in screen pixels" },
           "y": { "type": "integer", "description": "Y coordinate in screen pixels" },
-          "width": { "type": "integer", "aliases": ["w"], "default": 0 },
-          "height": { "type": "integer", "aliases": ["h"], "default": 0 },
+          "width": { "type": "integer", "default": 0 },
+          "height": { "type": "integer", "default": 0 },
+          "w": { "type": "integer", "classification": "REFERENCE_ONLY" },
+          "h": { "type": "integer", "classification": "REFERENCE_ONLY" },
           "scroll_h": { "type": "number", "description": "Horizontal scroll amount" },
           "scroll_v": { "type": "number", "description": "Vertical scroll amount" }
         }
@@ -125,14 +145,15 @@
           { "offset": 5, "length": 4, "field": "y", "type": "int32", "endianness": "big-endian" },
           { "offset": 9, "length": 2, "field": "width", "type": "uint16", "endianness": "big-endian" },
           { "offset": 11, "length": 2, "field": "height", "type": "uint16", "endianness": "big-endian" },
-          { "offset": 13, "length": 2, "field": "h_scroll", "type": "int16", "endianness": "big-endian", "description": "i16 fixed-point: float * 2048 (scaled for helper binary conversion)" },
-          { "offset": 15, "length": 2, "field": "v_scroll", "type": "int16", "endianness": "big-endian", "description": "i16 fixed-point: float * 2048 (scaled for helper binary conversion)" },
+          { "offset": 13, "length": 2, "field": "h_scroll", "type": "int16", "endianness": "big-endian", "description": "i16 fixed-point: float * 2048" },
+          { "offset": 15, "length": 2, "field": "v_scroll", "type": "int16", "endianness": "big-endian", "description": "i16 fixed-point: float * 2048" },
           { "offset": 17, "length": 4, "field": "buttons", "value": 0, "type": "int32", "endianness": "big-endian" }
         ]
       }
     },
     "hard_keyboard": {
       "discriminator": "hard_keyboard",
+      "discriminator_classification": "STATIC_PROTOCOL_EVIDENCE",
       "description": "Trigger opening hard keyboard settings dialog on Android",
       "json_schema": {
         "type": "object",

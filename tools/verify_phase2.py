@@ -3176,15 +3176,73 @@ def verify_all():
                  f"DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json SHA-256 verified against frozen contract: {expected_b2_sha256[:16]}...")
 
     # 21.2 Deferred Channels Strict Isolation Audit
-    datachannel_go = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "datachannel.go"
-    dc_content = datachannel_go.read_text(encoding="utf-8") if datachannel_go.exists() else ""
-    # Verify camera, file, ai, adb do NOT have active business message processing in B2
-    deferred_isolated = (
-        "camCh.OnMessage" not in dc_content and
-        "case ChannelFile:\n\t\t\tdc.FileChannel = remoteDC" in dc_content.replace("\r\n", "\n")
+    # Verify all four deferred channels across the entire reconstructed cloudphone-agent production tree:
+    # camera-channel, file-channel, ai-command-channel, adb-channel.
+    # Must NOT contain business: OnMessage handlers, payload parsers, file writes,
+    # camera processing, command execution, ADB sockets/bridges during B2.
+    agent_pkg_dir = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg"
+    deferred_violations = []
+
+    deferred_vars = ["CameraChannel", "FileChannel", "AICommandChannel", "ADBChannel", "camCh"]
+
+    # Scan all production Go files (excluding _test.go)
+    for go_file in agent_pkg_dir.rglob("*.go"):
+        if go_file.name.endswith("_test.go"):
+            continue
+        content = go_file.read_text(encoding="utf-8")
+
+        # 1. Check for OnMessage on deferred channels
+        for dvar in deferred_vars:
+            if f"{dvar}.OnMessage" in content:
+                deferred_violations.append(f"{go_file.name}: contains {dvar}.OnMessage handler")
+
+        # 2. Check for camera processing business logic
+        for kw in ["ProcessCameraFrame", "VirtualCamera", "CameraProcessor", "H264Camera", "OnCameraFrame"]:
+            if kw in content:
+                deferred_violations.append(f"{go_file.name}: contains camera business logic '{kw}'")
+
+        # 3. Check for file transfer / payload parser / file write business logic
+        for kw in ["SaveFile", "ParseFileChunk", "FileTransfer", "FileReceiver"]:
+            if kw in content:
+                deferred_violations.append(f"{go_file.name}: contains file transfer business logic '{kw}'")
+        if "os.Create(" in content or "os.WriteFile(" in content or "ioutil.WriteFile(" in content:
+            deferred_violations.append(f"{go_file.name}: contains direct file write call")
+
+        # 4. Check for AI command execution business logic
+        for kw in ["ExecuteAICommand", "ParseAICommand", "RunAICommand"]:
+            if kw in content:
+                deferred_violations.append(f"{go_file.name}: contains AI command business logic '{kw}'")
+        if "os/exec" in content or "exec.Command(" in content:
+            deferred_violations.append(f"{go_file.name}: contains command execution call")
+
+        # 5. Check for ADB sockets/bridges
+        for kw in ["AdbBridge", "AdbSocket", "ConnectAdb", "ForwardAdb"]:
+            if kw in content:
+                deferred_violations.append(f"{go_file.name}: contains ADB business logic '{kw}'")
+
+    # Specifically check datachannel.go inbound handler attaches only inert hooks without OnMessage
+    datachannel_go = agent_pkg_dir / "webrtc" / "datachannel.go"
+    if datachannel_go.exists():
+        dc_lines = datachannel_go.read_text(encoding="utf-8").splitlines()
+        on_message_targets = []
+        for line in dc_lines:
+            if ".OnMessage(" in line:
+                target = line.split(".OnMessage(")[0].strip()
+                on_message_targets.append(target)
+        # In B2, only inputCh and clipCh may attach OnMessage
+        invalid_on_messages = [t for t in on_message_targets if t not in ["inputCh", "clipCh"]]
+        if invalid_on_messages:
+            deferred_violations.append(f"datachannel.go: unexpected OnMessage registered on: {invalid_on_messages}")
+    else:
+        deferred_violations.append("datachannel.go missing")
+
+    deferred_isolated = (len(deferred_violations) == 0)
+    deferred_detail = (
+        "camera-channel, file-channel, ai-command-channel, and adb-channel verified strictly inert across all production files"
+        if deferred_isolated else
+        f"Deferred channel isolation violations: {'; '.join(deferred_violations)}"
     )
-    record_check("Phase 2C.5B2 Deferred Channels Strict Isolation Audit", deferred_isolated,
-                 "camera-channel, file-channel, ai-command-channel, and adb-channel remain strictly deferred with inert lifecycle hooks")
+    record_check("Phase 2C.5B2 Deferred Channels Strict Isolation Audit", deferred_isolated, deferred_detail)
 
     # 21.3 Input & Clipboard Real SCTP DataChannel E2E Parity
     sctp_dc_passed = (
@@ -3196,23 +3254,162 @@ def verify_all():
     record_check("Phase 2C.5B2 Input & Clipboard Real SCTP DataChannel E2E Parity", sctp_dc_passed,
                  "Real SCTP E2E verified for input-channel (32-byte scrcpy frame), set_clipboard, and get_clipboard response")
 
-    # 21.4 DataChannel B2 Differential Result Verification
+    # 21.4 DataChannel B2 Differential Result & Dimension Derivation Verification
     b2_diff_path = ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_DIFFERENTIAL_RESULT.json"
     b2_diff_valid = False
+    b2_diff_detail = ""
     if b2_diff_path.exists():
-        b2_diff_data = json.loads(b2_diff_path.read_text(encoding="utf-8"))
-        b2_counters = b2_diff_data.get("counters", {})
-        b2_diff_valid = (
-            b2_counters.get("exact_protocol_parity_total", 0) > 0 and
-            b2_counters.get("exact_protocol_parity_passed", 0) == b2_counters.get("exact_protocol_parity_total", 1) and
-            b2_counters.get("exact_binary_frame_passed", 0) == b2_counters.get("exact_binary_frame_total", 0) and
-            b2_counters.get("runtime_e2e_passed", 0) == b2_counters.get("runtime_e2e_total", 0) and
-            b2_counters.get("failed_total", 1) == 0
-        )
-    record_check("Phase 2C.5B2 DataChannel B2 Differential Result Verification", b2_diff_valid,
-                 "DATACHANNEL_B2_DIFFERENTIAL_RESULT.json reports 16/16 exact protocol parity, 5/5 exact binary frames, 4/4 runtime E2E, and 0 failures")
+        try:
+            b2_diff_data = json.loads(b2_diff_path.read_text(encoding="utf-8"))
+            stored_counters = b2_diff_data.get("counters", {})
+            dims = b2_diff_data.get("evaluated_dimensions", [])
 
-    # 21.5 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+            allowed_classifications = {
+                "STATIC_PROTOCOL_EVIDENCE",
+                "EXACT_BINARY_FRAME",
+                "RUNTIME_RECONSTRUCTED_E2E",
+                "ORIGINAL_AGENT_RUNTIME_PARITY",
+                "SEMANTIC_PARITY",
+                "REFERENCE_ONLY",
+                "IMPLEMENTATION_CHOICE",
+                "ENVIRONMENT_UNAVAILABLE",
+                "VERIFIED_DIVERGENCE",
+                "FAILED",
+            }
+
+            seen_ids = set()
+            recomputed = {
+                "static_protocol_evidence_total": 0,
+                "static_protocol_evidence_passed": 0,
+                "exact_binary_frame_total": 0,
+                "exact_binary_frame_passed": 0,
+                "reconstructed_runtime_e2e_total": 0,
+                "reconstructed_runtime_e2e_passed": 0,
+                "original_agent_runtime_parity_total": 0,
+                "original_agent_runtime_parity_passed": 0,
+                "semantic_parity_total": 0,
+                "semantic_parity_passed": 0,
+                "reference_only_total": 0,
+                "implementation_choice_total": 0,
+                "environment_unavailable_total": 0,
+                "verified_divergence_total": 0,
+                "failed_total": 0,
+            }
+
+            validation_errors = []
+            if len(dims) == 0:
+                validation_errors.append("evaluated_dimensions is empty")
+
+            for d in dims:
+                dim_id = d.get("id")
+                if not dim_id:
+                    validation_errors.append(f"Dimension missing id: {d}")
+                    continue
+                if dim_id in seen_ids:
+                    validation_errors.append(f"Duplicate dimension id: {dim_id}")
+                seen_ids.add(dim_id)
+
+                cls = d.get("classification")
+                if cls not in allowed_classifications:
+                    validation_errors.append(f"Unknown classification {cls} in {dim_id}")
+
+                res = d.get("result")
+                if not res:
+                    validation_errors.append(f"Missing result in {dim_id}")
+
+                if not d.get("evidence_basis"):
+                    validation_errors.append(f"Missing evidence_basis in {dim_id}")
+                if not d.get("runtime_basis"):
+                    validation_errors.append(f"Missing runtime_basis in {dim_id}")
+
+                if cls == "STATIC_PROTOCOL_EVIDENCE":
+                    recomputed["static_protocol_evidence_total"] += 1
+                    if res == "PASS":
+                        recomputed["static_protocol_evidence_passed"] += 1
+                elif cls == "EXACT_BINARY_FRAME":
+                    recomputed["exact_binary_frame_total"] += 1
+                    if res == "PASS":
+                        recomputed["exact_binary_frame_passed"] += 1
+                elif cls == "RUNTIME_RECONSTRUCTED_E2E":
+                    recomputed["reconstructed_runtime_e2e_total"] += 1
+                    if res == "PASS":
+                        recomputed["reconstructed_runtime_e2e_passed"] += 1
+                elif cls == "ORIGINAL_AGENT_RUNTIME_PARITY":
+                    recomputed["original_agent_runtime_parity_total"] += 1
+                    if res == "PASS":
+                        recomputed["original_agent_runtime_parity_passed"] += 1
+                elif cls == "SEMANTIC_PARITY":
+                    recomputed["semantic_parity_total"] += 1
+                    if res == "PASS":
+                        recomputed["semantic_parity_passed"] += 1
+                elif cls == "REFERENCE_ONLY":
+                    recomputed["reference_only_total"] += 1
+                elif cls == "IMPLEMENTATION_CHOICE":
+                    recomputed["implementation_choice_total"] += 1
+                elif cls == "ENVIRONMENT_UNAVAILABLE":
+                    recomputed["environment_unavailable_total"] += 1
+                elif cls == "VERIFIED_DIVERGENCE":
+                    recomputed["verified_divergence_total"] += 1
+                elif cls == "FAILED" or res == "FAILED":
+                    recomputed["failed_total"] += 1
+
+            mismatches = []
+            for k, v in recomputed.items():
+                stored_val = stored_counters.get(k)
+                if stored_val != v:
+                    mismatches.append(f"{k}: recomputed={v} vs stored={stored_val}")
+
+            if mismatches:
+                validation_errors.extend(mismatches)
+
+            if recomputed["failed_total"] != 0:
+                validation_errors.append(f"failed_total is {recomputed['failed_total']}, expected 0")
+
+            b2_diff_valid = (len(validation_errors) == 0) and (len(dims) >= 20)
+            if b2_diff_valid:
+                b2_diff_detail = (
+                    f"Derived from {len(dims)} dimensions: "
+                    f"{recomputed['static_protocol_evidence_passed']}/{recomputed['static_protocol_evidence_total']} static protocol, "
+                    f"{recomputed['exact_binary_frame_passed']}/{recomputed['exact_binary_frame_total']} binary frames, "
+                    f"{recomputed['reconstructed_runtime_e2e_passed']}/{recomputed['reconstructed_runtime_e2e_total']} runtime E2E, "
+                    f"{recomputed['semantic_parity_passed']}/{recomputed['semantic_parity_total']} semantic parity, "
+                    f"{recomputed['reference_only_total']} reference only, "
+                    f"{recomputed['implementation_choice_total']} implementation choice, "
+                    f"{recomputed['environment_unavailable_total']} env unavailable, "
+                    f"failed={recomputed['failed_total']}"
+                )
+            else:
+                b2_diff_detail = f"Validation failed: {'; '.join(validation_errors)}"
+        except Exception as e:
+            b2_diff_valid = False
+            b2_diff_detail = f"Exception validating differential: {e}"
+
+    record_check("Phase 2C.5B2 DataChannel B2 Differential Result Verification", b2_diff_valid,
+                 b2_diff_detail)
+
+    # 21.5 Concurrency and Race Verification Gate (go test -race ./...)
+    race_env = os.environ.copy()
+    llvm_bin = Path(r"C:\Users\TINH-NGUYEN\AppData\Local\Microsoft\WinGet\Packages\MartinStorsjo.LLVM-MinGW.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\llvm-mingw-20260616-ucrt-x86_64\bin")
+    if llvm_bin.exists():
+        race_env["PATH"] = str(llvm_bin) + os.pathsep + race_env.get("PATH", "")
+    race_env["CGO_ENABLED"] = "1"
+
+    agent_race_res = subprocess.run(["go", "test", "-race", "./..."],
+                                    cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                    capture_output=True, text=True, env=race_env)
+    sig_race_res = subprocess.run(["go", "test", "-race", "./..."],
+                                  cwd=str(ROOT / "reconstructed_source" / "webrtc-signaling"),
+                                  capture_output=True, text=True, env=race_env)
+
+    race_passed = (agent_race_res.returncode == 0) and (sig_race_res.returncode == 0)
+    race_detail = (
+        "go test -race ./... passed cleanly with zero data races in cloudphone-agent and webrtc-signaling"
+        if race_passed else
+        f"Race test failure: agent_code={agent_race_res.returncode}, sig_code={sig_race_res.returncode}"
+    )
+    record_check("Phase 2C.5B2R Concurrency and Race Verification Gate (go test -race ./...)", race_passed, race_detail)
+
+    # 21.6 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv

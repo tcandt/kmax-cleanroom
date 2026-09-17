@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Phase 2C.5B2 DataChannel Source Provenance Map",
-    "phase": "Phase 2C.5B2",
+    "title": "Phase 2C.5B2R DataChannel Source Provenance Map",
+    "phase": "Phase 2C.5B2R",
     "classification": "Clean-room behavioral/protocol reconstruction",
     "module": "cloudphone-agent"
   },
@@ -10,11 +10,11 @@
       "file": "pkg/webrtc/control.go",
       "symbols": [
         { "name": "ControlSink", "provenance": "GENERATED_ADAPTER", "notes": "Boundary adapter interface abstracting UDS @uds_sys_t_" },
-        { "name": "MemoryControlSink", "provenance": "IMPLEMENTATION_CHOICE", "notes": "In-memory test mock for sink verification" },
-        { "name": "TouchEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON touch schema corroborated by useWebRTC.js" },
+        { "name": "MemoryControlSink", "provenance": "IMPLEMENTATION_CHOICE", "notes": "In-memory thread-safe test mock" },
+        { "name": "TouchEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON touch schema; 'touch' alias and seq/client_ts marked REFERENCE_ONLY" },
         { "name": "KeycodeEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON keycode schema matching inject_keycode" },
         { "name": "TextEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON text schema matching inject_text" },
-        { "name": "ScrollEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON scroll schema matching inject_scroll" },
+        { "name": "ScrollEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON scroll schema matching inject_scroll; w/h aliases marked REFERENCE_ONLY" },
         { "name": "HardKeyboardEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON schema matching hard_keyboard" },
         { "name": "EncodeTouchEvent", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Big-endian 32-byte scrcpy encoding from AMD64 0x9cfb54-0x9cfc0e (bswap/rol)" },
         { "name": "EncodeKeycodeEvent", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "14-byte scrcpy keycode encoding matching helper reader" },
@@ -28,9 +28,9 @@
       "file": "pkg/webrtc/clipboard.go",
       "symbols": [
         { "name": "ClipboardProvider", "provenance": "GENERATED_ADAPTER", "notes": "Boundary adapter interface for device clipboard" },
-        { "name": "MemoryClipboardProvider", "provenance": "IMPLEMENTATION_CHOICE", "notes": "In-memory test mock for clipboard verification" },
-        { "name": "SetClipboardMessage", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON schema matching set_clipboard from useWebRTC.js" },
-        { "name": "GetClipboardMessage", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON schema matching get_clipboard from useWebRTC.js" },
+        { "name": "MemoryClipboardProvider", "provenance": "IMPLEMENTATION_CHOICE", "notes": "In-memory thread-safe test mock" },
+        { "name": "SetClipboardMessage", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "paste/suppress_broadcast marked REFERENCE_ONLY; origin_client_id is STATIC_PROTOCOL_EVIDENCE" },
+        { "name": "GetClipboardMessage", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON schema matching get_clipboard" },
         { "name": "ClipboardResponseMessage", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "JSON response schema with origin_client_id from binary rodata" },
         { "name": "HandleClipboardMessage", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Dispatch logic matching AMD64 0x9e3860/0x9e38ce" }
       ]
@@ -39,14 +39,14 @@
       "file": "pkg/webrtc/datachannel.go",
       "symbols": [
         { "name": "DataChannels.SetupOutboundChannels", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Creates input, clipboard, camera with ordered=true; wires active handlers for input and clipboard" },
-        { "name": "DataChannels.RegisterInboundHandler", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Registers file, ai-command, adb; keeps them deferred in B2" }
+        { "name": "DataChannels.RegisterInboundHandler", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Registers file, ai-command, adb; keeps them strictly deferred in B2" }
       ]
     },
     {
       "file": "pkg/agent/agent.go",
       "symbols": [
-        { "name": "Coordinator.SetControlSink", "provenance": "GENERATED_ADAPTER", "notes": "Wires ControlSink across managed sessions" },
-        { "name": "Coordinator.SetClipboardProvider", "provenance": "GENERATED_ADAPTER", "notes": "Wires ClipboardProvider across managed sessions" }
+        { "name": "Coordinator.SetControlSink", "provenance": "GENERATED_ADAPTER", "notes": "Propagates ControlSink adapter to active sessions" },
+        { "name": "Coordinator.SetClipboardProvider", "provenance": "GENERATED_ADAPTER", "notes": "Propagates ClipboardProvider adapter to active sessions" }
       ]
     }
   ]

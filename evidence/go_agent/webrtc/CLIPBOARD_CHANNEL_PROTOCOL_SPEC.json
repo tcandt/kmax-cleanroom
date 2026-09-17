@@ -2,7 +2,7 @@
   "metadata": {
     "title": "Clipboard Channel Protocol Specification",
     "channel_label": "clipboard-channel",
-    "phase": "Phase 2C.5B2",
+    "phase": "Phase 2C.5B2R",
     "classification": "RECONSTRUCTED_FROM_PROTOCOL",
     "transport": "WebRTC SCTP DataChannel (Ordered=true, Reliable)",
     "framing": "JSON_TEXT",
@@ -16,6 +16,34 @@
       "evidence/go_agent/STRINGS.json (origin_client_id)"
     ]
   },
+  "provenance_classification": {
+    "binary_confirmed_features": {
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "items": [
+        "set_clipboard (type, text, source, origin_client_id)",
+        "get_clipboard (type)",
+        "outbound clipboard response (type, text, source: 'device', origin_client_id)"
+      ],
+      "evidence": "AMD64 0x9e3860, 0x9e38ce, rodata string 'origin_client_id' at 0xb5..."
+    },
+    "reference_only_features": {
+      "classification": "REFERENCE_ONLY",
+      "items": [
+        "paste (boolean option in set_clipboard)",
+        "suppress_broadcast (boolean option in set_clipboard)"
+      ],
+      "evidence": "Observed in distributed frontend reference useWebRTC.js:1200-1202; retained for client compatibility"
+    },
+    "implementation_choice_features": {
+      "classification": "IMPLEMENTATION_CHOICE",
+      "items": [
+        "inbound peer clipboard frame processing",
+        "defensive payload size limit (CLIPBOARD_TEXT_MAX_LENGTH + 1024 overhead)",
+        "MemoryClipboardProvider test adapter"
+      ],
+      "evidence": "Defensive architectural design preventing buffer exhaustion and decoupling Android runtime"
+    }
+  },
   "messages": {
     "ingress_set_clipboard": {
       "discriminator": "set_clipboard",
@@ -27,10 +55,10 @@
         "properties": {
           "type": { "type": "string", "enum": ["set_clipboard"] },
           "text": { "type": "string", "description": "Text content to put into clipboard" },
-          "paste": { "type": "boolean", "default": false, "description": "Whether to inject immediate paste key event" },
+          "paste": { "type": "boolean", "default": false, "classification": "REFERENCE_ONLY", "description": "Whether to inject immediate paste key event" },
           "source": { "type": "string", "default": "local", "description": "Originating source tag" },
-          "suppress_broadcast": { "type": "boolean", "default": false, "description": "Whether to suppress notifying other peers" },
-          "origin_client_id": { "type": ["string", "null"], "description": "Identifier of originating client" }
+          "suppress_broadcast": { "type": "boolean", "default": false, "classification": "REFERENCE_ONLY", "description": "Whether to suppress notifying other peers" },
+          "origin_client_id": { "type": ["string", "null"], "classification": "STATIC_PROTOCOL_EVIDENCE", "description": "Identifier of originating client" }
         }
       },
       "agent_action": "Calls ClipboardProvider.Set(text, paste, origin_client_id)"
@@ -64,10 +92,10 @@
       }
     }
   },
-  "behavioral_contracts": {
-    "empty_clipboard": "Returns empty string in text field ({ \"type\": \"clipboard\", \"text\": \"\", \"source\": \"device\", \"origin_client_id\": null })",
-    "malformed_json": "Safely dropped without panic; no error response transmitted",
-    "maximum_payload_bound": "262130 bytes maximum payload (CLIPBOARD_TEXT_MAX_LENGTH)",
-    "directionality": "Bidirectional over single ordered SCTP channel"
+  "payload_bounds": {
+    "clipboard_text_maximum_bytes": 262130,
+    "helper_constant_provenance": "STATIC_CONFIRMED: ControlMessageReader.CLIPBOARD_TEXT_MAX_LENGTH = 262130",
+    "defensive_frame_bound_bytes": 263154,
+    "defensive_bound_provenance": "IMPLEMENTATION_CHOICE: MaxClipboardTextLength + 1024 JSON buffer overhead"
   }
 }
