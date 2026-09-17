@@ -88,10 +88,17 @@ def audit_contract_consistency(repo_root: Path = ROOT) -> Tuple[bool, List[str]]
 
         # 4. Check DC-B2-13: get_clipboard response schema contamination
         if cid == "DC-B2-13":
-            if "{type: 'clipboard', text, source: 'device'" in orig_claim:
-                violations.append(f"{cid}: effective original parity claim still asserts unproven full response envelope")
+            unsupported_response_terms = [
+                "{type: 'clipboard'", "response frame", "response emission",
+                "containing the current clipboard text", "source: 'device'", "origin_client_id: null"
+            ]
+            for term in unsupported_response_terms:
+                if term in orig_claim:
+                    violations.append(f"{cid}: effective original parity claim contains unsupported response semantic '{term}'")
             if "full_client_response_envelope_corroboration" not in ref_parts:
                 violations.append(f"{cid}: full response envelope not segregated into reference_only_parts")
+            if "response_emission" not in ref_parts:
+                violations.append(f"{cid}: 'response_emission' not segregated into reference_only_parts")
 
         # 5. Check DC-B2-11: ControlSink interface must be IMPLEMENTATION_CHOICE
         if cid == "DC-B2-11":

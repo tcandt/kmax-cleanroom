@@ -68,14 +68,16 @@
       "original_claim": "Messages on clipboard-channel with type 'get_clipboard' retrieve text from ClipboardProvider and transmit JSON response {type: 'clipboard', text, source: 'device', origin_client_id: null} (STATIC_CONFIRMED, mandatory_for_parity: true)",
       "problem": "Claiming the entire client-expected response schema as STATIC_CONFIRMED original protocol evidence is unsupported; original forensic artifacts only prove the get_clipboard request field ['type'] and handler VA, while the full response schema is a client-side contract corroborated by frontend useWebRTC.js:773-778.",
       "supporting_original_artifact": "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e38ce, clipboard_channel_messages.get_clipboard)",
-      "corrected_original_parity_claim": "Messages with type 'get_clipboard' trigger a clipboard text response frame on clipboard-channel containing the current clipboard text.",
-      "non_original_compatibility_behavior": "Frontend response envelope format {type: 'clipboard', text, source: 'device', origin_client_id: null} (REFERENCE_ONLY / COMBINED_CORROBORATION).",
+      "corrected_original_parity_claim": "Messages with discriminator/type 'get_clipboard' are recognized and dispatched by the original clipboard-channel handler.",
+      "non_original_compatibility_behavior": "Response emission, response text contents, and envelope schema {type: 'clipboard', text, source: 'device', origin_client_id: null} (REFERENCE_ONLY / RUNTIME_RECONSTRUCTED_E2E).",
       "effective_evidence_class": "STATIC_CONFIRMED",
       "effective_mandatory_for_original_parity": true,
       "reference_only_parts": [
+        "response_emission",
+        "response_text_contents",
         "full_client_response_envelope_corroboration"
       ],
-      "rationale": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json confirms the ingress get_clipboard message discriminator. The full egress envelope structure is verified via reference frontend useWebRTC.js."
+      "rationale": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json confirms the ingress get_clipboard message discriminator (fields = ['type']). Egress response emission and envelope format are corroborated via reference frontend useWebRTC.js and verified via reconstructed runtime E2E."
     },
     {
       "contract_id": "DC-B2-14",
