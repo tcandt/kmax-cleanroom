@@ -1,6 +1,6 @@
 {
   "description": "Device Registration and WebSocket Lifecycle State Machine (/register_device)",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "endpoint": "/register_device",
   "preconditions": "None (Public endpoint)",
   "states": [
@@ -100,7 +100,7 @@
       "event": "RECV_UNREGISTER",
       "to": "CLEANUP_OFFLINE",
       "action": "Remove from DeviceRegistry",
-      "evidence_class": "STATIC_BINARY_DERIVED",
+      "evidence_class": "STATIC_CONFIRMED",
       "confidence": 0.9,
       "evidence": [
         {

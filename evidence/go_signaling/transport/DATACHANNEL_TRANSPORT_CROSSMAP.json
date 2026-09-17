@@ -1,6 +1,6 @@
 {
   "description": "Separation of WebSocket Signaling Transport vs WebRTC DataChannel Plane",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "signaling_transport": {
     "protocol": "WebSocket (RFC 6455)",
     "endpoints": [

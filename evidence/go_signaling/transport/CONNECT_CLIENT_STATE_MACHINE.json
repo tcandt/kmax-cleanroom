@@ -1,6 +1,6 @@
 {
   "description": "Browser Client Connection and Device Multiplexing State Machine (/connect_client)",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "endpoint": "/connect_client",
   "preconditions": "Valid user auth token or share token required BEFORE upgrade",
   "states": [

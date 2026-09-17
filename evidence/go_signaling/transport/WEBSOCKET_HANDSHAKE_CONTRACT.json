@@ -1,6 +1,6 @@
 {
   "description": "WebSocket RFC 6455 Handshake & Framing Invariants",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "protocol": "WebSocket (RFC 6455)",
   "version": "13",
   "upgrader": {

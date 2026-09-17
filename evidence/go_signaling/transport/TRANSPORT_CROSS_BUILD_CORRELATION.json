@@ -1,10 +1,17 @@
 {
   "description": "Algorithmic Cross-Build Structural Correlation Across Linux AMD64, Windows AMD64, and Android ARM64",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "correlation_algorithm": "STRUCTURAL_SIGNATURE_AND_PROTOCOL_ROLE_MATCHING",
   "threshold": 0.85,
-  "correlation_score": 0.999,
+  "component_scores": {
+    "route_identity_score": 1.0,
+    "registration_structure_score": 1.0,
+    "handler_size_similarity_score": 0.9976,
+    "agent_protocol_alignment_score": 1.0
+  },
+  "correlation_score": 0.9994,
   "correlation_verdict": "ARCHITECTURALLY_CORRELATED_ACROSS_BUILDS",
+  "discovered_windows_pclntab_offset": "0x4e9c80",
   "targets": {
     "linux_amd64": {
       "binary": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
@@ -35,18 +42,21 @@
           "symbol": "main.mPpYwoaR8s5",
           "va": "0x140357760",
           "size_bytes": 6400,
+          "closure_va": "0x140454c80",
           "similarity_to_linux": 0.995
         },
         "/register_agent": {
           "symbol": "main.jF1o96pgWKy",
           "va": "0x14035de40",
           "size_bytes": 11328,
+          "closure_va": "0x140454c38",
           "similarity_to_linux": 1.0
         },
         "/connect_client": {
           "symbol": "main.cXBfmQd",
           "va": "0x140359aa0",
           "size_bytes": 14240,
+          "closure_va": "0x140454bc0",
           "similarity_to_linux": 0.9978
         }
       },

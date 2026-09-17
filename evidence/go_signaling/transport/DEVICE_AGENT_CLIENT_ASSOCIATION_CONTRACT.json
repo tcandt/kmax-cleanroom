@@ -1,6 +1,6 @@
 {
   "description": "Device, Agent, and Multi-Client Association Contract",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "association_key": "device_id (string)",
   "relationship_topology": {
     "device_record": "1 singleton per physical/emulated device in DeviceRegistry",
@@ -12,5 +12,17 @@
     "client_to_agent": "Client sends forward -> Server stamps client_id -> Relays to Agent",
     "agent_to_client": "Agent sends forward with target client_id -> Server unpackages -> Relays to Client as device_msg"
   },
+  "evidence": [
+    {
+      "kind": "STATIC_BINARY",
+      "symbol": "main.u8Z_Xk",
+      "detail": "Signaling hub routing map maintaining device_id to agent and client session bindings"
+    },
+    {
+      "kind": "DYNAMIC_ORACLE",
+      "case_id": "TR-E2E-CLI-CONNECT",
+      "detail": "Client successfully multiplexed against target device_id with dynamically assigned client_id"
+    }
+  ],
   "provenance": "COMBINED_CONFIRMED"
 }

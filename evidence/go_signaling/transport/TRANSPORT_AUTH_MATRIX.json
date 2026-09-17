@@ -13,7 +13,7 @@
   },
   "ADMIN_QUERY": {
     "case_id": "TR-AUTH-ADMIN-QUERY",
-    "path": "/connect_client?token=e176549d96bcdbf2de5a3a47d227e7a3b3b19ed8f05df3a46a4a79f5acd504ad",
+    "path": "/connect_client?token=c13512970b64d4ebd53943aab96a15edf5fbda92837d731cb204b855fa8aa63c",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
     "upgrade_success": true,
@@ -37,7 +37,7 @@
   },
   "NORMAL_USER_QUERY": {
     "case_id": "TR-AUTH-USER-QUERY",
-    "path": "/connect_client?token=2de0df00e3787a7a8a58df1148e3d7be0615e2b61188b27e3aaeac0e014392e3",
+    "path": "/connect_client?token=f52c11dc517451a61f7682b427fe0e3bbc4cb9a3520bfe2e5d5f843db48992d2",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
     "upgrade_success": true,
@@ -49,7 +49,7 @@
   },
   "SHARE_TOKEN_QUERY": {
     "case_id": "TR-AUTH-SHARE-QUERY",
-    "path": "/connect_client?share_token=st_da168ff5eeee9630c2742d8ec3758cf4",
+    "path": "/connect_client?share_token=st_61764b7dd058df5d9cdbdd879b0d7849",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
     "upgrade_success": true,

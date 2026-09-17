@@ -1,17 +1,42 @@
 {
   "description": "Transport Disconnect Cleanup Invariants",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "scenarios": {
     "normal_close": {
       "trigger": "Peer sends RFC 6455 Opcode 8 Close Frame",
       "server_action": "Server echoes close frame, terminates reader/writer goroutines, closes socket",
       "state_cleanup": "Removes peer connection from active maps, updates registry counts",
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.rQffYkwYhw",
+          "detail": "Gorilla close frame handling and defer cleanup"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-WS-HANDSHAKE-CLI",
+          "detail": "RFC 6455 opcode 8 close frame termination"
+        }
+      ],
       "provenance": "COMBINED_CONFIRMED"
     },
     "abrupt_close": {
       "trigger": "TCP connection reset / network drop / 60s read deadline timeout",
       "server_action": "Reader goroutine encounters io.EOF or net.ErrClosed, invokes defer cleanup",
       "state_cleanup": "Removes peer from session maps, decrements client_count, broadcasts update",
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.lv6Xh7",
+          "va": "0x74da60",
+          "detail": "Defer cleanup routine triggered on read deadline error or EOF"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-EDGE-UNMASKED-FRAME",
+          "detail": "Protocol error triggers abrupt connection drop and peer cleanup"
+        }
+      ],
       "provenance": "COMBINED_CONFIRMED"
     },
     "device_disconnect": {

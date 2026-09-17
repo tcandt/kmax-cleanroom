@@ -1,6 +1,6 @@
 {
   "description": "Agent Registration and WebRTC Signaling Relay State Machine (/register_agent)",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "endpoint": "/register_agent",
   "preconditions": "None (Public endpoint)",
   "states": [

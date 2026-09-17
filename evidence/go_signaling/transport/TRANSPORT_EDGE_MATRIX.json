@@ -1,6 +1,6 @@
 {
   "description": "Transport Edge Cases, Protocol Violations, and Security Boundaries",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "edge_cases": {
     "unmasked_client_frame": {
       "case_id": "TR-EDGE-UNMASKED-FRAME",

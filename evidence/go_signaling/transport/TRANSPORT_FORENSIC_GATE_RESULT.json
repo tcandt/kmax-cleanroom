@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-17T02:15:25Z",
-  "phase": "2C.4AR",
+  "timestamp": "2026-09-17T02:37:56Z",
+  "phase": "2C.4AR2",
   "family": "transport",
   "verdict": "PASS",
   "summary": "18/18 forensic invariants passed. Pure machine derivation, zero hardcoded VAs, complete dynamic oracle confirmation.",
@@ -55,20 +55,22 @@
       "status": "PASS",
       "description": "Query parameters, headers, and initial application frame contracts captured",
       "metrics": {
-        "endpoints_covered": 3
+        "endpoints_covered": 3,
+        "auth_enforced": true
       }
     },
     {
       "id": "REGISTRY_TYPES_RECOVERED",
       "status": "PASS",
-      "description": "Struct descriptors (Device, TaskProgress, Share, IceServer) recovered dynamically from binary rodata",
+      "description": "Struct descriptors (Device, TaskProgress, Share, IceServer) recovered dynamically from parsed ELF rodata",
       "metrics": {
         "types_recovered": [
           "IceServer",
           "TaskProgress",
           "Device",
           "Share"
-        ]
+        ],
+        "rodata_range": "0x770000..0x8d8ac2"
       }
     },
     {
@@ -76,9 +78,8 @@
       "status": "PASS",
       "description": "Evidence-bound state machine for /register_device documented with static VAs and dynamic probe IDs",
       "metrics": {
-        "states": 6,
-        "transitions": 7,
-        "evidence_bound": true
+        "state_count": 6,
+        "transition_count": 7
       }
     },
     {
@@ -86,9 +87,8 @@
       "status": "PASS",
       "description": "Evidence-bound state machine for /register_agent documented with static VAs, agent binary xrefs, and dynamic probe IDs",
       "metrics": {
-        "states": 6,
-        "transitions": 7,
-        "evidence_bound": true
+        "state_count": 6,
+        "transition_count": 7
       }
     },
     {
@@ -96,23 +96,23 @@
       "status": "PASS",
       "description": "Evidence-bound state machine for /connect_client documented with pre-upgrade auth timing and dynamic probe IDs",
       "metrics": {
-        "states": 7,
-        "transitions": 9,
-        "evidence_bound": true
+        "state_count": 7,
+        "transition_count": 9
       }
     },
     {
       "id": "MESSAGE_ENVELOPE_BOUNDED",
       "status": "PASS",
-      "description": "Wire frame envelopes and JSON message schemas machine-bound",
+      "description": "Wire frame envelopes and JSON message schemas machine-bound with sender, receiver, opcode, and evidence",
       "metrics": {
-        "envelope_count": 8
+        "confirmed_messages": 10,
+        "schemas_count": 8
       }
     },
     {
       "id": "HEARTBEAT_BOUNDED",
       "status": "PASS",
-      "description": "Keepalive Ping/Pong and application heartbeat interval (30s) and timeout (60s) proven via disassembly instructions and SetReadDeadline call traces",
+      "description": "Keepalive Ping/Pong and application heartbeat interval (30s) and timeout (60s) rediscovered via disassembly instructions",
       "metrics": {
         "interval_seconds": 30,
         "timeout_seconds": 60,
@@ -124,13 +124,14 @@
       "status": "PASS",
       "description": "Device, Agent, and Multi-Client association topology and client_id routing bounded",
       "metrics": {
-        "association_key": "device_id"
+        "association_key": "device_id (string)",
+        "evidence_count": 2
       }
     },
     {
       "id": "SIGNALING_MESSAGES_BOUNDED",
       "status": "PASS",
-      "description": "WebRTC offer/answer/candidate exchange sequence over WebSocket captured",
+      "description": "WebRTC offer/answer/candidate exchange sequence over WebSocket captured with dynamic oracle cases",
       "metrics": {
         "stages_captured": 4
       }
@@ -138,24 +139,24 @@
     {
       "id": "DISCONNECT_CLEANUP_BOUNDED",
       "status": "PASS",
-      "description": "Normal close and abrupt disconnect cleanup invariants proven",
+      "description": "Normal close and abrupt disconnect cleanup invariants proven with static and dynamic evidence",
       "metrics": {
         "scenarios": [
           "normal_close",
-          "abrupt_close"
+          "abrupt_close",
+          "device_disconnect",
+          "client_disconnect"
         ]
       }
     },
     {
       "id": "CONCURRENCY_MODEL_BOUNDED",
       "status": "PASS",
-      "description": "Goroutine reader/writer loops, sync.RWMutex, and event pump synchronization bounded",
+      "description": "Goroutine reader/writer loops, sync.RWMutex, and runtime.newproc synchronization bounded from function slices",
       "metrics": {
-        "synchronization_primitives": [
-          "sync.RWMutex",
-          "sync.Mutex",
-          "runtime.newproc"
-        ]
+        "has_goroutines": true,
+        "has_sync": true,
+        "recovered_slice_callees": 112
       }
     },
     {
@@ -163,8 +164,13 @@
       "status": "PASS",
       "description": "Algorithmic correlation across Linux AMD64, Windows AMD64 (PE pclntab resolved), and Android ARM64 executed successfully",
       "metrics": {
-        "correlation_score": 0.999,
-        "threshold": 0.85
+        "correlation_score": 0.9994,
+        "component_scores": {
+          "route_identity_score": 1.0,
+          "registration_structure_score": 1.0,
+          "handler_size_similarity_score": 0.9976,
+          "agent_protocol_alignment_score": 1.0
+        }
       }
     },
     {

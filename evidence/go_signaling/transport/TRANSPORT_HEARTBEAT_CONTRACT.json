@@ -1,6 +1,6 @@
 {
   "description": "Transport Keepalive & Heartbeat Contract with Exact Disassembly Proofs",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "transport_keepalive": {
     "type": "RFC 6455 Ping / Pong",
     "ping_opcode": 9,
@@ -40,7 +40,7 @@
             "0x74e62e",
             "0x74e968"
           ],
-          "disassembly": "movabs rdi, 0xdf8475800",
+          "constant_value_ns": 60000000000,
           "callee": "fZqVo7pKK.AipSo2.Add (time.Time.Add)",
           "semantics": "Conn.SetReadDeadline(time.Now().Add(60*time.Second))"
         },
@@ -51,7 +51,7 @@
             "0x754c1d",
             "0x754ebb"
           ],
-          "disassembly": "movabs rdi, 0xdf8475800",
+          "constant_value_ns": 60000000000,
           "callee": "fZqVo7pKK.AipSo2.Add (time.Time.Add)",
           "semantics": "Conn.SetReadDeadline(time.Now().Add(60*time.Second))"
         },
@@ -62,7 +62,7 @@
             "0x750b5d",
             "0x7510cd"
           ],
-          "disassembly": "movabs rdi, 0xdf8475800",
+          "constant_value_ns": 60000000000,
           "callee": "fZqVo7pKK.AipSo2.Add (time.Time.Add)",
           "semantics": "Conn.SetReadDeadline(time.Now().Add(60*time.Second))"
         }

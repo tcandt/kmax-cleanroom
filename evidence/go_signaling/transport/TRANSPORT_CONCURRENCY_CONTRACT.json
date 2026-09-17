@@ -1,6 +1,6 @@
 {
   "description": "Transport Concurrency, Goroutine Lifecycle, and Synchronization Contract",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "goroutines_per_connection": {
     "reader_loop": "1 dedicated goroutine per WebSocket executing Conn.ReadMessage()",
     "writer_loop": "1 dedicated goroutine or serialized mutex-guarded write pump per WebSocket"

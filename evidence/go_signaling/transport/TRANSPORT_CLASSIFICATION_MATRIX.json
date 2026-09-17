@@ -1,6 +1,6 @@
 {
   "description": "Formal Transport Protocol Classification for Signaling Endpoints",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "routes": {
     "/register_device": {
       "route": "/register_device",

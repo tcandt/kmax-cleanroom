@@ -1,6 +1,6 @@
 {
   "description": "Wire Frame Envelopes and Payload Field Schema Evidence",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "schemas": {
     "DeviceRegistration": {
       "direction": "device -> server",

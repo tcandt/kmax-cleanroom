@@ -1,6 +1,6 @@
 {
   "description": "WebRTC P2P Signaling Flow Contract over WebSocket",
-  "phase": "2C.4AR",
+  "phase": "2C.4AR2",
   "mediator": "Signaling Server (main.u8Z_Xk hub)",
   "ice_servers": {
     "default": [

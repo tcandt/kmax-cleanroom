@@ -1,13 +1,13 @@
 {
-  "description": "Phase 2C.4AR Canonical Transport Forensic Artifact Reproducibility Manifest",
-  "phase": "2C.4AR",
-  "timestamp": "2026-09-17T02:15:25Z",
+  "description": "Phase 2C.4AR2 Canonical Transport Forensic Artifact Reproducibility Manifest",
+  "phase": "2C.4AR2",
+  "timestamp": "2026-09-17T02:37:56Z",
   "canonical_denominator": 23,
   "artifacts": [
     {
       "artifact": "TRANSPORT_ROUTE_FAMILY.json",
-      "size_bytes": 3812,
-      "sha256": "0dc11a9500c8cc3f5107d0016d45538c2eddfc1262c5e222c27d9db96d3a3f2c",
+      "size_bytes": 3813,
+      "sha256": "3ccd453fc3c89b1f1131a0cfc68528523ae3f025f97c2e90913aff49627b4bf3",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
@@ -29,8 +29,8 @@
     },
     {
       "artifact": "TRANSPORT_CLASSIFICATION_MATRIX.json",
-      "size_bytes": 933,
-      "sha256": "2bf8f884be3e844b93a54381ceabfcf70ab182fb01775486e579529c00a92b0a",
+      "size_bytes": 934,
+      "sha256": "0e63fb072657ff9564475ca8f420064d0bcb2b777a1c0789d6c731e8d76e41e0",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "dynamic oracle WebSocket upgrader probe",
@@ -81,7 +81,7 @@
     {
       "artifact": "TRANSPORT_AUTH_MATRIX.json",
       "size_bytes": 3963,
-      "sha256": "87085a8208230a443e619389fcc8a9b5f12118f39574ec4658d9e55f2cdff107",
+      "sha256": "b9b7f33de09a2be3d3450959d114a39c69f5c58594f7df07140f0f17f1dccc73",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "dynamic oracle auth probe suite",
@@ -113,8 +113,8 @@
     },
     {
       "artifact": "TRANSPORT_REQUEST_CONTRACT.json",
-      "size_bytes": 2146,
-      "sha256": "62963c03ec1c418d5176ffb41b5bc9038bf4c8b932452d0870351fef5f475543",
+      "size_bytes": 2147,
+      "sha256": "6c7227efc9fb4244bcc12ed2f10757ffed00f1d8ca6f436771221d5567cb5491",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "static handler parameter handling",
@@ -142,8 +142,8 @@
     },
     {
       "artifact": "TRANSPORT_TYPE_EVIDENCE.json",
-      "size_bytes": 1865,
-      "sha256": "5addbf47cd5178d7faa17b214327e246d5ae5b2648d989c732184cfa58c39dd7",
+      "size_bytes": 1866,
+      "sha256": "ea788c57b9ead245377673a592471d95ec54a4393d2837c713ad6293a00c55ab",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "disassembly message parsing branches",
@@ -170,8 +170,8 @@
     },
     {
       "artifact": "WEBSOCKET_HANDSHAKE_CONTRACT.json",
-      "size_bytes": 1773,
-      "sha256": "8fabc1c7be84591df9f4fb467e7f6445a7e7d7fcb66b3b50496f161c7734770a",
+      "size_bytes": 1774,
+      "sha256": "294505090cc3088b9c1084c56e91cc6ebc71abacb8c3989b9cc84fd58186aa0a",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "RFC 6455 specification",
@@ -225,8 +225,8 @@
     },
     {
       "artifact": "REGISTER_DEVICE_STATE_MACHINE.json",
-      "size_bytes": 5199,
-      "sha256": "ab74fee519cafda7d8c3b2021006aee3ed9aab2f04129022e7359d5e2dab7b6e",
+      "size_bytes": 5195,
+      "sha256": "381410d6d9570432fdf869b556051b3b583337d2004ed19ff49842df01d1b20f",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "main.rQffYkwYhw disassembly",
@@ -253,8 +253,8 @@
     },
     {
       "artifact": "REGISTER_AGENT_STATE_MACHINE.json",
-      "size_bytes": 5634,
-      "sha256": "d5a2aaddbc7874d4e4533dd183753f46fbed3e923f133bd02d99a2e75c3f2ff3",
+      "size_bytes": 5635,
+      "sha256": "a1149b5a3ad06dbfe8f139baf1bd5dce48c1f252f50bb258613a30659ce20e3d",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "main.jdUaLc5NMO5 disassembly",
@@ -283,8 +283,8 @@
     },
     {
       "artifact": "CONNECT_CLIENT_STATE_MACHINE.json",
-      "size_bytes": 6892,
-      "sha256": "017de2e56e9fa843a41addf23a8c366d3af6f76449455ebdf9fcee8656c99957",
+      "size_bytes": 6893,
+      "sha256": "bcf6fc8791923e483183ee32f32785e1d87a497ef0d8faf4522aafcebfa6b6bf",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "main.id8ybRmw69lm disassembly",
@@ -314,8 +314,8 @@
     },
     {
       "artifact": "TRANSPORT_MESSAGE_TYPE_EVIDENCE.json",
-      "size_bytes": 5392,
-      "sha256": "8d676378454bcae01657f9ee332fcfb3feb21019f770236683353ffdb2c4b22b",
+      "size_bytes": 5393,
+      "sha256": "5ecd4470e8c46fc0271cf8ecaad0774e2b00bffbef1c859fecc58188b3134088",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "main disassembly instruction operands (movabs/cmp)",
@@ -343,8 +343,8 @@
     },
     {
       "artifact": "TRANSPORT_MESSAGE_MATRIX.json",
-      "size_bytes": 4177,
-      "sha256": "e0bfebbe823ad7140b496696aedd6af6154394fc734dd2446ba35fa0fd8fab90",
+      "size_bytes": 4178,
+      "sha256": "77bfc49286546f7e679e5b9473450e79d4f98a98dbeb930add4f4d6c68ba2d3d",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "disassembly message routing logic",
@@ -371,8 +371,8 @@
     },
     {
       "artifact": "TRANSPORT_HEARTBEAT_CONTRACT.json",
-      "size_bytes": 2627,
-      "sha256": "44ca7f7c1b6a9e8137cd1f060f7e9e25e5b5ef6c83a6b9063e0caac5c53afe31",
+      "size_bytes": 2604,
+      "sha256": "bf3ffadb8d83c324906d6440c3581e3979eff5b36909616e1bf1e553c2fd6236",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "Y0caeZ_zze.init disassembly instruction 0x6aa8aa",
@@ -397,8 +397,8 @@
     },
     {
       "artifact": "DEVICE_AGENT_CLIENT_ASSOCIATION_CONTRACT.json",
-      "size_bytes": 831,
-      "sha256": "9fa3354eabce1f12e47513fbb7933c1575f9527e151514bbf106f13deffc834e",
+      "size_bytes": 1237,
+      "sha256": "a14842c46e42a7ce0495b10f4c054b8a1f668799b157cafa1e3c21c7581527d7",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "device registry struct descriptors",
@@ -425,8 +425,8 @@
     },
     {
       "artifact": "WEBRTC_SIGNALING_CONTRACT.json",
-      "size_bytes": 1816,
-      "sha256": "175f51a506f8abb794da9bc53fb67e506bbeb443ea73f82754d20855cd7494b9",
+      "size_bytes": 1817,
+      "sha256": "7e94f921c861611db5149282369f6b67fb01d07132901e31d9377cfe573bbbea",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "WebRTC P2P signaling exchange sequence",
@@ -451,8 +451,8 @@
     },
     {
       "artifact": "DATACHANNEL_TRANSPORT_CROSSMAP.json",
-      "size_bytes": 2042,
-      "sha256": "141e7faf003cb8d84c4963189ffe0331c0000346e0cb3ff18fe8fe541589d88b",
+      "size_bytes": 2043,
+      "sha256": "674a0259984b95e352914a2fdaa78a33152aa06b8ca5ed19815abf068ddd1f44",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "cloudphone-agent CreateDataChannel binary argument recovery",
@@ -473,8 +473,8 @@
     },
     {
       "artifact": "TRANSPORT_DISCONNECT_CLEANUP_CONTRACT.json",
-      "size_bytes": 1319,
-      "sha256": "8521ede2d1e64aec10e5296d58b691d5dba9f5566a65ef03c230098cd56ee519",
+      "size_bytes": 2123,
+      "sha256": "90f17041caa912377abc3d0a18abca5f182f9a570ef79edd7127f098b55e792a",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "WebSocket close frame handling disassembly",
@@ -500,8 +500,8 @@
     },
     {
       "artifact": "TRANSPORT_CONCURRENCY_CONTRACT.json",
-      "size_bytes": 754,
-      "sha256": "e4c497292d76bb4ab10602e3fe73c7d8449297e8f23e1428533e003c60c7b23a",
+      "size_bytes": 755,
+      "sha256": "361cd40ecb8834c1822f1c6f63aecc2860a6c6bd257b854bf84709dd1a27f185",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "runtime.newproc goroutine spawns in transport handlers",
@@ -523,8 +523,8 @@
     },
     {
       "artifact": "TRANSPORT_EDGE_MATRIX.json",
-      "size_bytes": 923,
-      "sha256": "76d455706dbb896aa93e1fbe7e7367e0d21bb1236fc9f19d307cd67aba7f1173",
+      "size_bytes": 924,
+      "sha256": "a47bcf11702d7a43ea4c7b2cfffb33d388779695d8819167ee3527ebae0285f8",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "dynamic oracle edge case probes"
@@ -545,11 +545,11 @@
     },
     {
       "artifact": "TRANSPORT_CROSS_BUILD_CORRELATION.json",
-      "size_bytes": 2513,
-      "sha256": "4c219c00e5df68d632603ecc93f7233d474cbd04398d11cc0e99345c714de0aa",
+      "size_bytes": 2883,
+      "sha256": "5581f7c26a66f0b9b7a356492ebb2caa8dcec39927b5140d2ce0a4b35c4ffbc2",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
-        "Windows PE pclntab parser (0x4e9c80)",
+        "Windows PE pclntab parser (discovered offset)",
         "Windows main.main route registration trace",
         "Linux ROUTE_HANDLER_MAP",
         "Android agent binary string search"
@@ -572,8 +572,8 @@
     },
     {
       "artifact": "TRANSPORT_FUNCTION_SLICES.json",
-      "size_bytes": 10791,
-      "sha256": "f3b3eca9bce8cd47e444d8e0991328190447616541d2ea112ac0c71890b0148a",
+      "size_bytes": 10792,
+      "sha256": "90e7bc5953fd5f25c3a9b72c3bc965c2515c9b0f0b420087a5b6b3d278f26160",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "evidence/go_signaling/CALLGRAPH.json",
@@ -595,8 +595,8 @@
     },
     {
       "artifact": "TRANSPORT_FORENSIC_GATE_RESULT.json",
-      "size_bytes": 5666,
-      "sha256": "ceb088275137fcb9900e377125bf693885ee8f48305ba647c5051845d5e6702f",
+      "size_bytes": 6093,
+      "sha256": "26dfe08aa578b8aedc608942d6d3af780ef41f831a1a501efc24e0fa328713bf",
       "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
       "generation_sources": [
         "evaluate_forensic_gate() programmatically asserting all 18 invariants"

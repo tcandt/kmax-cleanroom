@@ -2772,7 +2772,8 @@ def verify_all():
                  f"PREVIOUS_TOTAL = {prev_passed}/{prev_total}; NEW_FILES_TASKS_TOTAL = {new_ft_passed}/{new_ft_total}; CUMULATIVE_PASS_RATE = {cumulative_passed}/{cumulative_total} (100% exact parity across all {len(canonical_diff_artifacts)} canonical suites; 2 intentional security divergences, 1 environmental exclusion accounted separately)")
 
     # =========================================================================
-    # 17. PHASE 2C.4A TRANSPORT FORENSICS AUDIT
+    # =========================================================================
+    # 17. PHASE 2C.4AR2 TRANSPORT FORENSICS & ANTI-TAUTOLOGY AUDIT
     # =========================================================================
     tp_dir = ROOT / "evidence" / "go_signaling" / "transport"
 
@@ -2812,7 +2813,7 @@ def verify_all():
         tp_count = len(expected_tp_artifacts)
         tp_denom_valid = all_present and (tp_m_data.get("canonical_denominator") == tp_count)
 
-    record_check("Phase 2C.4A Transport Artifact Denominator", tp_denom_valid,
+    record_check("Phase 2C.4AR2 Transport Artifact Denominator", tp_denom_valid,
                  f"All {tp_count}/{len(expected_tp_artifacts)} canonical Transport forensic artifacts present with verified manifest")
 
     # 17.2 Route Derivation & Formal Classification
@@ -2828,7 +2829,7 @@ def verify_all():
         all_ws = all(classes.get(r, {}).get("transport_class") == "WEBSOCKET_UPGRADE" for r in ["/register_device", "/register_agent", "/connect_client"])
         tp_route_valid = has_3_routes and all_ws and all(routes[r]["handler_symbol"].startswith("main.") for r in routes)
 
-    record_check("Phase 2C.4A Route Derivation & Transport Classification", tp_route_valid,
+    record_check("Phase 2C.4AR2 Route Derivation & Transport Classification", tp_route_valid,
                  "/register_device, /register_agent, /connect_client discovered from ROUTE_HANDLER_MAP/FUNCTION_MAP and classified as WEBSOCKET_UPGRADE")
 
     # 17.3 Method, Upgrade, and Auth Timing Matrices
@@ -2846,7 +2847,7 @@ def verify_all():
         dev_unauth_101 = (am_data.get("DEVICE_UNAUTH_REGISTRATION", {}).get("status_code") == 101)
         tp_matrix_valid = has_methods and auth_client_pre and auth_client_401 and auth_admin_101 and dev_unauth_101
 
-    record_check("Phase 2C.4A Method Upgrade & Auth Timing Invariants", tp_matrix_valid,
+    record_check("Phase 2C.4AR2 Method Upgrade & Auth Timing Invariants", tp_matrix_valid,
                  "All 7 HTTP methods mapped; /connect_client enforces PRE_UPGRADE auth (401); /register_device and /register_agent unauthenticated (101)")
 
     # 17.4 Separate State Machines & Handshake Contract
@@ -2865,10 +2866,15 @@ def verify_all():
                        sc.get("endpoint") == "/connect_client")
         upgrader_ok = (hs.get("upgrader", {}).get("library") == "github.com/gorilla/websocket")
         masking_ok = ("mandatory" in hs.get("framing", {}).get("client_to_server_masking", ""))
-        tp_sm_valid = distinct_sm and upgrader_ok and masking_ok and (len(sd.get("states", [])) >= 5)
+        all_trans_evidence = (
+            all(len(t.get("evidence", [])) >= 1 and t.get("confidence", 0) >= 0.8 for t in sd.get("transitions", [])) and
+            all(len(t.get("evidence", [])) >= 1 and t.get("confidence", 0) >= 0.8 for t in sa.get("transitions", [])) and
+            all(len(t.get("evidence", [])) >= 1 and t.get("confidence", 0) >= 0.8 for t in sc.get("transitions", []))
+        )
+        tp_sm_valid = distinct_sm and upgrader_ok and masking_ok and all_trans_evidence and (len(sd.get("states", [])) >= 5)
 
-    record_check("Phase 2C.4A State Machine & Handshake Contracts", tp_sm_valid,
-                 "Separate state machines for Device, Agent, and Client; RFC 6455 handshake, Gorilla upgrader, and frame masking bounded")
+    record_check("Phase 2C.4AR2 State Machine & Handshake Contracts", tp_sm_valid,
+                 "Separate state machines for Device, Agent, and Client; RFC 6455 handshake, Gorilla upgrader, and all transitions evidence-bound (confidence >= 0.8)")
 
     # 17.5 Type & Registry Recovery
     tp_reg_file = tp_dir / "TRANSPORT_REGISTRY_TYPE_EVIDENCE.json"
@@ -2883,7 +2889,7 @@ def verify_all():
         confirmed_msgs = [m for m, v in msgs.items() if v.get("status") == "CONFIRMED"]
         tp_type_valid = has_device and has_share and (len(confirmed_msgs) >= 8)
 
-    record_check("Phase 2C.4A Type & Registry Recovery Invariants", tp_type_valid,
+    record_check("Phase 2C.4AR2 Type & Registry Recovery Invariants", tp_type_valid,
                  f"Rodata descriptors recovered ({list(reg_data.keys()) if tp_reg_file.exists() else []}); {len(confirmed_msgs) if tp_msg_file.exists() else 0} confirmed message types bounded")
 
     # 17.6 Heartbeat, Signaling, Association & Cleanup Contracts
@@ -2904,16 +2910,75 @@ def verify_all():
         conc = json.loads(tp_conc_file.read_text(encoding="utf-8"))
         hb_ok = (hb.get("application_heartbeat", {}).get("observed_interval_seconds") == 30)
         sig_ok = (len(sig.get("exchange_stages", [])) >= 4)
-        assoc_ok = (assoc.get("association_key") == "device_id (string)")
+        assoc_ok = (assoc.get("association_key") == "device_id (string)" and len(assoc.get("evidence", [])) >= 2)
         dc_ok = ("EVIDENCE_ONLY" in dc.get("datachannel_plane", {}).get("forensic_status", ""))
         disc_ok = ("normal_close" in disc.get("scenarios", {}) and "abrupt_close" in disc.get("scenarios", {}))
         conc_ok = ("reader_loop" in conc.get("goroutines_per_connection", {}))
         tp_contracts_valid = hb_ok and sig_ok and assoc_ok and dc_ok and disc_ok and conc_ok
 
-    record_check("Phase 2C.4A Protocol & Concurrency Contracts", tp_contracts_valid,
+    record_check("Phase 2C.4AR2 Protocol & Concurrency Contracts", tp_contracts_valid,
                  "Heartbeat (30s interval), WebRTC signaling relay, DataChannel separation, disconnect cleanup, and concurrency bounded")
 
-    # 17.7 Transport Forensic Gate Result
+    # 17.7 Machine-Derived Heartbeat Rediscovery Invariant
+    tp_hb_rediscover_valid = False
+    if tp_hb_file.exists():
+        hb_data = json.loads(tp_hb_file.read_text(encoding="utf-8"))
+        app_hb = hb_data.get("application_heartbeat", {})
+        int_ev = app_hb.get("interval_evidence", {})
+        thr_ev = app_hb.get("threshold_evidence", {})
+        has_30s_disasm = (app_hb.get("observed_interval_seconds") == 30 and
+                          int_ev.get("instruction_va") == "0x6aa8aa" and
+                          "movabs" in int_ev.get("disassembly", ""))
+        has_60s_handlers = (app_hb.get("stale_threshold_seconds") == 60 and
+                            len(thr_ev.get("handlers", [])) == 3 and
+                            all(len(h.get("instruction_vas", [])) >= 1 for h in thr_ev.get("handlers", [])))
+        tp_hb_rediscover_valid = has_30s_disasm and has_60s_handlers
+
+    record_check("Phase 2C.4AR2 Machine-Derived Heartbeat Rediscovery Invariant", tp_hb_rediscover_valid,
+                 "30s interval (Y0caeZ_zze.init 0x6aa8aa) and 60s deadline (3 transport handlers) machine-rediscovered from binary instructions")
+
+    # 17.8 Windows PE Dynamic Parsing & Closure Discovery Invariant
+    tp_cb_file = tp_dir / "TRANSPORT_CROSS_BUILD_CORRELATION.json"
+    tp_win_pe_valid = False
+    if tp_cb_file.exists():
+        cb_data = json.loads(tp_cb_file.read_text(encoding="utf-8"))
+        pcln_off = cb_data.get("discovered_windows_pclntab_offset")
+        win_handlers = cb_data.get("targets", {}).get("windows_amd64", {}).get("handlers", {})
+        all_routes_mapped = set(win_handlers.keys()) == {"/register_device", "/register_agent", "/connect_client"}
+        all_closures_discovered = all(bool(h.get("closure_va") and h.get("symbol")) for h in win_handlers.values())
+        tp_win_pe_valid = (pcln_off is not None) and all_routes_mapped and all_closures_discovered
+
+    record_check("Phase 2C.4AR2 Dynamic Windows PE & Closure Discovery Invariant", tp_win_pe_valid,
+                 f"Windows Go pclntab discovered ({cb_data.get('discovered_windows_pclntab_offset') if tp_cb_file.exists() else 'N/A'}), PE sections parsed dynamically, all 3 route closures discovered from main.main")
+
+    # 17.9 Algorithmic Cross-Build Component Scoring Invariant
+    tp_cb_scoring_valid = False
+    if tp_cb_file.exists():
+        cb_data = json.loads(tp_cb_file.read_text(encoding="utf-8"))
+        comp = cb_data.get("component_scores", {})
+        comp_keys = {"route_identity_score", "registration_structure_score", "handler_size_similarity_score", "agent_protocol_alignment_score"}
+        has_comps = comp_keys.issubset(set(comp.keys()))
+        expected_composite = round(
+            0.30 * comp.get("route_identity_score", 0) +
+            0.25 * comp.get("registration_structure_score", 0) +
+            0.25 * comp.get("handler_size_similarity_score", 0) +
+            0.20 * comp.get("agent_protocol_alignment_score", 0),
+            4
+        )
+        score_matches = (cb_data.get("correlation_score") == expected_composite)
+        tp_cb_scoring_valid = has_comps and score_matches and (cb_data.get("correlation_score", 0) >= 0.85)
+
+    record_check("Phase 2C.4AR2 Cross-Build Mathematical Component Scoring Invariant", tp_cb_scoring_valid,
+                 f"Cross-build correlation score ({cb_data.get('correlation_score') if tp_cb_file.exists() else 'N/A'}) derived mathematically from 4 independent component scores")
+
+    # 17.10 Anti-Tautology Gate Invariant
+    import tools.forensics.reproduce_transport_forensics as rtf
+    audit_violations = rtf.audit_anti_tautology_invariants()
+    tp_anti_tautology_valid = (len(audit_violations) == 0)
+    record_check("Phase 2C.4AR2 Anti-Tautology Forensic Gate Invariant", tp_anti_tautology_valid,
+                 f"Zero unconditional PASS gate checks; zero hardcoded Windows offsets/closure maps; violations: {len(audit_violations)}")
+
+    # 17.11 Transport Forensic Gate Result
     tp_gate_file = tp_dir / "TRANSPORT_FORENSIC_GATE_RESULT.json"
     tp_gate_valid = False
     if tp_gate_file.exists():
@@ -2924,16 +2989,15 @@ def verify_all():
                       all(c.get("status") == "PASS" for c in checks_list))
         tp_gate_valid = all_passed
 
-    record_check("Phase 2C.4A Transport Forensic Gate Invariants", tp_gate_valid,
-                 "18/18 forensic invariants passed in TRANSPORT_FORENSIC_GATE_RESULT.json")
+    record_check("Phase 2C.4AR2 Transport Forensic Gate Invariants", tp_gate_valid,
+                 "18/18 dynamically evaluated forensic invariants passed in TRANSPORT_FORENSIC_GATE_RESULT.json")
 
-    # 17.8 Transport Reproducibility Execution
-    import tools.forensics.reproduce_transport_forensics as rtf
+    # 17.12 Transport Reproducibility Execution
     repro_ok = rtf.verify_reproducibility()
-    record_check("Phase 2C.4A True Forensic Reproducibility Invariant", repro_ok,
+    record_check("Phase 2C.4AR2 True Forensic Reproducibility Invariant", repro_ok,
                  "reproduce_transport_forensics.py passes 23/23 semantic validation with zero repo mutations")
 
-    # 17.9 Source Boundary Enforcement (Zero Production Transport Source)
+    # 17.13 Source Boundary Enforcement (Zero Production Transport Source)
     src_transport_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "transport"
     src_websocket_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "websocket"
     src_webrtc_dir = ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "webrtc"
@@ -2957,10 +3021,10 @@ def verify_all():
                         "nhooyr/websocket" not in gm_text)
 
     boundary_valid = no_dirs and server_go_clean and go_mod_clean
-    record_check("Phase 2C.4A Source Boundary Enforcement", boundary_valid,
+    record_check("Phase 2C.4AR2 Source Boundary Enforcement", boundary_valid,
                  "Zero production transport source written; no routes added to server.go; no websocket/webrtc packages in go.mod")
 
-    # 17.10 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # 17.14 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv
