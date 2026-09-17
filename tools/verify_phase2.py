@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 from collections import Counter
 import capstone
+import shutil
+import copy
 import subprocess
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -3258,117 +3260,192 @@ def verify_all():
     b2_diff_path = ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_DIFFERENTIAL_RESULT.json"
     b2_diff_valid = False
     b2_diff_detail = ""
-    if b2_diff_path.exists():
+
+    def validate_b2_differential_internal(diff_data, contract_data):
+        errors = []
+        valid_cids = {r["id"] for r in contract_data.get("requirements", [])}
+        mand_cids = {r["id"] for r in contract_data.get("requirements", []) if r.get("mandatory_for_parity") is True}
+
+        allowed_cls = {
+            "STATIC_PROTOCOL_EVIDENCE", "EXACT_BINARY_FRAME", "RUNTIME_RECONSTRUCTED_E2E",
+            "ORIGINAL_AGENT_RUNTIME_PARITY", "SEMANTIC_PARITY", "REFERENCE_ONLY",
+            "IMPLEMENTATION_CHOICE", "ENVIRONMENT_UNAVAILABLE", "VERIFIED_DIVERGENCE", "FAILED"
+        }
+        allowed_res = {"PASS", "ENVIRONMENT_UNAVAILABLE", "VERIFIED_DIVERGENCE", "FAILED"}
+
+        dims = diff_data.get("evaluated_dimensions", [])
+        if not dims:
+            return False, ["evaluated_dimensions is empty"], {}
+
+        seen_ids = set()
+        covered_cids = set()
+        recomputed = {
+            "static_protocol_evidence_total": 0, "static_protocol_evidence_passed": 0,
+            "exact_binary_frame_total": 0, "exact_binary_frame_passed": 0,
+            "reconstructed_runtime_e2e_total": 0, "reconstructed_runtime_e2e_passed": 0,
+            "original_agent_runtime_parity_total": 0, "original_agent_runtime_parity_passed": 0,
+            "semantic_parity_total": 0, "semantic_parity_passed": 0,
+            "reference_only_total": 0, "implementation_choice_total": 0,
+            "environment_unavailable_total": 0, "verified_divergence_total": 0,
+            "failed_total": 0
+        }
+
+        for d in dims:
+            did = d.get("id")
+            if not did:
+                errors.append("Dimension missing id")
+                continue
+            if did in seen_ids:
+                errors.append(f"Duplicate dimension id: {did}")
+            seen_ids.add(did)
+
+            cls = d.get("classification")
+            if cls not in allowed_cls:
+                errors.append(f"Unknown classification '{cls}' in {did}")
+
+            res = d.get("result")
+            if res not in allowed_res:
+                errors.append(f"Illegal result value '{res}' in {did}")
+
+            cids = d.get("contract_ids", [])
+            if not cids:
+                errors.append(f"Dimension {did} has empty contract_ids")
+            for cid in cids:
+                if cid not in valid_cids:
+                    errors.append(f"Dimension {did} references invalid contract ID '{cid}'")
+                covered_cids.add(cid)
+
+            if not d.get("evidence_basis"):
+                errors.append(f"Dimension {did} has empty evidence_basis")
+            if not d.get("runtime_basis"):
+                errors.append(f"Dimension {did} has empty runtime_basis")
+
+            if cls in {"STATIC_PROTOCOL_EVIDENCE", "EXACT_BINARY_FRAME", "RUNTIME_RECONSTRUCTED_E2E", "ORIGINAL_AGENT_RUNTIME_PARITY", "SEMANTIC_PARITY"}:
+                if res != "PASS":
+                    errors.append(f"Required parity class {cls} in {did} has non-PASS result: '{res}'")
+
+            if cls == "ENVIRONMENT_UNAVAILABLE" and res == "PASS":
+                errors.append(f"Dimension {did} claims PASS but environment is unavailable")
+
+            if cls == "STATIC_PROTOCOL_EVIDENCE":
+                recomputed["static_protocol_evidence_total"] += 1
+                if res == "PASS":
+                    recomputed["static_protocol_evidence_passed"] += 1
+            elif cls == "EXACT_BINARY_FRAME":
+                recomputed["exact_binary_frame_total"] += 1
+                if res == "PASS":
+                    recomputed["exact_binary_frame_passed"] += 1
+            elif cls == "RUNTIME_RECONSTRUCTED_E2E":
+                recomputed["reconstructed_runtime_e2e_total"] += 1
+                if res == "PASS":
+                    recomputed["reconstructed_runtime_e2e_passed"] += 1
+            elif cls == "ORIGINAL_AGENT_RUNTIME_PARITY":
+                recomputed["original_agent_runtime_parity_total"] += 1
+                if res == "PASS":
+                    recomputed["original_agent_runtime_parity_passed"] += 1
+            elif cls == "SEMANTIC_PARITY":
+                recomputed["semantic_parity_total"] += 1
+                if res == "PASS":
+                    recomputed["semantic_parity_passed"] += 1
+            elif cls == "REFERENCE_ONLY":
+                recomputed["reference_only_total"] += 1
+            elif cls == "IMPLEMENTATION_CHOICE":
+                recomputed["implementation_choice_total"] += 1
+            elif cls == "ENVIRONMENT_UNAVAILABLE":
+                recomputed["environment_unavailable_total"] += 1
+            elif cls == "VERIFIED_DIVERGENCE":
+                recomputed["verified_divergence_total"] += 1
+            elif cls == "FAILED" or res == "FAILED":
+                recomputed["failed_total"] += 1
+
+        uncovered = mand_cids - covered_cids
+        if uncovered:
+            errors.append(f"Uncovered mandatory contract requirements: {sorted(uncovered)}")
+
+        stored = diff_data.get("counters", {})
+        for k, v in recomputed.items():
+            if stored.get(k) != v:
+                errors.append(f"Counter mismatch {k}: stored={stored.get(k)}, recomputed={v}")
+
+        if not (recomputed["static_protocol_evidence_total"] > 0 and recomputed["static_protocol_evidence_passed"] == recomputed["static_protocol_evidence_total"]):
+            errors.append("Static protocol evidence parity not 100%")
+        if not (recomputed["exact_binary_frame_total"] > 0 and recomputed["exact_binary_frame_passed"] == recomputed["exact_binary_frame_total"]):
+            errors.append("Exact binary frame parity not 100%")
+        if not (recomputed["reconstructed_runtime_e2e_total"] > 0 and recomputed["reconstructed_runtime_e2e_passed"] == recomputed["reconstructed_runtime_e2e_total"]):
+            errors.append("Reconstructed runtime E2E parity not 100%")
+        if not (recomputed["semantic_parity_passed"] == recomputed["semantic_parity_total"]):
+            errors.append("Semantic parity not 100%")
+        if recomputed["failed_total"] != 0:
+            errors.append(f"failed_total non-zero ({recomputed['failed_total']})")
+
+        return len(errors) == 0, errors, recomputed
+
+    def run_verifier_mutation_tests(diff_data, contract_data):
+        # 7 negative mutation tests (Cases A-G)
+        # Case A: one STATIC result PASS -> FAILED
+        mut_a = copy.deepcopy(diff_data)
+        mut_a["evaluated_dimensions"][0]["result"] = "FAILED"
+        if validate_b2_differential_internal(mut_a, contract_data)[0]:
+            raise AssertionError("Mutation Case A failed: verifier accepted STATIC result=FAILED")
+
+        # Case B: one STATIC result PASS -> 'FAIL' (illegal result enum)
+        mut_b = copy.deepcopy(diff_data)
+        mut_b["evaluated_dimensions"][0]["result"] = "FAIL"
+        if validate_b2_differential_internal(mut_b, contract_data)[0]:
+            raise AssertionError("Mutation Case B failed: verifier accepted illegal result 'FAIL'")
+
+        # Case C: delete one mandatory contract dimension
+        mut_c = copy.deepcopy(diff_data)
+        mut_c["evaluated_dimensions"] = [d for d in mut_c["evaluated_dimensions"] if "DC-B2-01" not in d.get("contract_ids", [])]
+        if validate_b2_differential_internal(mut_c, contract_data)[0]:
+            raise AssertionError("Mutation Case C failed: verifier accepted missing mandatory contract dimension")
+
+        # Case D: duplicate a dimension ID
+        mut_d = copy.deepcopy(diff_data)
+        mut_d["evaluated_dimensions"].append(copy.deepcopy(mut_d["evaluated_dimensions"][0]))
+        if validate_b2_differential_internal(mut_d, contract_data)[0]:
+            raise AssertionError("Mutation Case D failed: verifier accepted duplicate dimension ID")
+
+        # Case E: change one stored counter
+        mut_e = copy.deepcopy(diff_data)
+        mut_e["counters"]["static_protocol_evidence_total"] += 1
+        if validate_b2_differential_internal(mut_e, contract_data)[0]:
+            raise AssertionError("Mutation Case E failed: verifier accepted altered stored counter")
+
+        # Case F: remove evidence_basis
+        mut_f = copy.deepcopy(diff_data)
+        mut_f["evaluated_dimensions"][0]["evidence_basis"] = ""
+        if validate_b2_differential_internal(mut_f, contract_data)[0]:
+            raise AssertionError("Mutation Case F failed: verifier accepted empty evidence_basis")
+
+        # Case G: original-agent ENVIRONMENT_UNAVAILABLE -> PASS without oracle
+        mut_g = copy.deepcopy(diff_data)
+        for d in mut_g["evaluated_dimensions"]:
+            if d["id"] == "DC-B2-DIM-26":
+                d["result"] = "PASS"
+                break
+        if validate_b2_differential_internal(mut_g, contract_data)[0]:
+            raise AssertionError("Mutation Case G failed: verifier accepted original-agent PASS without oracle")
+
+        return True
+
+    if b2_diff_path.exists() and b2_contract_path.exists():
         try:
             b2_diff_data = json.loads(b2_diff_path.read_text(encoding="utf-8"))
-            stored_counters = b2_diff_data.get("counters", {})
+            b2_contract_data = json.loads(b2_contract_path.read_text(encoding="utf-8"))
+
+            # 1. Run negative mutation suite
+            mutations_passed = run_verifier_mutation_tests(b2_diff_data, b2_contract_data)
+
+            # 2. Validate canonical differential result
+            valid, errors, recomputed = validate_b2_differential_internal(b2_diff_data, b2_contract_data)
             dims = b2_diff_data.get("evaluated_dimensions", [])
+            mand_reqs = [r for r in b2_contract_data.get("requirements", []) if r.get("mandatory_for_parity") is True]
 
-            allowed_classifications = {
-                "STATIC_PROTOCOL_EVIDENCE",
-                "EXACT_BINARY_FRAME",
-                "RUNTIME_RECONSTRUCTED_E2E",
-                "ORIGINAL_AGENT_RUNTIME_PARITY",
-                "SEMANTIC_PARITY",
-                "REFERENCE_ONLY",
-                "IMPLEMENTATION_CHOICE",
-                "ENVIRONMENT_UNAVAILABLE",
-                "VERIFIED_DIVERGENCE",
-                "FAILED",
-            }
-
-            seen_ids = set()
-            recomputed = {
-                "static_protocol_evidence_total": 0,
-                "static_protocol_evidence_passed": 0,
-                "exact_binary_frame_total": 0,
-                "exact_binary_frame_passed": 0,
-                "reconstructed_runtime_e2e_total": 0,
-                "reconstructed_runtime_e2e_passed": 0,
-                "original_agent_runtime_parity_total": 0,
-                "original_agent_runtime_parity_passed": 0,
-                "semantic_parity_total": 0,
-                "semantic_parity_passed": 0,
-                "reference_only_total": 0,
-                "implementation_choice_total": 0,
-                "environment_unavailable_total": 0,
-                "verified_divergence_total": 0,
-                "failed_total": 0,
-            }
-
-            validation_errors = []
-            if len(dims) == 0:
-                validation_errors.append("evaluated_dimensions is empty")
-
-            for d in dims:
-                dim_id = d.get("id")
-                if not dim_id:
-                    validation_errors.append(f"Dimension missing id: {d}")
-                    continue
-                if dim_id in seen_ids:
-                    validation_errors.append(f"Duplicate dimension id: {dim_id}")
-                seen_ids.add(dim_id)
-
-                cls = d.get("classification")
-                if cls not in allowed_classifications:
-                    validation_errors.append(f"Unknown classification {cls} in {dim_id}")
-
-                res = d.get("result")
-                if not res:
-                    validation_errors.append(f"Missing result in {dim_id}")
-
-                if not d.get("evidence_basis"):
-                    validation_errors.append(f"Missing evidence_basis in {dim_id}")
-                if not d.get("runtime_basis"):
-                    validation_errors.append(f"Missing runtime_basis in {dim_id}")
-
-                if cls == "STATIC_PROTOCOL_EVIDENCE":
-                    recomputed["static_protocol_evidence_total"] += 1
-                    if res == "PASS":
-                        recomputed["static_protocol_evidence_passed"] += 1
-                elif cls == "EXACT_BINARY_FRAME":
-                    recomputed["exact_binary_frame_total"] += 1
-                    if res == "PASS":
-                        recomputed["exact_binary_frame_passed"] += 1
-                elif cls == "RUNTIME_RECONSTRUCTED_E2E":
-                    recomputed["reconstructed_runtime_e2e_total"] += 1
-                    if res == "PASS":
-                        recomputed["reconstructed_runtime_e2e_passed"] += 1
-                elif cls == "ORIGINAL_AGENT_RUNTIME_PARITY":
-                    recomputed["original_agent_runtime_parity_total"] += 1
-                    if res == "PASS":
-                        recomputed["original_agent_runtime_parity_passed"] += 1
-                elif cls == "SEMANTIC_PARITY":
-                    recomputed["semantic_parity_total"] += 1
-                    if res == "PASS":
-                        recomputed["semantic_parity_passed"] += 1
-                elif cls == "REFERENCE_ONLY":
-                    recomputed["reference_only_total"] += 1
-                elif cls == "IMPLEMENTATION_CHOICE":
-                    recomputed["implementation_choice_total"] += 1
-                elif cls == "ENVIRONMENT_UNAVAILABLE":
-                    recomputed["environment_unavailable_total"] += 1
-                elif cls == "VERIFIED_DIVERGENCE":
-                    recomputed["verified_divergence_total"] += 1
-                elif cls == "FAILED" or res == "FAILED":
-                    recomputed["failed_total"] += 1
-
-            mismatches = []
-            for k, v in recomputed.items():
-                stored_val = stored_counters.get(k)
-                if stored_val != v:
-                    mismatches.append(f"{k}: recomputed={v} vs stored={stored_val}")
-
-            if mismatches:
-                validation_errors.extend(mismatches)
-
-            if recomputed["failed_total"] != 0:
-                validation_errors.append(f"failed_total is {recomputed['failed_total']}, expected 0")
-
-            b2_diff_valid = (len(validation_errors) == 0) and (len(dims) >= 20)
-            if b2_diff_valid:
+            if valid and mutations_passed:
+                b2_diff_valid = True
                 b2_diff_detail = (
-                    f"Derived from {len(dims)} dimensions: "
+                    f"Derived dynamically from {len(dims)} dimensions ({len(mand_reqs)}/{len(mand_reqs)} mandatory contract requirements covered, 7/7 mutation tests rejected): "
                     f"{recomputed['static_protocol_evidence_passed']}/{recomputed['static_protocol_evidence_total']} static protocol, "
                     f"{recomputed['exact_binary_frame_passed']}/{recomputed['exact_binary_frame_total']} binary frames, "
                     f"{recomputed['reconstructed_runtime_e2e_passed']}/{recomputed['reconstructed_runtime_e2e_total']} runtime E2E, "
@@ -3379,7 +3456,8 @@ def verify_all():
                     f"failed={recomputed['failed_total']}"
                 )
             else:
-                b2_diff_detail = f"Validation failed: {'; '.join(validation_errors)}"
+                b2_diff_valid = False
+                b2_diff_detail = f"Validation failed: {'; '.join(errors)}"
         except Exception as e:
             b2_diff_valid = False
             b2_diff_detail = f"Exception validating differential: {e}"
@@ -3387,26 +3465,87 @@ def verify_all():
     record_check("Phase 2C.5B2 DataChannel B2 Differential Result Verification", b2_diff_valid,
                  b2_diff_detail)
 
-    # 21.5 Concurrency and Race Verification Gate (go test -race ./...)
-    race_env = os.environ.copy()
-    llvm_bin = Path(r"C:\Users\TINH-NGUYEN\AppData\Local\Microsoft\WinGet\Packages\MartinStorsjo.LLVM-MinGW.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\llvm-mingw-20260616-ucrt-x86_64\bin")
-    if llvm_bin.exists():
-        race_env["PATH"] = str(llvm_bin) + os.pathsep + race_env.get("PATH", "")
-    race_env["CGO_ENABLED"] = "1"
+    # 21.5 Portable Concurrency and Race Verification Gate (go test -race ./...)
+    def discover_race_compiler():
+        # 1. explicit CC environment variable
+        cc = os.environ.get("CC")
+        if cc:
+            resolved = shutil.which(cc)
+            if resolved:
+                return resolved, Path(resolved).name, "CC_ENVIRONMENT_VARIABLE"
 
-    agent_race_res = subprocess.run(["go", "test", "-race", "./..."],
-                                    cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
-                                    capture_output=True, text=True, env=race_env)
-    sig_race_res = subprocess.run(["go", "test", "-race", "./..."],
-                                  cwd=str(ROOT / "reconstructed_source" / "webrtc-signaling"),
-                                  capture_output=True, text=True, env=race_env)
+        # 2. gcc from PATH
+        gcc_path = shutil.which("gcc")
+        if gcc_path:
+            return gcc_path, "gcc", "SYSTEM_PATH"
 
-    race_passed = (agent_race_res.returncode == 0) and (sig_race_res.returncode == 0)
-    race_detail = (
-        "go test -race ./... passed cleanly with zero data races in cloudphone-agent and webrtc-signaling"
-        if race_passed else
-        f"Race test failure: agent_code={agent_race_res.returncode}, sig_code={sig_race_res.returncode}"
-    )
+        # 3. clang from PATH
+        clang_path = shutil.which("clang")
+        if clang_path:
+            return clang_path, "clang", "SYSTEM_PATH"
+
+        # 4. On Windows, check standard User PATH in registry (HKCU\Environment\Path)
+        if sys.platform == "win32":
+            try:
+                import winreg
+                with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Environment") as key:
+                    user_path, _ = winreg.QueryValueEx(key, "Path")
+                    for p in user_path.split(os.pathsep):
+                        p = p.strip()
+                        if not p:
+                            continue
+                        candidate_gcc = Path(p) / "gcc.exe"
+                        candidate_clang = Path(p) / "clang.exe"
+                        if candidate_gcc.exists():
+                            return str(candidate_gcc), "gcc.exe", "WINDOWS_USER_REGISTRY_PATH"
+                        if candidate_clang.exists():
+                            return str(candidate_clang), "clang.exe", "WINDOWS_USER_REGISTRY_PATH"
+            except Exception:
+                pass
+
+        # 5. Configured repo toolchain metadata (evidence/metadata/TOOLCHAIN.json)
+        toolchain_json = ROOT / "evidence" / "metadata" / "TOOLCHAIN.json"
+        if toolchain_json.exists():
+            try:
+                meta = json.loads(toolchain_json.read_text(encoding="utf-8"))
+                basename = meta.get("compiler_executable_basename")
+                if basename:
+                    cand = shutil.which(basename)
+                    if cand:
+                        return cand, basename, "TOOLCHAIN_METADATA_PATH"
+            except Exception:
+                pass
+
+        return None, None, "TOOLCHAIN_UNAVAILABLE"
+
+    compiler_path, compiler_name, discovery_method = discover_race_compiler()
+    race_passed = False
+    race_detail = ""
+
+    if not compiler_path:
+        race_passed = False
+        race_detail = "TOOLCHAIN_UNAVAILABLE: No race-capable CGO compiler (gcc/clang) discovered in CC, PATH, registry, or toolchain metadata"
+    else:
+        race_env = os.environ.copy()
+        compiler_dir = str(Path(compiler_path).parent)
+        race_env["PATH"] = compiler_dir + os.pathsep + race_env.get("PATH", "")
+        race_env["CC"] = compiler_path
+        race_env["CGO_ENABLED"] = "1"
+
+        agent_race_res = subprocess.run(["go", "test", "-race", "-count=1", "./..."],
+                                        cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                        capture_output=True, text=True, env=race_env)
+        sig_race_res = subprocess.run(["go", "test", "-race", "-count=1", "./..."],
+                                      cwd=str(ROOT / "reconstructed_source" / "webrtc-signaling"),
+                                      capture_output=True, text=True, env=race_env)
+
+        race_passed = (agent_race_res.returncode == 0) and (sig_race_res.returncode == 0)
+        if race_passed:
+            race_detail = f"go test -race -count=1 ./... passed cleanly with zero data races in cloudphone-agent and webrtc-signaling (compiler: {compiler_name} via {discovery_method})"
+        else:
+            err_msg = (sig_race_res.stderr or sig_race_res.stdout) if sig_race_res.returncode != 0 else (agent_race_res.stderr or agent_race_res.stdout)
+            race_detail = f"Race test failure: agent_code={agent_race_res.returncode}, sig_code={sig_race_res.returncode}: {err_msg.strip()[:200]}"
+
     record_check("Phase 2C.5B2R Concurrency and Race Verification Gate (go test -race ./...)", race_passed, race_detail)
 
     # 21.6 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)

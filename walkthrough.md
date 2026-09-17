@@ -645,6 +645,45 @@ Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
    - Configured MinGW CGO toolchain.
    - Executed `go test -race ./...` across all packages in both `cloudphone-agent` and `webrtc-signaling`; 0 data races detected.
 
+---
+
+# Phase 2C.5B2R2 Walkthrough: Fail-Closed Differential & Portable Toolchain Closure
+
+**Date**: 2026-09-17  
+**Status**: CLOSED & VERIFIED (Gate Check: PASS)  
+**Contract Frozen Hash**: `3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7`  
+**Classification**: Clean-room behavioral/protocol audit & portability closure  
+
+## 1. Remediation Scope & Implemented Deliverables
+
+1. **Strict Result Enum & Fail-Closed Logic**:
+   - `ALLOWED_RESULTS`: `{"PASS", "ENVIRONMENT_UNAVAILABLE", "VERIFIED_DIVERGENCE", "FAILED"}`.
+   - Explicitly rejects `"FAIL"`, `"ERROR"`, `"UNKNOWN"`, or arbitrary strings.
+   - Closure enforces all required parity classes `passed == total > 0` and `failed_total == 0`.
+2. **Contract-Driven Dynamic Coverage**:
+   - Removed magic denominator `len(dims) >= 20`.
+   - Discovers all 16 mandatory requirements (`DC-B2-01` to `DC-B2-16`) in `DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json`.
+   - Verified 100% coverage via `contract_ids` across all 26 evaluated dimensions.
+3. **Automated Verifier Negative Mutation Testing**:
+   - Master Verifier runs 7 negative mutation tests (Cases A-G) on deep copies of differential data:
+     - Case A: STATIC result -> FAILED
+     - Case B: STATIC result -> "FAIL" (illegal result string)
+     - Case C: Missing mandatory contract requirement dimension
+     - Case D: Duplicate dimension ID
+     - Case E: Counter mismatch
+     - Case F: Empty evidence basis
+     - Case G: Original agent runtime claimed PASS without oracle
+   - Asserts all 7/7 mutations are rejected.
+4. **Portable Race Toolchain Discovery**:
+   - Removed machine-specific path `C:\Users\TINH-NGUYEN\...`.
+   - Implemented hierarchical portable discovery: `CC` env -> `PATH` gcc/clang -> Windows User Registry (`HKCU\Environment\Path`) -> `TOOLCHAIN.json`.
+   - Documented toolchain provenance in `evidence/metadata/TOOLCHAIN.json`.
+5. **Race Gate Execution**:
+   - Executed `go test -race -count=1 ./...` across all packages in `cloudphone-agent` and `webrtc-signaling`; 0 data races detected.
+6. **Terminology Correction**:
+   - Corrected inaccurate "root UID 2000" references to "shell UID 2000".
+
+
 
 
 

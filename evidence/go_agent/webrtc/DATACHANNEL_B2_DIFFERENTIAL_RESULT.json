@@ -2,7 +2,7 @@
   "metadata": {
     "title": "Phase 2C.5B2R DataChannel Protocol Differential Result",
     "phase": "Phase 2C.5B2R",
-    "evaluation_timestamp": "2026-09-17T18:15:00Z",
+    "evaluation_timestamp": "2026-09-17T18:50:00Z",
     "classification": "Clean-room behavioral/protocol reconstruction",
     "derivation_tool": "tools/derive_b2_differential.py"
   },
@@ -28,6 +28,9 @@
     {
       "id": "DC-B2-DIM-01",
       "name": "input_channel_label",
+      "contract_ids": [
+        "DC-B2-01"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (AMD64 0xb5a5af / ARM64 0x6b8548)",
       "runtime_basis": "pc.CreateDataChannel('input-channel')",
@@ -36,6 +39,9 @@
     {
       "id": "DC-B2-DIM-02",
       "name": "input_channel_ordered",
+      "contract_ids": [
+        "DC-B2-01"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
       "runtime_basis": "DataChannelInit.Ordered = true",
@@ -44,6 +50,9 @@
     {
       "id": "DC-B2-DIM-03",
       "name": "input_channel_json_framing",
+      "contract_ids": [
+        "DC-B2-03"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_FRAMING_MATRIX.json (channels.input-channel.payload_encoding = JSON_TEXT)",
       "runtime_basis": "HandleInputMessage parses JSON string",
@@ -52,6 +61,9 @@
     {
       "id": "DC-B2-DIM-04",
       "name": "clipboard_channel_label",
+      "contract_ids": [
+        "DC-B2-02"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (AMD64 0xb5e208 / ARM64 0x6bc175)",
       "runtime_basis": "pc.CreateDataChannel('clipboard-channel')",
@@ -60,6 +72,9 @@
     {
       "id": "DC-B2-DIM-05",
       "name": "clipboard_channel_ordered",
+      "contract_ids": [
+        "DC-B2-02"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
       "runtime_basis": "DataChannelInit.Ordered = true",
@@ -68,6 +83,9 @@
     {
       "id": "DC-B2-DIM-06",
       "name": "clipboard_channel_json_framing",
+      "contract_ids": [
+        "DC-B2-04"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_FRAMING_MATRIX.json (channels.clipboard-channel.payload_encoding = JSON_TEXT)",
       "runtime_basis": "HandleClipboardMessage parses JSON string",
@@ -76,6 +94,10 @@
     {
       "id": "DC-B2-DIM-07",
       "name": "touch_binary_frame_32bytes",
+      "contract_ids": [
+        "DC-B2-05",
+        "DC-B2-06"
+      ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "CONTROL_INPUT_PROTOCOL_CROSSMAP.json (AMD64 0x9cfb54-0x9cfc0e bswap/rol, ecx=0x20)",
       "runtime_basis": "TestGoldenTouchEvent",
@@ -84,6 +106,9 @@
     {
       "id": "DC-B2-DIM-08",
       "name": "keycode_binary_frame_14bytes",
+      "contract_ids": [
+        "DC-B2-07"
+      ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3ace, ControlMessageReader.java:69)",
       "runtime_basis": "TestGoldenKeycodeEvent",
@@ -92,6 +117,9 @@
     {
       "id": "DC-B2-DIM-09",
       "name": "text_binary_frame_5plusN",
+      "contract_ids": [
+        "DC-B2-08"
+      ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3a4d, ControlMessageReader.java:95)",
       "runtime_basis": "TestGoldenTextEvent",
@@ -100,6 +128,9 @@
     {
       "id": "DC-B2-DIM-10",
       "name": "scroll_binary_frame_21bytes",
+      "contract_ids": [
+        "DC-B2-09"
+      ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3c07, ControlMessageReader.java:103)",
       "runtime_basis": "TestGoldenScrollEvent",
@@ -108,6 +139,9 @@
     {
       "id": "DC-B2-DIM-11",
       "name": "hard_keyboard_frame_1byte",
+      "contract_ids": [
+        "DC-B2-10"
+      ],
       "classification": "EXACT_BINARY_FRAME",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3b60, ControlMessageReader.java:40)",
       "runtime_basis": "TestGoldenHardKeyboardEvent",
@@ -116,6 +150,9 @@
     {
       "id": "DC-B2-DIM-12",
       "name": "set_clipboard_handling",
+      "contract_ids": [
+        "DC-B2-12"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e3860, string origin_client_id at 0xb5...)",
       "runtime_basis": "TestSetClipboard",
@@ -124,6 +161,9 @@
     {
       "id": "DC-B2-DIM-13",
       "name": "get_clipboard_handling",
+      "contract_ids": [
+        "DC-B2-13"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json (AMD64 0x9e38ce)",
       "runtime_basis": "TestGetClipboard",
@@ -132,6 +172,9 @@
     {
       "id": "DC-B2-DIM-14",
       "name": "clipboard_response_schema",
+      "contract_ids": [
+        "DC-B2-13"
+      ],
       "classification": "STATIC_PROTOCOL_EVIDENCE",
       "evidence_basis": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json, useWebRTC.js:773-778",
       "runtime_basis": "TestGetClipboard sends {type: 'clipboard', text, source: 'device', origin_client_id: null}",
@@ -140,6 +183,11 @@
     {
       "id": "DC-B2-DIM-15",
       "name": "input_sctp_e2e",
+      "contract_ids": [
+        "DC-B2-03",
+        "DC-B2-05",
+        "DC-B2-06"
+      ],
       "classification": "RUNTIME_RECONSTRUCTED_E2E",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
       "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ControlSink exact 32-byte frame)",
@@ -148,6 +196,10 @@
     {
       "id": "DC-B2-DIM-16",
       "name": "clipboard_set_sctp_e2e",
+      "contract_ids": [
+        "DC-B2-04",
+        "DC-B2-12"
+      ],
       "classification": "RUNTIME_RECONSTRUCTED_E2E",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
       "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ClipboardProvider.Set)",
@@ -156,6 +208,10 @@
     {
       "id": "DC-B2-DIM-17",
       "name": "clipboard_get_sctp_e2e",
+      "contract_ids": [
+        "DC-B2-04",
+        "DC-B2-13"
+      ],
       "classification": "RUNTIME_RECONSTRUCTED_E2E",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-12)",
       "runtime_basis": "TestWebRTCDataChannelsE2E (Browser SCTP -> Agent -> ClipboardProvider.Get -> Response)",
@@ -164,6 +220,9 @@
     {
       "id": "DC-B2-DIM-18",
       "name": "deferred_channels_isolation",
+      "contract_ids": [
+        "DC-B2-16"
+      ],
       "classification": "SEMANTIC_PARITY",
       "evidence_basis": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json (CORE-08)",
       "runtime_basis": "Master Verifier scans entire cloudphone-agent production tree for zero deferred channel logic",
@@ -172,6 +231,9 @@
     {
       "id": "DC-B2-DIM-19",
       "name": "touch_alias_compatibility",
+      "contract_ids": [
+        "DC-B2-05"
+      ],
       "classification": "REFERENCE_ONLY",
       "evidence_basis": "useWebRTC.js:1032 ('type': 'touch')",
       "runtime_basis": "TestHandleInputMessageEndToEnd/touch_alias_type",
@@ -180,6 +242,9 @@
     {
       "id": "DC-B2-DIM-20",
       "name": "touch_seq_client_ts_fields",
+      "contract_ids": [
+        "DC-B2-05"
+      ],
       "classification": "REFERENCE_ONLY",
       "evidence_basis": "useWebRTC.js:1034-1035 (seq, client_ts_ms)",
       "runtime_basis": "TouchEvent struct unmarshals without error",
@@ -188,6 +253,9 @@
     {
       "id": "DC-B2-DIM-21",
       "name": "clipboard_paste_suppress_broadcast_fields",
+      "contract_ids": [
+        "DC-B2-12"
+      ],
       "classification": "REFERENCE_ONLY",
       "evidence_basis": "useWebRTC.js:1200-1202 (paste, suppress_broadcast)",
       "runtime_basis": "SetClipboardMessage struct unmarshals without error",
@@ -196,6 +264,9 @@
     {
       "id": "DC-B2-DIM-22",
       "name": "clipboard_peer_notification_inbound",
+      "contract_ids": [
+        "DC-B2-15"
+      ],
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "Defensive handling of inbound 'clipboard' frames",
       "runtime_basis": "TestPeerClipboardNotification",
@@ -204,6 +275,9 @@
     {
       "id": "DC-B2-DIM-23",
       "name": "defensive_payload_bound",
+      "contract_ids": [
+        "DC-B2-15"
+      ],
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "ControlMessageReader.CLIPBOARD_TEXT_MAX_LENGTH (262130) + JSON buffer envelope",
       "runtime_basis": "TestClipboardParserRobustnessAndFuzz/oversized_payload",
@@ -212,6 +286,9 @@
     {
       "id": "DC-B2-DIM-24",
       "name": "control_sink_adapter",
+      "contract_ids": [
+        "DC-B2-11"
+      ],
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "Boundary abstraction for @uds_sys_t_",
       "runtime_basis": "MemoryControlSink in-memory test implementation",
@@ -220,6 +297,9 @@
     {
       "id": "DC-B2-DIM-25",
       "name": "clipboard_provider_adapter",
+      "contract_ids": [
+        "DC-B2-14"
+      ],
       "classification": "IMPLEMENTATION_CHOICE",
       "evidence_basis": "Boundary abstraction for Android ClipboardManager",
       "runtime_basis": "MemoryClipboardProvider in-memory test implementation",
@@ -228,8 +308,14 @@
     {
       "id": "DC-B2-DIM-26",
       "name": "original_agent_datachannel_runtime_parity",
+      "contract_ids": [
+        "DC-B2-01",
+        "DC-B2-02",
+        "DC-B2-11",
+        "DC-B2-14"
+      ],
       "classification": "ENVIRONMENT_UNAVAILABLE",
-      "evidence_basis": "Requires Android container runtime with root UID 2000 and abstract UDS @uds_sys_t_",
+      "evidence_basis": "Android runtime requiring the original Agent/helper execution context, including shell UID 2000 and abstract UDS endpoints",
       "runtime_basis": "Host environment is Windows AMD64 desktop without Android emulator / app_process",
       "result": "ENVIRONMENT_UNAVAILABLE"
     }

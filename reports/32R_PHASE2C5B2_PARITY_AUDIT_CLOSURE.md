@@ -58,7 +58,7 @@ Counters are machine-derived from the 26 evaluated dimensions in `DATACHANNEL_B2
 - **Signaling Oracle Compatibility**: `TestOriginalSignalingOracleCompatibility` asserts that the reconstructed Agent can negotiate WebRTC sessions via the original Windows signaling binary (`webrtc-signaling_374a9d7898a9...exe`). This verifies B1 signaling relay compatibility.
 - **Agent DataChannel Runtime**: Validating runtime SCTP parity against the *original* `cloudphone-agent` binary requires:
   1. Linux / Android ARM64 execution environment.
-  2. Root privilege dropping to Android shell UID 2000.
+  2. Android runtime requiring the original Agent/helper execution context, including shell UID 2000 and abstract UDS endpoints.
   3. Abstract Linux domain socket `@uds_sys_t_` connection to an active Android `scrcpy` server.
   4. Active Android `ClipboardManager` IPC bridge.
 
@@ -68,7 +68,7 @@ Because the test runner executes on a Windows AMD64 desktop without an Android c
   "id": "DC-B2-DIM-26",
   "name": "original_agent_datachannel_runtime_parity",
   "classification": "ENVIRONMENT_UNAVAILABLE",
-  "evidence_basis": "Requires Android container runtime with root UID 2000 and abstract UDS @uds_sys_t_",
+  "evidence_basis": "Android runtime requiring the original Agent/helper execution context, including shell UID 2000 and abstract UDS endpoints",
   "runtime_basis": "Host environment is Windows AMD64 desktop without Android emulator / app_process",
   "result": "ENVIRONMENT_UNAVAILABLE"
 }
