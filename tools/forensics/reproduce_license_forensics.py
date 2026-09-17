@@ -23,6 +23,7 @@ import uuid
 import struct
 import shutil
 import hashlib
+import re
 import datetime
 from pathlib import Path
 import capstone
@@ -369,10 +370,15 @@ def verify_license_reproducibility():
                     if cj[r_pat][ctx]["status_code"] != rj[r_pat][ctx]["status_code"]:
                         print(f"[FAIL] Auth matrix status mismatch {r_pat} {ctx}: {cj[r_pat][ctx]['status_code']} != {rj[r_pat][ctx]['status_code']}")
                         return False
-                    if cj[r_pat][ctx]["body_preview"] != rj[r_pat][ctx]["body_preview"]:
-                        print(f"[FAIL] Auth matrix body mismatch {r_pat} {ctx}: {cj[r_pat][ctx]['body_preview']} != {rj[r_pat][ctx]['body_preview']}")
+                    c_body = cj[r_pat][ctx]["body_preview"]
+                    r_body = rj[r_pat][ctx]["body_preview"]
+                    # Normalize dynamic days_remaining (changes at midnight based on current date)
+                    c_body_norm = re.sub(r'"days_remaining":\s*\d+', '"days_remaining":NORM', c_body)
+                    r_body_norm = re.sub(r'"days_remaining":\s*\d+', '"days_remaining":NORM', r_body)
+                    if c_body_norm != r_body_norm:
+                        print(f"[FAIL] Auth matrix body mismatch {r_pat} {ctx}: {c_body} != {r_body}")
                         return False
-            checks_performed = ["status_code and body_preview across 3 routes * 6 auth contexts"]
+            checks_performed = ["status_code and body_preview across 3 routes * 6 auth contexts (dynamic days_remaining normalized)"]
 
         elif a_name == "LICENSE_STARTUP_FILE_MATRIX.json":
             # Deep check: all 6 startup cases, runtime results
@@ -480,6 +486,35 @@ def verify_license_reproducibility():
                 print("[FAIL] Regenerated success state mapping does not match canonical specification")
                 return False
             checks_performed = ["10 memory fields mapped", "dispositions verified", "target VAs and instructions bound", "canonical equality"]
+
+        elif a_name == "LICENSE_STATUS_CONTRACT.json":
+            cj_copy = json.loads(json.dumps(cj))
+            rj_copy = json.loads(json.dumps(rj))
+            if "days_remaining" in cj_copy.get("fields", {}):
+                cj_copy["fields"]["days_remaining"]["initial_value"] = "NORM"
+            if "days_remaining" in rj_copy.get("fields", {}):
+                rj_copy["fields"]["days_remaining"]["initial_value"] = "NORM"
+            if "days_remaining" in cj_copy.get("observed_baseline_sample", {}):
+                cj_copy["observed_baseline_sample"]["days_remaining"] = "NORM"
+            if "days_remaining" in rj_copy.get("observed_baseline_sample", {}):
+                rj_copy["observed_baseline_sample"]["days_remaining"] = "NORM"
+            if cj_copy != rj_copy:
+                print("[FAIL] Regenerated license status contract mismatch (non-dynamic fields)")
+                return False
+            checks_performed = ["13-field status response specification", "type annotations", "dynamic days_remaining normalized"]
+
+        elif a_name == "LICENSE_FAILED_ACTIVATION_STATE_MATRIX.json":
+            cj_copy = json.loads(json.dumps(cj))
+            rj_copy = json.loads(json.dumps(rj))
+            for key in ["memory_status_before", "memory_status_after"]:
+                if "days_remaining" in cj_copy.get(key, {}):
+                    cj_copy[key]["days_remaining"] = "NORM"
+                if "days_remaining" in rj_copy.get(key, {}):
+                    rj_copy[key]["days_remaining"] = "NORM"
+            if cj_copy != rj_copy:
+                print("[FAIL] Regenerated failed activation state matrix mismatch (non-dynamic fields)")
+                return False
+            checks_performed = ["failed activation cases verified", "dynamic days_remaining normalized"]
 
         elif a_name == "LICENSE_FORENSIC_GATE_RESULT.json":
             if rj.get("overall_verdict") != "PASS" or rj.get("passed_count") != 18 or rj.get("failed_count") != 0:
