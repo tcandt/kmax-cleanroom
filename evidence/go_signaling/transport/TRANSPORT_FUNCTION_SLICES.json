@@ -1,42 +1,306 @@
 {
-  "description": "Function Slices, Boundaries, and Callgraph Neighborhoods for Transport",
-  "phase": "2C.4A",
-  "handlers": {
-    "/register_device": {
+  "description": "Callgraph-Traversed Function Slices and Neighborhoods for Transport",
+  "phase": "2C.4AR",
+  "traversal_algorithm": "BREADTH_FIRST_CALLGRAPH_TRAVERSAL",
+  "traversal_roots": [
+    {
+      "path": "/register_device",
+      "symbol": "main.rQffYkwYhw",
+      "va": "0x74e4a0"
+    },
+    {
+      "path": "/register_agent",
+      "symbol": "main.jdUaLc5NMO5",
+      "va": "0x754b40"
+    },
+    {
+      "path": "/connect_client",
+      "symbol": "main.id8ybRmw69lm",
+      "va": "0x7507c0"
+    }
+  ],
+  "function_count": 28,
+  "functions": {
+    "main.rQffYkwYhw": {
       "symbol": "main.rQffYkwYhw",
       "va": "0x74e4a0",
       "size_bytes": 6368,
-      "role": "WebSocket device registration and heartbeat",
-      "provenance": "STATIC_BINARY_DERIVED"
+      "role": "Route handler for /register_device",
+      "traversal_depth": 0,
+      "discovery_parent": null,
+      "call_edge": "ROUTE_HANDLER_ROOT",
+      "evidence_class": "PCLNTAB_AND_CALLGRAPH"
     },
-    "/register_agent": {
+    "main.jdUaLc5NMO5": {
       "symbol": "main.jdUaLc5NMO5",
       "va": "0x754b40",
       "size_bytes": 11328,
-      "role": "WebSocket agent registration and WebRTC signaling relay",
-      "provenance": "STATIC_BINARY_DERIVED"
+      "role": "Route handler for /register_agent",
+      "traversal_depth": 0,
+      "discovery_parent": null,
+      "call_edge": "ROUTE_HANDLER_ROOT",
+      "evidence_class": "PCLNTAB_AND_CALLGRAPH"
     },
-    "/connect_client": {
+    "main.id8ybRmw69lm": {
       "symbol": "main.id8ybRmw69lm",
       "va": "0x7507c0",
       "size_bytes": 14208,
-      "role": "WebSocket client connection, auth validation, and multi-client signaling",
-      "provenance": "STATIC_BINARY_DERIVED"
+      "role": "Route handler for /connect_client",
+      "traversal_depth": 0,
+      "discovery_parent": null,
+      "call_edge": "ROUTE_HANDLER_ROOT",
+      "evidence_class": "PCLNTAB_AND_CALLGRAPH"
+    },
+    "main.CjJvJlDyTO.GetUint32": {
+      "symbol": "main.CjJvJlDyTO.GetUint32",
+      "va": "0x748040",
+      "size_bytes": 288,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.rQffYkwYhw",
+      "call_edge": "main.rQffYkwYhw -> main.CjJvJlDyTO.GetUint32",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.(*A38AV00w_).Send": {
+      "symbol": "main.(*A38AV00w_).Send",
+      "va": "0x74a7c0",
+      "size_bytes": 320,
+      "role": "Signaling message relay sender",
+      "traversal_depth": 1,
+      "discovery_parent": "main.rQffYkwYhw",
+      "call_edge": "main.rQffYkwYhw -> main.(*A38AV00w_).Send",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.hsHkin": {
+      "symbol": "main.hsHkin",
+      "va": "0x74a300",
+      "size_bytes": 544,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.rQffYkwYhw",
+      "call_edge": "main.rQffYkwYhw -> main.hsHkin",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.nFujia": {
+      "symbol": "main.nFujia",
+      "va": "0x738780",
+      "size_bytes": 608,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.rQffYkwYhw",
+      "call_edge": "main.rQffYkwYhw -> main.nFujia",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.tpqi71jr_cB": {
+      "symbol": "main.tpqi71jr_cB",
+      "va": "0x738a60",
+      "size_bytes": 160,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.rQffYkwYhw",
+      "call_edge": "main.rQffYkwYhw -> main.tpqi71jr_cB",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.(*LG7nmxLRaW).WriteJSON": {
+      "symbol": "main.(*LG7nmxLRaW).WriteJSON",
+      "va": "0x748360",
+      "size_bytes": 384,
+      "role": "WebSocket JSON frame serializer and writer",
+      "traversal_depth": 1,
+      "discovery_parent": "main.rQffYkwYhw",
+      "call_edge": "main.rQffYkwYhw -> main.(*LG7nmxLRaW).WriteJSON",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.lv6Xh7": {
+      "symbol": "main.lv6Xh7",
+      "va": "0x74ab00",
+      "size_bytes": 2272,
+      "role": "Device list update aggregator and broadcast dispatcher",
+      "traversal_depth": 1,
+      "discovery_parent": "main.rQffYkwYhw",
+      "call_edge": "main.rQffYkwYhw -> main.lv6Xh7",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.bEQ9kzaYde": {
+      "symbol": "main.bEQ9kzaYde",
+      "va": "0x764560",
+      "size_bytes": 480,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.jdUaLc5NMO5",
+      "call_edge": "main.jdUaLc5NMO5 -> main.bEQ9kzaYde",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.mE_zTegQycBQ": {
+      "symbol": "main.mE_zTegQycBQ",
+      "va": "0x7582a0",
+      "size_bytes": 704,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.jdUaLc5NMO5",
+      "call_edge": "main.jdUaLc5NMO5 -> main.mE_zTegQycBQ",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.pXBe1u_": {
+      "symbol": "main.pXBe1u_",
+      "va": "0x758860",
+      "size_bytes": 864,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.jdUaLc5NMO5",
+      "call_edge": "main.jdUaLc5NMO5 -> main.pXBe1u_",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.(*A38AV00w_).SendBinary": {
+      "symbol": "main.(*A38AV00w_).SendBinary",
+      "va": "0x74a960",
+      "size_bytes": 320,
+      "role": "Signaling message relay sender",
+      "traversal_depth": 1,
+      "discovery_parent": "main.jdUaLc5NMO5",
+      "call_edge": "main.jdUaLc5NMO5 -> main.(*A38AV00w_).SendBinary",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.lYKp_Iuf": {
+      "symbol": "main.lYKp_Iuf",
+      "va": "0x73b080",
+      "size_bytes": 1120,
+      "role": "User authentication token validator",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.lYKp_Iuf",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.qCbJFL34": {
+      "symbol": "main.qCbJFL34",
+      "va": "0x73b4e0",
+      "size_bytes": 928,
+      "role": "Share token validator",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.qCbJFL34",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.gkia2uz": {
+      "symbol": "main.gkia2uz",
+      "va": "0x75e420",
+      "size_bytes": 288,
+      "role": "WebSocket upgrade responder",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.gkia2uz",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.clLepzCabh": {
+      "symbol": "main.clLepzCabh",
+      "va": "0x73b880",
+      "size_bytes": 512,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.clLepzCabh",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.hPaJPN": {
+      "symbol": "main.hPaJPN",
+      "va": "0x74b4e0",
+      "size_bytes": 480,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.hPaJPN",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.pVOasuBli": {
+      "symbol": "main.pVOasuBli",
+      "va": "0x73d8a0",
+      "size_bytes": 1120,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.pVOasuBli",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.fvTf0gwrmpRX": {
+      "symbol": "main.fvTf0gwrmpRX",
+      "va": "0x73cce0",
+      "size_bytes": 288,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.fvTf0gwrmpRX",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.ii3OsowGJge": {
+      "symbol": "main.ii3OsowGJge",
+      "va": "0x73ce00",
+      "size_bytes": 576,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.ii3OsowGJge",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.(*AoIDVQHamcx).Send": {
+      "symbol": "main.(*AoIDVQHamcx).Send",
+      "va": "0x74a520",
+      "size_bytes": 576,
+      "role": "Signaling message relay sender",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.(*AoIDVQHamcx).Send",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.raQIth7": {
+      "symbol": "main.raQIth7",
+      "va": "0x73af60",
+      "size_bytes": 288,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 1,
+      "discovery_parent": "main.id8ybRmw69lm",
+      "call_edge": "main.id8ybRmw69lm -> main.raQIth7",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.(*LG7nmxLRaW).WriteMessage": {
+      "symbol": "main.(*LG7nmxLRaW).WriteMessage",
+      "va": "0x748160",
+      "size_bytes": 416,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 2,
+      "discovery_parent": "main.(*A38AV00w_).Send",
+      "call_edge": "main.(*A38AV00w_).Send -> main.(*LG7nmxLRaW).WriteMessage",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.zml1wMCaa": {
+      "symbol": "main.zml1wMCaa",
+      "va": "0x74c640",
+      "size_bytes": 2368,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 2,
+      "discovery_parent": "main.lv6Xh7",
+      "call_edge": "main.lv6Xh7 -> main.zml1wMCaa",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.ZbJsqTIiz3ML": {
+      "symbol": "main.ZbJsqTIiz3ML",
+      "va": "0x732ec0",
+      "size_bytes": 3456,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 2,
+      "discovery_parent": "main.hPaJPN",
+      "call_edge": "main.hPaJPN -> main.ZbJsqTIiz3ML",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
+    },
+    "main.hTdBpyNPqU": {
+      "symbol": "main.hTdBpyNPqU",
+      "va": "0x73d040",
+      "size_bytes": 2144,
+      "role": "Project transport helper / handler routine",
+      "traversal_depth": 2,
+      "discovery_parent": "main.fvTf0gwrmpRX",
+      "call_edge": "main.fvTf0gwrmpRX -> main.hTdBpyNPqU",
+      "evidence_class": "CALLGRAPH_TRAVERSED"
     }
   },
-  "hub_primitives": [
-    {
-      "symbol": "main.u8Z_Xk",
-      "role": "Device and client signaling hub"
-    },
-    {
-      "symbol": "main.d2Q7r7",
-      "role": "Broadcast device list updates to connected clients"
-    },
-    {
-      "symbol": "main.lv6Xh7",
-      "role": "Filter and format device list update message"
-    }
-  ],
   "provenance": "STATIC_BINARY_DERIVED"
 }

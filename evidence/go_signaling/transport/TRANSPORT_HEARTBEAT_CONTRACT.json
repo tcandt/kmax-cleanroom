@@ -1,6 +1,6 @@
 {
-  "description": "Transport Keepalive & Heartbeat Contract",
-  "phase": "2C.4A",
+  "description": "Transport Keepalive & Heartbeat Contract with Exact Disassembly Proofs",
+  "phase": "2C.4AR",
   "transport_keepalive": {
     "type": "RFC 6455 Ping / Pong",
     "ping_opcode": 9,
@@ -16,9 +16,60 @@
     "sender": "Device Agent (/register_agent)",
     "receiver": "Signaling Server",
     "observed_interval_seconds": 30,
+    "interval_evidence": {
+      "kind": "STATIC_BINARY_DISASM_AND_TYPE_DESCRIPTOR",
+      "symbol": "Y0caeZ_zze.init",
+      "instruction_va": "0x6aa8aa",
+      "disassembly": "movabs rcx, 0x6fc23ac00",
+      "constant_value_ns": 30000000000,
+      "target_type_va": "0x808cc0",
+      "target_fields": [
+        "ULbcrMh (offset 0x0, time.Duration)",
+        "ZnjlmYRWnV9 (offset 0x40, time.Duration)"
+      ]
+    },
     "stale_threshold_seconds": 60,
+    "threshold_evidence": {
+      "kind": "STATIC_BINARY_DISASM_CALL_TRACE",
+      "constant_value_ns": 60000000000,
+      "handlers": [
+        {
+          "route": "/register_device",
+          "symbol": "main.rQffYkwYhw",
+          "instruction_vas": [
+            "0x74e62e",
+            "0x74e968"
+          ],
+          "disassembly": "movabs rdi, 0xdf8475800",
+          "callee": "fZqVo7pKK.AipSo2.Add (time.Time.Add)",
+          "semantics": "Conn.SetReadDeadline(time.Now().Add(60*time.Second))"
+        },
+        {
+          "route": "/register_agent",
+          "symbol": "main.jdUaLc5NMO5",
+          "instruction_vas": [
+            "0x754c1d",
+            "0x754ebb"
+          ],
+          "disassembly": "movabs rdi, 0xdf8475800",
+          "callee": "fZqVo7pKK.AipSo2.Add (time.Time.Add)",
+          "semantics": "Conn.SetReadDeadline(time.Now().Add(60*time.Second))"
+        },
+        {
+          "route": "/connect_client",
+          "symbol": "main.id8ybRmw69lm",
+          "instruction_vas": [
+            "0x750b5d",
+            "0x7510cd"
+          ],
+          "disassembly": "movabs rdi, 0xdf8475800",
+          "callee": "fZqVo7pKK.AipSo2.Add (time.Time.Add)",
+          "semantics": "Conn.SetReadDeadline(time.Now().Add(60*time.Second))"
+        }
+      ]
+    },
     "state_mutation": "Updates Device.last_seen timestamp in global registry",
-    "stale_action": "Device marked online=false and broadcast emitted when heartbeat ceases beyond threshold",
+    "stale_action": "Read deadline expires after 60s of inactivity; connection torn down and device marked offline",
     "provenance": "COMBINED_CONFIRMED"
   }
 }

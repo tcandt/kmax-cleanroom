@@ -1,74 +1,110 @@
 {
   "ADMIN_HEADER": {
+    "case_id": "TR-AUTH-ADMIN-HEADER",
     "path": "/connect_client",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
+    "upgrade_success": true,
     "matches_expected": true,
     "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "token_source": "AUTHORIZATION_HEADER",
+    "body_class": "SWITCHING_PROTOCOLS",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "ADMIN_QUERY": {
-    "path": "/connect_client?token=a8399a08515d102082bd7307f99f92bccb4e463ff51223ce72a0f9ed9641bb6b",
+    "case_id": "TR-AUTH-ADMIN-QUERY",
+    "path": "/connect_client?token=e176549d96bcdbf2de5a3a47d227e7a3b3b19ed8f05df3a46a4a79f5acd504ad",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
+    "upgrade_success": true,
     "matches_expected": true,
     "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "token_source": "QUERY_PARAM_TOKEN",
+    "body_class": "SWITCHING_PROTOCOLS",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "NORMAL_USER_HEADER": {
+    "case_id": "TR-AUTH-USER-HEADER",
     "path": "/connect_client",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
+    "upgrade_success": true,
     "matches_expected": true,
     "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "token_source": "AUTHORIZATION_HEADER",
+    "body_class": "SWITCHING_PROTOCOLS",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "NORMAL_USER_QUERY": {
-    "path": "/connect_client?token=0745d94ae4837793a482f3106acbb99cacdb5721254c943dc188de9d01d7b957",
+    "case_id": "TR-AUTH-USER-QUERY",
+    "path": "/connect_client?token=2de0df00e3787a7a8a58df1148e3d7be0615e2b61188b27e3aaeac0e014392e3",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
+    "upgrade_success": true,
     "matches_expected": true,
     "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "token_source": "QUERY_PARAM_TOKEN",
+    "body_class": "SWITCHING_PROTOCOLS",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "SHARE_TOKEN_QUERY": {
-    "path": "/connect_client?share_token=st_64df9e3fdcc10bb17f599eb6c73e09be",
+    "case_id": "TR-AUTH-SHARE-QUERY",
+    "path": "/connect_client?share_token=st_da168ff5eeee9630c2742d8ec3758cf4",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
+    "upgrade_success": true,
     "matches_expected": true,
     "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "token_source": "QUERY_PARAM_SHARE_TOKEN",
+    "body_class": "SWITCHING_PROTOCOLS",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "MISSING_TOKEN": {
+    "case_id": "TR-AUTH-MISSING-TOKEN",
     "path": "/connect_client",
     "status_code": 401,
     "status_line": "HTTP/1.1 401 Unauthorized",
+    "upgrade_success": false,
     "matches_expected": true,
     "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "token_source": "NONE",
+    "body_class": "UNAUTHORIZED_RESPONSE",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "INVALID_TOKEN": {
+    "case_id": "TR-AUTH-INVALID-TOKEN",
     "path": "/connect_client?token=invalid_tok_123",
     "status_code": 401,
     "status_line": "HTTP/1.1 401 Unauthorized",
+    "upgrade_success": false,
     "matches_expected": true,
     "auth_timing": "PRE_UPGRADE_VALIDATION",
+    "token_source": "QUERY_PARAM_TOKEN",
+    "body_class": "UNAUTHORIZED_RESPONSE",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "DEVICE_UNAUTH_REGISTRATION": {
+    "case_id": "TR-AUTH-DEV-PUBLIC",
     "path": "/register_device",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
+    "upgrade_success": true,
     "matches_expected": true,
     "auth_timing": "UNAUTHENTICATED",
+    "token_source": "UNAUTHENTICATED",
+    "body_class": "SWITCHING_PROTOCOLS",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   },
   "AGENT_UNAUTH_REGISTRATION": {
+    "case_id": "TR-AUTH-AGENT-PUBLIC",
     "path": "/register_agent",
     "status_code": 101,
     "status_line": "HTTP/1.1 101 Switching Protocols",
+    "upgrade_success": true,
     "matches_expected": true,
     "auth_timing": "UNAUTHENTICATED",
+    "token_source": "UNAUTHENTICATED",
+    "body_class": "SWITCHING_PROTOCOLS",
     "provenance": "DYNAMIC_ORACLE_DERIVED"
   }
 }

@@ -1,6 +1,6 @@
 {
   "description": "Transport Query Parameters, Headers, and Request Contracts",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "endpoints": {
     "/register_device": {
       "transport": "WEBSOCKET_UPGRADE",

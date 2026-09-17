@@ -1,6 +1,6 @@
 {
   "description": "Transport, WebSocket Signaling, and Multiplexing Route Family",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "family": "transport",
   "route_count": 3,
   "routes": {
@@ -8,7 +8,10 @@
       "path": "/register_device",
       "handler_symbol": "main.rQffYkwYhw",
       "handler_va": "0x74e4a0",
-      "registration_function": "http.HandleFunc (Y0caeZ_zze.XpauMa5YLU)",
+      "registration_type": "HandleFunc",
+      "registration_call_va": "0x765c10",
+      "registration_closure_va": "0x848528",
+      "registering_function": "main.main",
       "size_bytes": 6368,
       "project_callees": [],
       "library_callees": [
@@ -35,14 +38,17 @@
         "scrcpy_addr",
         "type"
       ],
-      "wrapper_relationship": "http.HandlerFunc wrapper around package main handler function",
+      "wrapper_relationship": "HandleFunc wrapper via closure at 0x848528",
       "provenance": "STATIC_BINARY_DERIVED"
     },
     "/register_agent": {
       "path": "/register_agent",
       "handler_symbol": "main.jdUaLc5NMO5",
       "handler_va": "0x754b40",
-      "registration_function": "http.HandleFunc (Y0caeZ_zze.XpauMa5YLU)",
+      "registration_type": "HandleFunc",
+      "registration_call_va": "0x765c28",
+      "registration_closure_va": "0x8484b0",
+      "registering_function": "main.main",
       "size_bytes": 11328,
       "project_callees": [],
       "library_callees": [
@@ -69,14 +75,17 @@
         "scrcpy_addr",
         "is_webrtc"
       ],
-      "wrapper_relationship": "http.HandlerFunc wrapper around package main handler function",
+      "wrapper_relationship": "HandleFunc wrapper via closure at 0x8484b0",
       "provenance": "STATIC_BINARY_DERIVED"
     },
     "/connect_client": {
       "path": "/connect_client",
       "handler_symbol": "main.id8ybRmw69lm",
       "handler_va": "0x7507c0",
-      "registration_function": "http.HandleFunc (Y0caeZ_zze.XpauMa5YLU)",
+      "registration_type": "HandleFunc",
+      "registration_call_va": "0x765c40",
+      "registration_closure_va": "0x848478",
+      "registering_function": "main.main",
       "size_bytes": 14208,
       "project_callees": [
         "main.lYKp_Iuf",
@@ -104,7 +113,7 @@
         "ice_servers",
         "device_info"
       ],
-      "wrapper_relationship": "http.HandlerFunc wrapper around package main handler function",
+      "wrapper_relationship": "HandleFunc wrapper via closure at 0x848478",
       "provenance": "STATIC_BINARY_DERIVED"
     }
   }

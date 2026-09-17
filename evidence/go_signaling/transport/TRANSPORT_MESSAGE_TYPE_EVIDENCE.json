@@ -1,66 +1,83 @@
 {
   "description": "Binary Branch & Disassembly Provenance for Transport Messages",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "messages": {
     "register": {
       "status": "CONFIRMED",
       "role": "Device initial registration",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-DEV-REGISTER",
       "disasm_xref": "main.rQffYkwYhw (movabs 'register')"
     },
     "config": {
       "status": "CONFIRMED",
       "role": "Server config push with ice_servers",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-DEV-REGISTER",
       "disasm_xref": "main.id8ybRmw69lm / main.rQffYkwYhw"
     },
     "agent_register": {
       "status": "CONFIRMED",
       "role": "Agent initial registration",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-AGENT-REGISTER",
       "disasm_xref": "main.jdUaLc5NMO5 (movabs 'agent_re')"
     },
     "agent_register_ok": {
       "status": "CONFIRMED",
       "role": "Agent registration ACK",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-AGENT-REGISTER",
       "disasm_xref": "main.jdUaLc5NMO5"
     },
     "connect": {
       "status": "CONFIRMED",
       "role": "Client binding to device_id",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-CLI-CONNECT",
       "disasm_xref": "main.id8ybRmw69lm (cmp 'connect')"
     },
     "forward": {
       "status": "CONFIRMED",
       "role": "Bidirectional payload forwarding",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-CLI-FORWARD-REQ-OFFER",
       "disasm_xref": "main.id8ybRmw69lm / main.jdUaLc5NMO5 (cmp 'forward')"
     },
     "device_msg": {
       "status": "CONFIRMED",
       "role": "Relayed agent payload to client",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-AGENT-FORWARD-OFFER",
       "disasm_xref": "main.id8ybRmw69lm"
     },
     "device_list_update": {
       "status": "CONFIRMED",
       "role": "Broadcast device summary update",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-CLI-CONNECT",
       "disasm_xref": "main.lv6Xh7"
     },
     "heartbeat": {
       "status": "CONFIRMED",
       "role": "Agent keepalive ping",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-AGENT-REGISTER",
       "disasm_xref": "main.jdUaLc5NMO5 (movabs 'heartbea')"
     },
     "error": {
       "status": "CONFIRMED",
       "role": "Error envelope notification",
       "observed_in_oracle": true,
+      "oracle_case_id": "TR-AUTH-MISSING-TOKEN",
       "disasm_xref": "main.hPaJPN"
+    },
+    "request-offer": {
+      "status": "CONFIRMED",
+      "role": "WebRTC offer request payload",
+      "observed_in_oracle": true,
+      "oracle_case_id": "TR-E2E-CLI-FORWARD-REQ-OFFER",
+      "disasm_xref": "main.id8ybRmw69lm (movabs 'request-')"
     },
     "unregister": {
       "status": "STRING_CANDIDATE",
@@ -103,12 +120,6 @@
       "role": "Client device command request",
       "observed_in_oracle": false,
       "disasm_xref": "main.id8ybRmw69lm (cmp 'command')"
-    },
-    "request-offer": {
-      "status": "CONFIRMED",
-      "role": "WebRTC offer request payload",
-      "observed_in_oracle": true,
-      "disasm_xref": "main.id8ybRmw69lm (movabs 'request-')"
     },
     "quit_agent": {
       "status": "STRING_CANDIDATE",

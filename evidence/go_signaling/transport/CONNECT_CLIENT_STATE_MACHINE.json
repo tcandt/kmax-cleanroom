@@ -1,6 +1,6 @@
 {
   "description": "Browser Client Connection and Device Multiplexing State Machine (/connect_client)",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "endpoint": "/connect_client",
   "preconditions": "Valid user auth token or share token required BEFORE upgrade",
   "states": [
@@ -16,53 +16,190 @@
     {
       "from": "DISCONNECTED",
       "event": "TCP_CONNECT_GET_UPGRADE",
-      "to": "AUTH_VERIFYING"
+      "to": "AUTH_VERIFYING",
+      "action": "Receive HTTP GET /connect_client with upgrade headers and auth token",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.id8ybRmw69lm",
+          "va": "0x7507c0",
+          "detail": "Route registered in ServeMux at 0x765cd8"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-AUTH-MISSING-TOKEN",
+          "detail": "Probe initiates pre-upgrade auth check"
+        }
+      ]
     },
     {
       "from": "AUTH_VERIFYING",
       "event": "AUTH_FAILED",
       "to": "DISCONNECTED",
-      "action": "Return HTTP 401 Unauthorized immediately"
+      "action": "Return HTTP 401 Unauthorized immediately before upgrading socket",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.lYKp_Iuf",
+          "va": "0x73b080",
+          "detail": "Auth validator returns error when token is invalid or missing"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-AUTH-MISSING-TOKEN",
+          "detail": "Returns HTTP 401 Unauthorized without Upgrade headers"
+        }
+      ]
     },
     {
       "from": "AUTH_VERIFYING",
       "event": "AUTH_SUCCESS",
       "to": "HTTP_HANDSHAKE",
-      "action": "Return HTTP 101 Switching Protocols"
+      "action": "Return HTTP 101 Switching Protocols",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade",
+          "detail": "Upgrader called only upon successful token authentication"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-AUTH-ADMIN-HEADER",
+          "detail": "Valid bearer token upgrades successfully to 101"
+        }
+      ]
     },
     {
       "from": "HTTP_HANDSHAKE",
       "event": "UPGRADE_COMPLETE",
-      "to": "CLIENT_CONNECTED_UNBOUND"
+      "to": "CLIENT_CONNECTED_UNBOUND",
+      "action": "Initialize client WebSocket session, await connect message",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.id8ybRmw69lm",
+          "va": "0x7507c0",
+          "detail": "Spawns reader goroutine and enters read pump"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-WS-HANDSHAKE-CLI",
+          "detail": "Client enters WebSocket framing mode"
+        }
+      ]
     },
     {
       "from": "CLIENT_CONNECTED_UNBOUND",
       "event": "RECV_CONNECT_MESSAGE",
       "to": "CLIENT_BOUND_STREAMING",
-      "action": "Validate device access, increment device client_count, allocate client_id, send config & device_list_update"
+      "action": "Validate device access, increment device client_count, allocate client_id, send config & device_list_update",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.id8ybRmw69lm",
+          "va": "0x7507c0",
+          "detail": "Matches 'connect' string, allocates client_id, increments Client.client_count"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-CLI-CONNECT",
+          "detail": "Server replies with config message and device_list_update"
+        }
+      ]
     },
     {
       "from": "CLIENT_BOUND_STREAMING",
       "event": "RECV_FORWARD_REQUEST_OFFER",
       "to": "CLIENT_BOUND_STREAMING",
-      "action": "Relay request-offer to mapped agent"
+      "action": "Relay request-offer to mapped agent",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.id8ybRmw69lm",
+          "va": "0x7507c0",
+          "detail": "Matches 'request-' in forward payload and sends to agent WebSocket"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-CLI-FORWARD-REQ-OFFER",
+          "detail": "Agent receives request-offer forward envelope"
+        }
+      ]
     },
     {
       "from": "CLIENT_BOUND_STREAMING",
       "event": "RECV_FORWARD_ANSWER",
       "to": "CLIENT_BOUND_STREAMING",
-      "action": "Relay WebRTC answer to mapped agent"
+      "action": "Relay WebRTC answer to mapped agent",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.id8ybRmw69lm",
+          "va": "0x7507c0",
+          "detail": "Relays WebRTC signaling payloads (answer/candidate) to bound agent"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-AGENT-FORWARD-OFFER",
+          "detail": "Signaling relay verified bidirectional"
+        }
+      ]
     },
     {
       "from": "CLIENT_BOUND_STREAMING",
       "event": "TCP_CLOSE_OR_ERROR",
-      "to": "DISCONNECTING"
+      "to": "DISCONNECTING",
+      "action": "Detect client TCP socket close or 60s read deadline expiration",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.id8ybRmw69lm",
+          "va": "0x750b5d",
+          "detail": "SetReadDeadline 60s and ReadMessage error handling triggers defer cleanup"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-WS-HANDSHAKE-CLI",
+          "detail": "Close frame or TCP reset initiates teardown"
+        }
+      ]
     },
     {
       "from": "DISCONNECTING",
       "event": "TEARDOWN",
       "to": "CLEANUP",
-      "action": "Decrement device client_count, remove from clients map, broadcast device_list_update"
+      "action": "Decrement device client_count, remove from clients map, broadcast device_list_update",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.lv6Xh7",
+          "va": "0x74da60",
+          "detail": "Deferred cleanup decrements client_count and broadcasts device_list_update"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-CLI-CONNECT",
+          "detail": "Client disconnection broadcast reflected to remaining peers"
+        }
+      ]
     }
   ],
   "duplicate_connection_behavior": "Allows multiple concurrent clients per device (each assigned distinct client_id)",

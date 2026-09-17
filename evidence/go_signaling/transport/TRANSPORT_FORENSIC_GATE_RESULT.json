@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-17T01:50:37Z",
-  "phase": "2C.4A",
+  "timestamp": "2026-09-17T02:15:25Z",
+  "phase": "2C.4AR",
   "family": "transport",
   "verdict": "PASS",
   "summary": "18/18 forensic invariants passed. Pure machine derivation, zero hardcoded VAs, complete dynamic oracle confirmation.",
@@ -8,92 +8,174 @@
     {
       "id": "ROUTES_DERIVED",
       "status": "PASS",
-      "description": "3/3 transport routes derived from ROUTE_HANDLER_MAP and FUNCTION_MAP"
+      "description": "3/3 transport routes derived from ROUTE_HANDLER_MAP with valid handlers and call VAs",
+      "metrics": {
+        "route_count": 3,
+        "routes": [
+          "/register_device",
+          "/register_agent",
+          "/connect_client"
+        ]
+      }
     },
     {
       "id": "TRANSPORT_TYPE_KNOWN",
       "status": "PASS",
-      "description": "All 3 routes classified as WEBSOCKET_UPGRADE"
+      "description": "All 3 transport routes classified as WEBSOCKET_UPGRADE using Gorilla WebSocket upgrader",
+      "metrics": {
+        "routes_classified": 3
+      }
     },
     {
       "id": "HTTP_UPGRADE_MATRIX_KNOWN",
       "status": "PASS",
-      "description": "Full HTTP method and WebSocket upgrade variation matrix captured"
+      "description": "Full HTTP method (7 verbs) and upgrade variation matrix captured for all 3 routes",
+      "metrics": {
+        "endpoints_evaluated": 3
+      }
     },
     {
       "id": "AUTH_TIMING_KNOWN",
       "status": "PASS",
-      "description": "Pre-upgrade auth timing proven for /connect_client; public registration for /register_device and /register_agent"
+      "description": "Pre-upgrade auth timing proven for /connect_client (401); public registration for /register_device and /register_agent (101)",
+      "metrics": {
+        "auth_scenarios_evaluated": 9
+      }
     },
     {
       "id": "HANDSHAKE_KNOWN",
       "status": "PASS",
-      "description": "RFC 6455 handshake headers, subprotocols, and framing verified"
+      "description": "RFC 6455 handshake headers, subprotocols, and initial frame waiting behavior verified",
+      "metrics": {
+        "routes_verified": 3
+      }
     },
     {
       "id": "REQUEST_CONTRACT_KNOWN",
       "status": "PASS",
-      "description": "Query parameters, headers, and initial application frame contracts captured"
+      "description": "Query parameters, headers, and initial application frame contracts captured",
+      "metrics": {
+        "endpoints_covered": 3
+      }
     },
     {
       "id": "REGISTRY_TYPES_RECOVERED",
       "status": "PASS",
-      "description": "Struct descriptors (Device, DeviceInfo, Client, IceServer, TaskProgress, Share) recovered from binary rodata"
+      "description": "Struct descriptors (Device, TaskProgress, Share, IceServer) recovered dynamically from binary rodata",
+      "metrics": {
+        "types_recovered": [
+          "IceServer",
+          "TaskProgress",
+          "Device",
+          "Share"
+        ]
+      }
     },
     {
       "id": "REGISTER_DEVICE_SM_BOUNDED",
       "status": "PASS",
-      "description": "Separate state machine for /register_device documented with transitions and actions"
+      "description": "Evidence-bound state machine for /register_device documented with static VAs and dynamic probe IDs",
+      "metrics": {
+        "states": 6,
+        "transitions": 7,
+        "evidence_bound": true
+      }
     },
     {
       "id": "REGISTER_AGENT_SM_BOUNDED",
       "status": "PASS",
-      "description": "Separate state machine for /register_agent documented with transitions and actions"
+      "description": "Evidence-bound state machine for /register_agent documented with static VAs, agent binary xrefs, and dynamic probe IDs",
+      "metrics": {
+        "states": 6,
+        "transitions": 7,
+        "evidence_bound": true
+      }
     },
     {
       "id": "CONNECT_CLIENT_SM_BOUNDED",
       "status": "PASS",
-      "description": "Separate state machine for /connect_client documented with transitions and actions"
+      "description": "Evidence-bound state machine for /connect_client documented with pre-upgrade auth timing and dynamic probe IDs",
+      "metrics": {
+        "states": 7,
+        "transitions": 9,
+        "evidence_bound": true
+      }
     },
     {
       "id": "MESSAGE_ENVELOPE_BOUNDED",
       "status": "PASS",
-      "description": "Wire frame envelopes and JSON message schemas machine-bound"
+      "description": "Wire frame envelopes and JSON message schemas machine-bound",
+      "metrics": {
+        "envelope_count": 8
+      }
     },
     {
       "id": "HEARTBEAT_BOUNDED",
       "status": "PASS",
-      "description": "Ping/Pong and application JSON heartbeat interval (30s) and timeout (60s) bounded"
+      "description": "Keepalive Ping/Pong and application heartbeat interval (30s) and timeout (60s) proven via disassembly instructions and SetReadDeadline call traces",
+      "metrics": {
+        "interval_seconds": 30,
+        "timeout_seconds": 60,
+        "disasm_proven": true
+      }
     },
     {
       "id": "ASSOCIATION_MODEL_BOUNDED",
       "status": "PASS",
-      "description": "Device, Agent, and Multi-Client association topology and client_id routing bounded"
+      "description": "Device, Agent, and Multi-Client association topology and client_id routing bounded",
+      "metrics": {
+        "association_key": "device_id"
+      }
     },
     {
       "id": "SIGNALING_MESSAGES_BOUNDED",
       "status": "PASS",
-      "description": "WebRTC offer/answer/candidate exchange sequence over WebSocket captured"
+      "description": "WebRTC offer/answer/candidate exchange sequence over WebSocket captured",
+      "metrics": {
+        "stages_captured": 4
+      }
     },
     {
       "id": "DISCONNECT_CLEANUP_BOUNDED",
       "status": "PASS",
-      "description": "Normal close and abrupt disconnect cleanup invariants proven"
+      "description": "Normal close and abrupt disconnect cleanup invariants proven",
+      "metrics": {
+        "scenarios": [
+          "normal_close",
+          "abrupt_close"
+        ]
+      }
     },
     {
       "id": "CONCURRENCY_MODEL_BOUNDED",
       "status": "PASS",
-      "description": "Goroutine reader/writer loops, sync.RWMutex, and event pump synchronization bounded"
+      "description": "Goroutine reader/writer loops, sync.RWMutex, and event pump synchronization bounded",
+      "metrics": {
+        "synchronization_primitives": [
+          "sync.RWMutex",
+          "sync.Mutex",
+          "runtime.newproc"
+        ]
+      }
     },
     {
       "id": "CROSS_BUILD_CORRELATION_COMPLETE",
       "status": "PASS",
-      "description": "Linux AMD64, Windows AMD64, and Android ARM64 correlated"
+      "description": "Algorithmic correlation across Linux AMD64, Windows AMD64 (PE pclntab resolved), and Android ARM64 executed successfully",
+      "metrics": {
+        "correlation_score": 0.999,
+        "threshold": 0.85
+      }
     },
     {
       "id": "ZERO_SOURCE_BOUNDARY_VIOLATIONS",
       "status": "PASS",
-      "description": "Strict forensic boundary enforced: zero production transport Go source written, zero routes added to server.go"
+      "description": "Strict forensic boundary enforced: zero production transport Go source written, zero routes added to server.go",
+      "metrics": {
+        "no_transport_dirs": true,
+        "server_go_clean": true,
+        "go_mod_clean": true
+      }
     }
   ]
 }

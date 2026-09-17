@@ -1,6 +1,6 @@
 {
   "description": "Separation of WebSocket Signaling Transport vs WebRTC DataChannel Plane",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "signaling_transport": {
     "protocol": "WebSocket (RFC 6455)",
     "endpoints": [
@@ -16,26 +16,35 @@
       "config",
       "device_list_update"
     ],
-    "handling": "Handled and routed by webrtc-signaling server"
+    "handling": "Handled and routed by webrtc-signaling server",
+    "evidence_class": "COMBINED_CONFIRMED"
   },
   "datachannel_plane": {
     "protocol": "WebRTC SCTP DataChannels (Peer-to-Peer)",
     "channels": [
       {
         "label": "control",
-        "purpose": "Multi-device touch and key event framing, clipboard injection"
+        "purpose": "Multi-device touch and key event framing, clipboard injection",
+        "classification": "BINARY_CONFIRMED",
+        "agent_binary_evidence": "CreateDataChannel argument recovery (Ordered=true, VA 0x51c5a0)"
       },
       {
         "label": "adb",
-        "purpose": "Transparent ADB bridge between web terminal and adbd"
+        "purpose": "Transparent ADB bridge between web terminal and adbd",
+        "classification": "BINARY_CONFIRMED",
+        "agent_binary_evidence": "CreateDataChannel argument recovery (Ordered=true, VA 0x51c640)"
       },
       {
         "label": "shell",
-        "purpose": "Interactive PTY shell execution stream"
+        "purpose": "Interactive PTY shell execution stream",
+        "classification": "BINARY_CONFIRMED",
+        "agent_binary_evidence": "CreateDataChannel argument recovery (Ordered=true, VA 0x51c6e0)"
       },
       {
         "label": "heartbeat",
-        "purpose": "Keepalive and latency measurement (HEARTBEAT-ACK)"
+        "purpose": "Keepalive and latency measurement (HEARTBEAT-ACK)",
+        "classification": "BINARY_CONFIRMED",
+        "agent_binary_evidence": "CreateDataChannel argument recovery (Ordered=true, VA 0x51c780)"
       }
     ],
     "handling": "Exchanged directly between Browser and Android Agent over WebRTC peer connection (bypasses signaling server once connected)",

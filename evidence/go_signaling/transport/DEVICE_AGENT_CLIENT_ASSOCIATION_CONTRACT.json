@@ -1,6 +1,6 @@
 {
   "description": "Device, Agent, and Multi-Client Association Contract",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "association_key": "device_id (string)",
   "relationship_topology": {
     "device_record": "1 singleton per physical/emulated device in DeviceRegistry",

@@ -1,13 +1,15 @@
 {
   "description": "Transport Edge Cases, Protocol Violations, and Security Boundaries",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "edge_cases": {
     "unmasked_client_frame": {
+      "case_id": "TR-EDGE-UNMASKED-FRAME",
       "response_frame_opcode": 8,
       "closed_by_server": true,
       "provenance": "DYNAMIC_ORACLE_DERIVED"
     },
     "ping_pong": {
+      "case_id": "TR-EDGE-PING-PONG",
       "received_pong_opcode": 10,
       "pong_success": true,
       "provenance": "DYNAMIC_ORACLE_DERIVED"

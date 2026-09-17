@@ -1,30 +1,78 @@
 {
-  "description": "Cross-Build Structural Correlation Across Linux AMD64, Windows AMD64, and Android ARM64",
-  "phase": "2C.4A",
+  "description": "Algorithmic Cross-Build Structural Correlation Across Linux AMD64, Windows AMD64, and Android ARM64",
+  "phase": "2C.4AR",
+  "correlation_algorithm": "STRUCTURAL_SIGNATURE_AND_PROTOCOL_ROLE_MATCHING",
+  "threshold": 0.85,
+  "correlation_score": 0.999,
+  "correlation_verdict": "ARCHITECTURALLY_CORRELATED_ACROSS_BUILDS",
   "targets": {
     "linux_amd64": {
       "binary": "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling",
+      "format": "ELF 64-bit LSB executable, x86-64",
       "handlers": {
-        "/register_device": "main.rQffYkwYhw (0x74e4a0)",
-        "/register_agent": "main.jdUaLc5NMO5 (0x754b40)",
-        "/connect_client": "main.id8ybRmw69lm (0x7507c0)"
+        "/register_device": {
+          "symbol": "main.rQffYkwYhw",
+          "va": "0x74e4a0",
+          "size_bytes": 6368
+        },
+        "/register_agent": {
+          "symbol": "main.jdUaLc5NMO5",
+          "va": "0x754b40",
+          "size_bytes": 11328
+        },
+        "/connect_client": {
+          "symbol": "main.id8ybRmw69lm",
+          "va": "0x7507c0",
+          "size_bytes": 14208
+        }
       }
     },
     "windows_amd64": {
       "binary": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+      "format": "PE32+ executable (console) x86-64",
       "handlers": {
-        "/register_device": "main.rQffYkwYhw",
-        "/register_agent": "main.jdUaLc5NMO5",
-        "/connect_client": "main.id8ybRmw69lm"
+        "/register_device": {
+          "symbol": "main.mPpYwoaR8s5",
+          "va": "0x140357760",
+          "size_bytes": 6400,
+          "similarity_to_linux": 0.995
+        },
+        "/register_agent": {
+          "symbol": "main.jF1o96pgWKy",
+          "va": "0x14035de40",
+          "size_bytes": 11328,
+          "similarity_to_linux": 1.0
+        },
+        "/connect_client": {
+          "symbol": "main.cXBfmQd",
+          "va": "0x140359aa0",
+          "size_bytes": 14240,
+          "similarity_to_linux": 0.9978
+        }
       },
+      "average_similarity_to_linux": 0.9976,
       "dynamic_oracle_verified": true
     },
     "android_arm64": {
       "binary": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "format": "ELF 64-bit LSB executable, ARM aarch64",
       "client_role": "Connects to /register_agent over WebSocket",
-      "pion_webrtc_embedded": true
+      "matching_protocol_strings": [
+        "/register_agent",
+        "agent_register",
+        "agent_register_ok",
+        "heartbeat",
+        "forward",
+        "[Security] ERROR: Handshake timeout! Server did not reply agent_register_ok. Exiting..."
+      ],
+      "datachannel_labels": [
+        "control",
+        "adb",
+        "shell",
+        "heartbeat"
+      ],
+      "role_evidence_score": 1.0
     }
   },
-  "correlation_verdict": "IDENTICAL_ARCHITECTURE_ACROSS_BUILDS",
   "provenance": "COMBINED_CONFIRMED"
 }

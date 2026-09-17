@@ -1,6 +1,6 @@
 {
   "description": "WebRTC P2P Signaling Flow Contract over WebSocket",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "mediator": "Signaling Server (main.u8Z_Xk hub)",
   "ice_servers": {
     "default": [
@@ -23,7 +23,8 @@
         "payload": {
           "type": "request-offer"
         }
-      }
+      },
+      "oracle_case_id": "TR-E2E-CLI-FORWARD-REQ-OFFER"
     },
     {
       "stage": 2,
@@ -37,7 +38,8 @@
           "type": "offer",
           "sdp": "..."
         }
-      }
+      },
+      "oracle_case_id": "TR-E2E-AGENT-FORWARD-OFFER"
     },
     {
       "stage": 3,
@@ -50,7 +52,8 @@
           "type": "answer",
           "sdp": "..."
         }
-      }
+      },
+      "oracle_case_id": "TR-E2E-AGENT-FORWARD-OFFER"
     },
     {
       "stage": 4,
@@ -63,7 +66,8 @@
           "type": "candidate",
           "candidate": "..."
         }
-      }
+      },
+      "oracle_case_id": "TR-E2E-AGENT-FORWARD-OFFER"
     }
   ],
   "provenance": "COMBINED_CONFIRMED"

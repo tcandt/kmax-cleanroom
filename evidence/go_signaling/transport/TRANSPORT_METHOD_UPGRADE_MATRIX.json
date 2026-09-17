@@ -2,72 +2,124 @@
   "/register_device": {
     "standard_http": {
       "GET": {
+        "case_id": "TR-HTTP-DEV-GET",
+        "method": "GET",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "POST": {
+        "case_id": "TR-HTTP-DEV-POST",
+        "method": "POST",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "PUT": {
+        "case_id": "TR-HTTP-DEV-PUT",
+        "method": "PUT",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "PATCH": {
+        "case_id": "TR-HTTP-DEV-PATCH",
+        "method": "PATCH",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "DELETE": {
+        "case_id": "TR-HTTP-DEV-DELETE",
+        "method": "DELETE",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "HEAD": {
+        "case_id": "TR-HTTP-DEV-HEAD",
+        "method": "HEAD",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "OPTIONS": {
+        "case_id": "TR-HTTP-DEV-OPTIONS",
+        "method": "OPTIONS",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     },
     "upgrade_variations": {
       "valid_upgrade": {
+        "case_id": "TR-UPGRADE-DEV-VALID",
         "status_code": 101,
         "upgrade_success": true,
+        "connection_header": "Upgrade",
+        "upgrade_header": "websocket",
+        "sec_websocket_accept_present": true,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "missing_upgrade_header": {
+        "case_id": "TR-UPGRADE-DEV-MISSING-UPGRADE",
         "status_code": 400,
         "upgrade_success": false,
+        "connection_header": "",
+        "upgrade_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "invalid_upgrade_token": {
+        "case_id": "TR-UPGRADE-DEV-INVALID-UPGRADE-TOKEN",
         "status_code": 400,
         "upgrade_success": false,
+        "connection_header": "",
+        "upgrade_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "wrong_version_12": {
+        "case_id": "TR-UPGRADE-DEV-WRONG-VERSION",
         "status_code": 400,
         "upgrade_success": false,
+        "sec_websocket_version_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "missing_websocket_key": {
+        "case_id": "TR-UPGRADE-DEV-MISSING-KEY",
         "status_code": 400,
         "upgrade_success": false,
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     }
@@ -75,72 +127,124 @@
   "/register_agent": {
     "standard_http": {
       "GET": {
+        "case_id": "TR-HTTP-AGENT-GET",
+        "method": "GET",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "POST": {
+        "case_id": "TR-HTTP-AGENT-POST",
+        "method": "POST",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "PUT": {
+        "case_id": "TR-HTTP-AGENT-PUT",
+        "method": "PUT",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "PATCH": {
+        "case_id": "TR-HTTP-AGENT-PATCH",
+        "method": "PATCH",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "DELETE": {
+        "case_id": "TR-HTTP-AGENT-DELETE",
+        "method": "DELETE",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "HEAD": {
+        "case_id": "TR-HTTP-AGENT-HEAD",
+        "method": "HEAD",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "OPTIONS": {
+        "case_id": "TR-HTTP-AGENT-OPTIONS",
+        "method": "OPTIONS",
         "status_code": 400,
         "status_line": "HTTP/1.1 400 Bad Request",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "12",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     },
     "upgrade_variations": {
       "valid_upgrade": {
+        "case_id": "TR-UPGRADE-AGENT-VALID",
         "status_code": 101,
         "upgrade_success": true,
+        "connection_header": "Upgrade",
+        "upgrade_header": "websocket",
+        "sec_websocket_accept_present": true,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "missing_upgrade_header": {
+        "case_id": "TR-UPGRADE-AGENT-MISSING-UPGRADE",
         "status_code": 400,
         "upgrade_success": false,
+        "connection_header": "",
+        "upgrade_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "invalid_upgrade_token": {
+        "case_id": "TR-UPGRADE-AGENT-INVALID-UPGRADE-TOKEN",
         "status_code": 400,
         "upgrade_success": false,
+        "connection_header": "",
+        "upgrade_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "wrong_version_12": {
+        "case_id": "TR-UPGRADE-AGENT-WRONG-VERSION",
         "status_code": 400,
         "upgrade_success": false,
+        "sec_websocket_version_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "missing_websocket_key": {
+        "case_id": "TR-UPGRADE-AGENT-MISSING-KEY",
         "status_code": 400,
         "upgrade_success": false,
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     }
@@ -148,72 +252,124 @@
   "/connect_client": {
     "standard_http": {
       "GET": {
+        "case_id": "TR-HTTP-CLI-GET",
+        "method": "GET",
         "status_code": 401,
         "status_line": "HTTP/1.1 401 Unauthorized",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "13",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "POST": {
+        "case_id": "TR-HTTP-CLI-POST",
+        "method": "POST",
         "status_code": 401,
         "status_line": "HTTP/1.1 401 Unauthorized",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "13",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "PUT": {
+        "case_id": "TR-HTTP-CLI-PUT",
+        "method": "PUT",
         "status_code": 401,
         "status_line": "HTTP/1.1 401 Unauthorized",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "13",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "PATCH": {
+        "case_id": "TR-HTTP-CLI-PATCH",
+        "method": "PATCH",
         "status_code": 401,
         "status_line": "HTTP/1.1 401 Unauthorized",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "13",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "DELETE": {
+        "case_id": "TR-HTTP-CLI-DELETE",
+        "method": "DELETE",
         "status_code": 401,
         "status_line": "HTTP/1.1 401 Unauthorized",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "13",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "HEAD": {
+        "case_id": "TR-HTTP-CLI-HEAD",
+        "method": "HEAD",
         "status_code": 401,
         "status_line": "HTTP/1.1 401 Unauthorized",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "13",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "OPTIONS": {
+        "case_id": "TR-HTTP-CLI-OPTIONS",
+        "method": "OPTIONS",
         "status_code": 401,
         "status_line": "HTTP/1.1 401 Unauthorized",
         "upgrade_success": false,
+        "body_class": "EMPTY_OR_BAD_REQUEST",
+        "content_type": "text/plain; charset=utf-8",
+        "content_length": "13",
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     },
     "upgrade_variations": {
       "valid_upgrade": {
+        "case_id": "TR-UPGRADE-CLI-VALID",
         "status_code": 101,
         "upgrade_success": true,
+        "connection_header": "Upgrade",
+        "upgrade_header": "websocket",
+        "sec_websocket_accept_present": true,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "missing_upgrade_header": {
+        "case_id": "TR-UPGRADE-CLI-MISSING-UPGRADE",
         "status_code": 401,
         "upgrade_success": false,
+        "connection_header": "",
+        "upgrade_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "invalid_upgrade_token": {
+        "case_id": "TR-UPGRADE-CLI-INVALID-UPGRADE-TOKEN",
         "status_code": 401,
         "upgrade_success": false,
+        "connection_header": "",
+        "upgrade_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "wrong_version_12": {
+        "case_id": "TR-UPGRADE-CLI-WRONG-VERSION",
         "status_code": 400,
         "upgrade_success": false,
+        "sec_websocket_version_header": "",
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       },
       "missing_websocket_key": {
+        "case_id": "TR-UPGRADE-CLI-MISSING-KEY",
         "status_code": 401,
         "upgrade_success": false,
+        "sec_websocket_accept_present": false,
         "provenance": "DYNAMIC_ORACLE_DERIVED"
       }
     }

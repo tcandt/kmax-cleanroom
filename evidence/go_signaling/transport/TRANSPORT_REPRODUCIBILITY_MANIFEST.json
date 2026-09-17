@@ -1,168 +1,619 @@
 {
-  "description": "Phase 2C.4A Canonical Transport Forensic Artifact Reproducibility Manifest",
-  "phase": "2C.4A",
-  "timestamp": "2026-09-17T01:50:37Z",
+  "description": "Phase 2C.4AR Canonical Transport Forensic Artifact Reproducibility Manifest",
+  "phase": "2C.4AR",
+  "timestamp": "2026-09-17T02:15:25Z",
   "canonical_denominator": 23,
   "artifacts": [
     {
       "artifact": "TRANSPORT_ROUTE_FAMILY.json",
-      "size_bytes": 3568,
-      "sha256": "4a1ea6a27ce8040a802cdfe41df499ecf095c74acbcdd7b0a1d122f5ed2c916d",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 3812,
+      "sha256": "0dc11a9500c8cc3f5107d0016d45538c2eddfc1262c5e222c27d9db96d3a3f2c",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "static_inputs": [
+        "ROUTE_HANDLER_MAP.json (patterns, call_va, handler_va, registration_type)",
+        "FUNCTION_MAP.json (symbol_name, size_bytes, callees)"
+      ],
+      "dynamic_case_ids": [],
+      "semantic_checks": [
+        "route_count == 3",
+        "handlers start with main.",
+        "call_va present"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_CLASSIFICATION_MATRIX.json",
-      "size_bytes": 932,
-      "sha256": "23165e7373db6476723e376f83e8bb37048fcea4a89a72a40c3a6226f6672034",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 933,
+      "sha256": "2bf8f884be3e844b93a54381ceabfcf70ab182fb01775486e579529c00a92b0a",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "dynamic oracle WebSocket upgrader probe",
+        "Gorilla websocket upgrader symbol xrefs"
+      ],
+      "static_inputs": [
+        "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade"
+      ],
+      "dynamic_case_ids": [
+        "TR-UPGRADE-DEV-VALID",
+        "TR-UPGRADE-AGENT-VALID",
+        "TR-UPGRADE-CLI-VALID"
+      ],
+      "semantic_checks": [
+        "all 3 routes classify as WEBSOCKET_UPGRADE",
+        "upgrader == github.com/gorilla/websocket"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_METHOD_UPGRADE_MATRIX.json",
-      "size_bytes": 6623,
-      "sha256": "8f97d14660334093114efb8677781a8a9a1a747a858fe1028af728fd2e29d587",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 13157,
+      "sha256": "0417e4c7c4f3ccd346bc89f4f2348e6e585fd7a507dd240f4175ca0c6a799ee2",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "dynamic oracle raw HTTP probe suite"
+      ],
+      "static_inputs": [],
+      "dynamic_case_ids": [
+        "TR-HTTP-DEV-*",
+        "TR-HTTP-AGENT-*",
+        "TR-HTTP-CLI-*",
+        "TR-UPGRADE-DEV-*",
+        "TR-UPGRADE-AGENT-*",
+        "TR-UPGRADE-CLI-*"
+      ],
+      "semantic_checks": [
+        "7 standard HTTP verbs return 400 without upgrade",
+        "valid upgrade returns 101",
+        "missing/invalid header returns 400"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_AUTH_MATRIX.json",
-      "size_bytes": 2581,
-      "sha256": "20157fab09508696724c7ae8f262a04018c90d94a0987f2e0736fa27d3b4e804",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 3963,
+      "sha256": "87085a8208230a443e619389fcc8a9b5f12118f39574ec4658d9e55f2cdff107",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "dynamic oracle auth probe suite",
+        "auth handler disassembly (main.lYKp_Iuf, main.qCbJFL34)"
+      ],
+      "static_inputs": [
+        "main.lYKp_Iuf (0x73b080)",
+        "main.qCbJFL34 (0x73b4e0)"
+      ],
+      "dynamic_case_ids": [
+        "TR-AUTH-ADMIN-HEADER",
+        "TR-AUTH-ADMIN-QUERY",
+        "TR-AUTH-USER-HEADER",
+        "TR-AUTH-USER-QUERY",
+        "TR-AUTH-SHARE-QUERY",
+        "TR-AUTH-MISSING-TOKEN",
+        "TR-AUTH-INVALID-TOKEN",
+        "TR-AUTH-DEV-PUBLIC",
+        "TR-AUTH-AGENT-PUBLIC"
+      ],
+      "semantic_checks": [
+        "missing/invalid token returns 401 PRE_UPGRADE",
+        "valid bearer/query/share returns 101",
+        "public device/agent returns 101"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_REQUEST_CONTRACT.json",
-      "size_bytes": 2145,
-      "sha256": "16a2c8c610c9c19c8a389fcfe9da45fed6a9517d79661343ecf61bfccfc4e497",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 2146,
+      "sha256": "62963c03ec1c418d5176ffb41b5bc9038bf4c8b932452d0870351fef5f475543",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "static handler parameter handling",
+        "dynamic oracle request contract probes"
+      ],
+      "static_inputs": [
+        "ROUTE_HANDLER_MAP.json",
+        "FUNCTION_MAP.json"
+      ],
+      "dynamic_case_ids": [
+        "TR-AUTH-ADMIN-QUERY",
+        "TR-AUTH-SHARE-QUERY",
+        "TR-E2E-DEV-REGISTER",
+        "TR-E2E-AGENT-REGISTER",
+        "TR-E2E-CLI-CONNECT"
+      ],
+      "semantic_checks": [
+        "query parameters mapped",
+        "headers mapped",
+        "initial application frames documented"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_TYPE_EVIDENCE.json",
-      "size_bytes": 1864,
-      "sha256": "50ea71478a5e31180d2a7cae83b73084d4204f2fdd5783c41caeb3d08efdc95c",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 1865,
+      "sha256": "5addbf47cd5178d7faa17b214327e246d5ae5b2648d989c732184cfa58c39dd7",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "disassembly message parsing branches",
+        "dynamic oracle captured frame payloads"
+      ],
+      "static_inputs": [
+        "main.rQffYkwYhw",
+        "main.jdUaLc5NMO5",
+        "main.id8ybRmw69lm"
+      ],
+      "dynamic_case_ids": [
+        "TR-E2E-DEV-REGISTER",
+        "TR-E2E-AGENT-REGISTER",
+        "TR-E2E-CLI-CONNECT",
+        "TR-E2E-CLI-FORWARD-REQ-OFFER",
+        "TR-E2E-AGENT-FORWARD-OFFER"
+      ],
+      "semantic_checks": [
+        "8 wire frame schemas documented with direction and fields"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "WEBSOCKET_HANDSHAKE_CONTRACT.json",
-      "size_bytes": 1635,
-      "sha256": "b947ccc1f26bf519bf2514f78e5ff4ef71d23af23753b11268bbe73e02f83e1a",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 1773,
+      "sha256": "8fabc1c7be84591df9f4fb467e7f6445a7e7d7fcb66b3b50496f161c7734770a",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "RFC 6455 specification",
+        "Gorilla websocket upgrader disassembly",
+        "dynamic oracle handshake probe"
+      ],
+      "static_inputs": [
+        "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade"
+      ],
+      "dynamic_case_ids": [
+        "TR-WS-HANDSHAKE-DEV",
+        "TR-WS-HANDSHAKE-AGENT",
+        "TR-WS-HANDSHAKE-CLI",
+        "TR-WS-INITIAL-FRAME-DEV",
+        "TR-WS-INITIAL-FRAME-AGENT",
+        "TR-WS-INITIAL-FRAME-CLI"
+      ],
+      "semantic_checks": [
+        "status 101",
+        "Sec-WebSocket-Accept verified",
+        "framing masking verified",
+        "initial server frame timeout verified"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_REGISTRY_TYPE_EVIDENCE.json",
-      "size_bytes": 4901,
-      "sha256": "7cf202486d04a06eba719a41d3b85b976756b0c4c72d6a8fcf8c4f67c97af846",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 5690,
+      "sha256": "75d3a62b1bf737e62eec0611249ba8ffc1a5fda920c6765ca8b806d0f3538f35",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "ELF .rodata section parsed via parse_elf_sections",
+        "Go type descriptor recovery algorithm"
+      ],
+      "static_inputs": [
+        "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling (.rodata)"
+      ],
+      "dynamic_case_ids": [],
+      "semantic_checks": [
+        "Device (0x7ff0e0)",
+        "TaskProgress (0x7f4be0)",
+        "Share (0x80f700)",
+        "IceServer (0x7e24e0)",
+        "all fields mapped"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "REGISTER_DEVICE_STATE_MACHINE.json",
-      "size_bytes": 1676,
-      "sha256": "4756d4593f69fa34035244f8997593adcc1bd9efc7860cbf5a55bc76108760b1",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 5199,
+      "sha256": "ab74fee519cafda7d8c3b2021006aee3ed9aab2f04129022e7359d5e2dab7b6e",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "main.rQffYkwYhw disassembly",
+        "SetReadDeadline 60s (0x74e62e)",
+        "dynamic oracle device probes"
+      ],
+      "static_inputs": [
+        "main.rQffYkwYhw (0x74e4a0)",
+        "SetReadDeadline call trace (0x74e62e, 0x74e968)"
+      ],
+      "dynamic_case_ids": [
+        "TR-UPGRADE-DEV-VALID",
+        "TR-WS-HANDSHAKE-DEV",
+        "TR-E2E-DEV-REGISTER",
+        "TR-EDGE-UNMASKED-FRAME"
+      ],
+      "semantic_checks": [
+        "6 states, 7 transitions",
+        "all transitions evidence-bound with confidence >= 0.9"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "REGISTER_AGENT_STATE_MACHINE.json",
-      "size_bytes": 1720,
-      "sha256": "b23ef83ae789f3ceb653fc7314630d6abc63ea05ceae62aea6cbbd2279e5e000",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 5634,
+      "sha256": "d5a2aaddbc7874d4e4533dd183753f46fbed3e923f133bd02d99a2e75c3f2ff3",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "main.jdUaLc5NMO5 disassembly",
+        "cloudphone-agent binary strings",
+        "SetReadDeadline 60s (0x754c1d)",
+        "dynamic oracle agent probes"
+      ],
+      "static_inputs": [
+        "main.jdUaLc5NMO5 (0x754b40)",
+        "cloudphone-agent strings",
+        "SetReadDeadline call trace (0x754c1d, 0x754ebb)"
+      ],
+      "dynamic_case_ids": [
+        "TR-UPGRADE-AGENT-VALID",
+        "TR-WS-HANDSHAKE-AGENT",
+        "TR-E2E-AGENT-REGISTER",
+        "TR-E2E-AGENT-FORWARD-OFFER"
+      ],
+      "semantic_checks": [
+        "6 states, 7 transitions",
+        "all transitions evidence-bound with confidence == 1.0"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "CONNECT_CLIENT_STATE_MACHINE.json",
-      "size_bytes": 2170,
-      "sha256": "9fc76b94f44ddf76de57aa31b8e80ffb836391d8600f673e1c1ae3a3a0d33368",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 6892,
+      "sha256": "017de2e56e9fa843a41addf23a8c366d3af6f76449455ebdf9fcee8656c99957",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "main.id8ybRmw69lm disassembly",
+        "main.lYKp_Iuf / main.qCbJFL34 auth checks",
+        "SetReadDeadline 60s (0x750b5d)",
+        "dynamic oracle client probes"
+      ],
+      "static_inputs": [
+        "main.id8ybRmw69lm (0x7507c0)",
+        "main.lYKp_Iuf (0x73b080)",
+        "SetReadDeadline call trace (0x750b5d, 0x7510cd)"
+      ],
+      "dynamic_case_ids": [
+        "TR-AUTH-MISSING-TOKEN",
+        "TR-AUTH-ADMIN-HEADER",
+        "TR-WS-HANDSHAKE-CLI",
+        "TR-E2E-CLI-CONNECT",
+        "TR-E2E-CLI-FORWARD-REQ-OFFER"
+      ],
+      "semantic_checks": [
+        "7 states, 9 transitions",
+        "pre-upgrade auth failure and success branches evidence-bound"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_MESSAGE_TYPE_EVIDENCE.json",
-      "size_bytes": 4832,
-      "sha256": "a3636f11ce4d3e0fd3b026d5a0e86b60c830f86890ae32e348db8dfe33739958",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 5392,
+      "sha256": "8d676378454bcae01657f9ee332fcfb3feb21019f770236683353ffdb2c4b22b",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "main disassembly instruction operands (movabs/cmp)",
+        "dynamic oracle captured envelopes"
+      ],
+      "static_inputs": [
+        "main.rQffYkwYhw",
+        "main.jdUaLc5NMO5",
+        "main.id8ybRmw69lm"
+      ],
+      "dynamic_case_ids": [
+        "TR-E2E-DEV-REGISTER",
+        "TR-E2E-AGENT-REGISTER",
+        "TR-E2E-CLI-CONNECT",
+        "TR-E2E-CLI-FORWARD-REQ-OFFER",
+        "TR-E2E-AGENT-FORWARD-OFFER"
+      ],
+      "semantic_checks": [
+        "calculated classification (CONFIRMED vs STRING_CANDIDATE)",
+        "exact disassembly xrefs"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_MESSAGE_MATRIX.json",
-      "size_bytes": 3669,
-      "sha256": "15626f8b89c746e49927dfa5a22a762afafa6a81fa18c6a0c658286db66e844a",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 4177,
+      "sha256": "e0bfebbe823ad7140b496696aedd6af6154394fc734dd2446ba35fa0fd8fab90",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "disassembly message routing logic",
+        "dynamic oracle bidirectional message relay"
+      ],
+      "static_inputs": [
+        "main.rQffYkwYhw",
+        "main.jdUaLc5NMO5",
+        "main.id8ybRmw69lm"
+      ],
+      "dynamic_case_ids": [
+        "TR-E2E-DEV-REGISTER",
+        "TR-E2E-AGENT-REGISTER",
+        "TR-E2E-CLI-CONNECT",
+        "TR-E2E-CLI-FORWARD-REQ-OFFER",
+        "TR-E2E-AGENT-FORWARD-OFFER"
+      ],
+      "semantic_checks": [
+        "sender, receiver, opcode, envelope, routing, response mapped for all confirmed messages"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_HEARTBEAT_CONTRACT.json",
-      "size_bytes": 829,
-      "sha256": "cd2249c5ff4863cde38727531dc6114f1abf0a592bb793cc6caccf27b31e8478",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 2627,
+      "sha256": "44ca7f7c1b6a9e8137cd1f060f7e9e25e5b5ef6c83a6b9063e0caac5c53afe31",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "Y0caeZ_zze.init disassembly instruction 0x6aa8aa",
+        "main transport handlers SetReadDeadline call traces (0x74e62e, 0x754c1d, 0x750b5d)"
+      ],
+      "static_inputs": [
+        "Y0caeZ_zze.init (0x6aa8aa: movabs rcx, 0x6fc23ac00 -> 30s)",
+        "SetReadDeadline 60s: 0x74e62e, 0x754c1d, 0x750b5d (movabs rdi, 0xdf8475800 -> 60s)"
+      ],
+      "dynamic_case_ids": [
+        "TR-EDGE-PING-PONG",
+        "TR-E2E-AGENT-REGISTER"
+      ],
+      "semantic_checks": [
+        "interval 30s proven",
+        "stale threshold 60s proven",
+        "disassembly instruction proofs verified"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "DEVICE_AGENT_CLIENT_ASSOCIATION_CONTRACT.json",
-      "size_bytes": 830,
-      "sha256": "7a454f71739d8b7fc40ce94fa0f3b80aee97ce7a04dd726f6459ffdda7faae10",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 831,
+      "sha256": "9fa3354eabce1f12e47513fbb7933c1575f9527e151514bbf106f13deffc834e",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "device registry struct descriptors",
+        "client connection multiplexing disassembly"
+      ],
+      "static_inputs": [
+        "Device struct (0x7ff0e0)",
+        "Client struct",
+        "main.u8Z_Xk"
+      ],
+      "dynamic_case_ids": [
+        "TR-E2E-DEV-REGISTER",
+        "TR-E2E-AGENT-REGISTER",
+        "TR-E2E-CLI-CONNECT"
+      ],
+      "semantic_checks": [
+        "association_key == device_id",
+        "topology 1 device : 1 agent : N clients",
+        "client_id allocation"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "WEBRTC_SIGNALING_CONTRACT.json",
-      "size_bytes": 1593,
-      "sha256": "e23aef8e366f99c07ecadf5dca81fff74f85b1f8e94a209be0bfb2911b30f178",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 1816,
+      "sha256": "175f51a506f8abb794da9bc53fb67e506bbeb443ea73f82754d20855cd7494b9",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "WebRTC P2P signaling exchange sequence",
+        "dynamic oracle E2E request-offer and offer relay"
+      ],
+      "static_inputs": [
+        "main.u8Z_Xk",
+        "IceServer struct (0x7e24e0)"
+      ],
+      "dynamic_case_ids": [
+        "TR-E2E-CLI-FORWARD-REQ-OFFER",
+        "TR-E2E-AGENT-FORWARD-OFFER"
+      ],
+      "semantic_checks": [
+        "4 exchange stages captured",
+        "STUN server config push verified",
+        "bidirectional payload forwarding verified"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "DATACHANNEL_TRANSPORT_CROSSMAP.json",
-      "size_bytes": 1404,
-      "sha256": "f32d44155cd5f2ee0fcc56c3fb97e22a8f41ef1bd2cf533c11dbc3d818b4cf72",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 2042,
+      "sha256": "141e7faf003cb8d84c4963189ffe0331c0000346e0cb3ff18fe8fe541589d88b",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "cloudphone-agent CreateDataChannel binary argument recovery",
+        "webrtc-signaling scope audit"
+      ],
+      "static_inputs": [
+        "cloudphone-agent binary (CreateDataChannel Ordered=true, VAs 0x51c5a0, 0x51c640, 0x51c6e0, 0x51c780)"
+      ],
+      "dynamic_case_ids": [],
+      "semantic_checks": [
+        "channels control, adb, shell, heartbeat marked BINARY_CONFIRMED",
+        "signaling vs datachannel plane separation",
+        "forensic_status == EVIDENCE_ONLY"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_DISCONNECT_CLEANUP_CONTRACT.json",
-      "size_bytes": 1290,
-      "sha256": "c7d312605a72b301ad84b27b09aa3b04c5007df0e245acc77c9dfb849753cf67",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 1319,
+      "sha256": "8521ede2d1e64aec10e5296d58b691d5dba9f5566a65ef03c230098cd56ee519",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "WebSocket close frame handling disassembly",
+        "SetReadDeadline error teardown call traces",
+        "dynamic oracle close probes"
+      ],
+      "static_inputs": [
+        "main.rQffYkwYhw defer cleanup",
+        "main.jdUaLc5NMO5 defer cleanup",
+        "main.id8ybRmw69lm defer cleanup"
+      ],
+      "dynamic_case_ids": [
+        "TR-EDGE-UNMASKED-FRAME",
+        "TR-WS-HANDSHAKE-CLI"
+      ],
+      "semantic_checks": [
+        "normal_close and abrupt_close scenarios defined",
+        "device and client disconnect registry mutations documented"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_CONCURRENCY_CONTRACT.json",
-      "size_bytes": 753,
-      "sha256": "99c7c73e408b28ea499d1bf1bf8cbe576c9ed6286ea1b583ccfceec33011390e",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 754,
+      "sha256": "e4c497292d76bb4ab10602e3fe73c7d8449297e8f23e1428533e003c60c7b23a",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "runtime.newproc goroutine spawns in transport handlers",
+        "sync.RWMutex / sync.Mutex lock disassembly xrefs"
+      ],
+      "static_inputs": [
+        "runtime.newproc xrefs in 0x74e4a0, 0x754b40, 0x7507c0",
+        "sync.(*D2KbQ7Jm).Lock / RWMutex xrefs"
+      ],
+      "dynamic_case_ids": [],
+      "semantic_checks": [
+        "reader/writer goroutines bounded",
+        "hub primitives bounded",
+        "synchronization primitives documented"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_EDGE_MATRIX.json",
-      "size_bytes": 839,
-      "sha256": "4ab864b774a93d31b4efdfd8f62cd5ceb8dbb72c4bfee435926a7235cf22ede5",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 923,
+      "sha256": "76d455706dbb896aa93e1fbe7e7367e0d21bb1236fc9f19d307cd67aba7f1173",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "dynamic oracle edge case probes"
+      ],
+      "static_inputs": [],
+      "dynamic_case_ids": [
+        "TR-EDGE-UNMASKED-FRAME",
+        "TR-EDGE-PING-PONG"
+      ],
+      "semantic_checks": [
+        "unmasked client frame rejected with opcode 8 close",
+        "ping opcode 9 replied with pong opcode 10",
+        "security boundaries verified"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_CROSS_BUILD_CORRELATION.json",
-      "size_bytes": 1101,
-      "sha256": "9b82f857868bd93bdb416a3c2c903f7407bf78254f880368c66ad04bd50e5190",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 2513,
+      "sha256": "4c219c00e5df68d632603ecc93f7233d474cbd04398d11cc0e99345c714de0aa",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "Windows PE pclntab parser (0x4e9c80)",
+        "Windows main.main route registration trace",
+        "Linux ROUTE_HANDLER_MAP",
+        "Android agent binary string search"
+      ],
+      "static_inputs": [
+        "webrtc-signaling.exe (PE sections, pclntab)",
+        "webrtc-signaling (ELF sections, pclntab)",
+        "cloudphone-agent (ELF strings)"
+      ],
+      "dynamic_case_ids": [],
+      "semantic_checks": [
+        "Windows handler symbols derived: main.mPpYwoaR8s5, main.jF1o96pgWKy, main.cXBfmQd",
+        "size similarities > 0.95",
+        "correlation_score >= 0.85",
+        "verdict == ARCHITECTURALLY_CORRELATED_ACROSS_BUILDS"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_FUNCTION_SLICES.json",
-      "size_bytes": 1262,
-      "sha256": "2557cc87b11f1187c3af631b63298f9a8aa941b2b07d197c0a91cfe4272cc2f5",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 10791,
+      "sha256": "f3b3eca9bce8cd47e444d8e0991328190447616541d2ea112ac0c71890b0148a",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "evidence/go_signaling/CALLGRAPH.json",
+        "evidence/go_signaling/FUNCTION_MAP.json"
+      ],
+      "static_inputs": [
+        "CALLGRAPH.json",
+        "FUNCTION_MAP.json"
+      ],
+      "dynamic_case_ids": [],
+      "semantic_checks": [
+        "breadth-first traversal from 3 route handler roots",
+        "28 functions traversed",
+        "call edges and roles mapped"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     },
     {
       "artifact": "TRANSPORT_FORENSIC_GATE_RESULT.json",
-      "size_bytes": 3543,
-      "sha256": "be08ea40c50fb7e9664c4b9d50490bab695185cbb2aa338b06901d7359ac86b1",
-      "derivation_method": "GENUINE_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "size_bytes": 5666,
+      "sha256": "ceb088275137fcb9900e377125bf693885ee8f48305ba647c5051845d5e6702f",
+      "derivation_method": "EVIDENCE_BOUND_MACHINE_DERIVATION_AND_ORACLE_PROBING",
+      "generation_sources": [
+        "evaluate_forensic_gate() programmatically asserting all 18 invariants"
+      ],
+      "static_inputs": [
+        "All static binary and disassembly evidence"
+      ],
+      "dynamic_case_ids": [
+        "All dynamic oracle test cases"
+      ],
+      "semantic_checks": [
+        "18/18 invariants evaluated from regenerated evidence",
+        "zero hardcoded literals",
+        "verdict == PASS"
+      ],
+      "canonical_input_used": false,
+      "verification_result": "VERIFIED_REPRODUCIBLE",
       "provenance": "STATIC_BINARY_AND_DYNAMIC_ORACLE"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "description": "WebSocket RFC 6455 Handshake & Framing Invariants",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "protocol": "WebSocket (RFC 6455)",
   "version": "13",
   "upgrader": {
@@ -20,6 +20,7 @@
   },
   "initial_frame_contract": {
     "/register_device": {
+      "case_id": "TR-WS-INITIAL-FRAME-DEV",
       "has_initial_server_frame": false,
       "timeout_observed": true,
       "payload_sha256": null,
@@ -27,6 +28,7 @@
       "provenance": "DYNAMIC_ORACLE_DERIVED"
     },
     "/register_agent": {
+      "case_id": "TR-WS-INITIAL-FRAME-AGENT",
       "has_initial_server_frame": false,
       "timeout_observed": true,
       "payload_sha256": null,
@@ -34,6 +36,7 @@
       "provenance": "DYNAMIC_ORACLE_DERIVED"
     },
     "/connect_client": {
+      "case_id": "TR-WS-INITIAL-FRAME-CLI",
       "has_initial_server_frame": false,
       "timeout_observed": true,
       "payload_sha256": null,

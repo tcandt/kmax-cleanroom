@@ -1,6 +1,6 @@
 {
   "description": "Comprehensive Transport Message Routing Matrix",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "matrix": [
     {
       "message": "register",
@@ -14,6 +14,7 @@
       ],
       "routing": "Local registry update",
       "response": "config",
+      "oracle_case_id": "TR-E2E-DEV-REGISTER",
       "classification": "CONFIRMED"
     },
     {
@@ -28,6 +29,7 @@
       ],
       "routing": "Direct response to connecting peer",
       "response": "None",
+      "oracle_case_id": "TR-E2E-DEV-REGISTER",
       "classification": "CONFIRMED"
     },
     {
@@ -43,6 +45,7 @@
       ],
       "routing": "Local session binding",
       "response": "agent_register_ok",
+      "oracle_case_id": "TR-E2E-AGENT-REGISTER",
       "classification": "CONFIRMED"
     },
     {
@@ -56,6 +59,7 @@
       ],
       "routing": "Direct response",
       "response": "None",
+      "oracle_case_id": "TR-E2E-AGENT-REGISTER",
       "classification": "CONFIRMED"
     },
     {
@@ -69,6 +73,7 @@
       ],
       "routing": "Local client session binding",
       "response": "config + device_list_update",
+      "oracle_case_id": "TR-E2E-CLI-CONNECT",
       "classification": "CONFIRMED"
     },
     {
@@ -84,6 +89,7 @@
       ],
       "routing": "Relayed to agent mapped to device_id",
       "response": "device_msg (via agent response)",
+      "oracle_case_id": "TR-E2E-CLI-FORWARD-REQ-OFFER",
       "classification": "CONFIRMED"
     },
     {
@@ -99,6 +105,7 @@
       ],
       "routing": "Relayed to client matching client_id wrapped as device_msg",
       "response": "None",
+      "oracle_case_id": "TR-E2E-AGENT-FORWARD-OFFER",
       "classification": "CONFIRMED"
     },
     {
@@ -113,6 +120,7 @@
       ],
       "routing": "Direct delivery to client",
       "response": "None",
+      "oracle_case_id": "TR-E2E-AGENT-FORWARD-OFFER",
       "classification": "CONFIRMED"
     },
     {
@@ -126,6 +134,7 @@
       ],
       "routing": "Broadcast to all authenticated client sessions",
       "response": "None",
+      "oracle_case_id": "TR-E2E-CLI-CONNECT",
       "classification": "CONFIRMED"
     },
     {
@@ -139,6 +148,7 @@
       ],
       "routing": "Local timestamp update in device registry",
       "response": "None",
+      "oracle_case_id": "TR-E2E-AGENT-REGISTER",
       "classification": "CONFIRMED"
     }
   ]

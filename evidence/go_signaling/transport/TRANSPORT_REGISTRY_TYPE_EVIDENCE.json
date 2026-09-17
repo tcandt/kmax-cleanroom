@@ -1,4 +1,32 @@
 {
+  "IceServer": {
+    "va": "0x7e24e0",
+    "size": 56,
+    "field_count": 3,
+    "fields": [
+      {
+        "name": "KWpyoL",
+        "tag": "json:\"urls\"",
+        "offset": 0,
+        "type_va": "0x7989e0"
+      },
+      {
+        "name": "Do87J_",
+        "tag": "json:\"username,omitempty\"",
+        "offset": 12,
+        "type_va": "0x79e2c0"
+      },
+      {
+        "name": "G4kKJB5xuff",
+        "tag": "json:\"credential,omitempty\"",
+        "offset": 20,
+        "type_va": "0x79e2c0"
+      }
+    ],
+    "semantic_name": "IceServer",
+    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED",
+    "elf_rodata_base_va": "0x770000"
+  },
   "TaskProgress": {
     "va": "0x7f4be0",
     "size": 72,
@@ -36,7 +64,8 @@
       }
     ],
     "semantic_name": "TaskProgress",
-    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED"
+    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED",
+    "elf_rodata_base_va": "0x770000"
   },
   "Device": {
     "va": "0x7ff0e0",
@@ -87,7 +116,8 @@
       }
     ],
     "semantic_name": "Device",
-    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED"
+    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED",
+    "elf_rodata_base_va": "0x770000"
   },
   "Share": {
     "va": "0x80f700",
@@ -204,6 +234,7 @@
       }
     ],
     "semantic_name": "Share",
-    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED"
+    "provenance": "STATIC_RODATA_DESCRIPTOR_DERIVED",
+    "elf_rodata_base_va": "0x770000"
   }
 }

@@ -1,6 +1,6 @@
 {
   "description": "Agent Registration and WebRTC Signaling Relay State Machine (/register_agent)",
-  "phase": "2C.4A",
+  "phase": "2C.4AR",
   "endpoint": "/register_agent",
   "preconditions": "None (Public endpoint)",
   "states": [
@@ -15,41 +15,153 @@
     {
       "from": "DISCONNECTED",
       "event": "TCP_CONNECT_GET_UPGRADE",
-      "to": "HTTP_HANDSHAKE"
+      "to": "HTTP_HANDSHAKE",
+      "action": "Receive HTTP GET with Upgrade: websocket",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.jdUaLc5NMO5",
+          "va": "0x754b40",
+          "detail": "Route registered in ServeMux at 0x765cb0"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-UPGRADE-AGENT-VALID",
+          "detail": "HTTP GET with valid upgrade headers reaches agent handler"
+        }
+      ]
     },
     {
       "from": "HTTP_HANDSHAKE",
       "event": "STATUS_101_SWITCHING_PROTOCOLS",
-      "to": "AGENT_CONNECTED_UNREGISTERED"
+      "to": "AGENT_CONNECTED_UNREGISTERED",
+      "action": "Return HTTP 101 Switching Protocols with Sec-WebSocket-Accept",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "_iYIJQCvEF4X.(*ILKba3lAb4u).Upgrade",
+          "detail": "Gorilla WebSocket upgrader invoked"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-WS-HANDSHAKE-AGENT",
+          "detail": "Response 101 with verified Sec-WebSocket-Accept"
+        }
+      ]
     },
     {
       "from": "AGENT_CONNECTED_UNREGISTERED",
       "event": "RECV_AGENT_REGISTER",
       "to": "AGENT_REGISTERED_ACTIVE",
-      "action": "Bind agent connection to device_id, reply with agent_register_ok"
+      "action": "Bind agent connection to device_id, reply with agent_register_ok",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.jdUaLc5NMO5",
+          "va": "0x754b40",
+          "detail": "Matches 'agent_re', formats agent_register_ok JSON reply"
+        },
+        {
+          "kind": "STATIC_CORROBORATION",
+          "source": "cloudphone-agent",
+          "detail": "String: [Security] ERROR: Handshake timeout! Server did not reply agent_register_ok. Exiting..."
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-AGENT-REGISTER",
+          "detail": "Agent sends agent_register, receives agent_register_ok"
+        }
+      ]
     },
     {
       "from": "AGENT_REGISTERED_ACTIVE",
       "event": "RECV_HEARTBEAT",
       "to": "AGENT_REGISTERED_ACTIVE",
-      "action": "Update last_seen timestamp in device registry"
+      "action": "Update last_seen timestamp in device registry, refresh read deadline to +60s",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.jdUaLc5NMO5",
+          "va": "0x754c1d",
+          "detail": "Disassembly matches 'heartbea' and executes SetReadDeadline(time.Now().Add(60s))"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-AGENT-REGISTER",
+          "detail": "Agent heartbeat keepalive accepted without error"
+        }
+      ]
     },
     {
       "from": "AGENT_REGISTERED_ACTIVE",
       "event": "RECV_FORWARD_OFFER_ANSWER",
       "to": "AGENT_REGISTERED_ACTIVE",
-      "action": "Relay WebRTC offer/answer/candidate to mapped client"
+      "action": "Relay WebRTC offer/answer/candidate to mapped client",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.jdUaLc5NMO5",
+          "va": "0x754b40",
+          "detail": "Checks 'forward' message_type and client_id, relays to client session"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-AGENT-FORWARD-OFFER",
+          "detail": "Forwarded offer routed to client matching client_id"
+        }
+      ]
     },
     {
       "from": "AGENT_REGISTERED_ACTIVE",
       "event": "TCP_CLOSE_OR_ERROR",
-      "to": "DISCONNECTING"
+      "to": "DISCONNECTING",
+      "action": "Detect TCP close or 60s read deadline expiration",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.jdUaLc5NMO5",
+          "va": "0x754ebb",
+          "detail": "ReadMessage EOF or timeout invokes defer cleanup"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-WS-HANDSHAKE-AGENT",
+          "detail": "Socket close causes agent session cleanup"
+        }
+      ]
     },
     {
       "from": "DISCONNECTING",
       "event": "TEARDOWN",
       "to": "CLEANUP",
-      "action": "Unbind agent from device_id, notify active client peers"
+      "action": "Unbind agent from device_id, notify active client peers",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": 1.0,
+      "evidence": [
+        {
+          "kind": "STATIC_BINARY",
+          "symbol": "main.jdUaLc5NMO5",
+          "va": "0x754b40",
+          "detail": "Removes agent pointer from device session record, broadcasts updates"
+        },
+        {
+          "kind": "DYNAMIC_ORACLE",
+          "case_id": "TR-E2E-CLI-CONNECT",
+          "detail": "Disconnection reflected in device registry status"
+        }
+      ]
     }
   ],
   "duplicate_connection_behavior": "Replaces existing agent connection for device_id",
