@@ -574,6 +574,42 @@ Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
 5. **Full Master Verifier & Zero Regression**:
    - `python tools/verify_phase2.py`: 20/20 sections PASS.
 
+---
+
+# Walkthrough: Phase 2C.5B2 — WebRTC Input & Clipboard DataChannel Reconstruction
+
+**Date**: 2026-09-17  
+**Status**: CLOSED & VERIFIED (Gate Check: PASS)  
+**Contract Frozen Hash**: `3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7`  
+**Classification**: Clean-room behavioral/protocol reconstruction  
+
+## 1. Scope Boundary & Core Deliverables
+
+1. **Implementation Contract First**:
+   - Authored and frozen `evidence/go_agent/webrtc/DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json` prior to production modifications.
+2. **Input Channel Binary Control Translation**:
+   - Implemented `pkg/webrtc/control.go` translating JSON input events (`inject_touch`, `inject_keycode`, `inject_text`, `inject_scroll`, `hard_keyboard`) into exact big-endian scrcpy binary frames:
+     - Touch: 32 bytes (type=2, action, pointerId, x, y, w, h, pressure, actionButton, buttons) matching disassembly proof at `0x9cfb54-0x9cfc0e` (`bswap`/`rol`).
+     - Keycode: 14 bytes (type=0, action, keycode, repeat, meta).
+     - Text: 5 + len(text) bytes (type=1, length, utf8 bytes).
+     - Scroll: 21 bytes (type=3, x, y, w, h, hScroll, vScroll, buttons).
+     - Hard Keyboard: 1 byte (type=15).
+   - Introduced narrow adapter `ControlSink` abstracting `@uds_sys_t_`.
+3. **Clipboard Channel Protocol**:
+   - Implemented `pkg/webrtc/clipboard.go` supporting `set_clipboard`, `get_clipboard`, and outbound `clipboard` notification.
+   - Introduced narrow adapter `ClipboardProvider` with in-memory test implementation.
+4. **Deferred Channels Strict Isolation**:
+   - `camera-channel`, `file-channel`, `ai-command-channel`, and `adb-channel` remain strictly deferred with inert lifecycle hooks only.
+5. **Real SCTP DataChannel E2E Test**:
+   - `TestWebRTCDataChannelsE2E` passes across real SCTP DataChannels:
+     - Browser -> `input-channel` -> Agent -> `ControlSink` (32-byte scrcpy touch frame confirmed).
+     - Browser -> `clipboard-channel` -> Agent -> `ClipboardProvider` (`set_clipboard` confirmed).
+     - Browser -> `clipboard-channel` -> Agent -> `ClipboardProvider` -> Response -> Browser (`get_clipboard` confirmed).
+6. **Full Suite Regression & Master Verifier**:
+   - `cloudphone-agent go test -v ./...`: 33/33 PASS.
+   - `python tools/verify_phase2.py`: 21/21 sections PASS.
+
+
 
 
 

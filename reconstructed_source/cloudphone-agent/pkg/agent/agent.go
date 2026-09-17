@@ -31,6 +31,9 @@ type Coordinator struct {
 	signalingClient *signaling.Client
 	sessions        map[uint32]*agentwebrtc.PeerSession
 
+	controlSink       agentwebrtc.ControlSink
+	clipboardProvider agentwebrtc.ClipboardProvider
+
 	closed bool
 }
 
@@ -50,6 +53,28 @@ func (c *Coordinator) SetSignalingClient(client *signaling.Client) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.signalingClient = client
+}
+
+// SetControlSink binds the ControlSink adapter to the coordinator and all active sessions.
+// Classification: GENERATED_ADAPTER.
+func (c *Coordinator) SetControlSink(sink agentwebrtc.ControlSink) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.controlSink = sink
+	for _, s := range c.sessions {
+		s.SetControlSink(sink)
+	}
+}
+
+// SetClipboardProvider binds the ClipboardProvider adapter to the coordinator and all active sessions.
+// Classification: GENERATED_ADAPTER.
+func (c *Coordinator) SetClipboardProvider(provider agentwebrtc.ClipboardProvider) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.clipboardProvider = provider
+	for _, s := range c.sessions {
+		s.SetClipboardProvider(provider)
+	}
 }
 
 // HandleConfig updates the ICE servers dynamically pushed from signaling.
@@ -98,11 +123,20 @@ func (c *Coordinator) handleRequestOffer(clientID uint32) {
 
 	iceServers := c.ICEServers
 	sigClient := c.signalingClient
+	sink := c.controlSink
+	provider := c.clipboardProvider
 	c.mu.Unlock()
 
 	session, err := agentwebrtc.NewPeerSession(clientID, c.DeviceID, iceServers)
 	if err != nil {
 		return
+	}
+
+	if sink != nil {
+		session.SetControlSink(sink)
+	}
+	if provider != nil {
+		session.SetClipboardProvider(provider)
 	}
 
 	// Attach local ICE candidate listener to dispatch trickle ICE to signaling

@@ -266,3 +266,24 @@ func (s *PeerSession) GetState() SessionState {
 	defer s.mu.RUnlock()
 	return s.State
 }
+
+// SetControlSink binds a ControlSink to the session's DataChannels container.
+// Classification: GENERATED_ADAPTER.
+func (s *PeerSession) SetControlSink(sink ControlSink) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.Channels != nil {
+		s.Channels.SetControlSink(sink)
+	}
+}
+
+// SetClipboardProvider binds a ClipboardProvider to the session's DataChannels container.
+// Classification: GENERATED_ADAPTER.
+func (s *PeerSession) SetClipboardProvider(provider ClipboardProvider) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.Channels != nil {
+		s.Channels.SetClipboardProvider(provider)
+	}
+}
+

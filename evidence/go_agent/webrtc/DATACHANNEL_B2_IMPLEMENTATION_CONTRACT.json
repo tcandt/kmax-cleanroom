@@ -1,0 +1,194 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B2 WebRTC Input & Clipboard DataChannel Implementation Contract",
+    "phase": "Phase 2C.5B2",
+    "status": "FROZEN_PRE_IMPLEMENTATION",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "governing_docs": [
+      "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "evidence/go_agent/webrtc/CONTROL_INPUT_PROTOCOL_CROSSMAP.json",
+      "evidence/go_agent/webrtc/AGENT_HELPER_IPC_SOCKET_MATRIX.json",
+      "evidence/go_agent/webrtc/WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "DC-B2-01",
+      "requirement": "Input-Channel Creation and Ownership",
+      "observable_behavior": "Agent initiates and creates outbound DataChannel labeled 'input-channel' with ordered=true",
+      "source_artifact": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "source_field_or_case": "confirmed_webrtc_channels.input-channel",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static disassembly proves ordered=1 byte passed to CreateDataChannel (AMD64 0x9e1f4f, ARM64 0x53e588)"
+    },
+    {
+      "id": "DC-B2-02",
+      "requirement": "Clipboard-Channel Creation and Ownership",
+      "observable_behavior": "Agent initiates and creates outbound DataChannel labeled 'clipboard-channel' with ordered=true",
+      "source_artifact": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "source_field_or_case": "confirmed_webrtc_channels.clipboard-channel",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static disassembly proves ordered=1 byte passed to CreateDataChannel (AMD64 0x9e1ff7, ARM64 0x53e610)"
+    },
+    {
+      "id": "DC-B2-03",
+      "requirement": "Input Channel Message Framing",
+      "observable_behavior": "Input channel frames incoming messages as JSON_TEXT",
+      "source_artifact": "DATACHANNEL_FRAMING_MATRIX.json",
+      "source_field_or_case": "channels.input-channel.payload_encoding",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Incoming WebRTC DataChannel message is parsed as UTF-8 JSON text"
+    },
+    {
+      "id": "DC-B2-04",
+      "requirement": "Clipboard Channel Message Framing",
+      "observable_behavior": "Clipboard channel frames bidirectional messages as JSON_TEXT",
+      "source_artifact": "DATACHANNEL_FRAMING_MATRIX.json",
+      "source_field_or_case": "channels.clipboard-channel.payload_encoding",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Both inbound set/get requests and outbound clipboard responses use JSON text"
+    },
+    {
+      "id": "DC-B2-05",
+      "requirement": "Inject Touch Event JSON Parsing & Translation",
+      "observable_behavior": "Messages with discriminator 'inject_touch' (or 'touch') are parsed with action, pointer id, x, y, width, height, and pressure",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "input_channel_messages.inject_touch",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Action maps 0=DOWN, 1=UP, 2=MOVE. X/Y/W/H are integer pixel coordinates"
+    },
+    {
+      "id": "DC-B2-06",
+      "requirement": "Inject Touch Binary Scrcpy Serialization",
+      "observable_behavior": "Parsed touch event serializes to a 32-byte big-endian binary frame (type=2, action, pointerId, x, y, w, h, pressure, actionButton, buttons)",
+      "source_artifact": "CONTROL_INPUT_PROTOCOL_CROSSMAP.json",
+      "source_field_or_case": "protocol_translation.touch_translation_details",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly proof at AMD64 0x9cfb54-0x9cfc0e: bswap and rol instructions into 32-byte buffer (ecx=0x20)"
+    },
+    {
+      "id": "DC-B2-07",
+      "requirement": "Inject Keycode Event JSON Parsing & Serialization",
+      "observable_behavior": "Messages with discriminator 'inject_keycode' serialize to a 14-byte big-endian binary frame (type=0, action, keycode, repeat, metaState)",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "input_channel_messages.inject_keycode",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at AMD64 0x9e3ace (handler rKbdAxdt); ControlMessageReader parseInjectKeycode"
+    },
+    {
+      "id": "DC-B2-08",
+      "requirement": "Inject Text Event JSON Parsing & Serialization",
+      "observable_behavior": "Messages with discriminator 'inject_text' serialize to a binary frame of 1 byte type=1, 4 bytes uint32 big-endian length, followed by UTF-8 bytes",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "input_channel_messages.inject_text",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at AMD64 0x9e3a4d (handler cMG2_76Q); ControlMessageReader parseInjectText"
+    },
+    {
+      "id": "DC-B2-09",
+      "requirement": "Inject Scroll Event JSON Parsing & Serialization",
+      "observable_behavior": "Messages with discriminator 'inject_scroll' serialize to a 21-byte big-endian binary frame (type=3, x, y, w, h, hScroll, vScroll, buttons)",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "input_channel_messages.inject_scroll",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at AMD64 0x9e3c07 (handler yUpFvK); ControlMessageReader parseInjectScrollEvent"
+    },
+    {
+      "id": "DC-B2-10",
+      "requirement": "Hard Keyboard Settings Event JSON Parsing & Serialization",
+      "observable_behavior": "Messages with discriminator 'hard_keyboard' serialize to a 1-byte binary frame (type=15)",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "input_channel_messages.hard_keyboard",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at AMD64 0x9e3b60 (handler ibGYZ1JMSNE); ControlMessage.TYPE_OPEN_HARD_KEYBOARD_SETTINGS=15"
+    },
+    {
+      "id": "DC-B2-11",
+      "requirement": "Control Sink Adapter Boundary",
+      "observable_behavior": "Agent writes serialized scrcpy control frames to a narrow ControlSink interface abstracting the @uds_sys_t_ IPC socket",
+      "source_artifact": "AGENT_HELPER_IPC_SOCKET_MATRIX.json",
+      "source_field_or_case": "abstract_uds_sockets.@uds_sys_t_",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Concrete socket connection to @uds_sys_t_ mapped as GENERATED_ADAPTER / IMPLEMENTATION_CHOICE"
+    },
+    {
+      "id": "DC-B2-12",
+      "requirement": "Set Clipboard Ingress Handling",
+      "observable_behavior": "Messages on clipboard-channel with type 'set_clipboard' extract text, paste flag, and origin_client_id, passing to ClipboardProvider",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "clipboard_channel_messages.set_clipboard",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at AMD64 0x9e3860; string origin_client_id confirmed in binary rodata"
+    },
+    {
+      "id": "DC-B2-13",
+      "requirement": "Get Clipboard Ingress Handling and Response",
+      "observable_behavior": "Messages on clipboard-channel with type 'get_clipboard' retrieve text from ClipboardProvider and transmit JSON response {type: 'clipboard', text, source: 'device', origin_client_id: null}",
+      "source_artifact": "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "source_field_or_case": "clipboard_channel_messages.get_clipboard",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at AMD64 0x9e38ce; response schema corroborated by useWebRTC.js onmessage"
+    },
+    {
+      "id": "DC-B2-14",
+      "requirement": "Clipboard Provider Adapter Boundary",
+      "observable_behavior": "Clipboard operations interact via a narrow ClipboardProvider interface (Get/Set) without requiring live Android ClipboardManager in tests",
+      "source_artifact": "DATACHANNEL_FRAMING_MATRIX.json",
+      "source_field_or_case": "channels.clipboard-channel.target_downstream",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "In-memory test mock classified as IMPLEMENTATION_CHOICE"
+    },
+    {
+      "id": "DC-B2-15",
+      "requirement": "Parser Robustness & Panic Prevention",
+      "observable_behavior": "Malformed JSON, invalid types, empty strings, truncated payloads, and unknown event discriminators are dropped gracefully without panic",
+      "source_artifact": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json",
+      "source_field_or_case": "CORE-08 (DataChannel lifecycle)",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Defensive parsing invariant prevents crashing Agent goroutines on untrusted client input"
+    },
+    {
+      "id": "DC-B2-16",
+      "requirement": "Strict Deferred Boundary for Other Channels",
+      "observable_behavior": "Channels 'camera-channel', 'file-channel', 'ai-command-channel', and 'adb-channel' remain deferred with inert lifecycle hooks only",
+      "source_artifact": "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json",
+      "source_field_or_case": "CORE-08",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Accidental implementation of business logic on deferred channels is strictly prohibited in B2"
+    }
+  ]
+}

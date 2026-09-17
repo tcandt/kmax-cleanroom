@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B2 DataChannel Protocol Differential Result",
+    "phase": "Phase 2C.5B2",
+    "evaluation_timestamp": "2026-09-17T17:55:00Z",
+    "classification": "Clean-room behavioral/protocol reconstruction"
+  },
+  "counters": {
+    "exact_protocol_parity_total": 16,
+    "exact_protocol_parity_passed": 16,
+    "exact_binary_frame_total": 5,
+    "exact_binary_frame_passed": 5,
+    "semantic_parity_total": 4,
+    "semantic_parity_passed": 4,
+    "runtime_e2e_total": 4,
+    "runtime_e2e_passed": 4,
+    "verified_divergence_total": 0,
+    "environment_unavailable_total": 0,
+    "implementation_choice_tests": 8,
+    "failed_total": 0
+  },
+  "overall_verdict": "PASS_PHASE_2C5B2_CLOSED",
+  "evaluated_dimensions": {
+    "input_channel_label": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "input_channel_ordered": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "input_channel_framing": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "clipboard_channel_label": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "clipboard_channel_ordered": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "clipboard_channel_framing": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "touch_binary_frame_32bytes": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
+    "keycode_binary_frame_14bytes": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
+    "text_binary_frame_5plusN": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
+    "scroll_binary_frame_21bytes": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
+    "hard_keyboard_frame_1byte": { "classification": "EXACT_BINARY_FRAME", "result": "PASS" },
+    "set_clipboard_handling": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "get_clipboard_handling": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "clipboard_response_schema": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "input_sctp_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
+    "clipboard_set_sctp_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
+    "clipboard_get_sctp_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
+    "real_peerconnection_e2e": { "classification": "RUNTIME_E2E", "result": "PASS" },
+    "original_oracle_level_c": { "classification": "EXACT_PROTOCOL_PARITY", "result": "PASS" },
+    "deferred_channels_isolation": { "classification": "SEMANTIC_PARITY", "result": "PASS" }
+  }
+}

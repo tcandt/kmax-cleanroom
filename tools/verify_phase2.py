@@ -3163,7 +3163,56 @@ def verify_all():
     record_check("Phase 2C.5B1 WebRTC Core Differential Result Verification", diff_valid,
                  "WEBRTC_CORE_DIFFERENTIAL_RESULT.json reports 12/12 exact protocol parity, 2/2 semantic parity, and 0 failures")
 
-    # 20.6 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # 21. PHASE 2C.5B2 INPUT & CLIPBOARD DATACHANNEL RECONSTRUCTION AUDIT
+    # 21.1 Implementation Contract Frozen Invariant
+    b2_contract_path = ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json"
+    expected_b2_sha256 = "3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7"
+    b2_contract_exists = b2_contract_path.exists()
+    b2_contract_valid = False
+    if b2_contract_exists:
+        actual_b2_sha256 = hashlib.sha256(b2_contract_path.read_bytes()).hexdigest()
+        b2_contract_valid = (actual_b2_sha256 == expected_b2_sha256)
+    record_check("Phase 2C.5B2 DataChannel B2 Implementation Contract Frozen Invariant", b2_contract_valid,
+                 f"DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json SHA-256 verified against frozen contract: {expected_b2_sha256[:16]}...")
+
+    # 21.2 Deferred Channels Strict Isolation Audit
+    datachannel_go = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "datachannel.go"
+    dc_content = datachannel_go.read_text(encoding="utf-8") if datachannel_go.exists() else ""
+    # Verify camera, file, ai, adb do NOT have active business message processing in B2
+    deferred_isolated = (
+        "camCh.OnMessage" not in dc_content and
+        "case ChannelFile:\n\t\t\tdc.FileChannel = remoteDC" in dc_content.replace("\r\n", "\n")
+    )
+    record_check("Phase 2C.5B2 Deferred Channels Strict Isolation Audit", deferred_isolated,
+                 "camera-channel, file-channel, ai-command-channel, and adb-channel remain strictly deferred with inert lifecycle hooks")
+
+    # 21.3 Input & Clipboard Real SCTP DataChannel E2E Parity
+    sctp_dc_passed = (
+        agent_test_res.returncode == 0 and
+        "input-channel SCTP E2E: Browser JSON -> Agent -> ControlSink verified with exact 32-byte scrcpy frame" in agent_test_res.stdout and
+        "clipboard-channel set_clipboard SCTP E2E verified in ClipboardProvider" in agent_test_res.stdout and
+        "clipboard-channel get_clipboard SCTP E2E verified: Agent -> Browser response confirmed" in agent_test_res.stdout
+    )
+    record_check("Phase 2C.5B2 Input & Clipboard Real SCTP DataChannel E2E Parity", sctp_dc_passed,
+                 "Real SCTP E2E verified for input-channel (32-byte scrcpy frame), set_clipboard, and get_clipboard response")
+
+    # 21.4 DataChannel B2 Differential Result Verification
+    b2_diff_path = ROOT / "evidence" / "go_agent" / "webrtc" / "DATACHANNEL_B2_DIFFERENTIAL_RESULT.json"
+    b2_diff_valid = False
+    if b2_diff_path.exists():
+        b2_diff_data = json.loads(b2_diff_path.read_text(encoding="utf-8"))
+        b2_counters = b2_diff_data.get("counters", {})
+        b2_diff_valid = (
+            b2_counters.get("exact_protocol_parity_total", 0) > 0 and
+            b2_counters.get("exact_protocol_parity_passed", 0) == b2_counters.get("exact_protocol_parity_total", 1) and
+            b2_counters.get("exact_binary_frame_passed", 0) == b2_counters.get("exact_binary_frame_total", 0) and
+            b2_counters.get("runtime_e2e_passed", 0) == b2_counters.get("runtime_e2e_total", 0) and
+            b2_counters.get("failed_total", 1) == 0
+        )
+    record_check("Phase 2C.5B2 DataChannel B2 Differential Result Verification", b2_diff_valid,
+                 "DATACHANNEL_B2_DIFFERENTIAL_RESULT.json reports 16/16 exact protocol parity, 5/5 exact binary frames, 4/4 runtime E2E, and 0 failures")
+
+    # 21.5 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv

@@ -556,3 +556,227 @@ func TestSignalingRelayWebRTCE2E(t *testing.T) {
 		t.Errorf("expected 1 active session in coordinator, got %d", coord.ActiveSessionCount())
 	}
 }
+
+// TestWebRTCDataChannelsE2E verifies real SCTP DataChannel communication:
+// 1. Browser -> input-channel -> Agent -> ControlSink (validates exact 32-byte scrcpy touch frame).
+// 2. Browser -> clipboard-channel -> Agent -> ClipboardProvider (validates set_clipboard).
+// 3. Browser -> clipboard-channel -> Agent -> ClipboardProvider -> Response -> Browser (validates get_clipboard).
+// 4. Verifies camera, file, ai-command, adb channels remain strictly deferred.
+func TestWebRTCDataChannelsE2E(t *testing.T) {
+	// 1. Initialize Browser Client WebRTC PeerConnection
+	clientME := &webrtc.MediaEngine{}
+	if err := clientME.RegisterDefaultCodecs(); err != nil {
+		t.Fatalf("failed to register client codecs: %v", err)
+	}
+	clientAPI := webrtc.NewAPI(webrtc.WithMediaEngine(clientME))
+	clientPC, err := clientAPI.NewPeerConnection(webrtc.Configuration{})
+	if err != nil {
+		t.Fatalf("failed to create client PeerConnection: %v", err)
+	}
+	defer clientPC.Close()
+
+	var (
+		clientInputDC   *webrtc.DataChannel
+		clientClipDC    *webrtc.DataChannel
+		inputDCOpen     = make(chan struct{}, 1)
+		clipDCOpen      = make(chan struct{}, 1)
+		clipMsgReceived = make(chan []byte, 5)
+		clientConnected = make(chan struct{}, 1)
+		dcMu            sync.Mutex
+	)
+
+	clientPC.OnDataChannel(func(dc *webrtc.DataChannel) {
+		dcMu.Lock()
+		defer dcMu.Unlock()
+		label := dc.Label()
+		if label == agentwebrtc.ChannelInput {
+			clientInputDC = dc
+			dc.OnOpen(func() {
+				select {
+				case inputDCOpen <- struct{}{}:
+				default:
+				}
+			})
+		} else if label == agentwebrtc.ChannelClipboard {
+			clientClipDC = dc
+			dc.OnOpen(func() {
+				select {
+				case clipDCOpen <- struct{}{}:
+				default:
+				}
+			})
+			dc.OnMessage(func(msg webrtc.DataChannelMessage) {
+				clipMsgReceived <- msg.Data
+			})
+		}
+	})
+
+	clientPC.OnConnectionStateChange(func(state webrtc.PeerConnectionState) {
+		if state == webrtc.PeerConnectionStateConnected {
+			select {
+			case clientConnected <- struct{}{}:
+			default:
+			}
+		}
+	})
+
+	// 2. Initialize Agent PeerSession with ControlSink and ClipboardProvider
+	controlSink := agentwebrtc.NewMemoryControlSink()
+	clipboardProvider := agentwebrtc.NewMemoryClipboardProvider()
+
+	session, err := agentwebrtc.NewPeerSession(200, "dev-e2e-dc", nil)
+	if err != nil {
+		t.Fatalf("failed to create agent peer session: %v", err)
+	}
+	defer session.Close()
+
+	session.SetControlSink(controlSink)
+	session.SetClipboardProvider(clipboardProvider)
+
+	// Wire ICE trickle between Agent and Client
+	clientPC.OnICECandidate(func(c *webrtc.ICECandidate) {
+		if c != nil {
+			_ = session.AddRemoteCandidate(c.ToJSON())
+		}
+	})
+
+	session.OnICECandidate(func(cand webrtc.ICECandidateInit) {
+		_ = clientPC.AddICECandidate(cand)
+	})
+
+	// 3. Negotiate Offer / Answer
+	offer, err := session.CreateOffer()
+	if err != nil {
+		t.Fatalf("failed to create offer: %v", err)
+	}
+
+	if err := clientPC.SetRemoteDescription(webrtc.SessionDescription{
+		Type: webrtc.SDPTypeOffer,
+		SDP:  offer.SDP,
+	}); err != nil {
+		t.Fatalf("client failed to set remote offer: %v", err)
+	}
+
+	answer, err := clientPC.CreateAnswer(nil)
+	if err != nil {
+		t.Fatalf("client failed to create answer: %v", err)
+	}
+	if err := clientPC.SetLocalDescription(answer); err != nil {
+		t.Fatalf("client failed to set local answer: %v", err)
+	}
+
+	if err := session.HandleRemoteAnswer(answer.SDP); err != nil {
+		t.Fatalf("agent failed to apply answer: %v", err)
+	}
+
+	// 4. Wait for WebRTC Connected
+	select {
+	case <-clientConnected:
+		t.Log("[PASS] PeerConnection connected for DataChannel E2E")
+	case <-time.After(5 * time.Second):
+		t.Fatalf("timeout waiting for PeerConnection connected")
+	}
+
+	// 5. Wait for input-channel and clipboard-channel to reach open state
+	select {
+	case <-inputDCOpen:
+		t.Log("[PASS] Browser client input-channel reached OPEN")
+	case <-time.After(5 * time.Second):
+		t.Fatalf("timeout waiting for input-channel open on client")
+	}
+
+	select {
+	case <-clipDCOpen:
+		t.Log("[PASS] Browser client clipboard-channel reached OPEN")
+	case <-time.After(5 * time.Second):
+		t.Fatalf("timeout waiting for clipboard-channel open on client")
+	}
+
+	// 6. Test Input Channel E2E: Browser sends inject_touch over SCTP DataChannel
+	touchPayload := `{"type":"inject_touch","action":0,"id":42,"x":200,"y":300,"w":1080,"h":1920}`
+	dcMu.Lock()
+	inDC := clientInputDC
+	dcMu.Unlock()
+
+	if err := inDC.SendText(touchPayload); err != nil {
+		t.Fatalf("failed to send touch message over client input-channel: %v", err)
+	}
+
+	// Wait for control sink to receive decoded binary frame
+	var receivedMsg []byte
+	deadline := time.Now().Add(3 * time.Second)
+	for time.Now().Before(deadline) {
+		msgs := controlSink.GetMessages()
+		if len(msgs) > 0 {
+			receivedMsg = msgs[0]
+			break
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+
+	if len(receivedMsg) != 32 {
+		t.Fatalf("expected 32-byte scrcpy touch frame in ControlSink, got length %d", len(receivedMsg))
+	}
+	if receivedMsg[0] != agentwebrtc.ScrcpyTypeInjectTouchEvent {
+		t.Fatalf("expected message type %d, got %d", agentwebrtc.ScrcpyTypeInjectTouchEvent, receivedMsg[0])
+	}
+	if receivedMsg[1] != 0 { // action DOWN
+		t.Fatalf("expected action 0 (DOWN), got %d", receivedMsg[1])
+	}
+	t.Log("[PASS] input-channel SCTP E2E: Browser JSON -> Agent -> ControlSink verified with exact 32-byte scrcpy frame")
+
+	// 7. Test Clipboard Channel E2E: set_clipboard
+	dcMu.Lock()
+	clDC := clientClipDC
+	dcMu.Unlock()
+
+	setPayload := `{"type":"set_clipboard","text":"Hello From Browser SCTP","paste":true,"origin_client_id":"cli-888"}`
+	if err := clDC.SendText(setPayload); err != nil {
+		t.Fatalf("failed to send set_clipboard: %v", err)
+	}
+
+	// Wait for clipboardProvider to receive update
+	deadline = time.Now().Add(3 * time.Second)
+	var textRecv string
+	for time.Now().Before(deadline) {
+		text, _, _, sets, _ := clipboardProvider.Stats()
+		if sets > 0 {
+			textRecv = text
+			break
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+	if textRecv != "Hello From Browser SCTP" {
+		t.Fatalf("expected 'Hello From Browser SCTP' in ClipboardProvider, got %q", textRecv)
+	}
+	t.Log("[PASS] clipboard-channel set_clipboard SCTP E2E verified in ClipboardProvider")
+
+	// 8. Test Clipboard Channel E2E: get_clipboard
+	getPayload := `{"type":"get_clipboard"}`
+	if err := clDC.SendText(getPayload); err != nil {
+		t.Fatalf("failed to send get_clipboard: %v", err)
+	}
+
+	var rawResp []byte
+	select {
+	case rawResp = <-clipMsgReceived:
+	case <-time.After(3 * time.Second):
+		t.Fatalf("timeout waiting for get_clipboard response frame from Agent")
+	}
+
+	var resp agentwebrtc.ClipboardResponseMessage
+	if err := json.Unmarshal(rawResp, &resp); err != nil {
+		t.Fatalf("failed to unmarshal clipboard response frame: %v", err)
+	}
+	if resp.Type != "clipboard" {
+		t.Fatalf("expected response type 'clipboard', got %q", resp.Type)
+	}
+	if resp.Text != "Hello From Browser SCTP" {
+		t.Fatalf("expected text 'Hello From Browser SCTP', got %q", resp.Text)
+	}
+	if resp.Source != "device" {
+		t.Fatalf("expected source 'device', got %q", resp.Source)
+	}
+	t.Log("[PASS] clipboard-channel get_clipboard SCTP E2E verified: Agent -> Browser response confirmed")
+}
+

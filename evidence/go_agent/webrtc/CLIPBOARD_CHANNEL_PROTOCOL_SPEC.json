@@ -1,0 +1,73 @@
+{
+  "metadata": {
+    "title": "Clipboard Channel Protocol Specification",
+    "channel_label": "clipboard-channel",
+    "phase": "Phase 2C.5B2",
+    "classification": "RECONSTRUCTED_FROM_PROTOCOL",
+    "transport": "WebRTC SCTP DataChannel (Ordered=true, Reliable)",
+    "framing": "JSON_TEXT",
+    "downstream_target": "Android ClipboardManager / System Service (via ClipboardProvider)",
+    "references": [
+      "DATACHANNEL_LABEL_EVIDENCE.json",
+      "DATACHANNEL_FRAMING_MATRIX.json",
+      "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "reports/30_PHASE2C5A_WEBRTC_DATACHANNEL_MEDIA_FORENSICS.md",
+      "evidence/reference/raw/web-app/src/composables/useWebRTC.js:761-786, 1195-1215",
+      "evidence/go_agent/STRINGS.json (origin_client_id)"
+    ]
+  },
+  "messages": {
+    "ingress_set_clipboard": {
+      "discriminator": "set_clipboard",
+      "direction": "Browser -> Agent",
+      "description": "Sets the device clipboard to specified text, optionally triggering paste",
+      "json_schema": {
+        "type": "object",
+        "required": ["type", "text"],
+        "properties": {
+          "type": { "type": "string", "enum": ["set_clipboard"] },
+          "text": { "type": "string", "description": "Text content to put into clipboard" },
+          "paste": { "type": "boolean", "default": false, "description": "Whether to inject immediate paste key event" },
+          "source": { "type": "string", "default": "local", "description": "Originating source tag" },
+          "suppress_broadcast": { "type": "boolean", "default": false, "description": "Whether to suppress notifying other peers" },
+          "origin_client_id": { "type": ["string", "null"], "description": "Identifier of originating client" }
+        }
+      },
+      "agent_action": "Calls ClipboardProvider.Set(text, paste, origin_client_id)"
+    },
+    "ingress_get_clipboard": {
+      "discriminator": "get_clipboard",
+      "direction": "Browser -> Agent",
+      "description": "Requests current text content from the device clipboard",
+      "json_schema": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string", "enum": ["get_clipboard"] }
+        }
+      },
+      "agent_action": "Calls ClipboardProvider.Get() and responds with egress_clipboard frame"
+    },
+    "egress_clipboard": {
+      "discriminator": "clipboard",
+      "direction": "Agent -> Browser",
+      "description": "Notification or query response containing current device clipboard text",
+      "json_schema": {
+        "type": "object",
+        "required": ["type", "text"],
+        "properties": {
+          "type": { "type": "string", "enum": ["clipboard"] },
+          "text": { "type": "string", "description": "Text content currently in clipboard" },
+          "source": { "type": "string", "default": "device", "description": "Originating source tag (device)" },
+          "origin_client_id": { "type": ["string", "null"], "description": "Originating client ID if forwarded, otherwise null" }
+        }
+      }
+    }
+  },
+  "behavioral_contracts": {
+    "empty_clipboard": "Returns empty string in text field ({ \"type\": \"clipboard\", \"text\": \"\", \"source\": \"device\", \"origin_client_id\": null })",
+    "malformed_json": "Safely dropped without panic; no error response transmitted",
+    "maximum_payload_bound": "262130 bytes maximum payload (CLIPBOARD_TEXT_MAX_LENGTH)",
+    "directionality": "Bidirectional over single ordered SCTP channel"
+  }
+}

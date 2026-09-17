@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B2 DataChannel Source Provenance Map",
+    "phase": "Phase 2C.5B2",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "module": "cloudphone-agent"
+  },
+  "sources": [
+    {
+      "file": "pkg/webrtc/control.go",
+      "symbols": [
+        { "name": "ControlSink", "provenance": "GENERATED_ADAPTER", "notes": "Boundary adapter interface abstracting UDS @uds_sys_t_" },
+        { "name": "MemoryControlSink", "provenance": "IMPLEMENTATION_CHOICE", "notes": "In-memory test mock for sink verification" },
+        { "name": "TouchEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON touch schema corroborated by useWebRTC.js" },
+        { "name": "KeycodeEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON keycode schema matching inject_keycode" },
+        { "name": "TextEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON text schema matching inject_text" },
+        { "name": "ScrollEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON scroll schema matching inject_scroll" },
+        { "name": "HardKeyboardEvent", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON schema matching hard_keyboard" },
+        { "name": "EncodeTouchEvent", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Big-endian 32-byte scrcpy encoding from AMD64 0x9cfb54-0x9cfc0e (bswap/rol)" },
+        { "name": "EncodeKeycodeEvent", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "14-byte scrcpy keycode encoding matching helper reader" },
+        { "name": "EncodeTextEvent", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "5+N byte scrcpy text encoding matching helper reader" },
+        { "name": "EncodeScrollEvent", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "21-byte scrcpy scroll encoding matching helper reader" },
+        { "name": "EncodeHardKeyboardEvent", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "1-byte scrcpy type=15 frame matching helper reader" },
+        { "name": "HandleInputMessage", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Discriminator routing matching AMD64 0x9e39c0" }
+      ]
+    },
+    {
+      "file": "pkg/webrtc/clipboard.go",
+      "symbols": [
+        { "name": "ClipboardProvider", "provenance": "GENERATED_ADAPTER", "notes": "Boundary adapter interface for device clipboard" },
+        { "name": "MemoryClipboardProvider", "provenance": "IMPLEMENTATION_CHOICE", "notes": "In-memory test mock for clipboard verification" },
+        { "name": "SetClipboardMessage", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON schema matching set_clipboard from useWebRTC.js" },
+        { "name": "GetClipboardMessage", "provenance": "RECONSTRUCTED_FROM_PROTOCOL", "notes": "JSON schema matching get_clipboard from useWebRTC.js" },
+        { "name": "ClipboardResponseMessage", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "JSON response schema with origin_client_id from binary rodata" },
+        { "name": "HandleClipboardMessage", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Dispatch logic matching AMD64 0x9e3860/0x9e38ce" }
+      ]
+    },
+    {
+      "file": "pkg/webrtc/datachannel.go",
+      "symbols": [
+        { "name": "DataChannels.SetupOutboundChannels", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Creates input, clipboard, camera with ordered=true; wires active handlers for input and clipboard" },
+        { "name": "DataChannels.RegisterInboundHandler", "provenance": "RECONSTRUCTED_FROM_BINARY", "notes": "Registers file, ai-command, adb; keeps them deferred in B2" }
+      ]
+    },
+    {
+      "file": "pkg/agent/agent.go",
+      "symbols": [
+        { "name": "Coordinator.SetControlSink", "provenance": "GENERATED_ADAPTER", "notes": "Wires ControlSink across managed sessions" },
+        { "name": "Coordinator.SetClipboardProvider", "provenance": "GENERATED_ADAPTER", "notes": "Wires ClipboardProvider across managed sessions" }
+      ]
+    }
+  ]
+}

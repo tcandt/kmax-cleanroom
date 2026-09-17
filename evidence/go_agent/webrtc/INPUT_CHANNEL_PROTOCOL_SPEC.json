@@ -1,0 +1,153 @@
+{
+  "metadata": {
+    "title": "Input Channel Protocol Specification",
+    "channel_label": "input-channel",
+    "phase": "Phase 2C.5B2",
+    "classification": "RECONSTRUCTED_FROM_PROTOCOL",
+    "transport": "WebRTC SCTP DataChannel (Ordered=true, Reliable)",
+    "framing": "JSON_TEXT",
+    "downstream_target": "Abstract Unix Domain Socket @uds_sys_t_ (translated to scrcpy binary ControlMessage)",
+    "references": [
+      "DATACHANNEL_LABEL_EVIDENCE.json",
+      "DATACHANNEL_FRAMING_MATRIX.json",
+      "DATACHANNEL_MESSAGE_TYPE_EVIDENCE.json",
+      "CONTROL_INPUT_PROTOCOL_CROSSMAP.json",
+      "AGENT_HELPER_IPC_SOCKET_MATRIX.json",
+      "raw_extraction/android/jadx/sources/com/android/helper/control/ControlMessageReader.java"
+    ]
+  },
+  "messages": {
+    "inject_touch": {
+      "discriminator": "inject_touch",
+      "description": "Touch input event injected into Android InputManager via scrcpy protocol",
+      "json_schema": {
+        "type": "object",
+        "required": ["action", "x", "y", "width", "height"],
+        "properties": {
+          "type": { "type": "string", "enum": ["inject_touch", "touch"] },
+          "action": { "type": "integer", "enum": [0, 1, 2], "description": "0=DOWN, 1=UP, 2=MOVE" },
+          "id": { "type": "integer", "default": 0, "description": "Pointer ID (int64)" },
+          "seq": { "type": "integer", "description": "Optional sequence number" },
+          "client_ts_ms": { "type": "integer", "description": "Optional client timestamp in milliseconds" },
+          "x": { "type": "integer", "description": "X coordinate in screen pixels" },
+          "y": { "type": "integer", "description": "Y coordinate in screen pixels" },
+          "width": { "type": "integer", "aliases": ["w"], "description": "Screen width in pixels" },
+          "height": { "type": "integer", "aliases": ["h"], "description": "Screen height in pixels" },
+          "pressure": { "type": "number", "default": 1.0, "description": "Touch pressure (0 for UP, 1.0 or 0xffff for DOWN/MOVE)" }
+        }
+      },
+      "binary_scrcpy_frame": {
+        "message_type_id": 2,
+        "total_length_bytes": 32,
+        "byte_layout": [
+          { "offset": 0, "length": 1, "field": "type", "value": 2, "type": "uint8" },
+          { "offset": 1, "length": 1, "field": "action", "type": "uint8", "description": "0=DOWN, 1=UP, 2=MOVE" },
+          { "offset": 2, "length": 8, "field": "pointer_id", "type": "int64", "endianness": "big-endian" },
+          { "offset": 10, "length": 4, "field": "x", "type": "int32", "endianness": "big-endian" },
+          { "offset": 14, "length": 4, "field": "y", "type": "int32", "endianness": "big-endian" },
+          { "offset": 18, "length": 2, "field": "width", "type": "uint16", "endianness": "big-endian" },
+          { "offset": 20, "length": 2, "field": "height", "type": "uint16", "endianness": "big-endian" },
+          { "offset": 22, "length": 2, "field": "pressure", "type": "uint16", "endianness": "big-endian", "description": "0x0000 for UP, 0xffff for DOWN/MOVE" },
+          { "offset": 24, "length": 4, "field": "action_button", "value": 0, "type": "int32", "endianness": "big-endian" },
+          { "offset": 28, "length": 4, "field": "buttons", "value": 0, "type": "int32", "endianness": "big-endian" }
+        ]
+      }
+    },
+    "inject_keycode": {
+      "discriminator": "inject_keycode",
+      "description": "Key event injection (KeyEvent.ACTION_DOWN / ACTION_UP)",
+      "json_schema": {
+        "type": "object",
+        "required": ["action", "keycode"],
+        "properties": {
+          "type": { "type": "string", "enum": ["inject_keycode"] },
+          "action": { "type": "integer", "description": "0=ACTION_DOWN, 1=ACTION_UP" },
+          "keycode": { "type": "integer", "description": "Android KeyCode (e.g. 3=HOME, 4=BACK, 24=VOL_UP)" },
+          "repeat": { "type": "integer", "default": 0, "description": "Repeat count" },
+          "meta": { "type": "integer", "default": 0, "description": "Meta state flags" }
+        }
+      },
+      "binary_scrcpy_frame": {
+        "message_type_id": 0,
+        "total_length_bytes": 14,
+        "byte_layout": [
+          { "offset": 0, "length": 1, "field": "type", "value": 0, "type": "uint8" },
+          { "offset": 1, "length": 1, "field": "action", "type": "uint8" },
+          { "offset": 2, "length": 4, "field": "keycode", "type": "int32", "endianness": "big-endian" },
+          { "offset": 6, "length": 4, "field": "repeat", "type": "int32", "endianness": "big-endian" },
+          { "offset": 10, "length": 4, "field": "meta_state", "type": "int32", "endianness": "big-endian" }
+        ]
+      }
+    },
+    "inject_text": {
+      "discriminator": "inject_text",
+      "description": "Direct text string injection",
+      "json_schema": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {
+          "type": { "type": "string", "enum": ["inject_text"] },
+          "text": { "type": "string", "description": "UTF-8 text payload (max 300 bytes recommended)" }
+        }
+      },
+      "binary_scrcpy_frame": {
+        "message_type_id": 1,
+        "total_length_bytes": "5 + len(text)",
+        "byte_layout": [
+          { "offset": 0, "length": 1, "field": "type", "value": 1, "type": "uint8" },
+          { "offset": 1, "length": 4, "field": "length", "type": "uint32", "endianness": "big-endian" },
+          { "offset": 5, "length": "len(text)", "field": "text", "type": "bytes", "description": "UTF-8 encoded string bytes" }
+        ]
+      }
+    },
+    "inject_scroll": {
+      "discriminator": "inject_scroll",
+      "description": "Scroll wheel / gesture event injection",
+      "json_schema": {
+        "type": "object",
+        "required": ["x", "y", "scroll_h", "scroll_v"],
+        "properties": {
+          "type": { "type": "string", "enum": ["inject_scroll"] },
+          "x": { "type": "integer", "description": "X coordinate in screen pixels" },
+          "y": { "type": "integer", "description": "Y coordinate in screen pixels" },
+          "width": { "type": "integer", "aliases": ["w"], "default": 0 },
+          "height": { "type": "integer", "aliases": ["h"], "default": 0 },
+          "scroll_h": { "type": "number", "description": "Horizontal scroll amount" },
+          "scroll_v": { "type": "number", "description": "Vertical scroll amount" }
+        }
+      },
+      "binary_scrcpy_frame": {
+        "message_type_id": 3,
+        "total_length_bytes": 21,
+        "byte_layout": [
+          { "offset": 0, "length": 1, "field": "type", "value": 3, "type": "uint8" },
+          { "offset": 1, "length": 4, "field": "x", "type": "int32", "endianness": "big-endian" },
+          { "offset": 5, "length": 4, "field": "y", "type": "int32", "endianness": "big-endian" },
+          { "offset": 9, "length": 2, "field": "width", "type": "uint16", "endianness": "big-endian" },
+          { "offset": 11, "length": 2, "field": "height", "type": "uint16", "endianness": "big-endian" },
+          { "offset": 13, "length": 2, "field": "h_scroll", "type": "int16", "endianness": "big-endian", "description": "i16 fixed-point: float * 2048 (scaled for helper binary conversion)" },
+          { "offset": 15, "length": 2, "field": "v_scroll", "type": "int16", "endianness": "big-endian", "description": "i16 fixed-point: float * 2048 (scaled for helper binary conversion)" },
+          { "offset": 17, "length": 4, "field": "buttons", "value": 0, "type": "int32", "endianness": "big-endian" }
+        ]
+      }
+    },
+    "hard_keyboard": {
+      "discriminator": "hard_keyboard",
+      "description": "Trigger opening hard keyboard settings dialog on Android",
+      "json_schema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["hard_keyboard"] },
+          "enabled": { "type": "boolean", "default": true }
+        }
+      },
+      "binary_scrcpy_frame": {
+        "message_type_id": 15,
+        "total_length_bytes": 1,
+        "byte_layout": [
+          { "offset": 0, "length": 1, "field": "type", "value": 15, "type": "uint8" }
+        ]
+      }
+    }
+  }
+}

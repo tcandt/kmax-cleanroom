@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B2 DataChannel Test Matrix",
+    "phase": "Phase 2C.5B2",
+    "total_agent_tests": 33
+  },
+  "test_suites": [
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "tests": [
+        { "name": "TestGoldenTouchEvent", "level": "UNIT_GOLDEN", "contract_id": "DC-B2-06", "verdict": "PASS" },
+        { "name": "TestGoldenKeycodeEvent", "level": "UNIT_GOLDEN", "contract_id": "DC-B2-07", "verdict": "PASS" },
+        { "name": "TestGoldenTextEvent", "level": "UNIT_GOLDEN", "contract_id": "DC-B2-08", "verdict": "PASS" },
+        { "name": "TestGoldenScrollEvent", "level": "UNIT_GOLDEN", "contract_id": "DC-B2-09", "verdict": "PASS" },
+        { "name": "TestGoldenHardKeyboardEvent", "level": "UNIT_GOLDEN", "contract_id": "DC-B2-10", "verdict": "PASS" },
+        { "name": "TestHandleInputMessageEndToEnd", "level": "UNIT_INTEGRATION", "contract_id": "DC-B2-05", "verdict": "PASS" },
+        { "name": "TestInputParserRobustnessAndFuzz", "level": "UNIT_ROBUSTNESS", "contract_id": "DC-B2-15", "verdict": "PASS" },
+        { "name": "TestInputConcurrency", "level": "UNIT_CONCURRENCY", "contract_id": "DC-B2-11", "verdict": "PASS" },
+        { "name": "TestSetClipboard", "level": "UNIT_INTEGRATION", "contract_id": "DC-B2-12", "verdict": "PASS" },
+        { "name": "TestGetClipboard", "level": "UNIT_INTEGRATION", "contract_id": "DC-B2-13", "verdict": "PASS" },
+        { "name": "TestEmptyClipboard", "level": "UNIT_INTEGRATION", "contract_id": "DC-B2-13", "verdict": "PASS" },
+        { "name": "TestPeerClipboardNotification", "level": "UNIT_INTEGRATION", "contract_id": "DC-B2-14", "verdict": "PASS" },
+        { "name": "TestClipboardParserRobustnessAndFuzz", "level": "UNIT_ROBUSTNESS", "contract_id": "DC-B2-15", "verdict": "PASS" },
+        { "name": "TestClipboardConcurrency", "level": "UNIT_CONCURRENCY", "contract_id": "DC-B2-14", "verdict": "PASS" },
+        { "name": "TestEvidenceBoundMediaEngine", "level": "UNIT", "contract_id": "CORE-05", "verdict": "PASS" },
+        { "name": "TestMediaTrackProperties", "level": "UNIT", "contract_id": "CORE-06", "verdict": "PASS" },
+        { "name": "TestDataChannelLabels", "level": "UNIT", "contract_id": "DC-B2-01, DC-B2-02", "verdict": "PASS" },
+        { "name": "TestPeerSessionOfferCreation", "level": "UNIT", "contract_id": "CORE-09", "verdict": "PASS" },
+        { "name": "TestPeerSessionIdempotentClose", "level": "UNIT", "contract_id": "CORE-10", "verdict": "PASS" },
+        { "name": "TestSessionStateTransitions", "level": "UNIT", "contract_id": "CORE-07", "verdict": "PASS" },
+        { "name": "TestConcurrencyEdgeCases", "level": "UNIT", "contract_id": "CORE-10", "verdict": "PASS" }
+      ]
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "tests": [
+        { "name": "TestSignalingClientRegistration", "level": "INTEGRATION", "contract_id": "CORE-01", "verdict": "PASS" },
+        { "name": "TestSignalingClientForwardAndDisconnect", "level": "INTEGRATION", "contract_id": "CORE-02", "verdict": "PASS" },
+        { "name": "TestSignalingClientHeartbeatEmission", "level": "INTEGRATION", "contract_id": "CORE-03", "verdict": "PASS" },
+        { "name": "TestSignalingDisconnectDuringNegotiation", "level": "INTEGRATION", "contract_id": "CORE-04", "verdict": "PASS" }
+      ]
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "tests": [
+        { "name": "TestCoordinatorOfferGeneration", "level": "INTEGRATION", "contract_id": "CORE-09", "verdict": "PASS" },
+        { "name": "TestCoordinatorTeardownOnDisconnect", "level": "INTEGRATION", "contract_id": "CORE-10", "verdict": "PASS" },
+        { "name": "TestCoordinatorMultipleClients", "level": "INTEGRATION", "contract_id": "CORE-09", "verdict": "PASS" },
+        { "name": "TestCoordinatorConcurrentAccess", "level": "INTEGRATION", "contract_id": "CORE-10", "verdict": "PASS" }
+      ]
+    },
+    {
+      "package": "cloudphone-agent/tests",
+      "tests": [
+        { "name": "TestOriginalSignalingOracleCompatibility", "level": "ORACLE_LEVEL_C", "contract_id": "CORE-11", "verdict": "PASS" },
+        { "name": "TestWebRTCRealPeerConnectionE2E", "level": "REAL_E2E", "contract_id": "CORE-12", "verdict": "PASS" },
+        { "name": "TestSignalingRelayWebRTCE2E", "level": "RELAY_E2E", "contract_id": "CORE-09", "verdict": "PASS" },
+        { "name": "TestWebRTCDataChannelsE2E", "level": "DATACHANNEL_E2E", "contract_id": "DC-B2-01, DC-B2-02, DC-B2-06, DC-B2-12, DC-B2-13", "verdict": "PASS" }
+      ]
+    }
+  ]
+}
