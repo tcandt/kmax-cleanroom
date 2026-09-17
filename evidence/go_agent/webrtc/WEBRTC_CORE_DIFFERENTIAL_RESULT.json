@@ -1,0 +1,135 @@
+{
+  "metadata": {
+    "title": "Cloudphone Agent WebRTC Core Differential Result",
+    "phase": "Phase 2C.5B1",
+    "timestamp": "2026-09-17T14:05:00Z",
+    "evaluation_methodology": "Strict non-tautological protocol evaluation with discrete parity classifications"
+  },
+  "counters": {
+    "exact_protocol_parity_total": 12,
+    "exact_protocol_parity_passed": 12,
+    "semantic_parity_total": 2,
+    "semantic_parity_passed": 2,
+    "verified_divergence_total": 0,
+    "environment_unavailable_total": 0,
+    "implementation_choice_tests": 4,
+    "failed_total": 0
+  },
+  "oracle_status": {
+    "oracle_required": true,
+    "oracle_available": true,
+    "oracle_binary": "cloudphone-v0.3.6 (1)/bin/windows_amd64/webrtc-signaling.exe",
+    "oracle_sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+    "oracle_health_verified": true
+  },
+  "exact_protocol_parity_cases": [
+    {
+      "id": "DIFF-WTC-01-AGENT-REGISTRATION",
+      "description": "Agent WebSocket registration to /register_agent yielding agent_register_ok (status=valid)",
+      "evidence_ref": "TRANSPORT_MESSAGE_MATRIX.json: TR-E2E-AGENT-REGISTER",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-02-HEARTBEAT-KEEPALIVE",
+      "description": "Agent periodic heartbeat frame emission maintaining active connection within 60s read deadline",
+      "evidence_ref": "TRANSPORT_HEARTBEAT_CONTRACT.json",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-03-CONFIRMED-CODEC-OFFER",
+      "description": "SDP offer contains confirmed video/H264 (90000) and audio/opus (48000/2ch/minptime=10) with unconfirmed codecs excluded",
+      "evidence_ref": "WEBRTC_CODEC_CAPABILITY_MATRIX.json",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-04-CONFIRMED-MEDIA-TRACKS",
+      "description": "Local media tracks constructed with exact IDs display_0 and audio_0 via NewTrackLocalStaticSample",
+      "evidence_ref": "MEDIA_TRACK_CONSTRUCTION_EVIDENCE.json",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-05-OUTBOUND-DATACHANNELS",
+      "description": "Three outbound DataChannels (input-channel, clipboard-channel, camera-channel) created with ordered=true before offer",
+      "evidence_ref": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-06-INBOUND-DATACHANNELS",
+      "description": "Three inbound DataChannels (file-channel, ai-command-channel, adb-channel) recognized in OnDataChannel listener",
+      "evidence_ref": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-07-RELAY-REQUEST-OFFER",
+      "description": "Signaling relay forward of request-offer initiates PeerSession and offer generation",
+      "evidence_ref": "WEBRTC_SIGNALING_CONTRACT.json: stage 1",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-08-RELAY-SDP-OFFER",
+      "description": "Agent SDP offer wrapped in forward envelope and delivered to client as device_msg",
+      "evidence_ref": "WEBRTC_SIGNALING_CONTRACT.json: stage 2",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-09-RELAY-SDP-ANSWER",
+      "description": "Client SDP answer routed to agent matching client_id and applied via SetRemoteDescription",
+      "evidence_ref": "WEBRTC_SIGNALING_CONTRACT.json: stage 3",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-10-RELAY-TRICKLE-ICE",
+      "description": "Trickle ICE candidate payloads exchanged bidirectionally between agent and client via signaling",
+      "evidence_ref": "WEBRTC_SIGNALING_CONTRACT.json: stage 4",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-11-CLIENT-DISCONNECT-CLEANUP",
+      "description": "Agent receives client_disconnected notice and idempotently tears down associated PeerSession",
+      "evidence_ref": "TRANSPORT_DISCONNECT_CLEANUP_CONTRACT.json",
+      "status": "EXACT_PROTOCOL_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-12-P2P-ICE-CONNECTED",
+      "description": "WebRTC P2P ICE connectivity succeeds and transitions PeerConnectionState to Connected",
+      "evidence_ref": "WEBRTC_PEERCONNECTION_STATE_MACHINE.json",
+      "status": "EXACT_PROTOCOL_PARITY"
+    }
+  ],
+  "semantic_parity_cases": [
+    {
+      "id": "DIFF-WTC-SEM-01-VIDEO-DELIVERY",
+      "description": "Synthetic Annex-B H.264 sample written via WriteSample delivered as RTP packet to receiving client",
+      "verdict": "MEDIA_DELIVERY_CONFIRMED",
+      "status": "SEMANTIC_PARITY"
+    },
+    {
+      "id": "DIFF-WTC-SEM-02-AUDIO-DELIVERY",
+      "description": "Synthetic Opus sample written via WriteSample delivered as RTP packet to receiving client",
+      "verdict": "MEDIA_DELIVERY_CONFIRMED",
+      "status": "SEMANTIC_PARITY"
+    }
+  ],
+  "implementation_choice_cases": [
+    {
+      "id": "DIFF-WTC-IMP-01-SESSION-STATES",
+      "description": "Internal SessionState enums and transitions (Connecting -> HaveLocalOffer -> Connected -> Closed)",
+      "status": "IMPLEMENTATION_CHOICE"
+    },
+    {
+      "id": "DIFF-WTC-IMP-02-IDEMPOTENT-CLOSE",
+      "description": "sync.Once guarding Close() against duplicate concurrent teardowns",
+      "status": "IMPLEMENTATION_CHOICE"
+    },
+    {
+      "id": "DIFF-WTC-IMP-03-MULTI-CLIENT-ISOLATION",
+      "description": "Coordinator map-based session isolation with RWMutex concurrency protection",
+      "status": "IMPLEMENTATION_CHOICE"
+    },
+    {
+      "id": "DIFF-WTC-IMP-04-LATE-OPERATION-SAFETY",
+      "description": "ErrSessionClosed returned safely for operations submitted after session teardown",
+      "status": "IMPLEMENTATION_CHOICE"
+    }
+  ]
+}

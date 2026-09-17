@@ -543,5 +543,37 @@ Metric: **`IMPLEMENTED_TAG_CONTRACT_DIFFERENTIAL_PASS_RATE = 20/20`**
 - **Function Provenance Auditor**: 110/110 functions PASS (0 missing headers, 0 missing metadata fields)
 - **Master Verifier (`verify_phase2.py`)**: PASS across all 12 sections
 
+---
+
+# Walkthrough: Phase 2C.5B1 — Cloudphone Agent WebRTC Core Reconstruction
+
+**Date**: 2026-09-17  
+**Status**: CLOSED & VERIFIED (Gate Check: PASS)  
+**Contract Frozen Hash**: `152a3545be161f596fe508e8e17b4c1bdbb762c62f6974dbe6cad9d0c29ef0db`  
+**Classification**: Clean-room behavioral/protocol reconstruction  
+
+## 1. Scope Boundary & Core Deliverables
+
+1. **Implementation Contract First**:
+   - Authored and frozen `evidence/go_agent/webrtc/WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json` before production implementation.
+2. **Package Isolation**:
+   - Implemented Agent WebRTC packages in `reconstructed_source/cloudphone-agent`:
+     - `pkg/webrtc`: Core WebRTC engine, evidence-bound `MediaEngine` (H.264 90000 Hz, Opus 48000 Hz 2ch minptime=10), tracks `display_0` / `audio_0`, 6 DataChannels.
+     - `pkg/signaling`: WebSocket client connecting to `/register_agent`, registration handshake, heartbeat, forward dispatch.
+     - `pkg/agent`: Coordinator multiplexing `PeerSession` instances per `client_id`.
+   - `reconstructed_source/webrtc-signaling` kept strictly as a relay (zero WebRTC packages).
+3. **DataChannel B1 Boundary**:
+   - 3 outbound channels created with `ordered: true` (`input-channel`, `clipboard-channel`, `camera-channel`).
+   - 3 inbound channels registered via `OnDataChannel` (`file-channel`, `ai-command-channel`, `adb-channel`).
+   - Attached inert lifecycle hooks only; all business logic explicitly deferred to B2–B4.
+4. **Standards-Compliant & Oracle Interoperability**:
+   - Level A Unit tests: 15/15 PASS.
+   - Level B Protocol integration test: 1/1 PASS.
+   - Level C Original Oracle compatibility test against authentic Windows binary `webrtc-signaling.exe`: 1/1 PASS (`EXACT_PROTOCOL_PARITY`).
+   - Level D Real WebRTC P2P E2E test: 1/1 PASS with discrete confirmation of `NEGOTIATION_CONFIRMED` and `MEDIA_DELIVERY_CONFIRMED`.
+5. **Full Master Verifier & Zero Regression**:
+   - `python tools/verify_phase2.py`: 20/20 sections PASS.
+
+
 
 

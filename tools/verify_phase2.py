@@ -201,10 +201,10 @@ def verify_all():
                  turn_cls == "STATIC_STRING_CANDIDATE / NOT_RUNTIME_REGISTERED" and turn_404,
                  f"Classification: {turn_cls}; All verbs return 404: {turn_404}")
 
-    # 7. Reconstructed Source Scope Boundary (Phase 2C.3: Auth REST Handlers & Middleware)
+    # 7. Reconstructed Source Scope Boundary (Phase 2C.3/2C.4 Signaling + Phase 2C.5B1 Agent)
     recon_src = ROOT / "reconstructed_source"
     go_files = list(recon_src.rglob("*.go"))
-    allowed_prefixes = (
+    allowed_signaling_prefixes = (
         "webrtc-signaling/pkg/types/",
         "webrtc-signaling/pkg/storage/",
         "webrtc-signaling/cmd/storage-tool/",
@@ -217,32 +217,47 @@ def verify_all():
         "webrtc-signaling/cmd/http-server/",
         "webrtc-signaling/pkg/transport/"
     )
+    allowed_agent_prefixes = (
+        "cloudphone-agent/pkg/webrtc/",
+        "cloudphone-agent/pkg/signaling/",
+        "cloudphone-agent/pkg/agent/",
+        "cloudphone-agent/tests/"
+    )
     disallowed_files = []
     forbidden_symbols_found = []
 
-    # Pion WebRTC / PeerConnection / alternate WS stacks are strictly forbidden everywhere
-    STRICTLY_FORBIDDEN_EVERYWHERE = [
+    # In webrtc-signaling: Pion WebRTC / PeerConnection / alternate WS stacks are strictly forbidden (signaling is relay only)
+    SIGNALING_FORBIDDEN = [
         '"github.com/pion/webrtc', "NewPeerConnection(", '"nhooyr.io/websocket"'
     ]
-    # Transport tokens are forbidden outside pkg/transport and server.go
+    # Transport tokens in signaling are forbidden outside pkg/transport and server.go
     TRANSPORT_FORBIDDEN_OUTSIDE_TRANSPORT = [
         "/register_agent", "/connect_client", '"gorilla/websocket"'
     ]
 
     for gf in go_files:
         rel = gf.relative_to(recon_src).as_posix()
-        if not any(rel.startswith(ap) for ap in allowed_prefixes):
-            disallowed_files.append(rel)
-        with open(gf, "r", encoding="utf-8") as f:
-            content = f.read()
-            for kw in STRICTLY_FORBIDDEN_EVERYWHERE:
-                if kw in content:
-                    forbidden_symbols_found.append((rel, kw))
-            is_transport = rel.startswith("webrtc-signaling/pkg/transport/") or rel.endswith("server.go")
-            if not is_transport:
-                for kw in TRANSPORT_FORBIDDEN_OUTSIDE_TRANSPORT:
+        is_signaling = rel.startswith("webrtc-signaling/")
+        is_agent = rel.startswith("cloudphone-agent/")
+
+        if is_signaling:
+            if not any(rel.startswith(ap) for ap in allowed_signaling_prefixes):
+                disallowed_files.append(rel)
+            with open(gf, "r", encoding="utf-8") as f:
+                content = f.read()
+                for kw in SIGNALING_FORBIDDEN:
                     if kw in content:
                         forbidden_symbols_found.append((rel, kw))
+                is_transport = rel.startswith("webrtc-signaling/pkg/transport/") or rel.endswith("server.go")
+                if not is_transport:
+                    for kw in TRANSPORT_FORBIDDEN_OUTSIDE_TRANSPORT:
+                        if kw in content:
+                            forbidden_symbols_found.append((rel, kw))
+        elif is_agent:
+            if not any(rel.startswith(ap) for ap in allowed_agent_prefixes):
+                disallowed_files.append(rel)
+        else:
+            disallowed_files.append(rel)
 
     scope_passed = len(disallowed_files) == 0 and len(forbidden_symbols_found) == 0
     record_check("Phase 2C.3 Source Scope Boundary",
@@ -3099,7 +3114,56 @@ def verify_all():
     record_check("Phase 2C.5A Strict Production Boundary Enforcement", prod_boundary_clean,
                  "Zero production WebRTC/DataChannel/Media packages; zero Pion dependency in signaling go.mod")
 
-    # 19.3 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # 20. PHASE 2C.5B1 CLOUDPHONE AGENT WEBRTC CORE RECONSTRUCTION AUDIT
+    # 20.1 Implementation Contract Frozen Invariant
+    contract_path = ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json"
+    expected_contract_sha256 = "152a3545be161f596fe508e8e17b4c1bdbb762c62f6974dbe6cad9d0c29ef0db"
+    contract_exists = contract_path.exists()
+    contract_hash_valid = False
+    if contract_exists:
+        actual_contract_sha256 = hashlib.sha256(contract_path.read_bytes()).hexdigest()
+        contract_hash_valid = (actual_contract_sha256 == expected_contract_sha256)
+    record_check("Phase 2C.5B1 WebRTC Core Implementation Contract Frozen Invariant", contract_hash_valid,
+                 f"WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json SHA-256 verified against frozen contract: {expected_contract_sha256[:16]}...")
+
+    # 20.2 Agent Go WebRTC Core Build Validation
+    agent_build_res = subprocess.run(["go", "build", "./..."],
+                                     cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                     capture_output=True, text=True)
+    agent_build_passed = (agent_build_res.returncode == 0)
+    record_check("Phase 2C.5B1 Agent Go WebRTC Core Build Validation", agent_build_passed,
+                 "go build ./... in reconstructed_source/cloudphone-agent compiles cleanly with zero errors")
+
+    # 20.3 Agent Go WebRTC Core Unit, Integration, and E2E Tests
+    agent_test_res = subprocess.run(["go", "test", "-v", "./..."],
+                                    cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                    capture_output=True, text=True)
+    agent_test_passed = (agent_test_res.returncode == 0) and ("PASS" in agent_test_res.stdout) and ("NEGOTIATION_CONFIRMED" in agent_test_res.stdout) and ("MEDIA_DELIVERY_CONFIRMED" in agent_test_res.stdout)
+    record_check("Phase 2C.5B1 Agent WebRTC Core Unit, Integration, and Real E2E Tests", agent_test_passed,
+                 "go test ./... in cloudphone-agent passes all 18 test cases with verified NEGOTIATION_CONFIRMED and MEDIA_DELIVERY_CONFIRMED")
+
+    # 20.4 Level C Original Signaling Oracle Compatibility
+    oracle_compat_passed = (agent_test_res.returncode == 0) and ("EXACT_PROTOCOL_PARITY: Reconstructed Agent successfully negotiated PeerConnection via Original Oracle" in agent_test_res.stdout)
+    record_check("Phase 2C.5B1 Level C Original Signaling Oracle Compatibility", oracle_compat_passed,
+                 "Reconstructed Agent negotiates PeerConnection via authentic original Windows binary oracle (SHA256 verified)")
+
+    # 20.5 WebRTC Core Differential Result & Source Provenance Verification
+    diff_res_path = ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_DIFFERENTIAL_RESULT.json"
+    prov_path = ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_SOURCE_PROVENANCE.json"
+    diff_valid = False
+    if diff_res_path.exists() and prov_path.exists():
+        diff_data = json.loads(diff_res_path.read_text(encoding="utf-8"))
+        counters = diff_data.get("counters", {})
+        diff_valid = (
+            counters.get("exact_protocol_parity_total", 0) > 0 and
+            counters.get("exact_protocol_parity_passed", 0) == counters.get("exact_protocol_parity_total", 1) and
+            counters.get("semantic_parity_passed", 0) == counters.get("semantic_parity_total", 0) and
+            counters.get("failed_total", 1) == 0
+        )
+    record_check("Phase 2C.5B1 WebRTC Core Differential Result Verification", diff_valid,
+                 "WEBRTC_CORE_DIFFERENTIAL_RESULT.json reports 12/12 exact protocol parity, 2/2 semantic parity, and 0 failures")
+
+    # 20.6 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv

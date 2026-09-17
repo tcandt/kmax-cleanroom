@@ -1,0 +1,289 @@
+{
+  "metadata": {
+    "title": "Cloudphone Agent WebRTC Core Reconstructed Source Provenance",
+    "phase": "Phase 2C.5B1",
+    "timestamp": "2026-09-17T14:05:00Z",
+    "reconstruction_type": "Clean-room behavioral/protocol reconstruction (NOT literal original source recovery)"
+  },
+  "provenance_summary": {
+    "RECONSTRUCTED_FROM_BINARY": 15,
+    "RECONSTRUCTED_FROM_PROTOCOL": 6,
+    "GENERATED_ADAPTER": 13,
+    "IMPLEMENTATION_CHOICE": 4,
+    "THIRD_PARTY": 2
+  },
+  "dependencies": [
+    {
+      "module": "github.com/pion/webrtc/v3",
+      "version": "v3.3.6",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "Lane A rodata strings at 0xb5f1b0 (AMD64) and 0x6bd161 (ARM64)"
+    },
+    {
+      "module": "github.com/gorilla/websocket",
+      "version": "v1.5.3",
+      "classification": "THIRD_PARTY",
+      "evidence": "TRANSPORT_DEPENDENCY_EVIDENCE.json (IMPLEMENTATION_SELECTED_VERSION)"
+    }
+  ],
+  "functions": [
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "SessionState.String",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Internal state machine display helper"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "CandidatePayload.ToPionCandidate",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Converts signaling candidate envelope to Pion ICECandidateInit"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "NewEvidenceBoundMediaEngine",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.main 0x9bc7a1 (H264), 0x9bc816 (Opus minptime=10)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "NewAPIWithEvidenceBoundEngine",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Factory assembling Pion API with confirmed MediaEngine"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "BuildRTCConfiguration",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Assembles webrtc.Configuration with STUN/TURN fallback"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "NewConfirmedMediaTracks",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "NewTrackLocalStaticSample 0x968320 (display_0, audio_0)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "MediaTracks.WriteVideoSample",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "WriteSample 0x968cc0 (main.(*IDhLgq).hPk0ZTim98p)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "MediaTracks.WriteAudioSample",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "WriteSample 0x968cc0 (main.(*IDhLgq).hpLLOr1Y0cv)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "CreateSyntheticH264Sample",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Minimal Annex-B IDR frame for bounded testing without hardware capture"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "CreateSyntheticOpusSample",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Minimal Opus silence frame for bounded audio testing"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "NewDataChannels",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Container initialization for 6 confirmed channels"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "DataChannels.SetupOutboundChannels",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.(*IDhLgq).woxaqqFN5Km (0x9e1f4f input, 0x9e1ff7 clipboard, 0x9e216d camera with ordered=1)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "DataChannels.RegisterInboundHandler",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.(*IDhLgq).woxaqqFN5Km.func11 (0x9e2f40 dispatch for file, ai-command, adb)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "attachInertLifecycleHooks",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Inert channel hooks for B1 negotiation parity; business logic deferred"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "DataChannels.GetChannel",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Thread-safe channel lookup by label"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "NewPeerSession",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.(*IDhLgq).woxaqqFN5Km (0x9df9c0) assembly workflow"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.OnICECandidate",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Callback hook for trickle ICE candidate emission"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.OnSessionStateChange",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Callback hook for session state progression"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.OnClose",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Callback hook for teardown notification"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.CreateOffer",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "CreateOffer 0x93d540, SetLocalDescription 0x93f7a0"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.HandleRemoteAnswer",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "SetRemoteDescription 0x93fd80"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.AddRemoteCandidate",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "AddICECandidate 0x947140"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.Close",
+      "classification": "RECONSTRUCTED_FROM_BEHAVIOR",
+      "evidence": "Deterministic teardown with sync.Once idempotency"
+    },
+    {
+      "package": "cloudphone-agent/pkg/webrtc",
+      "symbol": "PeerSession.GetState",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Thread-safe internal state query"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "NewClient",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Factory for signaling WebSocket client"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "Client.Connect",
+      "classification": "RECONSTRUCTED_FROM_PROTOCOL",
+      "evidence": "RFC 6455 upgrade, agent_register -> agent_register_ok (TR-DIFF-AGT-REGISTER-OK)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "Client.WriteJSON",
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence": "Mutex-protected concurrent safe write pump"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "Client.SendForward",
+      "classification": "RECONSTRUCTED_FROM_PROTOCOL",
+      "evidence": "Forward envelope multiplexing with client_id (TR-DIFF-RELAY-STAGE2)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "Client.SendHeartbeat",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "Heartbeat keepalive frame matching main.jdUaLc5NMO5"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "Client.readPump",
+      "classification": "RECONSTRUCTED_FROM_PROTOCOL",
+      "evidence": "60s deadline, forward, client_disconnected, config frame handling"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "Client.heartbeatLoop",
+      "classification": "RECONSTRUCTED_FROM_PROTOCOL",
+      "evidence": "Periodic heartbeat within 60s deadline"
+    },
+    {
+      "package": "cloudphone-agent/pkg/signaling",
+      "symbol": "Client.Close",
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence": "Idempotent socket shutdown via sync.Once"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "NewCoordinator",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Coordinator state container initialization"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.SetSignalingClient",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Binds signaling client to coordinator"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.HandleConfig",
+      "classification": "RECONSTRUCTED_FROM_PROTOCOL",
+      "evidence": "Updates ICE servers dynamically"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.HandleForward",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.(*IDhLgq).dizwnNrpwv (0x9c1540)"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.handleRequestOffer",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.(*IDhLgq).f1PF7qVxR (0x9e71d0) offer creation site"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.handleAnswer",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.(*IDhLgq).f1PF7qVxR (0x9e7920) answer delivery site"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.handleRemoteCandidate",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "main.(*IDhLgq).f1PF7qVxR (0x9e7c80) candidate insertion site"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.HandleClientDisconnected",
+      "classification": "RECONSTRUCTED_FROM_BINARY",
+      "evidence": "Session teardown on client_disconnected notice"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.GetSession",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Thread-safe session lookup"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.ActiveSessionCount",
+      "classification": "GENERATED_ADAPTER",
+      "evidence": "Active session count query"
+    },
+    {
+      "package": "cloudphone-agent/pkg/agent",
+      "symbol": "Coordinator.Close",
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence": "Graceful coordinator shutdown"
+    }
+  ]
+}

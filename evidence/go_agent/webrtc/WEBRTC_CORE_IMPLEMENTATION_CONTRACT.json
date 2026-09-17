@@ -1,0 +1,204 @@
+{
+  "metadata": {
+    "title": "Cloudphone Agent WebRTC Core Implementation Contract",
+    "phase": "Phase 2C.5B1",
+    "contract_status": "FROZEN_BEFORE_PRODUCTION_IMPLEMENTATION",
+    "description": "Strict observable requirements derived solely from frozen Phase 2C.5A evidence and closed Phase 2C.4 transport contracts."
+  },
+  "requirements": [
+    {
+      "id": "REQ-WTC-01-DEPENDENCY-PION",
+      "requirement": "Pion WebRTC dependency version v3.3.6",
+      "observable_behavior": "The cloudphone-agent WebRTC core links against github.com/pion/webrtc/v3 v3.3.6, matching verbatim rodata string in Lane A AMD64 (0xb5f1b0) and ARM64 (0x6bd161) binaries.",
+      "source_artifact": "WEBRTC_DEPENDENCY_EVIDENCE.json",
+      "source_field_or_case": "exact_version",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Exact version established independently in Phase 2C.5A."
+    },
+    {
+      "id": "REQ-WTC-02-TOPOLOGY-ROLE",
+      "requirement": "Agent operates as WebRTC Offer Initiator in tri-party topology",
+      "observable_behavior": "Signaling server (/register_agent, /connect_client) acts strictly as a WebSocket relay. Agent initiates CreateOffer upon client request, Browser Client answers with SDP answer.",
+      "source_artifact": "WEBRTC_TOPOLOGY_CROSSMAP.json",
+      "source_field_or_case": "entities.cloudphone_agent.role",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Signaling server creates zero PeerConnections; all WebRTC termination is on the Agent."
+    },
+    {
+      "id": "REQ-WTC-03-OFFER-CREATION",
+      "requirement": "Agent generates SDP Offer with local description set",
+      "observable_behavior": "On client connection / request-offer, Agent calls CreateOffer and SetLocalDescription, producing an SDP offer payload dispatched via signaling.",
+      "source_artifact": "WEBRTC_PEERCONNECTION_CALLGRAPH.json",
+      "source_field_or_case": "agent_peerconnection_lifecycle.step_3_offer_creation",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Binary symbols: v6LoFegGUKTA.(*BtQfb9).CreateOffer (0x93d540), SetLocalDescription (0x93f7a0)."
+    },
+    {
+      "id": "REQ-WTC-04-REMOTE-ANSWER",
+      "requirement": "Agent receives and sets remote SDP Answer",
+      "observable_behavior": "When client returns SDP answer over signaling forward envelope, Agent calls SetRemoteDescription to transition PeerConnection to stable state.",
+      "source_artifact": "WEBRTC_PEERCONNECTION_CALLGRAPH.json",
+      "source_field_or_case": "agent_peerconnection_lifecycle.step_6_remote_answer_handling",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Binary symbol: v6LoFegGUKTA.(*BtQfb9).SetRemoteDescription (0x93fd80)."
+    },
+    {
+      "id": "REQ-WTC-05-TRICKLE-ICE",
+      "requirement": "Bidirectional trickle ICE candidate exchange",
+      "observable_behavior": "Agent publishes local ICE candidates via signaling envelope and accepts remote ICE candidates via AddICECandidate.",
+      "source_artifact": "WEBRTC_PEERCONNECTION_CALLGRAPH.json",
+      "source_field_or_case": "agent_peerconnection_lifecycle.step_7_ice_candidate_handling",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Binary symbol: v6LoFegGUKTA.(*BtQfb9).AddICECandidate (0x947140)."
+    },
+    {
+      "id": "REQ-WTC-06-VIDEO-CODEC-H264",
+      "requirement": "Confirmed video codec H.264 at 90000 Hz",
+      "observable_behavior": "MediaEngine registers video/H264 with clock rate 90000. SDP contains H.264 m=video line.",
+      "source_artifact": "WEBRTC_CODEC_CAPABILITY_MATRIX.json",
+      "source_field_or_case": "selected_codecs.video",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly xref: main.main (0x9bc7a1 AMD64, 0x51e7f0 ARM64). Other Pion default codecs excluded."
+    },
+    {
+      "id": "REQ-WTC-07-AUDIO-CODEC-OPUS",
+      "requirement": "Confirmed audio codec Opus at 48000 Hz, 2 channels, minptime=10",
+      "observable_behavior": "MediaEngine registers audio/opus with clock rate 48000, 2 channels, and fmtp 'minptime=10'. SDP contains Opus m=audio line.",
+      "source_artifact": "WEBRTC_CODEC_CAPABILITY_MATRIX.json",
+      "source_field_or_case": "selected_codecs.audio",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly xref: main.main (0x9bc816 AMD64, 0x51e850 ARM64)."
+    },
+    {
+      "id": "REQ-WTC-08-VIDEO-TRACK-CONSTRUCTION",
+      "requirement": "Video track display_0 constructed via NewTrackLocalStaticSample",
+      "observable_behavior": "Agent creates video track with ID 'display_0' and Stream ID 'display_0' using webrtc.NewTrackLocalStaticSample and attaches it to PeerConnection.",
+      "source_artifact": "MEDIA_TRACK_CONSTRUCTION_EVIDENCE.json",
+      "source_field_or_case": "tracks.video_track",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Constructor VA: 0x968320 AMD64, 0x4d3a80 ARM64."
+    },
+    {
+      "id": "REQ-WTC-09-AUDIO-TRACK-CONSTRUCTION",
+      "requirement": "Audio track audio_0 constructed via NewTrackLocalStaticSample",
+      "observable_behavior": "Agent creates audio track with ID 'audio_0' and Stream ID 'audio_0' using webrtc.NewTrackLocalStaticSample and attaches it to PeerConnection.",
+      "source_artifact": "MEDIA_TRACK_CONSTRUCTION_EVIDENCE.json",
+      "source_field_or_case": "tracks.audio_track",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Constructor VA: 0x968320 AMD64, 0x4d3a80 ARM64."
+    },
+    {
+      "id": "REQ-WTC-10-DATACHANNEL-OUTBOUND-LABELS",
+      "requirement": "Three outbound DataChannels created by Agent (input-channel, clipboard-channel, camera-channel)",
+      "observable_behavior": "Agent creates 3 DataChannels before offer creation with ordered=true: 'input-channel', 'clipboard-channel', 'camera-channel'. In Phase B1, inert lifecycle hooks are attached for negotiation parity; business logic is DEFERRED.",
+      "source_artifact": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "source_field_or_case": "confirmed_webrtc_channels (outbound)",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Ordered=true confirmed by byte pointer 0x1 in AMD64 (0x9e1f4f) and ARM64 (0x53e588). Full business logic deferred to B2-B4."
+    },
+    {
+      "id": "REQ-WTC-11-DATACHANNEL-INBOUND-LABELS",
+      "requirement": "Three inbound DataChannels handled via OnDataChannel (file-channel, ai-command-channel, adb-channel)",
+      "observable_behavior": "Agent registers OnDataChannel listener recognizing 'file-channel', 'ai-command-channel', and 'adb-channel'. In Phase B1, inert lifecycle hooks are attached for negotiation parity; business logic is DEFERRED.",
+      "source_artifact": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "source_field_or_case": "confirmed_webrtc_channels (inbound)",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Dispatch site: 0x9e2f40 AMD64, 0x53f234 ARM64. Full business logic deferred to B2-B4."
+    },
+    {
+      "id": "REQ-WTC-12-SIGNALING-REGISTRATION",
+      "requirement": "Agent registration to /register_agent over WebSocket",
+      "observable_behavior": "Agent connects to /register_agent, sends {\"type\":\"agent_register\",\"device_id\":\"...\",\"is_webrtc\":true}, and receives {\"message_type\":\"agent_register_ok\",\"status\":\"valid\"}.",
+      "source_artifact": "TRANSPORT_MESSAGE_MATRIX.json",
+      "source_field_or_case": "TR-E2E-AGENT-REGISTER",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Verified against original signaling binary in Phase 2C.4BR (TR-DIFF-AGT-REGISTER-OK)."
+    },
+    {
+      "id": "REQ-WTC-13-SIGNALING-FORWARD-ROUTING",
+      "requirement": "Signaling message exchange via forward envelope with client_id correlation",
+      "observable_behavior": "Agent exchanges offer, answer, and ice-candidate messages wrapped in forward envelopes carrying client_id, allowing multiplexing across multiple concurrent client sessions.",
+      "source_artifact": "WEBRTC_SIGNALING_CONTRACT.json",
+      "source_field_or_case": "relay_stage_1_through_4",
+      "evidence_class": "COMBINED_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Verified in Phase 2C.4BR (TR-DIFF-RELAY-STAGE1 through STAGE4)."
+    },
+    {
+      "id": "REQ-WTC-14-SESSION-TEARDOWN-CLEANUP",
+      "requirement": "Session teardown on client_disconnected notification or connection failure",
+      "observable_behavior": "Agent terminates PeerConnection cleanly upon receipt of {\"message_type\":\"client_disconnected\",\"client_id\":...} or when PeerConnection enters failed/closed state. Cleanup is idempotent and race-safe.",
+      "source_artifact": "TRANSPORT_DISCONNECT_CLEANUP_CONTRACT.json",
+      "source_field_or_case": "client_cleanup_triggers_agent_notification",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Verified in Phase 2C.4BR (TR-DIFF-CLI-DISCONNECT-NOTIF)."
+    },
+    {
+      "id": "REQ-WTC-15-INTERNAL-STATE-ABSTRACTION",
+      "requirement": "Reconstructed internal state machine and sample writer interfaces",
+      "observable_behavior": "Internal session states and interfaces VideoSampleSource / AudioSampleSource facilitate clean modular design and synthetic sample feeding.",
+      "source_artifact": "IMPLEMENTATION_CHOICE",
+      "source_field_or_case": "internal_architecture",
+      "evidence_class": "GENERATED_ADAPTER",
+      "confidence": "MEDIUM",
+      "mandatory_for_parity": false,
+      "notes": "Internal state names (Connecting, HaveLocalOffer, etc.) are implementation choices, not literal original enum symbols."
+    }
+  ],
+  "cleanup_trigger_matrix": {
+    "triggers": [
+      {
+        "trigger": "client_disconnected_message",
+        "action": "Close PeerConnection associated with client_id, release tracks, unbind session",
+        "evidence_classification": "STATIC_CONFIRMED"
+      },
+      {
+        "trigger": "peerconnection_failed",
+        "action": "Trigger session cleanup and notify signaling/coordinator",
+        "evidence_classification": "STATIC_CONFIRMED"
+      },
+      {
+        "trigger": "peerconnection_closed",
+        "action": "Idempotently release remaining local session resources",
+        "evidence_classification": "STATIC_CONFIRMED"
+      },
+      {
+        "trigger": "websocket_disconnect",
+        "action": "Close all active PeerConnection sessions and attempt reconnection to signaling",
+        "evidence_classification": "STATIC_CONFIRMED"
+      },
+      {
+        "trigger": "duplicate_close_call",
+        "action": "No-op, idempotent execution via sync.Once",
+        "evidence_classification": "IMPLEMENTATION_CHOICE"
+      }
+    ]
+  }
+}

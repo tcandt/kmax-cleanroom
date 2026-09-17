@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "title": "Cloudphone Agent WebRTC Core Test Matrix",
+    "phase": "Phase 2C.5B1",
+    "timestamp": "2026-09-17T14:05:00Z"
+  },
+  "levels": {
+    "LEVEL_A_UNIT": {
+      "description": "Component-level isolation tests validating configuration, state machines, track properties, and concurrency",
+      "total_cases": 15,
+      "passed": 15,
+      "cases": [
+        {"id": "TC-WTC-UNIT-01", "name": "TestEvidenceBoundMediaEngine", "package": "pkg/webrtc", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-02", "name": "TestMediaTrackProperties", "package": "pkg/webrtc", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-03", "name": "TestDataChannelLabels", "package": "pkg/webrtc", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-04", "name": "TestPeerSessionOfferCreation", "package": "pkg/webrtc", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-05", "name": "TestPeerSessionIdempotentClose", "package": "pkg/webrtc", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-06", "name": "TestSessionStateTransitions", "package": "pkg/webrtc", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-07", "name": "TestConcurrencyEdgeCases", "package": "pkg/webrtc", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-08", "name": "TestSignalingClientRegistration", "package": "pkg/signaling", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-09", "name": "TestSignalingClientForwardAndDisconnect", "package": "pkg/signaling", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-10", "name": "TestSignalingClientHeartbeatEmission", "package": "pkg/signaling", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-11", "name": "TestSignalingDisconnectDuringNegotiation", "package": "pkg/signaling", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-12", "name": "TestCoordinatorOfferGeneration", "package": "pkg/agent", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-13", "name": "TestCoordinatorTeardownOnDisconnect", "package": "pkg/agent", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-14", "name": "TestCoordinatorMultipleClients", "package": "pkg/agent", "status": "PASS"},
+        {"id": "TC-WTC-UNIT-15", "name": "TestCoordinatorConcurrentAccess", "package": "pkg/agent", "status": "PASS"}
+      ]
+    },
+    "LEVEL_B_PROTOCOL_INTEGRATION": {
+      "description": "Integration between reconstructed Agent and signaling server relay protocol",
+      "total_cases": 1,
+      "passed": 1,
+      "cases": [
+        {"id": "TC-WTC-INT-01", "name": "TestSignalingRelayWebRTCE2E", "package": "tests", "status": "PASS"}
+      ]
+    },
+    "LEVEL_C_ORACLE_COMPATIBILITY": {
+      "description": "Live compatibility between reconstructed Agent and authentic original Windows binary oracle (webrtc-signaling.exe)",
+      "total_cases": 1,
+      "passed": 1,
+      "oracle_sha256": "374a9d7898a92e9f5709bf16a2f9b8a9d878dbfd0d7f4c06841e4800a8a26917",
+      "oracle_available": true,
+      "cases": [
+        {
+          "id": "TC-WTC-ORACLE-01",
+          "name": "TestOriginalSignalingOracleCompatibility",
+          "package": "tests",
+          "classification": "EXACT_PROTOCOL_PARITY",
+          "status": "PASS",
+          "notes": "Agent registers, client connects, offer/answer exchanged via authentic original binary relay"
+        }
+      ]
+    },
+    "LEVEL_D_REAL_WEBRTC_E2E": {
+      "description": "Standards-compliant PeerConnection establishment, real ICE connectivity, and synthetic media delivery",
+      "total_cases": 1,
+      "passed": 1,
+      "cases": [
+        {
+          "id": "TC-WTC-E2E-01",
+          "name": "TestWebRTCRealPeerConnectionE2E",
+          "package": "tests",
+          "negotiation_verdict": "NEGOTIATION_CONFIRMED",
+          "media_delivery_verdict": "MEDIA_DELIVERY_CONFIRMED",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_test_cases": 18,
+    "total_passed": 18,
+    "total_failed": 0,
+    "all_levels_passed": true
+  }
+}
