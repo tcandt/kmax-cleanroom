@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "phase": "Phase 2C.5B6F",
+    "title": "ADB-Channel Implementation Contract (Forensic & Safe Scope)",
+    "classification": "STATIC_CONFIRMED",
+    "immutable": true,
+    "taxonomy_counts": {
+      "original_static_evidence": 8,
+      "cross_component_evidence": 0,
+      "reference_interoperability": 1,
+      "reference_background": 1,
+      "safe_scope_guard": 1,
+      "defensive_validation": 0,
+      "deferred_execution_boundary": 1,
+      "audit_provenance_guard": 1,
+      "unknown": 0
+    }
+  },
+  "requirements": [
+    {
+      "contract_id": "ADB-B6F-01",
+      "title": "Channel Label & Inbound Direction",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "Channel label is 'adb-channel' (11 bytes), created by Browser Client and accepted inbound by Agent in pc.OnDataChannel."
+    },
+    {
+      "contract_id": "ADB-B6F-02",
+      "title": "Dispatcher & Handler Routing",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "Inbound dispatch compares label 'adb-channel' (ARM64 0x53f2ac, AMD64 0x9e2fad) and routes to dedicated adb handler (ARM64 0x516020, AMD64 0x9b2be0)."
+    },
+    {
+      "contract_id": "ADB-B6F-03",
+      "title": "Lifecycle Callback Registration",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "Handler registers (*DataChannel).OnClose and (*DataChannel).OnMessage hooks; evaluates readyState on OnOpen; zero branch-specific OnError registered."
+    },
+    {
+      "contract_id": "ADB-B6F-04",
+      "title": "Session-Sticky Dual-Mode Persistence",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "First message evaluates length >= 24 and CNXN magic 0x4e584e43; permanently latches session into ADB_PACKET_MODE or BARE_RAW_PTY_MODE."
+    },
+    {
+      "contract_id": "ADB-B6F-05",
+      "title": "24-Byte ADB Packet Header Layout & State Machine",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "ADB packet mode enforces 24-byte little-endian header layout and handles CNXN, OPEN, WRTE, CLSE, replying with OKAY, CNXN, or CLSE via (*DataChannel).Send."
+    },
+    {
+      "contract_id": "ADB-B6F-06",
+      "title": "Bare Raw PTY Mode Streaming",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "Non-CNXN first message logs 'First packet is not ADB, switching to BARE raw PTY mode' and forwards raw unencapsulated bytes between DataChannel and PTY descriptor."
+    },
+    {
+      "contract_id": "ADB-B6F-07",
+      "title": "In-Process PTY/Shell Spawner & Concurrency Pump",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "Downstream execution allocates local PTY (/dev/ptmx) or fallback pipes, spawns shell process (/system/bin/sh or /bin/sh), and pumps stdout via goroutine."
+    },
+    {
+      "contract_id": "ADB-B6F-08",
+      "title": "Absence of External TCP 127.0.0.1:5555 Bridge",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "description": "Binary reachability analysis confirms zero reachable net.Dial calls from adb-channel handler; no external TCP bridge to 127.0.0.1:5555 exists in original agent."
+    },
+    {
+      "contract_id": "ADB-B6F-09",
+      "title": "Inbound Ordered Property Reference Classification",
+      "evidence_class": "REFERENCE_ONLY",
+      "mandatory_for_parity": false,
+      "mandatory_for_interoperability": true,
+      "description": "Inbound ordered=true is configured by browser client at creation and is classified as REFERENCE_ONLY from frontend evidence."
+    },
+    {
+      "contract_id": "ADB-B6F-10",
+      "title": "Standard ADB Protocol Specification Background",
+      "evidence_class": "REFERENCE_BACKGROUND",
+      "mandatory_for_parity": false,
+      "description": "Standard Android ADB protocol documentation (A_CNXN, A_OPEN, A_OKAY, A_CLSE, A_WRTE field names) is classified as REFERENCE_BACKGROUND."
+    },
+    {
+      "contract_id": "ADB-B6F-11",
+      "title": "Deferred ADB Bridge Execution Boundary",
+      "evidence_class": "DEFERRED_ADB_BRIDGE_BOUNDARY",
+      "mandatory_for_parity": false,
+      "mandatory_for_safe_scope": true,
+      "description": "All PTY allocation, process execution, and shell forwarder logic are classified as DEFERRED_ADB_BRIDGE_BOUNDARY and strictly excluded from clean-room agent runtime."
+    },
+    {
+      "contract_id": "ADB-B6F-12",
+      "title": "Production ADB Channel Inertness Guard",
+      "evidence_class": "SAFE_SCOPE_GUARD",
+      "mandatory_for_parity": false,
+      "mandatory_for_safe_scope": true,
+      "description": "Reconstructed clean-room agent maintains adb-channel strictly inert with zero production OnMessage handlers, zero net.Dial calls, and zero shell execution."
+    },
+    {
+      "contract_id": "ADB-B6F-13",
+      "title": "Historical Errata and Superseded Evidence Recorded",
+      "evidence_class": "AUDIT_PROVENANCE_GUARD",
+      "mandatory_for_parity": false,
+      "mandatory_for_audit_scope": true,
+      "description": "Historical Phase 2C.5A artifacts remain immutable while formal errata superseding the '127.0.0.1:5555' external bridge claim are recorded in ADB_CHANNEL_B6F_CONTRACT_ERRATA.json."
+    }
+  ]
+}

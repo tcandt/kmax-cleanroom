@@ -4615,6 +4615,104 @@ def verify_all():
         b5f_reg_detail = f"Exception evaluating historical differentials: {e}"
     record_check("Phase 2C.5B5F Historical Non-Regression & Differential Stability Invariant", b5f_reg_valid, b5f_reg_detail)
 
+    # 26. Phase 2C.5B6F ADB-Channel Forensic Invariants
+    # 26.1 Phase 2C.5B6F Frozen Forensic Contract Invariant
+    b6f_contract_valid = False
+    b6f_contract_detail = ""
+    try:
+        b6f_contract_p = ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_IMPLEMENTATION_CONTRACT.json"
+        b6f_spec_p = ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_PROTOCOL_SPEC.json"
+        b6f_errata_p = ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_CONTRACT_ERRATA.json"
+        if b6f_contract_p.exists() and b6f_spec_p.exists() and b6f_errata_p.exists():
+            c_sha = hashlib.sha256(b6f_contract_p.read_bytes()).hexdigest()
+            s_sha = hashlib.sha256(b6f_spec_p.read_bytes()).hexdigest()
+            e_sha = hashlib.sha256(b6f_errata_p.read_bytes()).hexdigest()
+            expected_b6f_contract_sha = "1b1aba53ef39786fadafaab772e11c0611198403f8910f951a507ff4b06fc3ea"
+            expected_b6f_spec_sha = "fc9e91c19d660030212db8d3dc2ddca34d0b6c22624f6ae59fd4482767267303"
+            expected_b6f_errata_sha = "2e7d9b875e52d59d7d08a8ecbb6730eee2965358205a77f4b1a78e83e0ec77e9"
+
+            c_data = json.loads(b6f_contract_p.read_text(encoding="utf-8"))
+            tc = c_data.get("metadata", {}).get("taxonomy_counts", {})
+            tc_valid = (
+                tc.get("original_static_evidence") == 8 and
+                tc.get("cross_component_evidence") == 0 and
+                tc.get("reference_interoperability") == 1 and
+                tc.get("reference_background") == 1 and
+                tc.get("safe_scope_guard") == 1 and
+                tc.get("defensive_validation") == 0 and
+                tc.get("deferred_execution_boundary") == 1 and
+                tc.get("audit_provenance_guard") == 1 and
+                tc.get("unknown") == 0
+            )
+            if c_sha == expected_b6f_contract_sha and s_sha == expected_b6f_spec_sha and e_sha == expected_b6f_errata_sha and tc_valid:
+                b6f_contract_valid = True
+                b6f_contract_detail = (
+                    f"ADB_CHANNEL_B6F_IMPLEMENTATION_CONTRACT.json ({c_sha[:12]}) frozen; "
+                    f"formal errata ({e_sha[:12]}) applied; taxonomy confirmed (8 static, 2 reference, 1 safe scope, 1 deferred, 1 audit guard, 0 unknown)"
+                )
+            else:
+                b6f_contract_detail = f"B6F contract check failed: c_sha={c_sha[:12]}, s_sha={s_sha[:12]}, e_sha={e_sha[:12]}, tc_valid={tc_valid}"
+        else:
+            b6f_contract_detail = "One or more B6F evidence artifacts missing"
+    except Exception as e:
+        b6f_contract_detail = f"Exception verifying B6F contract: {e}"
+    record_check("Phase 2C.5B6F Frozen Forensic Contract Invariant", b6f_contract_valid, b6f_contract_detail)
+
+    # 26.2 Phase 2C.5B6F Forensic Reproducer & Negative Mutation Invariant
+    b6f_repro_valid = False
+    b6f_repro_detail = ""
+    try:
+        repro_proc = subprocess.run([sys.executable, str(ROOT / "tools" / "forensics" / "reproduce_adb_channel_forensics.py"), "--check"],
+                                    cwd=str(ROOT), capture_output=True, text=True)
+        neg_proc = subprocess.run([sys.executable, str(ROOT / "tools" / "forensics" / "test_adb_channel_forensics_negative.py")],
+                                  cwd=str(ROOT), capture_output=True, text=True)
+        if repro_proc.returncode == 0 and neg_proc.returncode == 0:
+            b6f_repro_valid = True
+            b6f_repro_detail = "Forensic extraction and semantic protocol cleanly reproduced; 19/19 negative mutations and anti-tautology checks passed"
+        else:
+            b6f_repro_detail = f"Reproducer/Negative failure: repro={repro_proc.returncode}, neg={neg_proc.returncode}, err={repro_proc.stderr or neg_proc.stderr}"
+    except Exception as e:
+        b6f_repro_detail = f"Exception executing B6F reproducer: {e}"
+    record_check("Phase 2C.5B6F Forensic Reproducer & Negative Mutation Invariant", b6f_repro_valid, b6f_repro_detail)
+
+    # 26.3 Phase 2C.5B6F Dual-Architecture Evidence & Provenance Invariant
+    b6f_sem_valid = False
+    b6f_sem_detail = ""
+    try:
+        from tools.forensics.adb_channel.validate_adb_channel_semantics import validate_adb_channel_semantics
+        sem_res = validate_adb_channel_semantics(
+            spec=ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_PROTOCOL_SPEC.json",
+            contract=ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_IMPLEMENTATION_CONTRACT.json",
+            framing=ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_MESSAGE_FRAMING.json",
+            topology=ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_TOPOLOGY.json",
+            callgraph=ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_CALLGRAPH.json",
+            provenance=ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_SOURCE_PROVENANCE.json",
+            errata=ROOT / "evidence" / "go_agent" / "webrtc" / "ADB_CHANNEL_B6F_CONTRACT_ERRATA.json"
+        )
+        if sem_res.get("status") == "VALID":
+            b6f_sem_valid = True
+            b6f_sem_detail = "Shared semantic validator PASS: dual-mode framing (CNXN vs bare PTY), 24B LE header, 0 net.Dial calls, 0 127.0.0.1:5555 routes, authentic downstream (/dev/ptmx, /system/bin/sh, /bin/sh) confirmed"
+        else:
+            b6f_sem_detail = f"B6F semantic validation returned non-valid: {sem_res}"
+    except Exception as e:
+        b6f_sem_detail = f"Exception verifying B6F semantics: {e}"
+    record_check("Phase 2C.5B6F Dual-Architecture Evidence & Provenance Invariant", b6f_sem_valid, b6f_sem_detail)
+
+    # 26.4 Phase 2C.5B6F Production Boundary & Channel Inertness Invariant
+    b6f_iso_valid = False
+    b6f_iso_detail = ""
+    try:
+        from tools.audit.b2_common import scan_deferred_channels_isolation
+        violations = scan_deferred_channels_isolation(ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg", phase="B6F")
+        if len(violations) == 0:
+            b6f_iso_valid = True
+            b6f_iso_detail = "Zero production ADB OnMessage handlers, zero TCP dials, zero pty.Open, zero os/exec calls in agent pkg (0 violations)"
+        else:
+            b6f_iso_detail = f"B6F production boundary violations: {'; '.join(violations)}"
+    except Exception as e:
+        b6f_iso_detail = f"Exception scanning B6F production boundary: {e}"
+    record_check("Phase 2C.5B6F Production Boundary & Channel Inertness Invariant", b6f_iso_valid, b6f_iso_detail)
+
     # Generate Reports 02B and 02C BEFORE the cleanliness check (Rule 14)
     reports_dir = ROOT / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
@@ -4653,7 +4751,7 @@ def verify_all():
 
     print("[+] Wrote reports/02B_ROLE_MAPPING_VALIDATION.md and reports/02C_PHASE2_REPRODUCIBILITY.md")
 
-    # 26. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # 27. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     # Executed strictly AFTER all verifier side effects and report writes
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")

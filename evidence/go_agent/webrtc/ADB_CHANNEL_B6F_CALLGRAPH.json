@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "phase": "Phase 2C.5B6F",
+    "title": "ADB-Channel Static Disassembly Callgraph",
+    "classification": "STATIC_CONFIRMED",
+    "immutable": true
+  },
+  "entry_point": "PeerConnection.OnDataChannel",
+  "nodes": {
+    "ARM64": {
+      "OnDataChannel_closure": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 @ 0x53f210",
+      "label_branch": "0x53f2ac (cmp x1, #0xb -> 0x53f300)",
+      "onopen_closure": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11.1 @ 0x53f4e0",
+      "handler_function": "main.(*JJffa1S1Zv6)._kTtL83Kr @ 0x516020",
+      "onclose_registration": "(*DataChannel).OnClose (0x499570)",
+      "onmessage_registration": "(*DataChannel).OnMessage (0x499770)",
+      "onmessage_closure": "main.(*JJffa1S1Zv6)._kTtL83Kr.func3 @ 0x5163a0",
+      "mode_discriminator": "0x516508 (cmp x2, #0x18; cmp w5, 0x4e584e43)",
+      "ptmx_allocator": "piExaqMUk.uORj3xlV_Z / pty.Open @ 0x519bf0",
+      "pipe_fallback": "piExaqMUk.EW11VGMk @ 0x110d40",
+      "shell_spawner": "HvH5pmapH.RXi09bf9qp / exec.Command (/system/bin/sh) @ 0x196e70",
+      "concurrency_pump": "runtime.newproc @ 0x5f730",
+      "response_send": "(*DataChannel).Send @ 0x49a3d0",
+      "terminal_boundary": "DEFERRED_ADB_BRIDGE_BOUNDARY"
+    },
+    "AMD64": {
+      "OnDataChannel_closure": "main.(*IDhLgq).woxaqqFN5Km.func11 @ 0x9e2f20",
+      "label_branch": "0x9e2fad (cmpq $0xb, %rbx -> 0x9e2fdb)",
+      "onopen_closure": "main.(*IDhLgq).woxaqqFN5Km.func11.1 @ 0x9e31c0",
+      "handler_function": "main.(*IDhLgq).lgKKctm2YGo1 @ 0x9b2be0",
+      "onclose_registration": "(*DataChannel).OnClose (0x9242e0)",
+      "onmessage_registration": "(*DataChannel).OnMessage (0x9244a0)",
+      "onmessage_closure": "main.(*IDhLgq).lgKKctm2YGo1.func3 @ 0x9b30c0",
+      "mode_discriminator": "0x9b328b (cmpq $0x18, %rcx; cmpl $0x4e584e43, (%rbx))",
+      "ptmx_allocator": "uOfWpGI3.HSWRWyyeZ3 / pty.Open @ 0x9b7200",
+      "pipe_fallback": "uOfWpGI3.HSWRWyyeZ3 @ 0x50dd80",
+      "shell_spawner": "dN51dOZj79iH.Egppnln / exec.Command (/bin/sh) @ 0x5a1c00",
+      "concurrency_pump": "runtime.newproc @ 0x451c40",
+      "response_send": "(*DataChannel).Send @ 0x9250c0",
+      "terminal_boundary": "DEFERRED_ADB_BRIDGE_BOUNDARY"
+    }
+  },
+  "edges": [
+    {"from": "OnDataChannel_closure", "to": "label_branch", "type": "INTERNAL_BRANCH"},
+    {"from": "label_branch", "to": "onopen_closure", "type": "CLOSURE_ALLOCATION"},
+    {"from": "onopen_closure", "to": "handler_function", "type": "DIRECT_OR_CALLBACK_INVOCATION"},
+    {"from": "handler_function", "to": "onclose_registration", "type": "PION_LIFECYCLE_REGISTRATION"},
+    {"from": "handler_function", "to": "onmessage_registration", "type": "PION_LIFECYCLE_REGISTRATION"},
+    {"from": "onmessage_registration", "to": "onmessage_closure", "type": "CALLBACK_DISPATCH"},
+    {"from": "onmessage_closure", "to": "mode_discriminator", "type": "FIRST_PACKET_CHECK"},
+    {"from": "mode_discriminator", "to": "ptmx_allocator", "type": "PTY_SETUP"},
+    {"from": "ptmx_allocator", "to": "pipe_fallback", "type": "ERROR_FALLBACK"},
+    {"from": "mode_discriminator", "to": "shell_spawner", "type": "PROCESS_SPAWN"},
+    {"from": "shell_spawner", "to": "concurrency_pump", "type": "GOROUTINE_SPAWN"},
+    {"from": "concurrency_pump", "to": "response_send", "type": "DATACHANNEL_PUMP"},
+    {"from": "response_send", "to": "terminal_boundary", "type": "SAFE_SCOPE_ISOLATION"}
+  ]
+}

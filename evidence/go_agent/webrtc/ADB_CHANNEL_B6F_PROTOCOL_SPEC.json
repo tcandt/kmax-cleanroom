@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "phase": "Phase 2C.5B6F",
+    "title": "ADB-Channel Protocol Specification & State Machine",
+    "classification": "STATIC_CONFIRMED",
+    "immutable": true
+  },
+  "channel_identity": {
+    "label": "adb-channel",
+    "type": "DATACHANNEL_WEBRTC",
+    "creator_side": "Browser Client",
+    "consumer_side": "Agent",
+    "negotiation_method": "pc.createDataChannel",
+    "ordered_property": {
+      "value": true,
+      "classification": "REFERENCE_ONLY",
+      "provenance": "Configured by browser client at creation; not enforced or inspected by Agent binary"
+    }
+  },
+  "directional_framing": {
+    "browser_to_agent_request": {
+      "supported_modes": [
+        "ADB_PACKET_MODE (24-byte header + optional payload)",
+        "BARE_RAW_PTY_MODE (raw binary stream)"
+      ],
+      "classification": "STATIC_CONFIRMED",
+      "api": "OnMessage"
+    },
+    "agent_to_browser_response": {
+      "supported_modes": [
+        "ADB_PACKET_MODE (24-byte header + optional stdout payload via OKAY/WRTE/CNXN/CLSE)",
+        "BARE_RAW_PTY_MODE (raw binary stdout chunks from PTY)"
+      ],
+      "classification": "STATIC_CONFIRMED",
+      "api": "(*DataChannel).Send (binary)"
+    }
+  },
+  "session_mode_lifecycle": {
+    "initial_is_first_packet": true,
+    "initial_is_bare_pty_mode": false,
+    "header_length_threshold": 24,
+    "cnxn_command_magic": "0x4e584e43",
+    "is_session_sticky": true,
+    "bare_mode_log": "First packet is not ADB, switching to BARE raw PTY mode"
+  },
+  "adb_packet_protocol": {
+    "header_bytes": 24,
+    "fields": [
+      {
+        "offset": 0,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "command",
+        "standard_adb_name": "A_CMD"
+      },
+      {
+        "offset": 4,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "arg0",
+        "standard_adb_name": "A_ARG0"
+      },
+      {
+        "offset": 8,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "arg1",
+        "standard_adb_name": "A_ARG1"
+      },
+      {
+        "offset": 12,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "data_length",
+        "standard_adb_name": "A_LEN"
+      },
+      {
+        "offset": 16,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "data_crc32",
+        "standard_adb_name": "A_CRC"
+      },
+      {
+        "offset": 20,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "magic",
+        "standard_adb_name": "A_MAG"
+      }
+    ],
+    "commands": {
+      "CNXN": {
+        "constant": "0x4e584e43",
+        "behavior": "Logs '[ADB] Received CNXN, replying CNXN', responds with CNXN packet"
+      },
+      "OPEN": {
+        "constant": "0x4e45504f",
+        "behavior": "Logs '[ADB] Received OPEN', allocates PTY/pipe, starts shell (/system/bin/sh or /bin/sh), responds with OKAY (0x59414b4f)"
+      },
+      "WRTE": {
+        "constant": "0x45545257",
+        "behavior": "Writes payload bytes to shell stdin via (*os.File).Write, responds with OKAY (0x59414b4f)"
+      },
+      "CLSE": {
+        "constant": "0x45534c43",
+        "behavior": "Logs '[ADB] Received CLSE, closing session', tears down session, responds with CLSE (0x45534c43)"
+      },
+      "OKAY": {
+        "constant": "0x59414b4f",
+        "behavior": "Sent by Agent to acknowledge OPEN and WRTE commands"
+      }
+    }
+  },
+  "bare_pty_mode": {
+    "framing": "RAW_BINARY_STREAM",
+    "behavior": "Streams unencapsulated bytes directly between DataChannel and PTY master descriptor"
+  }
+}

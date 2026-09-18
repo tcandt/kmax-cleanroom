@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "phase": "Phase 2C.5B6F",
+    "title": "ADB-Channel Message Framing & Header Layout",
+    "classification": "STATIC_CONFIRMED",
+    "immutable": true
+  },
+  "channel_label": "adb-channel",
+  "framing_architecture": "DUAL_MODE_PROTOCOL_HANDLER",
+  "mode_selection_rule": {
+    "rule": "First message determines session mode permanently (SESSION_STICKY)",
+    "condition": "if len(first_msg) >= 24 and first_msg[0:4] == 0x4e584e43 ('CNXN') then ADB_PACKET_MODE else BARE_RAW_PTY_MODE"
+  },
+  "mode_1_adb_packet_framing": {
+    "header_bytes": 24,
+    "fields": [
+      {
+        "offset": 0,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "command",
+        "standard_adb_name": "A_CMD"
+      },
+      {
+        "offset": 4,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "arg0",
+        "standard_adb_name": "A_ARG0"
+      },
+      {
+        "offset": 8,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "arg1",
+        "standard_adb_name": "A_ARG1"
+      },
+      {
+        "offset": 12,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "data_length",
+        "standard_adb_name": "A_LEN"
+      },
+      {
+        "offset": 16,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "data_crc32",
+        "standard_adb_name": "A_CRC"
+      },
+      {
+        "offset": 20,
+        "width": 4,
+        "endian": "LITTLE_ENDIAN",
+        "machine_name": "magic",
+        "standard_adb_name": "A_MAG"
+      }
+    ],
+    "state_machine_commands": {
+      "CNXN": {
+        "constant": "0x4e584e43",
+        "behavior": "Logs '[ADB] Received CNXN, replying CNXN', responds with CNXN packet"
+      },
+      "OPEN": {
+        "constant": "0x4e45504f",
+        "behavior": "Logs '[ADB] Received OPEN', allocates PTY/pipe, starts shell (/system/bin/sh or /bin/sh), responds with OKAY (0x59414b4f)"
+      },
+      "WRTE": {
+        "constant": "0x45545257",
+        "behavior": "Writes payload bytes to shell stdin via (*os.File).Write, responds with OKAY (0x59414b4f)"
+      },
+      "CLSE": {
+        "constant": "0x45534c43",
+        "behavior": "Logs '[ADB] Received CLSE, closing session', tears down session, responds with CLSE (0x45534c43)"
+      },
+      "OKAY": {
+        "constant": "0x59414b4f",
+        "behavior": "Sent by Agent to acknowledge OPEN and WRTE commands"
+      }
+    }
+  },
+  "mode_2_bare_raw_pty_framing": {
+    "header_bytes": 0,
+    "payload_format": "RAW_BINARY_BYTES",
+    "stream_demultiplexing": "NONE (direct stream pipe between WebRTC and PTY)"
+  }
+}

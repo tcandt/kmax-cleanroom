@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "phase": "Phase 2C.5B6F",
+    "title": "ADB-Channel Source Provenance & Disassembly Cross-Reference",
+    "classification": "STATIC_CONFIRMED",
+    "immutable": true
+  },
+  "binaries": {
+    "arm64": {
+      "path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4"
+    },
+    "amd64": {
+      "path": "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64",
+      "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16"
+    }
+  },
+  "facts": [
+    {
+      "fact_id": "FACT-ADB-01",
+      "description": "Channel label 'adb-channel' string comparison & inbound dispatch",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "va": "0x53f2ac",
+        "instruction": "cmp x1, #0xb; cmp 8 bytes 'adb-chan', 2 bytes 'ne', 1 byte 'l'"
+      },
+      "amd64_evidence": {
+        "va": "0x9e2fad",
+        "instruction": "cmpq $0xb, %rbx; cmpq 0x6e6168632d626461, (%rax); cmpw $0x656e, 0x8(%rax); cmpb $0x6c, 0xa(%rax)"
+      }
+    },
+    {
+      "fact_id": "FACT-ADB-02",
+      "description": "OnOpen callback registration & readyState check",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "va": "0x53f300",
+        "closure": "0x53f4e0",
+        "onopen_call": "0x498d10",
+        "handler_call": "0x516020"
+      },
+      "amd64_evidence": {
+        "va": "0x9e2fdb",
+        "closure": "0x9e31c0",
+        "onopen_call": "0x923b60",
+        "handler_call": "0x9b2be0"
+      }
+    },
+    {
+      "fact_id": "FACT-ADB-03",
+      "description": "Lifecycle OnClose and OnMessage callback registration",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "onclose_call": "0x516280 calling 0x499570",
+        "onmessage_call": "0x516390 calling 0x499770"
+      },
+      "amd64_evidence": {
+        "onclose_call": "0x9b2f00 calling 0x9242e0",
+        "onmessage_call": "0x9b3091 calling 0x9244a0"
+      }
+    },
+    {
+      "fact_id": "FACT-ADB-04",
+      "description": "Session-sticky dual-mode discriminator (CNXN vs Bare PTY)",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "va": "0x516508",
+        "length_cmp": "cmp x2, #0x18",
+        "magic_cmp": "cmp w5, 0x4e584e43",
+        "bare_mode_log": "0x6e294e"
+      },
+      "amd64_evidence": {
+        "va": "0x9b328b",
+        "length_cmp": "cmpq $0x18, %rcx",
+        "magic_cmp": "cmpl $0x4e584e43, (%rbx)",
+        "bare_mode_log": "0xb8487d"
+      }
+    },
+    {
+      "fact_id": "FACT-ADB-05",
+      "description": "24-byte ADB packet header parser & state machine (CNXN, OPEN, WRTE, CLSE, OKAY)",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "va": "0x516f5c",
+        "commands": [
+          "CNXN (0x4e584e43)",
+          "OPEN (0x4e45504f)",
+          "WRTE (0x45545257)",
+          "CLSE (0x45534c43)",
+          "OKAY (0x59414b4f)"
+        ]
+      },
+      "amd64_evidence": {
+        "va": "0x9b3eab",
+        "commands": [
+          "CNXN (0x4e584e43)",
+          "OPEN (0x4e45504f)",
+          "WRTE (0x45545257)",
+          "CLSE (0x45534c43)",
+          "OKAY (0x59414b4f)"
+        ]
+      }
+    },
+    {
+      "fact_id": "FACT-ADB-06",
+      "description": "Response transmission via (*DataChannel).Send (binary)",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "va": "0x516f90",
+        "call": "(*DataChannel).Send @ 0x49a3d0"
+      },
+      "amd64_evidence": {
+        "va": "0x9b54fe",
+        "call": "(*DataChannel).Send @ 0x9250c0"
+      }
+    },
+    {
+      "fact_id": "FACT-ADB-07",
+      "description": "Absence of external TCP socket bridge to 127.0.0.1:5555",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "reachable_net_dial": 0,
+        "socket_strings": 0,
+        "callgraph": "All 67 calls in 0x515000-0x51a000 verified non-network"
+      },
+      "amd64_evidence": {
+        "reachable_net_dial": 0,
+        "socket_strings": 0,
+        "callgraph": "All 62 calls in 0x9b2000-0x9b7000 verified non-network"
+      }
+    },
+    {
+      "fact_id": "FACT-ADB-08",
+      "description": "In-process PTY allocation and shell process spawner",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "pty_call": "0x519bf0",
+        "pipe_call": "0x110d40",
+        "shell": "/system/bin/sh @ 0x196e70",
+        "pump": "0x5f730"
+      },
+      "amd64_evidence": {
+        "pty_call": "0x9b7200",
+        "pipe_call": "0x50dd80",
+        "shell": "/bin/sh @ 0x5a1c00",
+        "pump": "0x451c40"
+      }
+    }
+  ]
+}

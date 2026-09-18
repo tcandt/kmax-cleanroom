@@ -147,12 +147,13 @@ def scan_deferred_channels_isolation(agent_pkg_dir: Path, phase: str = "B2") -> 
       - 'B3': active = [input, clipboard, file]; deferred = [camera, ai, adb]
       - 'B4': active = [input, clipboard, file, camera]; deferred = [ai, adb]
       - 'B5F': active_runtime = [input, clipboard, file, camera]; active_safe = [ai parser/schema]; deferred = [ai onmessage, ai executor, process launch, adb]
+      - 'B6F': active_runtime = [input, clipboard, file, camera]; active_safe = [ai parser/schema]; deferred = [ai onmessage, ai executor, process launch, adb onmessage, adb pty, adb shell, adb 127.0.0.1:5555, adb bridge]
     """
     violations = []
     if not agent_pkg_dir.exists():
         return [f"Agent package directory missing: {agent_pkg_dir}"]
 
-    # 1. Structural Deferred Channels: AI-Command and ADB are deferred across ALL phases (B2, B3, B4, B5F)
+    # 1. Structural Deferred Channels: AI-Command and ADB are deferred across ALL phases (B2, B3, B4, B5F, B6F)
     ai_onmessage_patterns = [
         "AICommandChannel.OnMessage", "aiCommandChannel.OnMessage",
         "aiCh.OnMessage", "aiCmdCh.OnMessage", "aiDC.OnMessage",
@@ -161,8 +162,8 @@ def scan_deferred_channels_isolation(agent_pkg_dir: Path, phase: str = "B2") -> 
         "ADBChannel.OnMessage", "adbChannel.OnMessage",
         "adbCh.OnMessage", "adbCmdCh.OnMessage", "adbDC.OnMessage",
     ]
-    if phase == "B5F":
-        # In B5F: parser/schema symbols (ParseAICommand, ValidateAICommand, AICommandEnvelope,
+    if phase in ("B5F", "B6F"):
+        # In B5F/B6F: parser/schema symbols (ParseAICommand, ValidateAICommand, AICommandEnvelope,
         # AICommandResponse, MarshalAICommandResponse) are ACTIVE_SAFE.
         # Prohibited AI execution keywords:
         ai_keywords = [
@@ -177,7 +178,7 @@ def scan_deferred_channels_isolation(agent_pkg_dir: Path, phase: str = "B2") -> 
         ]
     adb_keywords = [
         "AdbBridge", "AdbSocket", "ConnectAdb", "ForwardAdb",
-        "127.0.0.1:5555", "adbForwarder",
+        "127.0.0.1:5555", "adbForwarder", "pty.Open", "/dev/ptmx",
     ]
 
     # Camera deferred only in B2 and B3

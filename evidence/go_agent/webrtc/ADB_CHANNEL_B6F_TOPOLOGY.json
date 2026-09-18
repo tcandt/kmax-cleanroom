@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "metadata": {
+    "phase": "Phase 2C.5B6F",
+    "title": "ADB-Channel Downstream Topology & Boundary Mapping",
+    "classification": "STATIC_CONFIRMED",
+    "immutable": true
+  },
+  "channel_label": "adb-channel",
+  "downstream_topology": {
+    "classification": "IN_PROCESS_PTY_SHELL_BOUNDARY",
+    "external_tcp_bridge": {
+      "target_endpoint": "127.0.0.1:5555",
+      "status": "ABSENT_UNREACHABLE",
+      "reachable_net_dial_calls": 0,
+      "reachable_tcp_socket_paths": 0,
+      "string_occurrences": 0
+    },
+    "in_process_execution": {
+      "ptmx_allocator_arm64": "0x519bf0 (uORj3xlV_Z / pty.Open)",
+      "ptmx_allocator_amd64": "0x9b7200 (hFJbmSI3 / pty.Open)",
+      "pipe_fallback_arm64": "0x110d40 (EW11VGMk)",
+      "pipe_fallback_amd64": "0x50dd80 (HSWRWyyeZ3)",
+      "shell_process_arm64": "/system/bin/sh",
+      "shell_process_amd64": "/bin/sh",
+      "concurrency_pump_arm64": "0x5f730 (runtime.newproc)",
+      "concurrency_pump_amd64": "0x451c40 (runtime.newproc)"
+    },
+    "clean_room_scope": "DEFERRED_ADB_BRIDGE_BOUNDARY. Zero process execution, zero PTY allocation, and zero socket bridging permitted in clean-room agent."
+  },
+  "evidence_summary": {
+    "external_tcp_connection_provenance": "Exhaustive binary reachability analysis proves zero net.Dial calls, zero TCP dials to 127.0.0.1:5555, and zero socket forwarders.",
+    "in_process_execution_provenance": "Original binaries implement an in-process PTY /dev/ptmx shell launcher (/system/bin/sh on Android ARM64, /bin/sh on Linux AMD64).",
+    "clean_room_governance": "Clean-room agent implements DEFERRED_ADB_BRIDGE_BOUNDARY. Production adb-channel remains completely inert with zero handlers attached."
+  }
+}
