@@ -82,77 +82,140 @@ func TestMediaTrackProperties(t *testing.T) {
 	}
 }
 
-// TestDataChannelLabels verifies the 3 outbound DataChannels and their properties.
+// TestDataChannelLabels verifies the outbound DataChannels and their properties under both cameraSupport true and false.
 func TestDataChannelLabels(t *testing.T) {
 	api, err := NewAPIWithEvidenceBoundEngine()
 	if err != nil {
 		t.Fatalf("failed to create API: %v", err)
 	}
 
-	pc, err := api.NewPeerConnection(BuildRTCConfiguration(nil))
-	if err != nil {
-		t.Fatalf("failed to create PC: %v", err)
-	}
-	defer pc.Close()
+	// 1. cameraSupport = true
+	{
+		pc, err := api.NewPeerConnection(BuildRTCConfiguration(nil))
+		if err != nil {
+			t.Fatalf("failed to create PC: %v", err)
+		}
+		defer pc.Close()
 
-	dc := NewDataChannels()
-	if err := dc.SetupOutboundChannels(pc); err != nil {
-		t.Fatalf("failed to setup outbound channels: %v", err)
+		dc := NewDataChannels()
+		if err := dc.SetupOutboundChannels(pc, true); err != nil {
+			t.Fatalf("failed to setup outbound channels: %v", err)
+		}
+
+		if dc.InputChannel == nil || dc.InputChannel.Label() != ChannelInput {
+			t.Errorf("expected %s to be created", ChannelInput)
+		}
+		if dc.ClipboardChannel == nil || dc.ClipboardChannel.Label() != ChannelClipboard {
+			t.Errorf("expected %s to be created", ChannelClipboard)
+		}
+		if dc.CameraChannel == nil || dc.CameraChannel.Label() != ChannelCamera {
+			t.Errorf("expected %s to be created when cameraSupport=true", ChannelCamera)
+		}
+
+		if !dc.InputChannel.Ordered() || !dc.ClipboardChannel.Ordered() || !dc.CameraChannel.Ordered() {
+			t.Errorf("all outbound channels must have ordered=true")
+		}
 	}
 
-	if dc.InputChannel == nil || dc.InputChannel.Label() != ChannelInput {
-		t.Errorf("expected %s to be created", ChannelInput)
-	}
-	if dc.ClipboardChannel == nil || dc.ClipboardChannel.Label() != ChannelClipboard {
-		t.Errorf("expected %s to be created", ChannelClipboard)
-	}
-	if dc.CameraChannel == nil || dc.CameraChannel.Label() != ChannelCamera {
-		t.Errorf("expected %s to be created", ChannelCamera)
-	}
+	// 2. cameraSupport = false
+	{
+		pc, err := api.NewPeerConnection(BuildRTCConfiguration(nil))
+		if err != nil {
+			t.Fatalf("failed to create PC: %v", err)
+		}
+		defer pc.Close()
 
-	if !dc.InputChannel.Ordered() || !dc.ClipboardChannel.Ordered() || !dc.CameraChannel.Ordered() {
-		t.Errorf("all outbound channels must have ordered=true")
+		dc := NewDataChannels()
+		if err := dc.SetupOutboundChannels(pc, false); err != nil {
+			t.Fatalf("failed to setup outbound channels: %v", err)
+		}
+
+		if dc.InputChannel == nil || dc.InputChannel.Label() != ChannelInput {
+			t.Errorf("expected %s to be created", ChannelInput)
+		}
+		if dc.ClipboardChannel == nil || dc.ClipboardChannel.Label() != ChannelClipboard {
+			t.Errorf("expected %s to be created", ChannelClipboard)
+		}
+		if dc.CameraChannel != nil {
+			t.Errorf("camera-channel MUST NOT be created when cameraSupport=false")
+		}
 	}
 }
 
-// TestPeerSessionOfferCreation validates offer SDP generation, local description, and camera support flag.
+// TestPeerSessionOfferCreation validates offer SDP generation, local description, and camera support flag for both true and false.
 func TestPeerSessionOfferCreation(t *testing.T) {
-	session, err := NewPeerSession(101, "dev-test-1", nil)
-	if err != nil {
-		t.Fatalf("failed to create peer session: %v", err)
-	}
-	defer session.Close()
+	// 1. CameraSupport = true
+	{
+		session, err := NewPeerSessionWithOptions(PeerSessionOptions{
+			ClientID:      101,
+			DeviceID:      "dev-test-1",
+			CameraSupport: true,
+			CameraConfig:  DefaultCameraConfig(),
+		})
+		if err != nil {
+			t.Fatalf("failed to create peer session: %v", err)
+		}
+		defer session.Close()
 
-	if session.GetState() != SessionStateConnecting {
-		t.Errorf("expected state %v, got %v", SessionStateConnecting, session.GetState())
+		if session.GetState() != SessionStateConnecting {
+			t.Errorf("expected state %v, got %v", SessionStateConnecting, session.GetState())
+		}
+
+		offerPayload, err := session.CreateOffer()
+		if err != nil {
+			t.Fatalf("failed to create offer: %v", err)
+		}
+
+		if offerPayload.Type != "offer" {
+			t.Errorf("expected type offer, got %s", offerPayload.Type)
+		}
+		if offerPayload.CameraSupport == nil || *offerPayload.CameraSupport != true {
+			t.Errorf("expected camera_support=true in offer payload")
+		}
+		if session.Channels.CameraChannel == nil {
+			t.Errorf("expected camera-channel to be created when CameraSupport=true")
+		}
+		if !strings.Contains(offerPayload.SDP, "m=video") {
+			t.Errorf("offer SDP missing m=video section")
+		}
+		if !strings.Contains(offerPayload.SDP, "m=audio") {
+			t.Errorf("offer SDP missing m=audio section")
+		}
+		if !strings.Contains(offerPayload.SDP, "display_0") {
+			t.Errorf("offer SDP missing display_0 track identifier")
+		}
+		if !strings.Contains(offerPayload.SDP, "audio_0") {
+			t.Errorf("offer SDP missing audio_0 track identifier")
+		}
+		if session.GetState() != SessionStateHaveLocalOffer {
+			t.Errorf("expected state %v, got %v", SessionStateHaveLocalOffer, session.GetState())
+		}
 	}
 
-	offerPayload, err := session.CreateOffer()
-	if err != nil {
-		t.Fatalf("failed to create offer: %v", err)
-	}
+	// 2. CameraSupport = false
+	{
+		session, err := NewPeerSessionWithOptions(PeerSessionOptions{
+			ClientID:      102,
+			DeviceID:      "dev-test-1-nocam",
+			CameraSupport: false,
+			CameraConfig:  DefaultCameraConfig(),
+		})
+		if err != nil {
+			t.Fatalf("failed to create peer session: %v", err)
+		}
+		defer session.Close()
 
-	if offerPayload.Type != "offer" {
-		t.Errorf("expected type offer, got %s", offerPayload.Type)
-	}
-	if offerPayload.CameraSupport == nil || *offerPayload.CameraSupport != true {
-		t.Errorf("expected camera_support=true in offer payload")
-	}
-	if !strings.Contains(offerPayload.SDP, "m=video") {
-		t.Errorf("offer SDP missing m=video section")
-	}
-	if !strings.Contains(offerPayload.SDP, "m=audio") {
-		t.Errorf("offer SDP missing m=audio section")
-	}
-	if !strings.Contains(offerPayload.SDP, "display_0") {
-		t.Errorf("offer SDP missing display_0 track identifier")
-	}
-	if !strings.Contains(offerPayload.SDP, "audio_0") {
-		t.Errorf("offer SDP missing audio_0 track identifier")
-	}
+		offerPayload, err := session.CreateOffer()
+		if err != nil {
+			t.Fatalf("failed to create offer: %v", err)
+		}
 
-	if session.GetState() != SessionStateHaveLocalOffer {
-		t.Errorf("expected state %v, got %v", SessionStateHaveLocalOffer, session.GetState())
+		if offerPayload.CameraSupport == nil || *offerPayload.CameraSupport != false {
+			t.Errorf("expected camera_support=false in offer payload")
+		}
+		if session.Channels.CameraChannel != nil {
+			t.Errorf("camera-channel MUST NOT be created when CameraSupport=false")
+		}
 	}
 }
 

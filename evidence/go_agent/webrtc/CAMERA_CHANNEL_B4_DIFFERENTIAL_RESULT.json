@@ -1,0 +1,1560 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B4 WebRTC Camera-Channel Differential Result",
+    "phase": "Phase 2C.5B4",
+    "status": "PASS_PHASE_2C5B4_CLOSED",
+    "effective_contract_sha256": "818abe7db2cc38df3563a0f6cf45ec047cf0c0a93338c994e60a327fc0d471ce",
+    "total_effective_requirements": 13,
+    "total_original_parity_requirements": 12,
+    "total_phase_scope_guards": 1,
+    "total_evaluated_dimensions": 27,
+    "derivation_tool": "tools/derive_b4_differential.py",
+    "engine": "evidence-executed"
+  },
+  "counters": {
+    "original_static_evidence_total": 18,
+    "original_static_evidence_passed": 18,
+    "cross_component_evidence_total": 1,
+    "cross_component_evidence_passed": 1,
+    "exact_framing_total": 1,
+    "exact_framing_passed": 1,
+    "reconstructed_runtime_e2e_total": 1,
+    "reconstructed_runtime_e2e_passed": 1,
+    "original_agent_runtime_parity_total": 1,
+    "original_agent_runtime_parity_passed": 0,
+    "phase_scope_guard_total": 1,
+    "phase_scope_guard_passed": 1,
+    "reference_only_total": 1,
+    "reference_only_passed": 1,
+    "implementation_choice_total": 2,
+    "implementation_choice_passed": 2,
+    "reconstructed_semantic_model_total": 1,
+    "reconstructed_semantic_model_passed": 1,
+    "environment_unavailable_total": 1,
+    "verified_divergence_total": 0,
+    "failed_total": 0
+  },
+  "overall_verdict": "PASS_PHASE_2C5B4_CLOSED",
+  "dimensions": [
+    {
+      "id": "CAM-B4-DIM-01",
+      "name": "camera_channel_label",
+      "contract_ids": [
+        "CAM-B4-01"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (confirmed_webrtc_channels.camera-channel.label)",
+      "runtime_basis": "Agent creates outbound DataChannel with label 'camera-channel'",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/camera-channel/label",
+          "expected": "camera-channel",
+          "expected_classification": "COMBINED_CONFIRMED",
+          "classification_json_pointer": "/confirmed_webrtc_channels/camera-channel/evidence_classification"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSupportTrueE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSupportTrueE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-02",
+      "name": "camera_channel_ordered",
+      "contract_ids": [
+        "CAM-B4-01"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
+      "runtime_basis": "camera-channel created with ordered=true",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/camera-channel/ordered",
+          "expected": true
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestDataChannelLabels"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestDataChannelLabels"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-03",
+      "name": "conditional_creation_gate",
+      "contract_ids": [
+        "CAM-B4-01"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (channel_properties.conditional_creation)",
+      "runtime_basis": "TestCameraSupportFalseE2E: camera-channel MUST NOT be created when support=false",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/channel_properties/conditional_creation",
+          "expected": "Created if and only if cameraSupport == true (probed at cameraAddr or overridden via -force-camera)"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSupportFalseE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSupportFalseE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-04",
+      "name": "bridge_address_and_config",
+      "contract_ids": [
+        "CAM-B4-02"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json (default 127.0.0.1:9001, camera-addr, force-camera)",
+      "runtime_basis": "CameraConfig defaults and env resolution verified",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/endpoint_classification/default_endpoint",
+          "expected": "127.0.0.1:9001"
+        }
+      ],
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "127.0.0.1:9001"
+        },
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "camera-addr"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraProbeBehavior"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraProbeBehavior"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-05",
+      "name": "camera_probe_and_override",
+      "contract_ids": [
+        "CAM-B4-02"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json (Camera HAL service address and force-camera override)",
+      "runtime_basis": "TestCameraProbeBehavior verifies probe success/failure/override logic",
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "force-camera"
+        },
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "Camera HAL service address (IP:Port)"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraProbeBehavior"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraProbeBehavior"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-06",
+      "name": "signaling_offer_camera_support_flag",
+      "contract_ids": [
+        "CAM-B4-02"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (runtime_behavior dynamic probe and camera_support disabled)",
+      "runtime_basis": "Offer payload carries camera_support boolean reflecting probe state",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/endpoint_classification/runtime_behavior",
+          "expected": "Dialed dynamically on startup; if dial fails without -force-camera, camera_support is disabled."
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestPeerSessionOfferCreation"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestPeerSessionOfferCreation"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-07",
+      "name": "datachannel_lifecycle_handlers",
+      "contract_ids": [
+        "CAM-B4-03"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DISASSEMBLY_FACTS.json (ARM64 0x51a024-0x51a0f8 OnOpen, OnMessage, OnClose)",
+      "runtime_basis": "CameraHandler registers active OnOpen, OnMessage, OnClose handlers",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandlerHALBridgeInteraction"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandlerHALBridgeInteraction"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-08",
+      "name": "length_prefix_wire_framing",
+      "contract_ids": [
+        "CAM-B4-04",
+        "CAM-B4-10"
+      ],
+      "classification": "EXACT_FRAMING",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (4-byte LE length prefix framing)",
+      "runtime_basis": "Exact wire vectors verified: 0, 6, 28, 34, 35, 460800",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/wire_framing/byte_order",
+          "expected": "little-endian"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/wire_framing/width_bytes",
+          "expected": 4
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraWireFramingVectors"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraWireFramingVectors"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-09",
+      "name": "hal_bridge_handshake",
+      "contract_ids": [
+        "CAM-B4-04"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (handshake JSON with width, height, frame_rate)",
+      "runtime_basis": "TestCameraHandshakeSerialization and handshake receipt on mock bridge",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/handshake/default_fields/width",
+          "expected": 640
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/handshake/default_fields/height",
+          "expected": 480
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/handshake/default_fields/frame_rate",
+          "expected": 30.0
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandshakeSerialization"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandshakeSerialization"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-10",
+      "name": "hal_inbound_event_framing",
+      "contract_ids": [
+        "CAM-B4-05"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (START, STOP, CAPTURE ASCII events)",
+      "runtime_basis": "TestCameraHandlerHALBridgeInteraction parses all 3 inbound events",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/0/event_name",
+          "expected": "VIRTUAL_DEVICE_START_CAMERA_SESSION"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/0/length",
+          "expected": 35
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/1/event_name",
+          "expected": "VIRTUAL_DEVICE_STOP_CAMERA_SESSION"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/1/length",
+          "expected": 34
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/2/event_name",
+          "expected": "VIRTUAL_DEVICE_CAPTURE_IMAGE"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/2/length",
+          "expected": 28
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandlerHALBridgeInteraction"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandlerHALBridgeInteraction"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-11",
+      "name": "start_stop_command_dispatch",
+      "contract_ids": [
+        "CAM-B4-06"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (action:start / action:stop text frames)",
+      "runtime_basis": "Browser client receives exact semantic start/stop actions via DataChannel",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/datachannel_message_types/agent_to_browser/start_command/framing",
+          "expected": "JSON_TEXT"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/datachannel_message_types/agent_to_browser/stop_command/framing",
+          "expected": "JSON_TEXT"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSCTPTCPFullE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSCTPTCPFullE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-12",
+      "name": "inbound_jpeg_frame_ingestion",
+      "contract_ids": [
+        "CAM-B4-07"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (raw binary JPEG payload bytes)",
+      "runtime_basis": "Agent accepts binary JPEG payload bytes and rejects text frames",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/datachannel_message_types/browser_to_agent/camera_frame/framing",
+          "expected": "RAW_BINARY"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-13",
+      "name": "snapshot_cache_ordering",
+      "contract_ids": [
+        "CAM-B4-07"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (latestCameraJpeg updated BEFORE enqueue)",
+      "runtime_basis": "Newest frame updates snapshot cache even when queue drops the frame",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/backpressure_and_concurrency/snapshot_cache_ordering/ordering",
+          "expected": "latestCameraJpeg is updated under lock BEFORE selectnbsend into cameraFrameChan"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-14",
+      "name": "single_element_queue_capacity",
+      "contract_ids": [
+        "CAM-B4-08"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (cameraFrameChan capacity=1)",
+      "runtime_basis": "cameraFrameChan allocated with cap=1",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/backpressure_and_concurrency/channel_capacity/capacity",
+          "expected": 1
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-15",
+      "name": "non_blocking_send_semantics",
+      "contract_ids": [
+        "CAM-B4-08"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (selectnbsend non-blocking drop)",
+      "runtime_basis": "Fast producer does not block when queue is saturated",
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraBackpressureSCTPE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraBackpressureSCTPE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-16",
+      "name": "jpeg_decode_i420_contiguous_fast_path",
+      "contract_ids": [
+        "CAM-B4-09"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (fast_path 3 contiguous memmoves Y, Cb, Cr)",
+      "runtime_basis": "TestI420ContiguousGolden verifies exact contiguous planar byte layout",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/video_frame_stream/planar_layout/format",
+          "expected": "Planar I420 (YUV420P)"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestI420ContiguousGolden"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestI420ContiguousGolden"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-17",
+      "name": "i420_row_stride_handling",
+      "contract_ids": [
+        "CAM-B4-09"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (stride_fallback_action row-by-row offsets)",
+      "runtime_basis": "TestI420StrideGolden verifies conversion with YStride > width and CStride > width/2",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestI420StrideGolden"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestI420StrideGolden"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-18",
+      "name": "generic_image_rec601_fallback",
+      "contract_ids": [
+        "CAM-B4-09"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (generic_fallback_action Rec.601 RGB-to-YUV)",
+      "runtime_basis": "TestI420GenericFallbackGolden verifies Rec.601 YUV output on RGBA input",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestI420GenericFallbackGolden"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestI420GenericFallbackGolden"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-19",
+      "name": "virtual_camera_snapshot_extraction",
+      "contract_ids": [
+        "CAM-B4-11"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (snapshot_response 4-byte LE + raw JPEG)",
+      "runtime_basis": "Mock bridge receives exact original JPEG bytes on VIRTUAL_DEVICE_CAPTURE_IMAGE",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/snapshot_response/trigger",
+          "expected": "Received VIRTUAL_DEVICE_CAPTURE_IMAGE event from Camera HAL"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSCTPTCPFullE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSCTPTCPFullE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-20",
+      "name": "camera_pipeline_boundary_assertion",
+      "contract_ids": [
+        "CAM-B4-12"
+      ],
+      "classification": "CROSS_COMPONENT_EVIDENCE",
+      "evidence_basis": "CameraCapture.java bound to physical capture; virtual camera decoupled from @uds_sys_v_",
+      "runtime_basis": "Cross-component source artifact verified and decoupling maintained",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/architectural_separation/boundary_assertion",
+          "expected": "CameraCapture.java is positively bound to the physical-camera capture pipeline. No recovered call/data-flow evidence places CameraCapture.java on the virtual-camera injection path; the recovered injection path is camera-channel -> Agent JPEG decode -> camera TCP bridge."
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "cross_component_positive_binding",
+        "artifact": "D:\\KMAX-CLEANROOM\\raw_extraction\\android\\jadx\\sources\\com\\android\\helper\\video\\CameraCapture.java"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-21",
+      "name": "deferred_channels_isolation",
+      "contract_ids": [
+        "CAM-B4-13"
+      ],
+      "classification": "PHASE_SCOPE_GUARD",
+      "evidence_basis": "Deferred channels (ai-command-channel, adb-channel) remain strictly inert",
+      "runtime_basis": "Static scan confirms zero business handlers on deferred channels",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "phase_scope_guard",
+        "details": "zero violations"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-22",
+      "name": "reconstructed_runtime_real_sctp_tcp_e2e",
+      "contract_ids": [
+        "CAM-B4-01",
+        "CAM-B4-04",
+        "CAM-B4-05",
+        "CAM-B4-06",
+        "CAM-B4-09",
+        "CAM-B4-10",
+        "CAM-B4-11"
+      ],
+      "classification": "RUNTIME_RECONSTRUCTED_E2E",
+      "evidence_basis": "Full standards-compliant Pion WebRTC SCTP DataChannel + TCP mock bridge E2E",
+      "runtime_basis": "TestCameraSCTPTCPFullE2E passes Steps A through O",
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSCTPTCPFullE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSCTPTCPFullE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-23",
+      "name": "defensive_bounded_max_frame_size",
+      "contract_ids": [],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "Defensive safety bound (10MB) rejects oversized frames before allocation",
+      "runtime_basis": "TestCameraWireFramingDefensiveLimit passes",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraWireFramingDefensiveLimit"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraWireFramingDefensiveLimit"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-24",
+      "name": "camera_bridge_interface_abstraction",
+      "contract_ids": [],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "CameraBridge / CameraBridgeDialer interfaces decouple network transport for testing",
+      "runtime_basis": "Dialer injection verified across unit and E2E tests",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Architectural abstraction verified"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-25",
+      "name": "camera_semantic_state_machine",
+      "contract_ids": [],
+      "classification": "RECONSTRUCTED_SEMANTIC_MODEL",
+      "evidence_basis": "7-state lifecycle model (StateUninitialized .. StateClosed)",
+      "runtime_basis": "Observable state transitions verified in TestCameraHandlerHALBridgeInteraction",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandlerHALBridgeInteraction"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandlerHALBridgeInteraction"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-26",
+      "name": "browser_arraybuffer_reference_context",
+      "contract_ids": [],
+      "classification": "REFERENCE_ONLY",
+      "evidence_basis": "Browser frontend useWebRTC.js encodes canvas to ArrayBuffer (Lane D reference)",
+      "runtime_basis": "ArrayBuffer confirmed as frontend reference, Agent accepts raw binary JPEG bytes",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "reference_only_clarification",
+        "note": "Verified reference boundary"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-27",
+      "name": "original_agent_runtime_parity",
+      "contract_ids": [],
+      "classification": "ENVIRONMENT_UNAVAILABLE",
+      "evidence_basis": "Original Android cleanroom testbed unavailable for original binary execution",
+      "runtime_basis": "Environment check returns ENVIRONMENT_UNAVAILABLE",
+      "result": "ENVIRONMENT_UNAVAILABLE",
+      "execution_evidence": {
+        "type": "android_prerequisite_matrix",
+        "prerequisites": {
+          "original_agent_artifact_available": true,
+          "compatible_android_target_available": false,
+          "app_process_available": false,
+          "helper_artifact_available": true,
+          "execution_context_shell_uid_2000": false,
+          "abstract_uds_support": false,
+          "safe_launch_capability": false
+        },
+        "diagnostic": "Android runtime unavailable: missing ['abstract_uds_support', 'app_process_available', 'compatible_android_target_available', 'execution_context_shell_uid_2000', 'safe_launch_capability']"
+      }
+    }
+  ],
+  "evaluated_dimensions": [
+    {
+      "id": "CAM-B4-DIM-01",
+      "name": "camera_channel_label",
+      "contract_ids": [
+        "CAM-B4-01"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (confirmed_webrtc_channels.camera-channel.label)",
+      "runtime_basis": "Agent creates outbound DataChannel with label 'camera-channel'",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/camera-channel/label",
+          "expected": "camera-channel",
+          "expected_classification": "COMBINED_CONFIRMED",
+          "classification_json_pointer": "/confirmed_webrtc_channels/camera-channel/evidence_classification"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSupportTrueE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSupportTrueE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-02",
+      "name": "camera_channel_ordered",
+      "contract_ids": [
+        "CAM-B4-01"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DATACHANNEL_LABEL_EVIDENCE.json (Disassembly passes ordered=1 byte pointer)",
+      "runtime_basis": "camera-channel created with ordered=true",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+          "json_pointer": "/confirmed_webrtc_channels/camera-channel/ordered",
+          "expected": true
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestDataChannelLabels"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestDataChannelLabels"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-03",
+      "name": "conditional_creation_gate",
+      "contract_ids": [
+        "CAM-B4-01"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (channel_properties.conditional_creation)",
+      "runtime_basis": "TestCameraSupportFalseE2E: camera-channel MUST NOT be created when support=false",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/channel_properties/conditional_creation",
+          "expected": "Created if and only if cameraSupport == true (probed at cameraAddr or overridden via -force-camera)"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSupportFalseE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSupportFalseE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-04",
+      "name": "bridge_address_and_config",
+      "contract_ids": [
+        "CAM-B4-02"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json (default 127.0.0.1:9001, camera-addr, force-camera)",
+      "runtime_basis": "CameraConfig defaults and env resolution verified",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/endpoint_classification/default_endpoint",
+          "expected": "127.0.0.1:9001"
+        }
+      ],
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "127.0.0.1:9001"
+        },
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "camera-addr"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraProbeBehavior"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraProbeBehavior"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-05",
+      "name": "camera_probe_and_override",
+      "contract_ids": [
+        "CAM-B4-02"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "STRINGS.json (Camera HAL service address and force-camera override)",
+      "runtime_basis": "TestCameraProbeBehavior verifies probe success/failure/override logic",
+      "string_refs": [
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "force-camera"
+        },
+        {
+          "artifact": "evidence/go_agent/STRINGS.json",
+          "needle": "Camera HAL service address (IP:Port)"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraProbeBehavior"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraProbeBehavior"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-06",
+      "name": "signaling_offer_camera_support_flag",
+      "contract_ids": [
+        "CAM-B4-02"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (runtime_behavior dynamic probe and camera_support disabled)",
+      "runtime_basis": "Offer payload carries camera_support boolean reflecting probe state",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/endpoint_classification/runtime_behavior",
+          "expected": "Dialed dynamically on startup; if dial fails without -force-camera, camera_support is disabled."
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestPeerSessionOfferCreation"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestPeerSessionOfferCreation"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-07",
+      "name": "datachannel_lifecycle_handlers",
+      "contract_ids": [
+        "CAM-B4-03"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "DISASSEMBLY_FACTS.json (ARM64 0x51a024-0x51a0f8 OnOpen, OnMessage, OnClose)",
+      "runtime_basis": "CameraHandler registers active OnOpen, OnMessage, OnClose handlers",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandlerHALBridgeInteraction"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandlerHALBridgeInteraction"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-08",
+      "name": "length_prefix_wire_framing",
+      "contract_ids": [
+        "CAM-B4-04",
+        "CAM-B4-10"
+      ],
+      "classification": "EXACT_FRAMING",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (4-byte LE length prefix framing)",
+      "runtime_basis": "Exact wire vectors verified: 0, 6, 28, 34, 35, 460800",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/wire_framing/byte_order",
+          "expected": "little-endian"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/wire_framing/width_bytes",
+          "expected": 4
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraWireFramingVectors"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraWireFramingVectors"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-09",
+      "name": "hal_bridge_handshake",
+      "contract_ids": [
+        "CAM-B4-04"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (handshake JSON with width, height, frame_rate)",
+      "runtime_basis": "TestCameraHandshakeSerialization and handshake receipt on mock bridge",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/handshake/default_fields/width",
+          "expected": 640
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/handshake/default_fields/height",
+          "expected": 480
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/handshake/default_fields/frame_rate",
+          "expected": 30.0
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandshakeSerialization"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandshakeSerialization"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-10",
+      "name": "hal_inbound_event_framing",
+      "contract_ids": [
+        "CAM-B4-05"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (START, STOP, CAPTURE ASCII events)",
+      "runtime_basis": "TestCameraHandlerHALBridgeInteraction parses all 3 inbound events",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/0/event_name",
+          "expected": "VIRTUAL_DEVICE_START_CAMERA_SESSION"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/0/length",
+          "expected": 35
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/1/event_name",
+          "expected": "VIRTUAL_DEVICE_STOP_CAMERA_SESSION"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/1/length",
+          "expected": 34
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/2/event_name",
+          "expected": "VIRTUAL_DEVICE_CAPTURE_IMAGE"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/inbound_event_framing/supported_events/2/length",
+          "expected": 28
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandlerHALBridgeInteraction"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandlerHALBridgeInteraction"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-11",
+      "name": "start_stop_command_dispatch",
+      "contract_ids": [
+        "CAM-B4-06"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (action:start / action:stop text frames)",
+      "runtime_basis": "Browser client receives exact semantic start/stop actions via DataChannel",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/datachannel_message_types/agent_to_browser/start_command/framing",
+          "expected": "JSON_TEXT"
+        },
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/datachannel_message_types/agent_to_browser/stop_command/framing",
+          "expected": "JSON_TEXT"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSCTPTCPFullE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSCTPTCPFullE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-12",
+      "name": "inbound_jpeg_frame_ingestion",
+      "contract_ids": [
+        "CAM-B4-07"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (raw binary JPEG payload bytes)",
+      "runtime_basis": "Agent accepts binary JPEG payload bytes and rejects text frames",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/datachannel_message_types/browser_to_agent/camera_frame/framing",
+          "expected": "RAW_BINARY"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-13",
+      "name": "snapshot_cache_ordering",
+      "contract_ids": [
+        "CAM-B4-07"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (latestCameraJpeg updated BEFORE enqueue)",
+      "runtime_basis": "Newest frame updates snapshot cache even when queue drops the frame",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/backpressure_and_concurrency/snapshot_cache_ordering/ordering",
+          "expected": "latestCameraJpeg is updated under lock BEFORE selectnbsend into cameraFrameChan"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-14",
+      "name": "single_element_queue_capacity",
+      "contract_ids": [
+        "CAM-B4-08"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (cameraFrameChan capacity=1)",
+      "runtime_basis": "cameraFrameChan allocated with cap=1",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/backpressure_and_concurrency/channel_capacity/capacity",
+          "expected": 1
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-15",
+      "name": "non_blocking_send_semantics",
+      "contract_ids": [
+        "CAM-B4-08"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (selectnbsend non-blocking drop)",
+      "runtime_basis": "Fast producer does not block when queue is saturated",
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraBackpressureSCTPE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraBackpressureSCTPE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-16",
+      "name": "jpeg_decode_i420_contiguous_fast_path",
+      "contract_ids": [
+        "CAM-B4-09"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (fast_path 3 contiguous memmoves Y, Cb, Cr)",
+      "runtime_basis": "TestI420ContiguousGolden verifies exact contiguous planar byte layout",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/video_frame_stream/planar_layout/format",
+          "expected": "Planar I420 (YUV420P)"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestI420ContiguousGolden"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestI420ContiguousGolden"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-17",
+      "name": "i420_row_stride_handling",
+      "contract_ids": [
+        "CAM-B4-09"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (stride_fallback_action row-by-row offsets)",
+      "runtime_basis": "TestI420StrideGolden verifies conversion with YStride > width and CStride > width/2",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestI420StrideGolden"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestI420StrideGolden"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-18",
+      "name": "generic_image_rec601_fallback",
+      "contract_ids": [
+        "CAM-B4-09"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (generic_fallback_action Rec.601 RGB-to-YUV)",
+      "runtime_basis": "TestI420GenericFallbackGolden verifies Rec.601 YUV output on RGBA input",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestI420GenericFallbackGolden"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestI420GenericFallbackGolden"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-19",
+      "name": "virtual_camera_snapshot_extraction",
+      "contract_ids": [
+        "CAM-B4-11"
+      ],
+      "classification": "STATIC_PROTOCOL_EVIDENCE",
+      "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (snapshot_response 4-byte LE + raw JPEG)",
+      "runtime_basis": "Mock bridge receives exact original JPEG bytes on VIRTUAL_DEVICE_CAPTURE_IMAGE",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/camera_hal_tcp_protocol/snapshot_response/trigger",
+          "expected": "Received VIRTUAL_DEVICE_CAPTURE_IMAGE event from Camera HAL"
+        }
+      ],
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSCTPTCPFullE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSCTPTCPFullE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-20",
+      "name": "camera_pipeline_boundary_assertion",
+      "contract_ids": [
+        "CAM-B4-12"
+      ],
+      "classification": "CROSS_COMPONENT_EVIDENCE",
+      "evidence_basis": "CameraCapture.java bound to physical capture; virtual camera decoupled from @uds_sys_v_",
+      "runtime_basis": "Cross-component source artifact verified and decoupling maintained",
+      "evidence_refs": [
+        {
+          "artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+          "json_pointer": "/architectural_separation/boundary_assertion",
+          "expected": "CameraCapture.java is positively bound to the physical-camera capture pipeline. No recovered call/data-flow evidence places CameraCapture.java on the virtual-camera injection path; the recovered injection path is camera-channel -> Agent JPEG decode -> camera TCP bridge."
+        }
+      ],
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "cross_component_positive_binding",
+        "artifact": "D:\\KMAX-CLEANROOM\\raw_extraction\\android\\jadx\\sources\\com\\android\\helper\\video\\CameraCapture.java"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-21",
+      "name": "deferred_channels_isolation",
+      "contract_ids": [
+        "CAM-B4-13"
+      ],
+      "classification": "PHASE_SCOPE_GUARD",
+      "evidence_basis": "Deferred channels (ai-command-channel, adb-channel) remain strictly inert",
+      "runtime_basis": "Static scan confirms zero business handlers on deferred channels",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "phase_scope_guard",
+        "details": "zero violations"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-22",
+      "name": "reconstructed_runtime_real_sctp_tcp_e2e",
+      "contract_ids": [
+        "CAM-B4-01",
+        "CAM-B4-04",
+        "CAM-B4-05",
+        "CAM-B4-06",
+        "CAM-B4-09",
+        "CAM-B4-10",
+        "CAM-B4-11"
+      ],
+      "classification": "RUNTIME_RECONSTRUCTED_E2E",
+      "evidence_basis": "Full standards-compliant Pion WebRTC SCTP DataChannel + TCP mock bridge E2E",
+      "runtime_basis": "TestCameraSCTPTCPFullE2E passes Steps A through O",
+      "go_test_target": {
+        "pkg": "./tests",
+        "test_name": "TestCameraSCTPTCPFullE2E"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./tests",
+          "test_name": "TestCameraSCTPTCPFullE2E"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-23",
+      "name": "defensive_bounded_max_frame_size",
+      "contract_ids": [],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "Defensive safety bound (10MB) rejects oversized frames before allocation",
+      "runtime_basis": "TestCameraWireFramingDefensiveLimit passes",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraWireFramingDefensiveLimit"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraWireFramingDefensiveLimit"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-24",
+      "name": "camera_bridge_interface_abstraction",
+      "contract_ids": [],
+      "classification": "IMPLEMENTATION_CHOICE",
+      "evidence_basis": "CameraBridge / CameraBridgeDialer interfaces decouple network transport for testing",
+      "runtime_basis": "Dialer injection verified across unit and E2E tests",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "implementation_choice_validation",
+        "note": "Architectural abstraction verified"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-25",
+      "name": "camera_semantic_state_machine",
+      "contract_ids": [],
+      "classification": "RECONSTRUCTED_SEMANTIC_MODEL",
+      "evidence_basis": "7-state lifecycle model (StateUninitialized .. StateClosed)",
+      "runtime_basis": "Observable state transitions verified in TestCameraHandlerHALBridgeInteraction",
+      "go_test_target": {
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestCameraHandlerHALBridgeInteraction"
+      },
+      "result": "PASS",
+      "execution_evidence": {
+        "test_target": {
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestCameraHandlerHALBridgeInteraction"
+        },
+        "test_passed": true,
+        "executed_events_count": 0
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-26",
+      "name": "browser_arraybuffer_reference_context",
+      "contract_ids": [],
+      "classification": "REFERENCE_ONLY",
+      "evidence_basis": "Browser frontend useWebRTC.js encodes canvas to ArrayBuffer (Lane D reference)",
+      "runtime_basis": "ArrayBuffer confirmed as frontend reference, Agent accepts raw binary JPEG bytes",
+      "result": "PASS",
+      "execution_evidence": {
+        "type": "reference_only_clarification",
+        "note": "Verified reference boundary"
+      }
+    },
+    {
+      "id": "CAM-B4-DIM-27",
+      "name": "original_agent_runtime_parity",
+      "contract_ids": [],
+      "classification": "ENVIRONMENT_UNAVAILABLE",
+      "evidence_basis": "Original Android cleanroom testbed unavailable for original binary execution",
+      "runtime_basis": "Environment check returns ENVIRONMENT_UNAVAILABLE",
+      "result": "ENVIRONMENT_UNAVAILABLE",
+      "execution_evidence": {
+        "type": "android_prerequisite_matrix",
+        "prerequisites": {
+          "original_agent_artifact_available": true,
+          "compatible_android_target_available": false,
+          "app_process_available": false,
+          "helper_artifact_available": true,
+          "execution_context_shell_uid_2000": false,
+          "abstract_uds_support": false,
+          "safe_launch_capability": false
+        },
+        "diagnostic": "Android runtime unavailable: missing ['abstract_uds_support', 'app_process_available', 'compatible_android_target_available', 'execution_context_shell_uid_2000', 'safe_launch_capability']"
+      }
+    }
+  ]
+}

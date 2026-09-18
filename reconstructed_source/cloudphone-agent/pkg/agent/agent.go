@@ -40,17 +40,52 @@ type Coordinator struct {
 	fileSinkFactory   FileSinkFactory
 	postUploadAction  agentwebrtc.PostUploadActionHandler
 
+	cameraConfig  agentwebrtc.CameraConfig
+	cameraSupport bool
+	cameraDialer  agentwebrtc.CameraBridgeDialer
+
 	closed bool
 }
 
 // NewCoordinator initializes the agent coordinator.
+// Probes default camera HAL bridge to establish cameraSupport status.
 // Classification: GENERATED_ADAPTER.
 func NewCoordinator(deviceID string, iceServers []webrtc.ICEServer) *Coordinator {
+	cfg := agentwebrtc.DefaultCameraConfig()
+	cfg = agentwebrtc.ResolveCameraConfig(cfg)
+	support := agentwebrtc.ProbeCameraBridge(cfg)
 	return &Coordinator{
-		DeviceID:   deviceID,
-		ICEServers: iceServers,
-		sessions:   make(map[uint32]*agentwebrtc.PeerSession),
+		DeviceID:      deviceID,
+		ICEServers:    iceServers,
+		sessions:      make(map[uint32]*agentwebrtc.PeerSession),
+		cameraConfig:  cfg,
+		cameraSupport: support,
 	}
+}
+
+// SetCameraConfig updates the camera configuration and refreshes the camera probe.
+// Classification: GENERATED_ADAPTER.
+func (c *Coordinator) SetCameraConfig(cfg agentwebrtc.CameraConfig) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.cameraConfig = cfg
+	c.cameraSupport = agentwebrtc.ProbeCameraBridge(cfg)
+}
+
+// SetCameraSupport explicitly overrides the camera support state (e.g. for testing).
+// Classification: GENERATED_ADAPTER.
+func (c *Coordinator) SetCameraSupport(support bool) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.cameraSupport = support
+}
+
+// SetCameraDialer configures an injected dialer for the camera bridge (e.g. for testing).
+// Classification: GENERATED_ADAPTER.
+func (c *Coordinator) SetCameraDialer(dialer agentwebrtc.CameraBridgeDialer) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.cameraDialer = dialer
 }
 
 // SetSignalingClient binds the active signaling WebSocket client.
@@ -149,9 +184,20 @@ func (c *Coordinator) handleRequestOffer(clientID uint32) {
 	provider := c.clipboardProvider
 	sinkFactory := c.fileSinkFactory
 	postAction := c.postUploadAction
+	cameraSupport := c.cameraSupport
+	cameraCfg := c.cameraConfig
+	cameraDialer := c.cameraDialer
 	c.mu.Unlock()
 
-	session, err := agentwebrtc.NewPeerSession(clientID, c.DeviceID, iceServers)
+	opts := agentwebrtc.PeerSessionOptions{
+		ClientID:      clientID,
+		DeviceID:      c.DeviceID,
+		ICEServers:    iceServers,
+		CameraSupport: cameraSupport,
+		CameraConfig:  cameraCfg,
+		CameraDialer:  cameraDialer,
+	}
+	session, err := agentwebrtc.NewPeerSessionWithOptions(opts)
 	if err != nil {
 		return
 	}

@@ -28,6 +28,17 @@ var (
 	ErrEmptyRemoteSDP  = errors.New("remote sdp description is empty")
 )
 
+// PeerSessionOptions parameterizes the creation of a PeerSession.
+// Classification: GENERATED_ADAPTER / IMPLEMENTATION_CHOICE.
+type PeerSessionOptions struct {
+	ClientID      uint32
+	DeviceID      string
+	ICEServers    []webrtc.ICEServer
+	CameraSupport bool
+	CameraConfig  CameraConfig
+	CameraDialer  CameraBridgeDialer
+}
+
 // PeerSession encapsulates the state and lifecycle of an active WebRTC PeerConnection
 // between the cloudphone-agent and a connected client.
 // Classification: RECONSTRUCTED_FROM_BINARY.
@@ -37,32 +48,48 @@ type PeerSession struct {
 	ClientID uint32
 	DeviceID string
 
-	PC           *webrtc.PeerConnection
-	Media        *MediaTracks
-	Channels     *DataChannels
-	State        SessionState
-	closedOnce   sync.Once
+	PC            *webrtc.PeerConnection
+	Media         *MediaTracks
+	Channels      *DataChannels
+	CameraHandler *CameraHandler
+	CameraSupport bool
+	CameraConfig  CameraConfig
+	State         SessionState
+	closedOnce    sync.Once
 
 	onCandidateCb func(webrtc.ICECandidateInit)
 	onStateCb     func(SessionState)
 	onCloseCb     func()
 }
 
-// NewPeerSession initializes a fully configured PeerSession matching the original binary lifecycle:
+// NewPeerSession initializes a PeerSession with default cameraSupport=false.
+// Classification: GENERATED_ADAPTER.
+func NewPeerSession(clientID uint32, deviceID string, iceServers []webrtc.ICEServer) (*PeerSession, error) {
+	return NewPeerSessionWithOptions(PeerSessionOptions{
+		ClientID:      clientID,
+		DeviceID:      deviceID,
+		ICEServers:    iceServers,
+		CameraSupport: false,
+		CameraConfig:  DefaultCameraConfig(),
+	})
+}
+
+// NewPeerSessionWithOptions initializes a fully configured PeerSession matching the original binary lifecycle:
 // 1. Instantiates Pion API with evidence-bound MediaEngine (H.264 / Opus only).
 // 2. Creates PeerConnection with ICE server configuration.
 // 3. Adds confirmed video (display_0) and audio (audio_0) tracks.
-// 4. Creates the 3 outbound DataChannels (input, clipboard, camera).
-// 5. Registers OnDataChannel callback for inbound channels (file, ai, adb).
-// 6. Configures ICE candidate and connection state monitoring.
+// 4. Creates outbound DataChannels (input, clipboard, and conditionally camera if CameraSupport==true).
+// 5. If CameraSupport==true, instantiates and attaches CameraHandler to camera-channel.
+// 6. Registers OnDataChannel callback for inbound channels (file, ai, adb).
+// 7. Configures ICE candidate and connection state monitoring.
 // Classification: RECONSTRUCTED_FROM_BINARY.
-func NewPeerSession(clientID uint32, deviceID string, iceServers []webrtc.ICEServer) (*PeerSession, error) {
+func NewPeerSessionWithOptions(opts PeerSessionOptions) (*PeerSession, error) {
 	api, err := NewAPIWithEvidenceBoundEngine()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build webrtc API: %w", err)
 	}
 
-	rtcConfig := BuildRTCConfiguration(iceServers)
+	rtcConfig := BuildRTCConfiguration(opts.ICEServers)
 	pc, err := api.NewPeerConnection(rtcConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create PeerConnection: %w", err)
@@ -87,19 +114,32 @@ func NewPeerSession(clientID uint32, deviceID string, iceServers []webrtc.ICESer
 
 	// Setup confirmed DataChannels
 	channels := NewDataChannels()
-	if err := channels.SetupOutboundChannels(pc); err != nil {
+
+	var camHandler *CameraHandler
+	if opts.CameraSupport {
+		camHandler = NewCameraHandler(opts.CameraConfig, opts.CameraDialer)
+		channels.SetCameraHandler(camHandler)
+	}
+
+	if err := channels.SetupOutboundChannels(pc, opts.CameraSupport); err != nil {
 		_ = pc.Close()
+		if camHandler != nil {
+			_ = camHandler.Close()
+		}
 		return nil, fmt.Errorf("failed to setup outbound datachannels: %w", err)
 	}
 	channels.RegisterInboundHandler(pc)
 
 	session := &PeerSession{
-		ClientID: clientID,
-		DeviceID: deviceID,
-		PC:       pc,
-		Media:    mediaTracks,
-		Channels: channels,
-		State:    SessionStateConnecting,
+		ClientID:      opts.ClientID,
+		DeviceID:      opts.DeviceID,
+		PC:            pc,
+		Media:         mediaTracks,
+		Channels:      channels,
+		CameraHandler: camHandler,
+		CameraSupport: opts.CameraSupport,
+		CameraConfig:  opts.CameraConfig,
+		State:         SessionStateConnecting,
 	}
 
 	// ICE Candidate listener
@@ -190,7 +230,7 @@ func (s *PeerSession) CreateOffer() (*SignalingPayload, error) {
 	}
 
 	s.State = SessionStateHaveLocalOffer
-	cameraSupport := true
+	cameraSupport := s.CameraSupport
 
 	return &SignalingPayload{
 		Type:          "offer",
@@ -245,8 +285,13 @@ func (s *PeerSession) Close() error {
 	s.closedOnce.Do(func() {
 		s.mu.Lock()
 		s.State = SessionStateClosed
+		camHandler := s.CameraHandler
 		closeCb := s.onCloseCb
 		s.mu.Unlock()
+
+		if camHandler != nil {
+			_ = camHandler.Close()
+		}
 
 		if s.PC != nil {
 			closeErr = s.PC.Close()
@@ -294,6 +339,17 @@ func (s *PeerSession) SetFileHandler(handler *FileChannelHandler) {
 	defer s.mu.Unlock()
 	if s.Channels != nil {
 		s.Channels.SetFileHandler(handler)
+	}
+}
+
+// SetCameraHandler binds a CameraHandler to the session's DataChannels container.
+// Classification: GENERATED_ADAPTER.
+func (s *PeerSession) SetCameraHandler(handler *CameraHandler) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.CameraHandler = handler
+	if s.Channels != nil {
+		s.Channels.SetCameraHandler(handler)
 	}
 }
 

@@ -3218,9 +3218,10 @@ def verify_all():
     FROZEN_B2_PRODUCTION_HASHES = {
         "reconstructed_source/cloudphone-agent/pkg/webrtc/control.go": "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe",
         "reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go": "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "001bc7de58cb2742a0328b672f13180116e12b89d860724b9c34a6966fd63e53",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "7daf5f3c9bff2070c266dea8e7ff094f5b80fa283cc11375509139924315de74",
-        "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "f84989584b980906d530bf89d6018753d9867796ef116e9e9322ffc0c2bb92b0",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "f0736bcc0577396bc4d18b44eb4f05cd7ace246a706e834a7e7c92b08f50d03c",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "d01147d3ae29b6878931a7ac0bcbb87753be0673a7a6e0e966a17abc9d41ed5f",
+        "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "f05246801c9c6a099455544976c4242b4940af9b024d7735ed7333950c06a465",
+        "reconstructed_source/cloudphone-agent/pkg/webrtc/camera.go": "7fcaefe2fce85527f7b80da318be14fbd9667c22a313c469d1eca056bf45af9c",
         "reconstructed_source/cloudphone-agent/go.mod": "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b",
         "reconstructed_source/cloudphone-agent/go.sum": "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4",
     }
@@ -3239,7 +3240,7 @@ def verify_all():
     record_check(
         "Phase 2C.5B2 Production Source Code Frozen Invariant",
         prod_frozen_passed,
-        "All 7 production B2 files (control.go, clipboard.go, datachannel.go, peer.go, agent.go, go.mod, go.sum) verified against baseline (control and clipboard strictly frozen, file-channel production wiring active)"
+        "All 8 production files (control.go, clipboard.go, datachannel.go, peer.go, agent.go, camera.go, go.mod, go.sum) verified against baseline (control and clipboard strictly frozen, file-channel and camera-channel production wiring active)"
         if prod_frozen_passed else f"Production file mutations detected: {'; '.join(prod_frozen_failures)}"
     )
 
@@ -4112,7 +4113,107 @@ def verify_all():
         b4_mut_detail = f"Exception running negative mutation tests: {e}"
     record_check("Phase 2C.5B4 Camera Forensic Negative Mutation Invariant", b4_mut_valid, b4_mut_detail)
 
-    # 24. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # =========================================================================
+    # 24. PHASE 2C.5B4 PRODUCTION CAMERA-CHANNEL & DATA PLANE RECONSTRUCTION AUDIT
+    # =========================================================================
+
+    # 24.1 B4 Camera Differential Engine Invariant (--check mode)
+    b4_diff_valid = False
+    b4_diff_detail = ""
+    try:
+        diff_res = subprocess.run([sys.executable, str(ROOT / "tools" / "derive_b4_differential.py"), "--check"],
+                                  cwd=str(ROOT), capture_output=True, text=True)
+        if diff_res.returncode == 0:
+            b4_diff_valid = True
+            b4_diff_detail = diff_res.stdout.strip()
+        else:
+            b4_diff_detail = f"B4 Differential check failed (code {diff_res.returncode}): {diff_res.stderr.strip()[:200]}"
+    except Exception as e:
+        b4_diff_detail = f"Exception running B4 differential check: {e}"
+    record_check("Phase 2C.5B4 Camera Differential Engine Invariant (--check)", b4_diff_valid, b4_diff_detail)
+
+    # 24.2 Dynamic Camera Support Gating (True and False Paths)
+    b4_gate_valid = False
+    b4_gate_detail = ""
+    try:
+        gate_res = subprocess.run(["go", "test", "-count=1", "-run", "^(TestCameraSupportFalseE2E|TestCameraSupportTrueE2E|TestCameraProbeBehavior)$", "./..."],
+                                  cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                  capture_output=True, text=True)
+        if gate_res.returncode == 0:
+            b4_gate_valid = True
+            b4_gate_detail = "Dynamic probe and camera_support gate validated: false path omits camera-channel and emits camera_support=false; true path creates ordered camera-channel and emits camera_support=true"
+        else:
+            b4_gate_detail = f"Camera support gate test failed (code {gate_res.returncode}): {gate_res.stderr.strip()[:200]}"
+    except Exception as e:
+        b4_gate_detail = f"Exception testing camera support gating: {e}"
+    record_check("Phase 2C.5B4 Dynamic Camera Support Gating (Probe & Flag)", b4_gate_valid, b4_gate_detail)
+
+    # 24.3 Real WebRTC SCTP + Mock TCP Camera HAL Bridge E2E Data Plane
+    b4_e2e_valid = False
+    b4_e2e_detail = ""
+    try:
+        e2e_res = subprocess.run(["go", "test", "-count=1", "-run", "^TestCameraSCTPTCPFullE2E$", "./tests"],
+                                 cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                 capture_output=True, text=True)
+        if e2e_res.returncode == 0:
+            b4_e2e_valid = True
+            b4_e2e_detail = "Real WebRTC SCTP DataChannel + Mock TCP Bridge E2E passed (Steps A-O: Handshake, START event, start JSON text, binary JPEG ingestion, I420 YUV conversion, TCP streaming, CAPTURE event, JPEG snapshot return, STOP event, stop JSON text, clean shutdown)"
+        else:
+            b4_e2e_detail = f"Camera SCTP/TCP E2E test failed (code {e2e_res.returncode}): {e2e_res.stderr.strip()[:200]}"
+    except Exception as e:
+        b4_e2e_detail = f"Exception testing Camera SCTP/TCP E2E: {e}"
+    record_check("Phase 2C.5B4 Real WebRTC SCTP + TCP Bridge E2E Data Plane", b4_e2e_valid, b4_e2e_detail)
+
+    # 24.4 Camera Frame Backpressure Queue & Snapshot Cache Invariants
+    b4_queue_valid = False
+    b4_queue_detail = ""
+    try:
+        queue_res = subprocess.run(["go", "test", "-count=1", "-run", "^(TestBackpressureQueueCapacityAndSnapshotOrdering|TestCameraBackpressureSCTPE2E)$", "./..."],
+                                   cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                   capture_output=True, text=True)
+        if queue_res.returncode == 0:
+            b4_queue_valid = True
+            b4_queue_detail = "Backpressure invariants verified: cameraFrameChan capacity=1, non-blocking select drop, latestCameraJpeg updated under mutex BEFORE enqueue attempt"
+        else:
+            b4_queue_detail = f"Queue/Snapshot test failed (code {queue_res.returncode}): {queue_res.stderr.strip()[:200]}"
+    except Exception as e:
+        b4_queue_detail = f"Exception testing camera queue/snapshot: {e}"
+    record_check("Phase 2C.5B4 Frame Backpressure Queue & Snapshot Cache Ordering", b4_queue_valid, b4_queue_detail)
+
+    # 24.5 Length-Prefixed Wire Framing & Planar I420 Golden Conversion Invariants
+    b4_wire_valid = False
+    b4_wire_detail = ""
+    try:
+        wire_res = subprocess.run(["go", "test", "-count=1", "-run", "^(TestCameraWireFramingVectors|TestCameraHandshakeSerialization|TestI420ContiguousGolden|TestI420StrideGolden|TestI420GenericFallbackGolden|TestJPEGDecodeIntegration)$", "./pkg/webrtc"],
+                                  cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                  capture_output=True, text=True)
+        if wire_res.returncode == 0:
+            b4_wire_valid = True
+            b4_wire_detail = "Exact 4-byte LE wire vectors (0, 6, 28, 34, 35, 460800), JSON handshake, contiguous I420 Y/U/V, row stride fallback, and Rec.601 generic fallback verified"
+        else:
+            b4_wire_detail = f"Wire framing / conversion test failed (code {wire_res.returncode}): {wire_res.stderr.strip()[:200]}"
+    except Exception as e:
+        b4_wire_detail = f"Exception testing wire framing: {e}"
+    record_check("Phase 2C.5B4 Wire Framing & Planar I420 Golden Conversion Invariants", b4_wire_valid, b4_wire_detail)
+
+    # 24.6 Channel Isolation and Non-Regression Invariant
+    b4_iso_valid = False
+    b4_iso_detail = ""
+    try:
+        from tools.audit.b2_common import scan_deferred_channels_isolation
+        violations = scan_deferred_channels_isolation(ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg")
+        diff_b3_res = subprocess.run([sys.executable, str(ROOT / "tools" / "derive_b3_differential.py"), "--check"],
+                                     cwd=str(ROOT), capture_output=True, text=True)
+        if len(violations) == 0 and diff_b3_res.returncode == 0:
+            b4_iso_valid = True
+            b4_iso_detail = "Channels ai-command-channel and adb-channel remain strictly inert (0 violations); B3 file-channel differential unchanged and passing"
+        else:
+            b4_iso_detail = f"Isolation/Regression violation: deferred violations={violations}, B3 diff code={diff_b3_res.returncode}"
+    except Exception as e:
+        b4_iso_detail = f"Exception testing isolation/regression: {e}"
+    record_check("Phase 2C.5B4 Channel Scope Isolation & Non-Regression Invariant", b4_iso_valid, b4_iso_detail)
+
+    # 25. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv

@@ -1,0 +1,200 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B4 Camera-Channel Test Matrix",
+    "phase": "Phase 2C.5B4",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "governing_contract": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json",
+    "effective_contract_errata": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_CONTRACT_ERRATA.json"
+  },
+  "test_cases": [
+    {
+      "contract_id": "CAM-B4-01",
+      "test_name": "TestCameraSupportTrueE2E",
+      "package": "./tests",
+      "test_type": "SCTP_E2E_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "ChannelCamera",
+      "description": "Verifies outbound Agent-created camera-channel with ordered=true when cameraSupport=true"
+    },
+    {
+      "contract_id": "CAM-B4-01",
+      "test_name": "TestCameraSupportFalseE2E",
+      "package": "./tests",
+      "test_type": "SCTP_E2E_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "SetupOutboundChannels",
+      "description": "Verifies camera-channel is NOT created when cameraSupport=false (probe unavailable, force=false)"
+    },
+    {
+      "contract_id": "CAM-B4-02",
+      "test_name": "TestCameraProbeBehavior",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "ProbeCameraBridge",
+      "description": "Verifies camera bridge TCP probe logic: success -> true, failure -> false, forceCamera override -> true"
+    },
+    {
+      "contract_id": "CAM-B4-02",
+      "test_name": "TestPeerSessionOfferCreation",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "CreateOffer",
+      "description": "Verifies CreateOffer emits actual s.CameraSupport state (no hardcoding to true)"
+    },
+    {
+      "contract_id": "CAM-B4-03",
+      "test_name": "TestCameraHandlerHALBridgeInteraction",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "CameraHandler.Attach",
+      "description": "Verifies OnOpen, OnMessage, OnClose handler registration on camera-channel"
+    },
+    {
+      "contract_id": "CAM-B4-04",
+      "test_name": "TestCameraWireFramingVectors",
+      "package": "./pkg/webrtc",
+      "test_type": "EXACT_FRAMING",
+      "evidence_class": "EXACT_FRAMING",
+      "target_symbol": "writeCameraFrame / readCameraFrame",
+      "description": "Verifies exact 4-byte LE uint32 length prefix on vectors: 0, 6, 28, 34, 35, 460800"
+    },
+    {
+      "contract_id": "CAM-B4-04",
+      "test_name": "TestCameraHandshakeSerialization",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "CameraHandshake",
+      "description": "Verifies length-prefixed JSON handshake with width=640, height=480, frame_rate=30.0"
+    },
+    {
+      "contract_id": "CAM-B4-05",
+      "test_name": "TestCameraHandlerHALBridgeInteraction",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "CameraHandler.halEventLoop",
+      "description": "Verifies parsing of inbound HAL ASCII events: START (35B), STOP (34B), CAPTURE (28B)"
+    },
+    {
+      "contract_id": "CAM-B4-06",
+      "test_name": "TestCameraSCTPTCPFullE2E",
+      "package": "./tests",
+      "test_type": "FULL_SCTP_TCP_E2E",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "sendCameraCommand",
+      "description": "Verifies browser peer receives {\"action\":\"start\"} and {\"action\":\"stop\"} JSON text over DataChannel"
+    },
+    {
+      "contract_id": "CAM-B4-07",
+      "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "latestCameraJpeg",
+      "description": "Verifies snapshot cache update occurs under mutex BEFORE non-blocking enqueue to cameraFrameChan"
+    },
+    {
+      "contract_id": "CAM-B4-08",
+      "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "cameraFrameChan",
+      "description": "Verifies single-element channel capacity (cap=1) and non-blocking select drop"
+    },
+    {
+      "contract_id": "CAM-B4-08",
+      "test_name": "TestCameraBackpressureSCTPE2E",
+      "package": "./tests",
+      "test_type": "SCTP_E2E_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "cameraFrameChan",
+      "description": "Verifies non-blocking frame drop during burst SCTP transmission while retaining latest snapshot"
+    },
+    {
+      "contract_id": "CAM-B4-09",
+      "test_name": "TestI420ContiguousGolden",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "ConvertImageToI420",
+      "description": "Verifies fast contiguous memmove path for *image.YCbCr 4:2:0 input"
+    },
+    {
+      "contract_id": "CAM-B4-09",
+      "test_name": "TestI420StrideGolden",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "ConvertImageToI420",
+      "description": "Verifies row-by-row stride fallback when YStride > width or CStride > width/2"
+    },
+    {
+      "contract_id": "CAM-B4-09",
+      "test_name": "TestI420GenericFallbackGolden",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "ConvertImageToI420",
+      "description": "Verifies Rec.601 RGB-to-YUV planar conversion for generic image.Image types"
+    },
+    {
+      "contract_id": "CAM-B4-09",
+      "test_name": "TestJPEGDecodeIntegration",
+      "package": "./pkg/webrtc",
+      "test_type": "INTEGRATION_TEST",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "jpeg.Decode",
+      "description": "Verifies standard image/jpeg decode -> I420 YUV conversion pipeline"
+    },
+    {
+      "contract_id": "CAM-B4-10",
+      "test_name": "TestCameraSCTPTCPFullE2E",
+      "package": "./tests",
+      "test_type": "FULL_SCTP_TCP_E2E",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "writeCameraFrame",
+      "description": "Verifies mock bridge receives exact length-prefixed I420 frame data over TCP"
+    },
+    {
+      "contract_id": "CAM-B4-11",
+      "test_name": "TestCameraSCTPTCPFullE2E",
+      "package": "./tests",
+      "test_type": "FULL_SCTP_TCP_E2E",
+      "evidence_class": "STATIC_CONFIRMED",
+      "target_symbol": "VIRTUAL_DEVICE_CAPTURE_IMAGE",
+      "description": "Verifies mock bridge receives exact length-prefixed original JPEG snapshot upon request"
+    },
+    {
+      "contract_id": "CAM-B4-12",
+      "test_name": "TestCrossComponentBoundaryStaticCheck",
+      "package": "tools/derive_b4_differential.py",
+      "test_type": "STATIC_ANALYSIS",
+      "evidence_class": "CROSS_COMPONENT_CONFIRMED",
+      "target_symbol": "CameraCapture.java",
+      "description": "Verifies positive binding of CameraCapture.java to physical camera and decoupling of virtual camera"
+    },
+    {
+      "contract_id": "CAM-B4-13",
+      "test_name": "TestDeferredChannelsInert",
+      "package": "tools/derive_b4_differential.py",
+      "test_type": "STATIC_SCAN",
+      "evidence_class": "PHASE_SCOPE_GUARD",
+      "target_symbol": "scan_deferred_channels_isolation",
+      "description": "Verifies ai-command-channel and adb-channel remain strictly inert with zero business logic"
+    },
+    {
+      "contract_id": "IMPLEMENTATION_CHOICE",
+      "test_name": "TestCameraWireFramingDefensiveLimit",
+      "package": "./pkg/webrtc",
+      "test_type": "UNIT_TEST",
+      "evidence_class": "IMPLEMENTATION_CHOICE",
+      "target_symbol": "MaxCameraHALMessageLen",
+      "description": "Verifies rejection of oversized messages exceeding 10MB defensive limit prior to allocation"
+    }
+  ]
+}

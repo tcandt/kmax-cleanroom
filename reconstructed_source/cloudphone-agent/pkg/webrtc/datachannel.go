@@ -51,6 +51,7 @@ type DataChannels struct {
 	ControlSink       ControlSink
 	ClipboardProvider ClipboardProvider
 	FileHandler       *FileChannelHandler
+	CameraHandler     *CameraHandler
 }
 
 // NewDataChannels initializes the container for the 6 confirmed DataChannels.
@@ -84,10 +85,23 @@ func (dc *DataChannels) SetFileHandler(handler *FileChannelHandler) {
 	}
 }
 
-// SetupOutboundChannels creates the 3 Agent-initiated DataChannels with ordered=true
+// SetCameraHandler binds a CameraHandler to the outbound camera DataChannel.
+// Classification: GENERATED_ADAPTER.
+func (dc *DataChannels) SetCameraHandler(handler *CameraHandler) {
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
+	dc.CameraHandler = handler
+	if handler != nil && dc.CameraChannel != nil {
+		handler.Attach(dc.CameraChannel)
+	}
+}
+
+// SetupOutboundChannels creates the Agent-initiated DataChannels with ordered=true
 // before the local SDP offer is created, matching original binary assembly.
+// Outbound input-channel and clipboard-channel are always created.
+// Outbound camera-channel is created ONLY IF cameraSupport == true.
 // Classification: RECONSTRUCTED_FROM_BINARY.
-func (dc *DataChannels) SetupOutboundChannels(pc *webrtc.PeerConnection) error {
+func (dc *DataChannels) SetupOutboundChannels(pc *webrtc.PeerConnection, cameraSupport bool) error {
 	dc.mu.Lock()
 	defer dc.mu.Unlock()
 
@@ -130,13 +144,18 @@ func (dc *DataChannels) SetupOutboundChannels(pc *webrtc.PeerConnection) error {
 	})
 	dc.ClipboardChannel = clipCh
 
-	// 3. camera-channel (STRICTLY DEFERRED in B2: inert hooks only)
-	camCh, err := pc.CreateDataChannel(ChannelCamera, initOptions)
-	if err != nil {
-		return fmt.Errorf("failed to create %s: %w", ChannelCamera, err)
+	// 3. camera-channel (Created ONLY IF cameraSupport == true)
+	if cameraSupport {
+		camCh, err := pc.CreateDataChannel(ChannelCamera, initOptions)
+		if err != nil {
+			return fmt.Errorf("failed to create %s: %w", ChannelCamera, err)
+		}
+		attachInertLifecycleHooks(camCh)
+		dc.CameraChannel = camCh
+		if dc.CameraHandler != nil {
+			dc.CameraHandler.Attach(camCh)
+		}
 	}
-	attachInertLifecycleHooks(camCh)
-	dc.CameraChannel = camCh
 
 	return nil
 }

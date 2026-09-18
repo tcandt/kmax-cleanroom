@@ -1,0 +1,142 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B4 Camera-Channel Source Provenance Mapping",
+    "phase": "Phase 2C.5B4",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "governing_contract": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json",
+    "effective_contract_errata": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_CONTRACT_ERRATA.json"
+  },
+  "provenance_classes": {
+    "STATIC_CONFIRMED": "Directly proven by original Go binary disassembly, rodata strings, or callgraph analysis",
+    "CROSS_COMPONENT_CONFIRMED": "Proven by bidirectional correspondence between original binary and protocol peers",
+    "EXACT_FRAMING": "Exact length-prefixed wire byte vectors verified by deterministic unit tests",
+    "RUNTIME_RECONSTRUCTED_E2E": "Validated by real Pion WebRTC SCTP DataChannel transmission in reconstructed runtime",
+    "REFERENCE_ONLY": "Derived from reference web-app frontend composables (does not claim original binary parity)",
+    "IMPLEMENTATION_CHOICE": "Clean-room architectural abstractions, test doubles, or defensive security hardening",
+    "RECONSTRUCTED_SEMANTIC_MODEL": "Structured semantic state model organizing observable transitions without claiming original enum names",
+    "PHASE_SCOPE_GUARD": "Deliberate phase isolation guards keeping deferred channels or actions strictly inert",
+    "ENVIRONMENT_UNAVAILABLE": "Requires authentic Android OS runtime environment unavailable in host execution"
+  },
+  "symbol_provenance_mappings": [
+    {
+      "symbol": "ChannelCamera",
+      "target_file": "pkg/webrtc/datachannel.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "DATACHANNEL_LABEL_EVIDENCE.json confirmed_webrtc_channels.camera-channel; Disassembly passes ordered=1 byte pointer in AMD64 0x9e216d and ARM64 0x53e740"
+    },
+    {
+      "symbol": "SetupOutboundChannels",
+      "target_file": "pkg/webrtc/datachannel.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "camera-channel is created if and only if cameraSupport == true (dynamic bridge probe or -force-camera override)"
+    },
+    {
+      "symbol": "CameraConfig",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "GENERATED_ADAPTER",
+      "evidence": "Configurable parameters backed by original strings: default 127.0.0.1:9001 (STRINGS.json:23796), -camera-addr, CP_AGENT_CAMERA_ADDR, -force-camera, 640x480 @ 30fps"
+    },
+    {
+      "symbol": "ProbeCameraBridge",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Startup TCP dial to cameraAddr; probe success sets cameraSupport=true; failure without -force-camera disables camera support and omits camera-channel"
+    },
+    {
+      "symbol": "writeCameraFrame / readCameraFrame",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "EXACT_FRAMING",
+      "evidence": "4-byte little-endian uint32 payload length prefix. Native register stores str w3,[x0] / movl %edx,(%rax) verify little-endian byte ordering"
+    },
+    {
+      "symbol": "MaxCameraHALMessageLen",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "10MB defensive safety bound rejecting oversized allocation requests prior to buffer allocation"
+    },
+    {
+      "symbol": "CameraHandshake",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Length-prefixed JSON with width: 640, height: 480, frame_rate: 30.0 sent upon active bridge connection (rodata: 0x6d863a)"
+    },
+    {
+      "symbol": "CameraHALEventLoop",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Inbound 4-byte LE length-prefixed ASCII events: VIRTUAL_DEVICE_START_CAMERA_SESSION (len 35), VIRTUAL_DEVICE_STOP_CAMERA_SESSION (len 34), VIRTUAL_DEVICE_CAPTURE_IMAGE (len 28)"
+    },
+    {
+      "symbol": "StartStopCommandDispatch",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Agent sends JSON text {\"action\":\"start\"} on START event and {\"action\":\"stop\"} on STOP event via camera-channel SendText"
+    },
+    {
+      "symbol": "InboundBinaryJPEGIngestion",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Agent receives raw binary JPEG payload bytes from browser; ignores/rejects text frames (DISASSEMBLY_FACTS.json: ARM64 0x51a08c)"
+    },
+    {
+      "symbol": "cameraFrameChan",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Single-element buffer (capacity=1) allocated via runtime.makechan64 (ARM64 0x51ea3c); non-blocking send via runtime.selectnbsend (ARM64 0x51a388)"
+    },
+    {
+      "symbol": "latestCameraJpeg",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Snapshot cache updated under mutex protection BEFORE selectnbsend into cameraFrameChan, preserving newest frame even when streaming queue drops it"
+    },
+    {
+      "symbol": "ConvertImageToI420",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "Planar I420 (YUV420P) layout (Y, U/Cb, V/Cr). Contiguous fast-path memmoves when strides match, row-by-row fallback when strides differ, Rec.601 generic fallback"
+    },
+    {
+      "symbol": "SnapshotResponse",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "STATIC_CONFIRMED",
+      "evidence": "VIRTUAL_DEVICE_CAPTURE_IMAGE triggers read of latestCameraJpeg under lock and transmission of 4-byte LE length + raw JPEG bytes to HAL (rodata: 0x6d42d6)"
+    },
+    {
+      "symbol": "CameraState",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "RECONSTRUCTED_SEMANTIC_MODEL",
+      "evidence": "7-state lifecycle model (StateUninitialized .. StateClosed) structuring observable state transitions"
+    },
+    {
+      "symbol": "CameraBridgeDialer",
+      "target_file": "pkg/webrtc/camera.go",
+      "provenance": "IMPLEMENTATION_CHOICE",
+      "evidence": "Dialer interface abstraction enabling ephemeral localhost mock server in tests without requiring real Android Camera HAL"
+    },
+    {
+      "symbol": "CameraPipelineBoundary",
+      "target_file": "raw_extraction/android/jadx/sources/com/android/helper/video/CameraCapture.java",
+      "provenance": "CROSS_COMPONENT_CONFIRMED",
+      "evidence": "CameraCapture.java is positively bound to physical hardware camera capture; virtual camera injection routes strictly via camera-channel -> Agent -> camera TCP bridge"
+    },
+    {
+      "symbol": "DeferredChannelsInert",
+      "target_file": "pkg/webrtc/datachannel.go",
+      "provenance": "PHASE_SCOPE_GUARD",
+      "evidence": "Channels ai-command-channel and adb-channel remain strictly deferred with inert lifecycle references only and zero business processing logic"
+    },
+    {
+      "symbol": "BrowserArrayBufferContext",
+      "target_file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "provenance": "REFERENCE_ONLY",
+      "evidence": "Frontend canvas toBlob image/jpeg sent as ArrayBuffer (Lane D reference context, not Agent-side protocol type)"
+    },
+    {
+      "symbol": "AndroidCameraHALEnvironment",
+      "target_file": "reconstructed_source/cloudphone-agent",
+      "provenance": "ENVIRONMENT_UNAVAILABLE",
+      "evidence": "Authentic Android Camera HAL hardware daemon unavailable in host execution environment; tested via localhost mock bridge"
+    }
+  ]
+}
