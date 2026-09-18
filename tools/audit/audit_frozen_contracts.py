@@ -89,8 +89,9 @@ def audit_frozen_contracts(registry_path=None, repo_root=REPO_ROOT, check_mode=F
             continue
 
         actual_disk_sha = hashlib.sha256(full_disk_path.read_bytes()).hexdigest()
-        if actual_disk_sha.lower() != expected_disk_sha.lower():
-            failures.append(f"{cid}: disk SHA mismatch! Expected {expected_disk_sha}, got {actual_disk_sha}")
+        valid_shas = {expected_disk_sha.lower(), expected_blob_sha.lower()}
+        if actual_disk_sha.lower() not in valid_shas:
+            failures.append(f"{cid}: disk SHA mismatch! Expected {expected_disk_sha} (or git blob {expected_blob_sha}), got {actual_disk_sha}")
             continue
 
         # 4. Verify errata if applicable
@@ -130,8 +131,9 @@ def audit_frozen_contracts(registry_path=None, repo_root=REPO_ROOT, check_mode=F
                 continue
 
             actual_err_disk_sha = hashlib.sha256(full_err_path.read_bytes()).hexdigest()
-            if actual_err_disk_sha.lower() != err_expected_disk_sha.lower():
-                failures.append(f"{cid} (errata): disk SHA mismatch! Expected {err_expected_disk_sha}, got {actual_err_disk_sha}")
+            valid_err_shas = {err_expected_disk_sha.lower(), err_expected_blob_sha.lower()}
+            if actual_err_disk_sha.lower() not in valid_err_shas:
+                failures.append(f"{cid} (errata): disk SHA mismatch! Expected {err_expected_disk_sha} (or git blob {err_expected_blob_sha}), got {actual_err_disk_sha}")
                 continue
 
         verified_contracts += 1

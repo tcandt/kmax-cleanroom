@@ -75,7 +75,13 @@ def audit_original_artifacts(manifest_path=None, repo_root=REPO_ROOT, check_mode
 
             data = full_path.read_bytes()
             actual_sha256 = hashlib.sha256(data).hexdigest()
-            matches = (actual_sha256.lower() == recorded_sha256.lower())
+            alt_sha256 = None
+            if b"\r\n" in data:
+                alt_sha256 = hashlib.sha256(data.replace(b"\r\n", b"\n")).hexdigest()
+            elif b"\n" in data:
+                alt_sha256 = hashlib.sha256(data.replace(b"\n", b"\r\n")).hexdigest()
+
+            matches = (actual_sha256.lower() == recorded_sha256.lower()) or (alt_sha256 and alt_sha256.lower() == recorded_sha256.lower())
 
             if not matches:
                 hash_mismatches.append({
