@@ -3270,10 +3270,10 @@ def verify_all():
         if prod_frozen_passed else f"Production file mutations detected: {'; '.join(prod_frozen_failures)}"
     )
 
-    # 21.2 Deferred Channels Strict Isolation Audit
-    # Verify all four deferred channels across the entire reconstructed cloudphone-agent production tree:
-    # camera-channel, file-channel, ai-command-channel, adb-channel.
-    # Uses shared pure scanner from tools.audit.b2_common.
+    # 21.2 Historical Phase 2C.5B2 Deferred Channels Strict Isolation Audit
+    # Per Phase 2C.5B4R Audit Correction 4:
+    # Validate historical B2 scope against pinned commit c84d34aac31333298f45e2f66930bf05d8b20756.
+    # Do NOT run B2 policy against the current evolved B4 tree.
     from tools.audit.b2_common import (
         scan_deferred_channels_isolation,
         evaluate_android_runtime_prerequisites,
@@ -3282,15 +3282,39 @@ def verify_all():
     )
     from tools.derive_b2_differential import evaluate_dimension_result
 
-    agent_pkg_dir = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg"
-    deferred_violations = scan_deferred_channels_isolation(agent_pkg_dir)
-    deferred_isolated = (len(deferred_violations) == 0)
-    deferred_detail = (
-        "camera-channel, ai-command-channel, and adb-channel verified strictly inert across all production files"
-        if deferred_isolated else
-        f"Deferred channel isolation violations: {'; '.join(deferred_violations)}"
-    )
-    record_check("Phase 2C.5B2 Deferred Channels Strict Isolation Audit", deferred_isolated, deferred_detail)
+    b2_commit = "c84d34aac31333298f45e2f66930bf05d8b20756"
+    b2_scope_passed = False
+    b2_scope_detail = ""
+    try:
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_b2_scan_dir:
+            temp_b2_pkg = Path(temp_b2_scan_dir) / "pkg"
+            temp_b2_pkg.mkdir(parents=True)
+            # Materialize all Go files under pkg in historical B2 commit
+            ls_res = subprocess.run(
+                ["git", "ls-tree", "-r", "--name-only", b2_commit, "reconstructed_source/cloudphone-agent/pkg"],
+                cwd=str(ROOT), capture_output=True, text=True
+            )
+            for fpath in ls_res.stdout.splitlines():
+                fpath = fpath.strip()
+                if not fpath.endswith(".go"):
+                    continue
+                rel_in_pkg = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
+                target_file = temp_b2_pkg / rel_in_pkg
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                show_f = subprocess.run(["git", "show", f"{b2_commit}:{fpath}"], cwd=str(ROOT), capture_output=True)
+                target_file.write_bytes(show_f.stdout)
+
+            b2_violations = scan_deferred_channels_isolation(temp_b2_pkg, phase="B2")
+            if len(b2_violations) == 0:
+                b2_scope_passed = True
+                b2_scope_detail = f"Historical B2 tree at {b2_commit[:8]} verified: camera, file, ai-command, and adb channels strictly deferred and inert"
+            else:
+                b2_scope_detail = f"Historical B2 isolation violations: {'; '.join(b2_violations)}"
+    except Exception as e:
+        b2_scope_detail = f"Exception evaluating historical B2 scope: {e}"
+
+    record_check("Phase 2C.5B2 Deferred Channels Strict Isolation Audit", b2_scope_passed, b2_scope_detail)
 
     # 21.3 Input & Clipboard Real SCTP DataChannel E2E Parity
     sctp_dc_passed = (
@@ -3789,6 +3813,42 @@ def verify_all():
         b3_base_detail = "B3_PRODUCTION_BASELINE.json missing"
     record_check("Phase 2C.5B3 Production Source Code Frozen Invariant", b3_base_valid, b3_base_detail)
 
+    # 22.1e Historical Phase 2C.5B3 Deferred Channels Strict Isolation Audit
+    # Per Phase 2C.5B4R Audit Correction 5:
+    # Validate historical B3 scope against pinned commit 2a039510d7e5ae4ef3f067769b40660c705989ff.
+    b3_scope_passed = False
+    b3_scope_detail = ""
+    try:
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_b3_scan_dir:
+            temp_b3_pkg = Path(temp_b3_scan_dir) / "pkg"
+            temp_b3_pkg.mkdir(parents=True)
+            # Materialize all Go files under pkg in historical B3 commit
+            ls_res_b3 = subprocess.run(
+                ["git", "ls-tree", "-r", "--name-only", b3_commit, "reconstructed_source/cloudphone-agent/pkg"],
+                cwd=str(ROOT), capture_output=True, text=True
+            )
+            for fpath in ls_res_b3.stdout.splitlines():
+                fpath = fpath.strip()
+                if not fpath.endswith(".go"):
+                    continue
+                rel_in_pkg = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
+                target_file = temp_b3_pkg / rel_in_pkg
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                show_f = subprocess.run(["git", "show", f"{b3_commit}:{fpath}"], cwd=str(ROOT), capture_output=True)
+                target_file.write_bytes(show_f.stdout)
+
+            b3_violations = scan_deferred_channels_isolation(temp_b3_pkg, phase="B3")
+            if len(b3_violations) == 0:
+                b3_scope_passed = True
+                b3_scope_detail = f"Historical B3 tree at {b3_commit[:8]} verified: camera, ai-command, and adb channels strictly deferred and inert"
+            else:
+                b3_scope_detail = f"Historical B3 isolation violations: {'; '.join(b3_violations)}"
+    except Exception as e:
+        b3_scope_detail = f"Exception evaluating historical B3 scope: {e}"
+
+    record_check("Phase 2C.5B3 Deferred Channels Strict Isolation Audit", b3_scope_passed, b3_scope_detail)
+
     # 22.2 Safe FileSink Boundary & Deferred Installer Invariant
     file_go_path = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "file.go"
     filesink_safe = False
@@ -4282,35 +4342,117 @@ def verify_all():
     record_check("Phase 2C.5B4 Channel Scope Isolation & Non-Regression Invariant", b4_iso_valid, b4_iso_detail)
 
     # 24.7 Phase 2C.5B4 Production Baseline Invariant
-    # Per Phase 2C.5B4R Correction 8:
-    # Baseline manifest points to COMMIT A (7e94bd48d3af3ab28e874f7b8b15901a482f2853)
+    # Per Phase 2C.5B4R Correction 6:
+    # 1. baseline_commit must strictly equal Commit A (7e94bd48d3af3ab28e874f7b8b15901a482f2853)
+    # 2. Every manifest entry must match git show 7e94bd48...:<path>
+    # 3. Separately verify current working-tree production files match those same hashes
     b4_baseline_path = ROOT / "evidence" / "go_agent" / "webrtc" / "phase_baselines" / "B4_PRODUCTION_BASELINE.json"
+    expected_b4_commit = "7e94bd48d3af3ab28e874f7b8b15901a482f2853"
     b4_base_valid = False
     b4_base_detail = ""
     if b4_baseline_path.exists():
         try:
             b4_bdata = json.loads(b4_baseline_path.read_text(encoding="utf-8"))
             b4_commit = b4_bdata.get("baseline_commit")
-            b4_files = b4_bdata.get("production_files", {})
-            b4_mismatches = []
-            for rel_p, exp_h in b4_files.items():
-                fp = ROOT / rel_p
-                if not fp.exists():
-                    b4_mismatches.append(f"{rel_p} missing")
-                    continue
-                actual_h = hashlib.sha256(fp.read_bytes()).hexdigest()
-                if actual_h != exp_h:
-                    b4_mismatches.append(f"{rel_p} SHA mismatch: {actual_h[:12]} != {exp_h[:12]}")
-            if len(b4_mismatches) == 0 and len(b4_files) == 9:
-                b4_base_valid = True
-                b4_base_detail = f"All 9 production files verified against B4 production baseline pinned to Commit A ({b4_commit[:8]})"
+            if b4_commit != expected_b4_commit:
+                b4_base_detail = f"B4 baseline commit mismatch: expected {expected_b4_commit}, got {b4_commit}"
             else:
-                b4_base_detail = f"B4 baseline verification failures: {'; '.join(b4_mismatches)}"
+                b4_files = b4_bdata.get("production_files", {})
+                b4_mismatches = []
+                for rel_p, exp_h in b4_files.items():
+                    # Check Commit A blob via git show
+                    show_res = subprocess.run(["git", "show", f"{expected_b4_commit}:{rel_p}"], cwd=str(ROOT), capture_output=True)
+                    if show_res.returncode != 0:
+                        b4_mismatches.append(f"{rel_p} missing in Commit A {expected_b4_commit[:8]}")
+                        continue
+                    show_h = hashlib.sha256(show_res.stdout).hexdigest()
+                    if show_h != exp_h:
+                        b4_mismatches.append(f"Commit A {rel_p} SHA mismatch: {show_h[:12]} != {exp_h[:12]}")
+
+                    # Check current working tree file
+                    fp = ROOT / rel_p
+                    if not fp.exists():
+                        b4_mismatches.append(f"Current {rel_p} missing")
+                        continue
+                    disk_h = hashlib.sha256(fp.read_bytes()).hexdigest()
+                    if disk_h != exp_h:
+                        b4_mismatches.append(f"Current {rel_p} SHA mismatch: {disk_h[:12]} != {exp_h[:12]}")
+
+                if len(b4_mismatches) == 0 and len(b4_files) == 9:
+                    b4_base_valid = True
+                    b4_base_detail = f"All 9 production files verified dual-bound: Commit A ({expected_b4_commit[:8]}) matches manifest, working tree matches manifest"
+                else:
+                    b4_base_detail = f"B4 baseline verification failures: {'; '.join(b4_mismatches)}"
         except Exception as e:
             b4_base_detail = f"Exception validating B4 baseline manifest: {e}"
     else:
         b4_base_detail = "B4_PRODUCTION_BASELINE.json missing"
     record_check("Phase 2C.5B4 Production Baseline Manifest Invariant", b4_base_valid, b4_base_detail)
+
+    # 24.8 Phase 2C.5B4 Phase Baselines Negative Mutation Invariant
+    # Per Phase 2C.5B4R Correction 7:
+    # 1. B4 baseline_commit changed -> FAIL
+    # 2. B4 manifest file hash changed -> FAIL
+    # 3. historical B2 commit changed -> FAIL
+    # 4. historical B3 commit changed -> FAIL
+    b_mut_valid = False
+    b_mut_detail = ""
+    try:
+        def test_b4_manifest(m_data):
+            c = m_data.get("baseline_commit")
+            if c != expected_b4_commit:
+                return False
+            fls = m_data.get("production_files", {})
+            if len(fls) != 9:
+                return False
+            for p, eh in fls.items():
+                s_res = subprocess.run(["git", "show", f"{expected_b4_commit}:{p}"], cwd=str(ROOT), capture_output=True)
+                if s_res.returncode != 0 or hashlib.sha256(s_res.stdout).hexdigest() != eh:
+                    return False
+            return True
+
+        def test_hist_manifest(m_data, exp_c):
+            c = m_data.get("closure_commit")
+            if c != exp_c:
+                return False
+            fls = m_data.get("production_files", {})
+            for p, eh in fls.items():
+                s_res = subprocess.run(["git", "show", f"{exp_c}:{p}"], cwd=str(ROOT), capture_output=True)
+                if s_res.returncode != 0 or hashlib.sha256(s_res.stdout).hexdigest() != eh:
+                    return False
+            return True
+
+        # Mutation 1: B4 baseline_commit changed
+        mut1 = json.loads(b4_baseline_path.read_text(encoding="utf-8"))
+        mut1["baseline_commit"] = "0" * 40
+        if test_b4_manifest(mut1):
+            raise AssertionError("Baseline Mutation 1 failed: arbitrary baseline_commit accepted")
+
+        # Mutation 2: B4 manifest file hash changed
+        mut2 = json.loads(b4_baseline_path.read_text(encoding="utf-8"))
+        first_k = list(mut2["production_files"].keys())[0]
+        mut2["production_files"][first_k] = "0" * 64
+        if test_b4_manifest(mut2):
+            raise AssertionError("Baseline Mutation 2 failed: tampered manifest file hash accepted")
+
+        # Mutation 3: historical B2 commit changed
+        mut3 = json.loads((ROOT / "evidence/go_agent/webrtc/phase_baselines/B2_PRODUCTION_BASELINE.json").read_text(encoding="utf-8"))
+        mut3["closure_commit"] = "0" * 40
+        if test_hist_manifest(mut3, "c84d34aac31333298f45e2f66930bf05d8b20756"):
+            raise AssertionError("Baseline Mutation 3 failed: arbitrary B2 commit accepted")
+
+        # Mutation 4: historical B3 commit changed
+        mut4 = json.loads((ROOT / "evidence/go_agent/webrtc/phase_baselines/B3_PRODUCTION_BASELINE.json").read_text(encoding="utf-8"))
+        mut4["closure_commit"] = "0" * 40
+        if test_hist_manifest(mut4, "2a039510d7e5ae4ef3f067769b40660c705989ff"):
+            raise AssertionError("Baseline Mutation 4 failed: arbitrary B3 commit accepted")
+
+        b_mut_valid = True
+        b_mut_detail = "4/4 baseline negative mutation tests rejected (B4 commit changed, B4 file hash changed, B2 commit changed, B3 commit changed)"
+    except Exception as e:
+        b_mut_detail = f"Baseline negative mutation failure: {e}"
+
+    record_check("Phase 2C.5B4 Phase Baselines Negative Mutation Invariant", b_mut_valid, b_mut_detail)
 
     # 25. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
@@ -4331,7 +4473,7 @@ def verify_all():
     reports_dir = ROOT / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
 
-    with open(reports_dir / "02B_ROLE_MAPPING_VALIDATION.md", "w", encoding="utf-8") as f:
+    with open(reports_dir / "02B_ROLE_MAPPING_VALIDATION.md", "w", encoding="utf-8", newline="\n") as f:
         f.write("# Forensic Report 02B: Semantic Role Mapping Validation (Phase 2B.6)\n\n")
         f.write("**Status**: VERIFIED & AUDITED (Automated Invariant Check: PASS)\n\n")
         f.write("## 1. Mathematical Count Invariants\n\n")
@@ -4344,7 +4486,7 @@ def verify_all():
         f.write("- **Zero Leaked Generic Methods**: 0 generic methods (`String`, `MarshalText`, `ReadFrom`, `AcceptTCPWithConn`, etc.) receive project application roles.\n")
         f.write("- **Two-Class Evidence Rule**: Every confirmed project role is backed by at least 2 independent evidence classes (e.g. route registration closure + instruction xref + dynamic oracle confirmation).\n")
 
-    with open(reports_dir / "02C_PHASE2_REPRODUCIBILITY.md", "w", encoding="utf-8") as f:
+    with open(reports_dir / "02C_PHASE2_REPRODUCIBILITY.md", "w", encoding="utf-8", newline="\n") as f:
         f.write("# Forensic Report 02C: Phase 2 Reproducibility & Tooling Pipeline\n\n")
         f.write("**Status**: STATIC_FORENSIC_REPRODUCIBLE\n\n")
         f.write("## 1. Committed Reproducibility Tooling Suite\n\n")

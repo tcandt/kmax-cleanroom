@@ -30,16 +30,16 @@ Every blocker and required correction approved in the B4R plan has been implemen
 - **Single Bridge Write Mutex**: All outbound HAL bridge writes (handshake JSON, planar I420 streaming frames, and JPEG snapshot responses) are strictly serialized under `h.bridgeWriteMu sync.Mutex` via `h.writeBridgeFrame(payload)`. Zero unsynchronized direct writes remain.
 
 ### 2.2 Centralized Failure Cancellation Without Self-Wait
-- **`signalFailure(err)`**: Atomically marks state transition to `CameraStateError`, records error, invokes cancel function, and closes TCP bridge connection under `sync.Once`.
+- **`signalFailure(err)`**: Atomically marks state transition to `StateClosed`, records error, invokes cancel function, and closes TCP bridge connection under `sync.Once`.
 - **Zero Self-Wait**: Workers call `signalFailure(err)` and immediately return; `wg.Wait()` is never called inside worker goroutines, eliminating worker deadlocks. Only external callers of `Close()` or teardown perform `wg.Wait()`.
 
 ### 2.3 WaitGroup Start / Close Race Elimination
-- **Atomic Startup Boundary**: In `onOpen`, handler acquires `h.mu.Lock()`, verifies that state is not `CameraStateClosed` and context is not cancelled, atomically calls `h.wg.Add(2)` and marks `h.workersStarted = true`, releases lock, and then spawns `readBridgeEvents` and `processFrames`.
+- **Atomic Startup Boundary**: In `onOpen`, handler acquires `h.mu.Lock()`, verifies that state is not `StateClosed` and context is not cancelled, atomically calls `h.wg.Add(2)` and marks `h.workersStarted = true`, releases lock, and then spawns `readBridgeEvents` and `processFrames`.
 - **Deterministic Teardown**: `Close()` synchronizes against this startup boundary, ensuring no worker can be launched after `Close()` returns.
 
 ### 2.4 Active Dial Timeout & Normalized Configuration
-- **Active Dial Timeout**: `net.Dialer.DialContext(ctx, ...)` is bounded by `context.WithTimeout(h.ctx, cfg.DialTimeout)` defaulting to 5 seconds, preventing indefinite hangs on unresponsive bridges.
-- **Config Normalization & Sources**: `NormalizeCameraConfig` sanitizes zero values to defaults (640x480, 30fps, 5s timeout). Sources `-camera-addr`, `-force-camera`, and `CP_AGENT_CAMERA_ADDR` are resolved with explicit provenance; `CP_AGENT_FORCE_CAMERA` is formally classified as `IMPLEMENTATION_CHOICE_EXTENSION`.
+- **Active Dial Timeout**: `net.Dialer.DialContext(ctx, ...)` is bounded by `context.WithTimeout(h.ctx, cfg.DialTimeout)` defaulting to 1 second (`DefaultCameraTimeout = 1 * time.Second`), preventing indefinite hangs on unresponsive bridges.
+- **Config Normalization & Sources**: `NormalizeCameraConfig` sanitizes zero values to defaults (640x480, 30fps, 1s timeout). Sources `-camera-addr`, `-force-camera`, and `CP_AGENT_CAMERA_ADDR` are resolved with explicit provenance; `CP_AGENT_FORCE_CAMERA` is formally classified as `IMPLEMENTATION_CHOICE_EXTENSION`.
 
 ### 2.5 Odd Dimension Rejection (ARM64 Disassembly Parity)
 - **ARM64 Disassembly Proof**: Disassembly at `0x51c2cc-0x51c2f8` proves Go compiler generated integer division (`asr x4, x4, #1` and `asr x5, x5, #1`) computing `uvSize = (w/2) * (h/2)`.
@@ -93,14 +93,14 @@ To eliminate manifest self-reference, B4R adheres to a two-step closure sequence
 - **Semantic Normalization**: Compares normalized dimensions, classifications, contract IDs, results, evidence refs, mapped test targets, counter families, and overall verdict.
 - **Negative Mutations (21/21 Rejected)**:
   - Cases 1–13: Contract ID tampering, classification alteration, missing static evidence, missing runtime test, missing framing vectors, invalid phase scope, etc.
-  - Case 14: Tampered framing vectors.
-  - Case 15: Tampered backpressure capacity.
-  - Case 16: Interleaved framed write corruption fixture through real writeBridgeFrame path.
-  - Case 17: Tampered semantic differential result with matching counters.
-  - Case 18: Simulated unexecuted mapped test.
-  - Case 19: Prohibited AI command channel registration.
-  - Case 20: Prohibited ADB channel registration.
-  - Case 21: Sibling worker leak / failure cancellation condition.
+  - Case 14: Nonexistent mapped test target rejected.
+  - Case 15: Skipped mapped test target rejected.
+  - Case 16: Package PASS but mapped test absent rejected.
+  - Case 17: Tampered dimension result with matching counters rejected by real `--check` CLI comparison path.
+  - Case 18: Prohibited AI OnMessage handler triggers isolation violation.
+  - Case 19: Prohibited ADB OnMessage handler triggers isolation violation.
+  - Case 20: Unsynchronized framed writes (bypassed `bridgeWriteMu`) verified to fail real Go test `TestCameraBridgeWriteConcurrency`.
+  - Case 21: Absence of `signalFailure` propagation verified to fail real Go lifecycle test `TestCameraBridgeLifecycleAndCancellation`.
 
 ---
 

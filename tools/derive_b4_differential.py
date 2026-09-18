@@ -20,6 +20,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -976,19 +977,30 @@ def run_b4_verifier_mutation_tests(
     if res16 != "FAILED":
         raise AssertionError("Mutation Case 16 failed: package PASS with exact test absent did not evaluate to FAILED")
 
-    # 17. same counters but tampered dimension result -> semantic check FAILED
-    _, _, test_result, _ = derive_b4_differential_internal(contract_data, repo_root, test_cache=test_cache)
-    tampered_result = copy.deepcopy(test_result)
-    if len(tampered_result.get("dimensions", [])) >= 2:
-        # Alter a dimension result without changing counter totals
-        tampered_result["dimensions"][0]["result"] = "FAILED"
-        tampered_result["dimensions"][0]["details"] = {"error": "tampered for mutation test"}
-        ok17, diffs17 = compare_semantic_results(test_result, tampered_result)
-        if ok17:
-            raise AssertionError("Mutation Case 17 failed: tampered dimension result with matching counters was not rejected by semantic check")
+    # 17. same counters but tampered dimension result -> --check CLI comparison path rejects
+    with tempfile.TemporaryDirectory() as tmpdir:
+        temp_diff_path = Path(tmpdir) / "CAMERA_CHANNEL_B4_DIFFERENTIAL_RESULT_TAMPERED.json"
+        canon_diff_data = json.loads(B4_DIFF_PATH.read_text(encoding="utf-8"))
+        if len(canon_diff_data.get("dimensions", [])) >= 2:
+            # Alter a dimension result without changing counter totals
+            canon_diff_data["dimensions"][0]["result"] = "FAILED"
+            canon_diff_data["dimensions"][0]["details"] = {"error": "tampered for mutation test"}
+            temp_diff_path.write_text(json.dumps(canon_diff_data, indent=2), encoding="utf-8")
+
+            # Invoke the exact same --check semantic comparison path via CLI subprocess
+            cli_env = os.environ.copy()
+            cli_env["B4_SKIP_MUTATIONS"] = "1"
+            proc17 = subprocess.run(
+                [sys.executable, str(repo_root / "tools" / "derive_b4_differential.py"), "--check", "--output", str(temp_diff_path)],
+                cwd=str(repo_root),
+                capture_output=True,
+                text=True,
+                env=cli_env
+            )
+            if proc17.returncode == 0:
+                raise AssertionError("Mutation Case 17 failed: --check CLI path accepted tampered differential with matching counters")
 
     # 18. AI OnMessage introduced -> phase guard FAILED
-    import tempfile
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_pkg = Path(tmpdir) / "pkg"
         tmp_pkg.mkdir(parents=True)
@@ -1006,36 +1018,47 @@ def run_b4_verifier_mutation_tests(
         if not any("ADBChannel.OnMessage" in v for v in adb_violations):
             raise AssertionError("Mutation Case 19 failed: ADB OnMessage did not trigger isolation violation")
 
-    # 20. Framed writes interleaved / corruption fixture through real write helper path -> FAILED
-    # Interleaved prefix/payload bytes must fail parsing
-    corrupted_interleaved_stream = (
-        b"\x06\x00\x00\x00" + b"\x1c\x00\x00\x00" + b"interleaved-prefix-mix"
-    )
-    import io as pyio
-    corrupt_buf = pyio.BytesIO(corrupted_interleaved_stream)
-    prefix1 = corrupt_buf.read(4)
-    len1 = int.from_bytes(prefix1, "little")
-    payload1 = corrupt_buf.read(len1)
-    # The payload read will get the second prefix bytes b"\x1c\x00\x00\x00" + b"in"
-    if payload1 == b"valid_frame":
-        raise AssertionError("Mutation Case 20 failed: interleaved stream unexpectedly parsed as valid")
+    # 20. Framed writes without bridgeWriteMu synchronization -> real TestCameraBridgeWriteConcurrency must FAIL
+    camera_go_path = repo_root / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "camera.go"
+    orig_camera_go_bytes = camera_go_path.read_bytes()
+    orig_camera_go = orig_camera_go_bytes.decode("utf-8")
+    try:
+        # Mutate CameraHandler.writeBridgeFrame to bypass bridgeWriteMu lock and inject unsafe unsynchronized write path
+        target_20 = "func (h *CameraHandler) writeBridgeFrame(payload []byte) error {\n\th.bridgeWriteMu.Lock()\n\tdefer h.bridgeWriteMu.Unlock()"
+        replacement_20 = "func (h *CameraHandler) writeBridgeFrame(payload []byte) error {\n\t// h.bridgeWriteMu.Lock() bypassed and unsafe writer path injected for mutation test\n\tif h.bridgeConn != nil { _ = writeAll(h.bridgeConn, []byte{0xDE, 0xAD}) }"
+        mutated_camera_go = orig_camera_go.replace(target_20, replacement_20)
+        if mutated_camera_go == orig_camera_go:
+            raise AssertionError("Failed to apply Mutation 20 pattern to camera.go")
+        camera_go_path.write_bytes(mutated_camera_go.encode("utf-8"))
 
-    # 21. Bridge sibling worker leak fixture -> FAILED
-    # If a reader fails without signaling failure to sibling, sibling does not cancel
-    class MockSiblingWorker:
-        def __init__(self):
-            self.canceled = False
-        def signal_failure(self):
-            self.canceled = True
-    worker_without_signal = MockSiblingWorker()
-    # Simulated reader error without signal_failure:
-    if worker_without_signal.canceled:
-        raise AssertionError("Mutation Case 21 failed: worker canceled without signal")
-    # Simulated reader error WITH signal_failure:
-    worker_with_signal = MockSiblingWorker()
-    worker_with_signal.signal_failure()
-    if not worker_with_signal.canceled:
-        raise AssertionError("Mutation Case 21 failed: worker not canceled with signal")
+        # Execute the real mapped Go production test TestCameraBridgeWriteConcurrency
+        res20 = execute_go_test_target("./pkg/webrtc", "TestCameraBridgeWriteConcurrency", repo_root)
+        test_action20 = res20.get("tests", {}).get("TestCameraBridgeWriteConcurrency", {}).get("action")
+        if res20.get("package_passed") and test_action20 == "pass":
+            raise AssertionError("Mutation Case 20 failed: TestCameraBridgeWriteConcurrency passed despite unsynchronized writeBridgeFrame")
+    finally:
+        camera_go_path.write_bytes(orig_camera_go_bytes)
+
+    # 21. Absence of signalFailure propagation in CameraHandler -> real TestCameraBridgeLifecycleAndCancellation must FAIL
+    orig_camera_go21_bytes = camera_go_path.read_bytes()
+    orig_camera_go21 = orig_camera_go21_bytes.decode("utf-8")
+    try:
+        # Break signalFailure by turning it into a no-op (no context cancel, no connection close, no state change)
+        mutated_signal = orig_camera_go21.replace(
+            "func (h *CameraHandler) signalFailure(err error) {",
+            "func (h *CameraHandler) signalFailure(err error) { return // signalFailure broken for mutation test\n"
+        )
+        if mutated_signal == orig_camera_go21:
+            raise AssertionError("Failed to apply Mutation 21 pattern to camera.go")
+        camera_go_path.write_bytes(mutated_signal.encode("utf-8"))
+
+        # Execute the real mapped Go lifecycle test TestCameraBridgeLifecycleAndCancellation
+        res21 = execute_go_test_target("./pkg/webrtc", "TestCameraBridgeLifecycleAndCancellation", repo_root)
+        test_action21 = res21.get("tests", {}).get("TestCameraBridgeLifecycleAndCancellation", {}).get("action")
+        if res21.get("package_passed") and test_action21 == "pass":
+            raise AssertionError("Mutation Case 21 failed: TestCameraBridgeLifecycleAndCancellation passed despite broken signalFailure propagation")
+    finally:
+        camera_go_path.write_bytes(orig_camera_go21_bytes)
 
     return True
 
@@ -1113,11 +1136,12 @@ def main():
         sys.exit(1)
 
     # Run negative mutation suite (21/21 mutations)
-    try:
-        run_b4_verifier_mutation_tests(eff_contract, ROOT, test_cache=test_cache)
-    except Exception as ex:
-        print(f"[FAIL] B4 Negative Mutation Suite FAILED: {ex}", file=sys.stderr)
-        sys.exit(1)
+    if os.environ.get("B4_SKIP_MUTATIONS") != "1":
+        try:
+            run_b4_verifier_mutation_tests(eff_contract, ROOT, test_cache=test_cache)
+        except Exception as ex:
+            print(f"[FAIL] B4 Negative Mutation Suite FAILED: {ex}", file=sys.stderr)
+            sys.exit(1)
 
     out_path = Path(args.output) if args.output else B4_DIFF_PATH
 
