@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B4 Camera-Channel Implementation Contract Formal Errata and Provenance Amendment",
+    "phase": "Phase 2C.5B4F",
+    "base_contract_path": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json",
+    "base_contract_sha256": "818abe7db2cc38df3563a0f6cf45ec047cf0c0a93338c994e60a327fc0d471ce",
+    "base_contract_status": "FROZEN_PRE_IMPLEMENTATION",
+    "errata_phase": "Phase 2C.5B4F",
+    "reason": "Correction of pre-implementation over-classification and boundary over-claims. Segregates authentic original binary protocol parity from phase scope guards, architectural implementation choices, and browser frontend reference representations.",
+    "effective_contract_rules": [
+      "Base contract CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json remains strictly frozen and immutable to preserve pre-implementation historical provenance.",
+      "Deferred channel isolation (CAM-B4-13) is classified as PHASE_SCOPE_GUARD and does not increase original protocol parity counters.",
+      "Corrects source relationship of CAM-B4-13 from FILE-B3-16 to FILE-B3-14.",
+      "Separates positive cross-component camera boundary facts (CAM-B4-12) from negative architectural exclusion guards.",
+      "Removes browser-specific 'ArrayBuffer' terminology from static Agent parity claims (CAM-B4-07), confining it to REFERENCE_ONLY frontend evidence.",
+      "Effective contract view is dynamically computed by combining the frozen base contract with this formal errata document."
+    ]
+  },
+  "corrections": [
+    {
+      "contract_id": "CAM-B4-07",
+      "original_claim": "Inbound Binary JPEG Frame Ingestion and Snapshot Cache Ordering: Agent receives binary JPEG ArrayBuffer frames on camera-channel and caches the latest frame in latestCameraJpeg under mutex protection BEFORE attempting non-blocking channel enqueue (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "'ArrayBuffer' is a browser JavaScript DOM/WebAPI representation, not an authentic original Go Agent binary concept. Original Agent binary proves byte-level ingestion of raw binary JPEG data.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json and useWebRTC.js",
+      "corrected_original_parity_claim": "Agent receives binary JPEG payload bytes on camera-channel and caches the latest frame in latestCameraJpeg under mutex protection BEFORE attempting non-blocking channel enqueue.",
+      "non_original_compatibility_behavior": "Browser client encodes canvas frames to image/jpeg and transmits them as ArrayBuffer objects over DataChannel (REFERENCE_ONLY).",
+      "effective_evidence_class": "STATIC_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "reference_only_parts": [
+        "browser_arraybuffer_representation"
+      ],
+      "rationale": "Original Go Agent evidence verifies reception and processing of raw JPEG byte slices (msg.Data). The JavaScript ArrayBuffer type belongs strictly to Lane D reference frontend context."
+    },
+    {
+      "contract_id": "CAM-B4-12",
+      "original_claim": "Physical-Camera vs Virtual-Camera Boundary Assertion: Virtual camera data plane routes exclusively through camera-channel and Camera HAL/bridge TCP socket (default 127.0.0.1:9001), strictly decoupled from scrcpy helper video UDS (@uds_sys_v_) and CameraCapture.java (CROSS_COMPONENT_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Asserting that virtual camera injection routes 'exclusively' and is 'strictly decoupled from every possible path' elevates the absence of recovered call/data-flows into an over-strong negative static assertion. The confirmed cross-component fact is the positive binding of CameraCapture.java to physical capture and camera-channel to virtual injection.",
+      "supporting_original_artifact": "raw_extraction/android/jadx/sources/com/android/helper/video/CameraCapture.java and cloudphone-agent binary",
+      "corrected_original_parity_claim": "CameraCapture.java is positively bound to the physical-camera capture pipeline. Recovered virtual-camera injection path is camera-channel -> Agent JPEG decode -> planar I420 -> camera TCP bridge.",
+      "non_original_compatibility_behavior": "Virtual camera reconstruction must not route through CameraCapture.java or @uds_sys_v_ (IMPLEMENTATION_ARCHITECTURE_GUARD / PHASE_SCOPE_GUARD).",
+      "effective_evidence_class": "CROSS_COMPONENT_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "phase_scope_parts": [
+        "virtual_camera_reconstruction_decoupled_from_helper_video_uds"
+      ],
+      "rationale": "The positive data paths for physical camera capture and virtual camera injection are CROSS_COMPONENT_CONFIRMED. The negative routing exclusion is an architectural guard for reconstruction."
+    },
+    {
+      "contract_id": "CAM-B4-13",
+      "original_claim": "Strict Isolation of Deferred Channels (AI and ADB): Channels 'ai-command-channel' and 'adb-channel' remain strictly deferred with inert lifecycle references only and zero payload processing logic (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Deferred channel isolation is an engineering scope guard to prevent premature out-of-scope reconstruction during Phase 2C.5B4, not an original Agent protocol parity requirement. Additionally, the base contract incorrectly referenced FILE-B3-16 instead of FILE-B3-14.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json (FILE-B3-14)",
+      "corrected_original_parity_claim": "N/A (Engineering Phase Scope Guard: Channels 'ai-command-channel' and 'adb-channel' remain strictly deferred with inert lifecycle references only and zero payload processing logic).",
+      "non_original_compatibility_behavior": "Deferred channels remain inert across Phase 2C.5B4 (PHASE_SCOPE_GUARD).",
+      "effective_evidence_class": "PHASE_SCOPE_GUARD",
+      "effective_mandatory_for_original_parity": false,
+      "mandatory_for_phase_scope": true,
+      "corrected_source_relationship": "FILE-B3-14",
+      "phase_scope_parts": [
+        "ai_command_channel_inertness",
+        "adb_channel_inertness",
+        "zero_payload_processing"
+      ],
+      "rationale": "Inertness of deferred channels is a phase scope boundary rule. It must not be counted as an original static protocol parity requirement."
+    }
+  ]
+}

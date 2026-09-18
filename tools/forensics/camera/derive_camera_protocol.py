@@ -2,6 +2,9 @@
 """
 tools/forensics/camera/derive_camera_protocol.py
 
+Reproduces and validates the frozen camera forensic interpretation against
+original binary disassembly and supporting artifacts.
+
 Derives the camera protocol rules, wire framing vectors, and cross-component boundaries
 from the forensic disassembly and string extraction artifacts.
 """
@@ -11,7 +14,8 @@ import struct
 import sys
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-DISAS_FILE = os.path.join(REPO_ROOT, "tools", "forensics", "camera", "camera_disassembly_manifest.json")
+DEFAULT_DISAS_FILE = os.path.join(REPO_ROOT, "tools", "forensics", "camera", "camera_disassembly_manifest.json")
+DEFAULT_OUT_FILE = os.path.join(REPO_ROOT, "tools", "forensics", "camera", "derived_camera_protocol.json")
 
 def derive_framing_vectors():
     """
@@ -44,8 +48,9 @@ def derive_framing_vectors():
         results.append(entry)
     return results
 
-def derive_protocol_rules():
-    with open(DISAS_FILE, "r", encoding="utf-8") as f:
+def derive_protocol_rules(manifest_path=None, output_path=None):
+    disas_file = manifest_path or DEFAULT_DISAS_FILE
+    with open(disas_file, "r", encoding="utf-8") as f:
         disas = json.load(f)
 
     toolchain = disas["toolchain"]
@@ -217,7 +222,7 @@ def derive_protocol_rules():
         }
     }
 
-    out_path = os.path.join(REPO_ROOT, "tools", "forensics", "camera", "derived_camera_protocol.json")
+    out_path = output_path or DEFAULT_OUT_FILE
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(protocol_rules, f, indent=2)
     print(f"Derived protocol rules saved to {out_path}")

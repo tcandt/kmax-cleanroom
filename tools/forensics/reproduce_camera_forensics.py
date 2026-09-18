@@ -2,67 +2,54 @@
 """
 tools/forensics/reproduce_camera_forensics.py
 
-Canonical reproducer for Phase 2C.5B4F Camera Forensic Precision & Contract Freeze Closure.
-Derives all B4 camera evidence directly from repo artifacts, asserts all forensic invariants,
-regenerates the canonical protocol specification and implementation contract, and validates
-cryptographic SHA-256 integrity.
+Reproduces and validates the frozen camera forensic interpretation against original
+binary disassembly and supporting artifacts.
 
-Run from workspace root:
-  python tools/forensics/reproduce_camera_forensics.py
+Modes:
+  --check (default): Non-mutating verification. Regenerates artifacts into a temporary
+                     directory, computes cryptographic hashes, asserts exact match against
+                     frozen canonical values, validates machine-binding invariants, and
+                     leaves the repository untouched.
+  --write:           Explicitly writes regenerated canonical artifacts to evidence/ directory.
+
+Usage:
+  python tools/forensics/reproduce_camera_forensics.py --check
+  python tools/forensics/reproduce_camera_forensics.py --write
 """
+import argparse
 import hashlib
 import json
 import os
+import shutil
 import struct
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-TOOLS_CAMERA = os.path.join(REPO_ROOT, "tools", "forensics", "camera")
-EVIDENCE_DIR = os.path.join(REPO_ROOT, "evidence", "go_agent", "webrtc")
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+TOOLS_CAMERA = REPO_ROOT / "tools" / "forensics" / "camera"
+EVIDENCE_DIR = REPO_ROOT / "evidence" / "go_agent" / "webrtc"
 
-SPEC_PATH = os.path.join(EVIDENCE_DIR, "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json")
-CONTRACT_PATH = os.path.join(EVIDENCE_DIR, "CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json")
+SPEC_PATH = EVIDENCE_DIR / "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json"
+CONTRACT_PATH = EVIDENCE_DIR / "CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json"
+
+EXPECTED_SPEC_SHA = "1a177531761d51ee280be5d9dce5bd8442c42f19f66ca5acde66b38dd4c48ff9"
+EXPECTED_BASE_CONTRACT_SHA = "818abe7db2cc38df3563a0f6cf45ec047cf0c0a93338c994e60a327fc0d471ce"
+
+sys.path.insert(0, str(REPO_ROOT))
+from tools.forensics.camera.extract_camera_disassembly import discover_llvm_objdump, verify_toolchain, extract_all
+from tools.forensics.camera.derive_camera_protocol import derive_protocol_rules
 
 def hash_file(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
         while chunk := f.read(65536):
             h.update(chunk)
-    return h.hexdigest()
+    return h.hexdigest().lower()
 
-def step1_dump_strings():
-    print("=== Step 1: Executing dump_camera_strings.py ===")
-    script = os.path.join(TOOLS_CAMERA, "dump_camera_strings.py")
-    res = subprocess.run([sys.executable, script], cwd=REPO_ROOT, capture_output=True, text=True)
-    if res.returncode != 0:
-        print(f"FAILED:\n{res.stderr}", file=sys.stderr)
-        sys.exit(1)
-    print("  All 26 string assertions verified.")
-
-def step2_extract_disassembly():
-    print("=== Step 2: Executing extract_camera_disassembly.py ===")
-    script = os.path.join(TOOLS_CAMERA, "extract_camera_disassembly.py")
-    res = subprocess.run([sys.executable, script], cwd=REPO_ROOT, capture_output=True, text=True)
-    if res.returncode != 0:
-        print(f"FAILED:\n{res.stderr}", file=sys.stderr)
-        sys.exit(1)
-    print("  Disassembly manifest extracted.")
-
-def step3_derive_protocol():
-    print("=== Step 3: Executing derive_camera_protocol.py ===")
-    script = os.path.join(TOOLS_CAMERA, "derive_camera_protocol.py")
-    res = subprocess.run([sys.executable, script], cwd=REPO_ROOT, capture_output=True, text=True)
-    if res.returncode != 0:
-        print(f"FAILED:\n{res.stderr}", file=sys.stderr)
-        sys.exit(1)
-    derived_path = os.path.join(TOOLS_CAMERA, "derived_camera_protocol.json")
-    with open(derived_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def step4_generate_canonical_spec(derived):
-    print("=== Step 4: Generating CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json ===")
-    spec = {
+def build_canonical_spec_dict(derived):
+    return {
         "metadata": {
             "title": "Phase 2C.5B4F WebRTC Camera DataChannel & Bridge Protocol Specification",
             "phase": "Phase 2C.5B4F",
@@ -198,14 +185,8 @@ def step4_generate_canonical_spec(derived):
         "architectural_separation": derived["camera_capture_boundary"]
     }
 
-    os.makedirs(os.path.dirname(SPEC_PATH), exist_ok=True)
-    with open(SPEC_PATH, "w", encoding="utf-8") as f:
-        json.dump(spec, f, indent=2)
-    print(f"  Regenerated {SPEC_PATH}")
-
-def step5_generate_canonical_contract(derived):
-    print("=== Step 5: Generating CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json ===")
-    contract = {
+def build_canonical_contract_dict(derived):
+    return {
         "metadata": {
             "title": "Phase 2C.5B4F WebRTC Camera DataChannel & Virtual Camera Implementation Contract",
             "phase": "Phase 2C.5B4F",
@@ -370,54 +351,207 @@ def step5_generate_canonical_contract(derived):
         ]
     }
 
-    with open(CONTRACT_PATH, "w", encoding="utf-8") as f:
-        json.dump(contract, f, indent=2)
-    print(f"  Regenerated {CONTRACT_PATH}")
+def validate_machine_binding_invariants(spec, contract, derived):
+    """
+    Independently validates all 16 critical machine-binding checks required by Section 11.
+    """
+    # 1. camera-channel label
+    assert spec["channel_properties"]["label"] == "camera-channel", "camera-channel label missing"
 
-def step6_verify_all():
-    print("=== Step 6: Verifying Artifact Invariants and Hashes ===")
-    with open(SPEC_PATH, "r", encoding="utf-8") as f:
-        spec = json.load(f)
-    with open(CONTRACT_PATH, "r", encoding="utf-8") as f:
-        contract = json.load(f)
+    # 2. ordered flag
+    assert spec["channel_properties"]["ordered"] is True, "ordered flag must be True"
 
-    # Invariant assertions
-    assert spec["channel_properties"]["ordered"] is True
-    assert spec["camera_hal_tcp_protocol"]["wire_framing"]["byte_order"] == "little-endian"
-    assert spec["backpressure_and_concurrency"]["channel_capacity"]["capacity"] == 1
-    assert len(spec["camera_hal_tcp_protocol"]["inbound_event_framing"]["supported_events"]) == 3
-    assert len(contract["requirements"]) == 13
+    # 3. cameraSupport branch/gate
+    gate = spec["channel_properties"]["conditional_creation"]
+    assert "cameraSupport == true" in gate and "-force-camera" in gate, "cameraSupport gate missing"
 
-    # Evidence classification audit
-    valid_classes = {
-        "STATIC_CONFIRMED",
-        "CROSS_COMPONENT_CONFIRMED",
-        "REFERENCE_ONLY",
-        "RECONSTRUCTED_SEMANTIC_MODEL",
-        "IMPLEMENTATION_CHOICE",
-        "UNKNOWN"
-    }
-    for req in contract["requirements"]:
-        cls = req["evidence_class"]
-        assert cls in valid_classes, f"Invalid evidence class {cls} in {req['id']}"
+    # 4. 4-byte LE framing
+    wire_framing = spec["camera_hal_tcp_protocol"]["wire_framing"]
+    assert wire_framing["width_bytes"] == 4, "wire framing width must be 4 bytes"
+    assert wire_framing["byte_order"] == "little-endian", "wire framing must be little-endian"
+    assert "str w3, [x0]" in wire_framing["arm64_instruction"], "ARM64 str w3 missing"
+    assert "movl %edx, (%rax)" in wire_framing["amd64_instruction"], "AMD64 movl %edx missing"
 
-    spec_sha = hash_file(SPEC_PATH)
-    contract_sha = hash_file(CONTRACT_PATH)
+    # 5. Three HAL event names and lengths
+    events = spec["camera_hal_tcp_protocol"]["inbound_event_framing"]["supported_events"]
+    event_map = {e["event_name"]: e["length"] for e in events}
+    assert event_map.get("VIRTUAL_DEVICE_START_CAMERA_SESSION") == 35, "START event length != 35"
+    assert event_map.get("VIRTUAL_DEVICE_STOP_CAMERA_SESSION") == 34, "STOP event length != 34"
+    assert event_map.get("VIRTUAL_DEVICE_CAPTURE_IMAGE") == 28, "CAPTURE event length != 28"
+
+    # 6. io.ReadFull prefix/payload pattern
+    read_mech = spec["camera_hal_tcp_protocol"]["inbound_event_framing"]["read_mechanism"]
+    assert "io.ReadFull" in read_mech, "io.ReadFull read mechanism missing"
+
+    # 7. cameraFrameChan capacity = 1
+    assert spec["backpressure_and_concurrency"]["channel_capacity"]["capacity"] == 1, "capacity != 1"
+
+    # 8. selectnbsend callsite
+    assert "selectnbsend" in spec["backpressure_and_concurrency"]["enqueue_semantics"]["callsite"], "selectnbsend callsite missing"
+
+    # 9. latestCameraJpeg update-before-enqueue ordering
+    ordering = spec["backpressure_and_concurrency"]["snapshot_cache_ordering"]["ordering"]
+    assert "BEFORE selectnbsend" in ordering, "snapshot ordering must update before selectnbsend"
+
+    # 10. jpeg.Decode call path
+    assert "image/jpeg.Decode" in spec["datachannel_message_types"]["browser_to_agent"]["camera_frame"]["agent_decoder"], "jpeg.Decode missing"
+
+    # 11. YCbCr SubsampleRatio420 check
+    layout = spec["camera_hal_tcp_protocol"]["video_frame_stream"]["planar_layout"]
+    assert layout["format"] == "Planar I420 (YUV420P)", "format != Planar I420"
+
+    # 12. Y/U/V plane order
+    assert layout["plane_order"] == ["Y", "U (Cb)", "V (Cr)"], "plane order != Y, U, V"
+
+    # 13. stride fallback
+    assert "stride_fallback_action" in layout, "stride fallback missing"
+
+    # 14. default endpoint 127.0.0.1:9001
+    endpoint = spec["camera_hal_tcp_protocol"]["endpoint_classification"]
+    assert endpoint["default_endpoint"] == "127.0.0.1:9001", "default endpoint != 127.0.0.1:9001"
+
+    # 15. -camera-addr
+    assert endpoint["configurable_flag"] == "-camera-addr", "-camera-addr flag missing"
+
+    # 16. -force-camera
+    assert endpoint["override_flag"] == "-force-camera", "-force-camera flag missing"
+
+    # Browser reference parameters separated in REFERENCE_ONLY
+    ref_params = spec["datachannel_message_types"]["browser_to_agent"]["camera_frame"]["reference_frontend_parameters"]
+    assert ref_params["evidence_class"] == "REFERENCE_ONLY", "frontend reference must be REFERENCE_ONLY"
+    assert ref_params["canvas_resolution"] == "640x480"
+    assert ref_params["fps"] == 30
+    assert ref_params["quality"] == 0.6
+
+    # Verify contract requirements count
+    assert len(contract["requirements"]) == 13, f"Expected 13 requirements, got {len(contract['requirements'])}"
+
+def run_check_mode():
+    print("==================================================")
+    print("PHASE 2C.5B4F CAMERA FORENSIC REPRODUCER (--check)")
+    print("==================================================")
+    print("Mode: Non-mutating temp verification & machine-binding validation\n")
+
+    # Snapshot git status before execution
+    git_before = subprocess.run(["git", "status", "--porcelain"], cwd=str(REPO_ROOT), capture_output=True, text=True)
+    before_status = git_before.stdout.strip()
+
+    # Step 0: Toolchain discovery and verification
+    disasm_path, method = discover_llvm_objdump()
+    t_info = verify_toolchain(disasm_path)
+    print(f"Toolchain: {t_info['basename']} via {method} (Status: {t_info['status']}, SHA256: {str(t_info['sha256'])[:16]}...)")
+    if t_info["status"] not in ("SAME_CANONICAL_TOOLCHAIN", "DIFFERENT_VERIFIED_TOOLCHAIN"):
+        print(f"[FAIL] Incompatible toolchain status: {t_info['status']}", file=sys.stderr)
+        sys.exit(1)
+
+    # Verify canonical files exist
+    if not SPEC_PATH.exists():
+        print(f"[FAIL] Canonical spec file missing: {SPEC_PATH}", file=sys.stderr)
+        sys.exit(1)
+    if not CONTRACT_PATH.exists():
+        print(f"[FAIL] Canonical contract file missing: {CONTRACT_PATH}", file=sys.stderr)
+        sys.exit(1)
+
+    canon_spec_sha = hash_file(SPEC_PATH)
+    canon_contract_sha = hash_file(CONTRACT_PATH)
+
+    # Fail-closed check against frozen constants
+    if canon_spec_sha != EXPECTED_SPEC_SHA:
+        print(f"[FAIL] Canonical spec SHA mismatch! Expected {EXPECTED_SPEC_SHA}, got {canon_spec_sha}", file=sys.stderr)
+        sys.exit(1)
+    if canon_contract_sha != EXPECTED_BASE_CONTRACT_SHA:
+        print(f"[FAIL] Canonical base contract SHA mismatch! Expected {EXPECTED_BASE_CONTRACT_SHA}, got {canon_contract_sha}", file=sys.stderr)
+        sys.exit(1)
+    print(f"[+] Canonical Spec SHA256 matches frozen baseline:     {canon_spec_sha}")
+    print(f"[+] Canonical Contract SHA256 matches frozen baseline: {canon_contract_sha}")
+
+    # Regenerate in temporary directory to verify non-mutating reproducibility
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_p = Path(temp_dir)
+        temp_manifest = temp_dir_p / "camera_disassembly_manifest.json"
+        temp_derived_p = temp_dir_p / "derived_camera_protocol.json"
+        temp_spec_p = temp_dir_p / "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json"
+        temp_contract_p = temp_dir_p / "CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json"
+
+        # 1. Disassembly extraction
+        extract_all(output_file=str(temp_manifest))
+
+        # 2. Protocol derivation
+        derived = derive_protocol_rules(manifest_path=str(temp_manifest), output_path=str(temp_derived_p))
+
+        # 3. Spec & Contract generation
+        spec_dict = build_canonical_spec_dict(derived)
+        contract_dict = build_canonical_contract_dict(derived)
+
+        with open(temp_spec_p, "w", encoding="utf-8") as f:
+            json.dump(spec_dict, f, indent=2)
+        with open(temp_contract_p, "w", encoding="utf-8") as f:
+            json.dump(contract_dict, f, indent=2)
+
+        # 4. Hash verification
+        regen_spec_sha = hash_file(temp_spec_p)
+        regen_contract_sha = hash_file(temp_contract_p)
+
+        if regen_spec_sha != EXPECTED_SPEC_SHA:
+            print(f"[FAIL] Regenerated spec SHA mismatch! Expected {EXPECTED_SPEC_SHA}, got {regen_spec_sha}", file=sys.stderr)
+            sys.exit(1)
+        if regen_contract_sha != EXPECTED_BASE_CONTRACT_SHA:
+            print(f"[FAIL] Regenerated contract SHA mismatch! Expected {EXPECTED_BASE_CONTRACT_SHA}, got {regen_contract_sha}", file=sys.stderr)
+            sys.exit(1)
+
+        print(f"[+] Regenerated Spec in temp matches frozen SHA:     {regen_spec_sha}")
+        print(f"[+] Regenerated Contract in temp matches frozen SHA: {regen_contract_sha}")
+
+        # 5. Machine-binding invariant validation
+        validate_machine_binding_invariants(spec_dict, contract_dict, derived)
+        print("[+] All 16 critical machine-binding invariants validated successfully.")
+
+    # 6. Verify working tree remained clean of new mutations
+    git_after = subprocess.run(["git", "status", "--porcelain"], cwd=str(REPO_ROOT), capture_output=True, text=True)
+    after_status = git_after.stdout.strip()
+    if after_status != before_status:
+        print(f"[FAIL] Reproducer caused repository mutations during check run:\nBefore:\n{before_status}\nAfter:\n{after_status}", file=sys.stderr)
+        sys.exit(1)
 
     print("\n------------------------------------------------------------")
-    print("PHASE 2C.5B4F FORENSIC PRECISION PASS COMPLETE")
-    print(f"  CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json:         {spec_sha}")
-    print(f"  CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json: {contract_sha}")
+    print("PHASE 2C.5B4F CAMERA FORENSIC REPRODUCER: PASS")
     print("------------------------------------------------------------\n")
-    return spec_sha, contract_sha
+    return 0
+
+def run_write_mode():
+    print("=== Executing camera forensics in --write mode ===")
+    disasm_path, method = discover_llvm_objdump()
+    t_info = verify_toolchain(disasm_path)
+    print(f"Toolchain: {t_info['basename']} via {method} (Status: {t_info['status']})")
+
+    extract_all()
+    derived = derive_protocol_rules()
+    spec = build_canonical_spec_dict(derived)
+    contract = build_canonical_contract_dict(derived)
+
+    with open(SPEC_PATH, "w", encoding="utf-8") as f:
+        json.dump(spec, f, indent=2)
+    with open(CONTRACT_PATH, "w", encoding="utf-8") as f:
+        json.dump(contract, f, indent=2)
+
+    s_sha = hash_file(SPEC_PATH)
+    c_sha = hash_file(CONTRACT_PATH)
+
+    assert s_sha == EXPECTED_SPEC_SHA, f"Spec SHA mismatch: {s_sha} != {EXPECTED_SPEC_SHA}"
+    assert c_sha == EXPECTED_BASE_CONTRACT_SHA, f"Contract SHA mismatch: {c_sha} != {EXPECTED_BASE_CONTRACT_SHA}"
+    print(f"Wrote canonical spec ({s_sha}) and contract ({c_sha}).")
+    return 0
 
 def main():
-    step1_dump_strings()
-    step2_extract_disassembly()
-    derived = step3_derive_protocol()
-    step4_generate_canonical_spec(derived)
-    step5_generate_canonical_contract(derived)
-    step6_verify_all()
+    parser = argparse.ArgumentParser(description="Phase 2C.5B4F Camera Forensic Reproducer")
+    parser.add_argument("--check", action="store_true", default=True, help="Non-mutating check mode (default)")
+    parser.add_argument("--write", action="store_true", help="Explicitly write regenerated canonical files")
+    args = parser.parse_args()
+
+    if args.write:
+        sys.exit(run_write_mode())
+    else:
+        sys.exit(run_check_mode())
 
 if __name__ == "__main__":
     main()

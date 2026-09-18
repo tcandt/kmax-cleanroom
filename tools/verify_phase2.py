@@ -3979,7 +3979,140 @@ def verify_all():
 
     record_check("Phase 2C.5B2R Concurrency and Race Verification Gate (go test -race ./...)", race_passed, race_detail)
 
-    # 21.6 Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # 23. PHASE 2C.5B4 CAMERA DATACHANNEL & VIRTUAL CAMERA FORENSIC BASELINE AUDIT
+    # 23.1 B4 Base Contract Frozen Invariant
+    b4_contract_path = ROOT / "evidence" / "go_agent" / "webrtc" / "CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json"
+    expected_b4_sha256 = "818abe7db2cc38df3563a0f6cf45ec047cf0c0a93338c994e60a327fc0d471ce"
+    b4_contract_valid = False
+    b4_contract_detail = ""
+
+    if b4_contract_path.exists():
+        with open(b4_contract_path, "rb") as f:
+            actual_b4_sha = hashlib.sha256(f.read()).hexdigest().lower()
+        if actual_b4_sha == expected_b4_sha256.lower():
+            try:
+                b4_cdata = json.loads(b4_contract_path.read_text(encoding="utf-8"))
+                reqs = b4_cdata.get("requirements", [])
+                if len(reqs) == 13 and b4_cdata.get("metadata", {}).get("phase") == "Phase 2C.5B4F":
+                    b4_contract_valid = True
+                    b4_contract_detail = f"CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json SHA-256 verified against frozen baseline ({actual_b4_sha[:16]}..., 13/13 requirements confirmed)"
+                else:
+                    b4_contract_detail = "B4 contract requirements count or phase metadata mismatch"
+            except Exception as e:
+                b4_contract_detail = f"Failed to parse B4 contract JSON: {e}"
+        else:
+            b4_contract_detail = f"B4 contract SHA mismatch: expected {expected_b4_sha256[:16]}, got {actual_b4_sha[:16]}"
+    else:
+        b4_contract_detail = "CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json missing"
+    record_check("Phase 2C.5B4 Camera Implementation Contract Frozen Invariant", b4_contract_valid, b4_contract_detail)
+
+    # 23.2 B4 Protocol Specification Frozen Invariant
+    b4_spec_path = ROOT / "evidence" / "go_agent" / "webrtc" / "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json"
+    expected_b4_spec_sha = "1a177531761d51ee280be5d9dce5bd8442c42f19f66ca5acde66b38dd4c48ff9"
+    b4_spec_valid = False
+    b4_spec_detail = ""
+
+    if b4_spec_path.exists():
+        with open(b4_spec_path, "rb") as f:
+            actual_b4_spec_sha = hashlib.sha256(f.read()).hexdigest().lower()
+        if actual_b4_spec_sha == expected_b4_spec_sha.lower():
+            try:
+                b4_sdata = json.loads(b4_spec_path.read_text(encoding="utf-8"))
+                if b4_sdata.get("metadata", {}).get("phase") == "Phase 2C.5B4F":
+                    b4_spec_valid = True
+                    b4_spec_detail = f"CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json SHA-256 verified against frozen baseline ({actual_b4_spec_sha[:16]}...)"
+                else:
+                    b4_spec_detail = "B4 spec phase metadata mismatch"
+            except Exception as e:
+                b4_spec_detail = f"Failed to parse B4 spec JSON: {e}"
+        else:
+            b4_spec_detail = f"B4 spec SHA mismatch: expected {expected_b4_spec_sha[:16]}, got {actual_b4_spec_sha[:16]}"
+    else:
+        b4_spec_detail = "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json missing"
+    record_check("Phase 2C.5B4 Camera Protocol Specification Frozen Invariant", b4_spec_valid, b4_spec_detail)
+
+    # 23.3 B4 Contract Formal Errata & Schema Invariant
+    b4_errata_path = ROOT / "evidence" / "go_agent" / "webrtc" / "CAMERA_CHANNEL_B4_CONTRACT_ERRATA.json"
+    b4_errata_valid = False
+    b4_errata_detail = ""
+
+    if b4_errata_path.exists():
+        try:
+            b4_edata = json.loads(b4_errata_path.read_text(encoding="utf-8"))
+            emeta = b4_edata.get("metadata", {})
+            corrections = b4_edata.get("corrections", [])
+            cids = {c.get("contract_id") for c in corrections}
+            required_b4_cids = {"CAM-B4-07", "CAM-B4-12", "CAM-B4-13"}
+
+            if (
+                emeta.get("base_contract_sha256") == expected_b4_sha256 and
+                emeta.get("errata_phase") == "Phase 2C.5B4F" and
+                required_b4_cids.issubset(cids)
+            ):
+                b4_errata_valid = True
+                b4_errata_detail = f"Formal errata validated: {len(corrections)} corrections present (CAM-B4-07, CAM-B4-12, CAM-B4-13), references frozen base SHA-256 {expected_b4_sha256[:16]}..."
+            else:
+                b4_errata_detail = "B4 errata metadata or corrections set incomplete/mismatched"
+        except Exception as e:
+            b4_errata_detail = f"Failed to parse B4 errata: {e}"
+    else:
+        b4_errata_detail = "CAMERA_CHANNEL_B4_CONTRACT_ERRATA.json missing"
+    record_check("Phase 2C.5B4 Formal Contract Errata & Schema Invariant", b4_errata_valid, b4_errata_detail)
+
+    # 23.4 B4 Effective Contract Compilation Invariant
+    b4_eff_valid = False
+    b4_eff_detail = ""
+    try:
+        from tools.audit.build_b4_effective_contract import build_b4_effective_contract
+        eff_b4 = build_b4_effective_contract(ROOT)
+        b4_b = eff_b4["breakdown_by_classification"]
+        if (
+            eff_b4["metadata"]["total_requirements"] == 13 and
+            eff_b4["metadata"]["total_original_parity_requirements"] == 12 and
+            eff_b4["metadata"]["total_phase_scope_guards"] == 1 and
+            len(b4_b["original_static"]) == 11 and
+            len(b4_b["cross_component"]) == 1 and
+            len(b4_b["phase_scope_guard"]) == 1
+        ):
+            b4_eff_valid = True
+            b4_eff_detail = f"Effective contract compiled: 13 requirements, 3 errata corrections, 12 original parity claims (11 static + 1 cross-component), 1 phase scope guard"
+        else:
+            b4_eff_detail = "Effective contract requirements or classification breakdown mismatch"
+    except Exception as e:
+        b4_eff_detail = f"Failed to build effective B4 contract: {e}"
+    record_check("Phase 2C.5B4 Effective Implementation Contract View", b4_eff_valid, b4_eff_detail)
+
+    # 23.5 B4 Camera Forensic Reproducer Invariant (--check mode)
+    b4_repro_valid = False
+    b4_repro_detail = ""
+    try:
+        repro_res = subprocess.run([sys.executable, str(ROOT / "tools" / "forensics" / "reproduce_camera_forensics.py"), "--check"],
+                                  cwd=str(ROOT), capture_output=True, text=True)
+        if repro_res.returncode == 0:
+            b4_repro_valid = True
+            b4_repro_detail = "Non-mutating reproducer --check passed cleanly (all 16 machine-binding invariants validated, temp SHA matched frozen baseline)"
+        else:
+            b4_repro_detail = f"Reproducer --check failed (code {repro_res.returncode}): {repro_res.stderr.strip()[:200]}"
+    except Exception as e:
+        b4_repro_detail = f"Exception running reproducer: {e}"
+    record_check("Phase 2C.5B4 Camera Forensic Reproducer Invariant (--check)", b4_repro_valid, b4_repro_detail)
+
+    # 23.6 B4 Camera Forensic Negative Mutation Invariant
+    b4_mut_valid = False
+    b4_mut_detail = ""
+    try:
+        mut_res = subprocess.run([sys.executable, str(ROOT / "tools" / "forensics" / "test_camera_forensics_negative.py")],
+                                cwd=str(ROOT), capture_output=True, text=True)
+        if mut_res.returncode == 0:
+            b4_mut_valid = True
+            b4_mut_detail = "10/10 negative mutation tests successfully rejected (LE framing, capacity=1, event length, tampered hash, over-classification)"
+        else:
+            b4_mut_detail = f"Negative mutation tests failed (code {mut_res.returncode}): {mut_res.stderr.strip()[:200]}"
+    except Exception as e:
+        b4_mut_detail = f"Exception running negative mutation tests: {e}"
+    record_check("Phase 2C.5B4 Camera Forensic Negative Mutation Invariant", b4_mut_valid, b4_mut_detail)
+
+    # 24. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv
