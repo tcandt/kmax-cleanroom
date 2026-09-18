@@ -770,6 +770,10 @@ def main():
                 if "execution_evidence" in d_copy:
                     ev = dict(d_copy["execution_evidence"])
                     ev.pop("elapsed", None)
+                    if "target" in ev and isinstance(ev["target"], str):
+                        target_str = ev["target"].replace("\\", "/")
+                        if "reconstructed_source/" in target_str:
+                            ev["target"] = "reconstructed_source/" + target_str.split("reconstructed_source/", 1)[1]
                     d_copy["execution_evidence"] = ev
                 dims.append(d_copy)
             return {
