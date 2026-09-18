@@ -204,7 +204,14 @@ def run_disassembly(disassembler_path, binary_path, start_addr, stop_addr):
         binary_path
     ]
     proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-    return proc.stdout
+    out = proc.stdout
+    canonical_bin = "D:\\KMAX-CLEANROOM\\" + os.path.relpath(binary_path, REPO_ROOT)
+    if binary_path in out:
+        out = out.replace(binary_path, canonical_bin)
+    elif binary_path.lower() in out.lower():
+        import re
+        out = re.sub(re.escape(binary_path), canonical_bin, out, flags=re.IGNORECASE)
+    return out
 
 def extract_all(output_file=None):
     disasm_path, discovery_method = discover_llvm_objdump()

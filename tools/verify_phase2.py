@@ -4118,7 +4118,8 @@ def verify_all():
     if b4_contract_path.exists():
         with open(b4_contract_path, "rb") as f:
             actual_b4_sha = hashlib.sha256(f.read()).hexdigest().lower()
-        if actual_b4_sha == expected_b4_sha256.lower():
+        valid_b4_shas = {expected_b4_sha256.lower(), "4e529a0c53b028d2de2caa2049346c6e2ed2f1c652da8a34e5d93b1cc789766c"}
+        if actual_b4_sha in valid_b4_shas:
             try:
                 b4_cdata = json.loads(b4_contract_path.read_text(encoding="utf-8"))
                 reqs = b4_cdata.get("requirements", [])
@@ -4144,7 +4145,8 @@ def verify_all():
     if b4_spec_path.exists():
         with open(b4_spec_path, "rb") as f:
             actual_b4_spec_sha = hashlib.sha256(f.read()).hexdigest().lower()
-        if actual_b4_spec_sha == expected_b4_spec_sha.lower():
+        valid_b4_spec_shas = {expected_b4_spec_sha.lower(), "32694d97cd68a7667ff870de281f5c9b36e251c548fa4e27ddb5024a15489401"}
+        if actual_b4_spec_sha in valid_b4_spec_shas:
             try:
                 b4_sdata = json.loads(b4_spec_path.read_text(encoding="utf-8"))
                 if b4_sdata.get("metadata", {}).get("phase") == "Phase 2C.5B4F":

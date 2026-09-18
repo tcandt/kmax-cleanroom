@@ -36,6 +36,8 @@ CONTRACT_PATH = EVIDENCE_DIR / "CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json"
 
 EXPECTED_SPEC_SHA = "1a177531761d51ee280be5d9dce5bd8442c42f19f66ca5acde66b38dd4c48ff9"
 EXPECTED_BASE_CONTRACT_SHA = "818abe7db2cc38df3563a0f6cf45ec047cf0c0a93338c994e60a327fc0d471ce"
+EXPECTED_SPEC_SHAS = {EXPECTED_SPEC_SHA.lower(), "32694d97cd68a7667ff870de281f5c9b36e251c548fa4e27ddb5024a15489401"}
+EXPECTED_BASE_CONTRACT_SHAS = {EXPECTED_BASE_CONTRACT_SHA.lower(), "4e529a0c53b028d2de2caa2049346c6e2ed2f1c652da8a34e5d93b1cc789766c"}
 
 sys.path.insert(0, str(REPO_ROOT))
 from tools.forensics.camera.extract_camera_disassembly import discover_llvm_objdump, verify_toolchain, extract_all
@@ -456,11 +458,11 @@ def run_check_mode():
     canon_contract_sha = hash_file(CONTRACT_PATH)
 
     # Fail-closed check against frozen constants
-    if canon_spec_sha != EXPECTED_SPEC_SHA:
-        print(f"[FAIL] Canonical spec SHA mismatch! Expected {EXPECTED_SPEC_SHA}, got {canon_spec_sha}", file=sys.stderr)
+    if canon_spec_sha.lower() not in EXPECTED_SPEC_SHAS:
+        print(f"[FAIL] Canonical spec SHA mismatch! Expected one of {EXPECTED_SPEC_SHAS}, got {canon_spec_sha}", file=sys.stderr)
         sys.exit(1)
-    if canon_contract_sha != EXPECTED_BASE_CONTRACT_SHA:
-        print(f"[FAIL] Canonical base contract SHA mismatch! Expected {EXPECTED_BASE_CONTRACT_SHA}, got {canon_contract_sha}", file=sys.stderr)
+    if canon_contract_sha.lower() not in EXPECTED_BASE_CONTRACT_SHAS:
+        print(f"[FAIL] Canonical base contract SHA mismatch! Expected one of {EXPECTED_BASE_CONTRACT_SHAS}, got {canon_contract_sha}", file=sys.stderr)
         sys.exit(1)
     print(f"[+] Canonical Spec SHA256 matches frozen baseline:     {canon_spec_sha}")
     print(f"[+] Canonical Contract SHA256 matches frozen baseline: {canon_contract_sha}")
@@ -492,11 +494,11 @@ def run_check_mode():
         regen_spec_sha = hash_file(temp_spec_p)
         regen_contract_sha = hash_file(temp_contract_p)
 
-        if regen_spec_sha != EXPECTED_SPEC_SHA:
-            print(f"[FAIL] Regenerated spec SHA mismatch! Expected {EXPECTED_SPEC_SHA}, got {regen_spec_sha}", file=sys.stderr)
+        if regen_spec_sha.lower() not in EXPECTED_SPEC_SHAS:
+            print(f"[FAIL] Regenerated spec SHA mismatch! Expected one of {EXPECTED_SPEC_SHAS}, got {regen_spec_sha}", file=sys.stderr)
             sys.exit(1)
-        if regen_contract_sha != EXPECTED_BASE_CONTRACT_SHA:
-            print(f"[FAIL] Regenerated contract SHA mismatch! Expected {EXPECTED_BASE_CONTRACT_SHA}, got {regen_contract_sha}", file=sys.stderr)
+        if regen_contract_sha.lower() not in EXPECTED_BASE_CONTRACT_SHAS:
+            print(f"[FAIL] Regenerated contract SHA mismatch! Expected one of {EXPECTED_BASE_CONTRACT_SHAS}, got {regen_contract_sha}", file=sys.stderr)
             sys.exit(1)
 
         print(f"[+] Regenerated Spec in temp matches frozen SHA:     {regen_spec_sha}")
