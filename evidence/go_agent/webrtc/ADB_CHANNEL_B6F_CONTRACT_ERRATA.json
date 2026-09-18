@@ -1,9 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "metadata": {
-    "phase": "Phase 2C.5B6F",
+    "phase": "Phase 2C.5B6FR",
     "title": "ADB-Channel Formal Contract & Historical Evidence Errata",
-    "description": "Formally supersedes preliminary Phase 2C.5A claims regarding adb-channel downstream topology and inbound channel options, recording machine-bound corrections while preserving historical artifact immutability.",
+    "base_contract_path": "evidence/go_agent/webrtc/ADB_CHANNEL_B6F_IMPLEMENTATION_CONTRACT.json",
+    "base_contract_sha256": "1b1aba53ef39786fadafaab772e11c0611198403f8910f951a507ff4b06fc3ea",
+    "base_contract_status": "FROZEN_FORENSIC_BASELINE",
+    "errata_phase": "Phase 2C.5B6FR",
+    "description": "Formally supersedes preliminary Phase 2C.5A claims regarding adb-channel downstream topology and inbound channel options, and refines ADB-B6F-01 evidence classification into cross-component parity while preserving historical artifact immutability.",
     "superseded_historical_artifacts": [
       {
         "artifact": "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
@@ -16,9 +20,11 @@
     ],
     "errata_principles": [
       "Historical Phase 2C.5A artifacts remain strictly immutable on disk.",
+      "Base contract ADB_CHANNEL_B6F_IMPLEMENTATION_CONTRACT.json remains strictly frozen and immutable with SHA256 1b1aba53ef39786fadafaab772e11c0611198403f8910f951a507ff4b06fc3ea.",
       "Exhaustive binary callgraph analysis across ARM64 and AMD64 proves zero reachable net.Dial/net.DialTCP calls, zero constructed socket paths, and zero occurrences of '127.0.0.1:5555'.",
       "The authentic original downstream topology is an in-process PTY shell allocation (/dev/ptmx via pty.Open with non-PTY pipe shell fallback) spawning /system/bin/sh (ARM64) or /bin/sh (AMD64) with background goroutines pumping stdout -> (*DataChannel).Send.",
       "Inbound 'ordered: true' property is classified as REFERENCE_ONLY from frontend browser creation (pc.createDataChannel('adb-channel', { ordered: true })), as original Agent binary does not enforce or inspect the ordered flag on inbound channels.",
+      "Channel identity (ADB-B6F-01) is split into Agent inbound acceptance (STATIC_CONFIRMED) and Browser client creation (REFERENCE_INTEROPERABILITY), yielding effective classification CROSS_COMPONENT_CONFIRMED.",
       "All process execution, PTY allocation, and shell streaming logic are classified as DEFERRED_ADB_BRIDGE_BOUNDARY and excluded from clean-room agent runtime implementation."
     ]
   },
@@ -41,6 +47,26 @@
       "effective_classification": "REFERENCE_ONLY",
       "effective_mandatory_for_original_parity": false,
       "mandatory_for_interoperability": true
+    },
+    {
+      "contract_id": "ADB-B6F-01",
+      "base_contract_id": "ADB-B6F-01",
+      "superseded_claim": "Channel label is 'adb-channel' (11 bytes), created by Browser Client and accepted inbound by Agent in pc.OnDataChannel (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "Channel label comparison 'adb-channel' and inbound acceptance via pc.OnDataChannel are authentic original Agent binary static facts (STATIC_CONFIRMED). However, 'created by Browser Client' originates from client-side WebRTC construction in frontend Lane D reference (pc.createDataChannel('adb-channel', { ordered: true })). Attributing the entire composite requirement to pure original static evidence overcounts Agent static parity.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/ADB_CHANNEL_B6F_PROTOCOL_SPEC.json and useWebRTC.js",
+      "split_effective_semantics": {
+        "original_static_part": "Agent receives an inbound DataChannel through pc.OnDataChannel, performs label comparison proving 'adb-channel' (ARM64 0x53f2ac, AMD64 0x9e2fad), and consumes the matched channel.",
+        "reference_interoperability_part": "Browser Client creates the DataChannel with label 'adb-channel' via pc.createDataChannel('adb-channel', ...)."
+      },
+      "corrected_original_parity_claim": "Agent receives inbound DataChannel via pc.OnDataChannel, compares label 'adb-channel', and routes to dedicated adb handler.",
+      "non_original_compatibility_behavior": "Browser Client initiates the WebRTC DataChannel with label 'adb-channel' (REFERENCE_INTEROPERABILITY).",
+      "effective_evidence_class": "CROSS_COMPONENT_CONFIRMED",
+      "effective_mandatory_for_original_parity": true,
+      "mandatory_for_interoperability": true,
+      "reference_only_parts": [
+        "browser_client_channel_creation"
+      ],
+      "rationale": "Separates Agent binary inbound consumption (STATIC_CONFIRMED) from Browser client channel creation (REFERENCE_INTEROPERABILITY), classifying the composite channel identity requirement as CROSS_COMPONENT_CONFIRMED."
     }
   ]
 }

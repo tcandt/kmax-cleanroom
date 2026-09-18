@@ -4629,26 +4629,28 @@ def verify_all():
             e_sha = hashlib.sha256(b6f_errata_p.read_bytes()).hexdigest()
             expected_b6f_contract_sha = "1b1aba53ef39786fadafaab772e11c0611198403f8910f951a507ff4b06fc3ea"
             expected_b6f_spec_sha = "fc9e91c19d660030212db8d3dc2ddca34d0b6c22624f6ae59fd4482767267303"
-            expected_b6f_errata_sha = "2e7d9b875e52d59d7d08a8ecbb6730eee2965358205a77f4b1a78e83e0ec77e9"
+            expected_b6f_errata_sha = "20f6288bb4d2ab1b3c687d7cbbcb58432268806de8af9c32fd847ad37925cdde"
 
-            c_data = json.loads(b6f_contract_p.read_text(encoding="utf-8"))
-            tc = c_data.get("metadata", {}).get("taxonomy_counts", {})
+            from tools.audit.build_b6f_effective_contract import build_b6f_effective_contract
+            eff = build_b6f_effective_contract(ROOT)
+            eff_tc = eff["metadata"]["taxonomy_counts"]
             tc_valid = (
-                tc.get("original_static_evidence") == 8 and
-                tc.get("cross_component_evidence") == 0 and
-                tc.get("reference_interoperability") == 1 and
-                tc.get("reference_background") == 1 and
-                tc.get("safe_scope_guard") == 1 and
-                tc.get("defensive_validation") == 0 and
-                tc.get("deferred_execution_boundary") == 1 and
-                tc.get("audit_provenance_guard") == 1 and
-                tc.get("unknown") == 0
+                eff_tc["original_static_evidence"] == 7 and
+                eff_tc["cross_component_evidence"] == 1 and
+                eff_tc["reference_interoperability"] == 1 and
+                eff_tc["reference_background"] == 1 and
+                eff_tc["safe_scope_guard"] == 1 and
+                eff_tc["defensive_validation"] == 0 and
+                eff_tc["deferred_execution_boundary"] == 1 and
+                eff_tc["audit_provenance_guard"] == 1 and
+                eff_tc["unknown"] == 0 and
+                eff["metadata"]["total_requirements"] == 13
             )
             if c_sha == expected_b6f_contract_sha and s_sha == expected_b6f_spec_sha and e_sha == expected_b6f_errata_sha and tc_valid:
                 b6f_contract_valid = True
                 b6f_contract_detail = (
                     f"ADB_CHANNEL_B6F_IMPLEMENTATION_CONTRACT.json ({c_sha[:12]}) frozen; "
-                    f"formal errata ({e_sha[:12]}) applied; taxonomy confirmed (8 static, 2 reference, 1 safe scope, 1 deferred, 1 audit guard, 0 unknown)"
+                    f"formal errata ({e_sha[:12]}) applied; effective contract taxonomy confirmed (7 static, 1 cross-component, 1 reference, 1 background, 1 safe scope, 1 deferred, 1 audit guard)"
                 )
             else:
                 b6f_contract_detail = f"B6F contract check failed: c_sha={c_sha[:12]}, s_sha={s_sha[:12]}, e_sha={e_sha[:12]}, tc_valid={tc_valid}"
@@ -4668,7 +4670,7 @@ def verify_all():
                                   cwd=str(ROOT), capture_output=True, text=True)
         if repro_proc.returncode == 0 and neg_proc.returncode == 0:
             b6f_repro_valid = True
-            b6f_repro_detail = "Forensic extraction and semantic protocol cleanly reproduced; 19/19 negative mutations and anti-tautology checks passed"
+            b6f_repro_detail = "Forensic extraction and semantic protocol cleanly reproduced; 22/22 negative mutations and anti-tautology checks passed"
         else:
             b6f_repro_detail = f"Reproducer/Negative failure: repro={repro_proc.returncode}, neg={neg_proc.returncode}, err={repro_proc.stderr or neg_proc.stderr}"
     except Exception as e:

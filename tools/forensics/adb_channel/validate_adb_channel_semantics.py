@@ -3,7 +3,7 @@
 tools/forensics/adb_channel/validate_adb_channel_semantics.py
 
 Validates semantic consistency, forensic invariants, and safety boundaries
-across Phase 2C.5B6F adb-channel artifacts.
+across Phase 2C.5B6F / B6FR adb-channel artifacts.
 """
 import json
 import sys
@@ -11,6 +11,8 @@ from pathlib import Path
 from typing import Dict, Any, Union
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 EVID_DIR = REPO_ROOT / "evidence" / "go_agent" / "webrtc"
 
 
@@ -27,10 +29,11 @@ def validate_adb_channel_semantics(
     callgraph: Union[str, Path, Dict[str, Any]] = None,
     provenance: Union[str, Path, Dict[str, Any]] = None,
     contract: Union[str, Path, Dict[str, Any]] = None,
-    errata: Union[str, Path, Dict[str, Any]] = None
+    errata: Union[str, Path, Dict[str, Any]] = None,
+    effective_contract: Union[str, Path, Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Executes comprehensive semantic validation across all Phase 2C.5B6F artifacts.
+    Executes comprehensive semantic validation across all Phase 2C.5B6F / B6FR artifacts.
     Raises ValueError on any invariant violation (fail-closed).
     """
     spec_d = _load(spec or (EVID_DIR / "ADB_CHANNEL_B6F_PROTOCOL_SPEC.json"))
@@ -50,13 +53,18 @@ def validate_adb_channel_semantics(
     if frame_d.get("channel_label") != "adb-channel":
         raise ValueError(f"Framing channel label must be 'adb-channel', got '{frame_d.get('channel_label')}'")
 
-    # 2. Channel Ownership Invariant
+    # 2. Channel Ownership & Classification Separation Invariant
     creator = spec_d.get("channel_identity", {}).get("creator_side")
     consumer = spec_d.get("channel_identity", {}).get("consumer_side")
     if creator != "Browser Client":
         raise ValueError(f"Creator side must be 'Browser Client', got '{creator}'")
     if consumer != "Agent":
         raise ValueError(f"Consumer side must be 'Agent', got '{consumer}'")
+
+    # Creator side must NOT be classified as pure original STATIC_CONFIRMED
+    creator_ev = spec_d.get("channel_identity", {}).get("creator_evidence_class")
+    if creator_ev == "STATIC_CONFIRMED":
+        raise ValueError("Browser Client creator evidence must not be classified as pure original STATIC_CONFIRMED")
 
     # 3. Inbound Ordered Property Classification Invariant
     ordered_info = spec_d.get("channel_identity", {}).get("ordered_property", {})
@@ -133,9 +141,20 @@ def validate_adb_channel_semantics(
     if "DEFERRED_ADB_BRIDGE_BOUNDARY" not in cr_scope:
         raise ValueError(f"Clean room scope must specify DEFERRED_ADB_BRIDGE_BOUNDARY, got '{cr_scope}'")
 
-    # 10. Callgraph Terminal Boundary
+    # 10. Callgraph Lifecycle Invariant (OnOpen + OnClose + OnMessage)
     arm_cg = cg_d.get("nodes", {}).get("ARM64", {})
     amd_cg = cg_d.get("nodes", {}).get("AMD64", {})
+    if not arm_cg.get("onopen_closure") or not amd_cg.get("onopen_closure"):
+        raise ValueError("Callgraph missing required onopen_closure nodes for dual-stage lifecycle")
+    if not arm_cg.get("onclose_registration") or not amd_cg.get("onclose_registration"):
+        raise ValueError("Callgraph missing required onclose_registration nodes for terminal cleanup")
+    if not arm_cg.get("onmessage_registration") or not amd_cg.get("onmessage_registration"):
+        raise ValueError("Callgraph missing required onmessage_registration nodes for inbound packet handling")
+
+    # Guard against stale "only OnMessage / no OnClose / no OnOpen" claim
+    if arm_cg.get("lifecycle_policy") == "ONLY_ONMESSAGE" or amd_cg.get("lifecycle_policy") == "ONLY_ONMESSAGE":
+        raise ValueError("Stale lifecycle claim 'ONLY_ONMESSAGE' rejected: canonical binary registers OnClose and OnOpen")
+
     if arm_cg.get("terminal_boundary") != "DEFERRED_ADB_BRIDGE_BOUNDARY":
         raise ValueError(f"ARM64 callgraph terminal boundary must be DEFERRED_ADB_BRIDGE_BOUNDARY, got {arm_cg.get('terminal_boundary')}")
     if amd_cg.get("terminal_boundary") != "DEFERRED_ADB_BRIDGE_BOUNDARY":
@@ -152,6 +171,16 @@ def validate_adb_channel_semantics(
     if not f1 or "0x53f2ac" not in f1.get("arm64_evidence", {}).get("va", "") or "0x9e2fad" not in f1.get("amd64_evidence", {}).get("va", ""):
         raise ValueError("Source provenance FACT-ADB-01 missing required dispatch sites (ARM64 0x53f2ac, AMD64 0x9e2fad)")
 
+    # Verify FACT-ADB-02 (OnOpen & readyState)
+    f2 = facts_by_id.get("FACT-ADB-02")
+    if not f2 or not f2.get("arm64_evidence", {}).get("onopen_call") or not f2.get("amd64_evidence", {}).get("onopen_call"):
+        raise ValueError("Source provenance FACT-ADB-02 missing required OnOpen callsites")
+
+    # Verify FACT-ADB-03 (OnClose & OnMessage)
+    f3 = facts_by_id.get("FACT-ADB-03")
+    if not f3 or not f3.get("arm64_evidence", {}).get("onclose_call") or not f3.get("amd64_evidence", {}).get("onclose_call"):
+        raise ValueError("Source provenance FACT-ADB-03 missing required OnClose callsites")
+
     # Verify FACT-ADB-06 (Response Send)
     f6 = facts_by_id.get("FACT-ADB-06")
     if not f6 or "0x49a3d0" not in f6.get("arm64_evidence", {}).get("call", "") or "0x9250c0" not in f6.get("amd64_evidence", {}).get("call", ""):
@@ -162,33 +191,72 @@ def validate_adb_channel_semantics(
     if not f7 or f7.get("arm64_evidence", {}).get("reachable_net_dial") != 0 or f7.get("amd64_evidence", {}).get("reachable_net_dial") != 0:
         raise ValueError("Source provenance FACT-ADB-07 must confirm 0 reachable net.Dial calls across architectures")
 
-    # 12. Contract Taxonomy Invariant
-    tc = contract_d.get("metadata", {}).get("taxonomy_counts", {})
-    if tc.get("original_static_evidence") != 8:
-        raise ValueError(f"Contract taxonomy original_static_evidence must be 8, got {tc.get('original_static_evidence')}")
-    if tc.get("reference_interoperability") != 1:
-        raise ValueError(f"Contract taxonomy reference_interoperability must be 1, got {tc.get('reference_interoperability')}")
-    if tc.get("reference_background") != 1:
-        raise ValueError(f"Contract taxonomy reference_background must be 1, got {tc.get('reference_background')}")
-    if tc.get("safe_scope_guard") != 1:
-        raise ValueError(f"Contract taxonomy safe_scope_guard must be 1, got {tc.get('safe_scope_guard')}")
-    if tc.get("deferred_execution_boundary") != 1:
-        raise ValueError(f"Contract taxonomy deferred_execution_boundary must be 1, got {tc.get('deferred_execution_boundary')}")
-    if tc.get("audit_provenance_guard") != 1:
-        raise ValueError(f"Contract taxonomy audit_provenance_guard must be 1, got {tc.get('audit_provenance_guard')}")
-    if tc.get("unknown") != 0:
-        raise ValueError(f"Contract taxonomy unknown must be 0, got {tc.get('unknown')}")
+    # 12. Base Contract Invariant
+    tc_base = contract_d.get("metadata", {}).get("taxonomy_counts", {})
+    if tc_base.get("original_static_evidence") != 8:
+        raise ValueError(f"Base contract taxonomy original_static_evidence must be 8, got {tc_base.get('original_static_evidence')}")
+    if tc_base.get("reference_interoperability") != 1:
+        raise ValueError(f"Base contract taxonomy reference_interoperability must be 1, got {tc_base.get('reference_interoperability')}")
+    if tc_base.get("reference_background") != 1:
+        raise ValueError(f"Base contract taxonomy reference_background must be 1, got {tc_base.get('reference_background')}")
+    if tc_base.get("safe_scope_guard") != 1:
+        raise ValueError(f"Base contract taxonomy safe_scope_guard must be 1, got {tc_base.get('safe_scope_guard')}")
+    if tc_base.get("deferred_execution_boundary") != 1:
+        raise ValueError(f"Base contract taxonomy deferred_execution_boundary must be 1, got {tc_base.get('deferred_execution_boundary')}")
+    if tc_base.get("audit_provenance_guard") != 1:
+        raise ValueError(f"Base contract taxonomy audit_provenance_guard must be 1, got {tc_base.get('audit_provenance_guard')}")
+    if tc_base.get("unknown") != 0:
+        raise ValueError(f"Base contract taxonomy unknown must be 0, got {tc_base.get('unknown')}")
 
     reqs = contract_d.get("requirements", [])
     if len(reqs) != 13:
-        raise ValueError(f"Contract must define exactly 13 requirements, got {len(reqs)}")
+        raise ValueError(f"Base contract must define exactly 13 requirements, got {len(reqs)}")
 
-    # 13. Errata Verification (if present)
+    # 13. Errata Verification (Required)
     if err_d:
         corrs = err_d.get("corrections", [])
         corr_ids = {c.get("contract_id") for c in corrs}
-        if "ADB-B6F-ERRATA-01" not in corr_ids or "ADB-B6F-ERRATA-02" not in corr_ids:
-            raise ValueError("Formal errata missing required corrections ADB-B6F-ERRATA-01 or ADB-B6F-ERRATA-02")
+        if "ADB-B6F-ERRATA-01" not in corr_ids or "ADB-B6F-ERRATA-02" not in corr_ids or "ADB-B6F-01" not in corr_ids:
+            raise ValueError("Formal errata missing required corrections ADB-B6F-ERRATA-01, ADB-B6F-ERRATA-02, or ADB-B6F-01")
+
+        # Verify ADB-B6F-01 correction classification
+        c01 = next((c for c in corrs if c.get("contract_id") == "ADB-B6F-01"), None)
+        if not c01:
+            raise ValueError("Formal errata missing correction for ADB-B6F-01")
+        if c01.get("effective_evidence_class") != "CROSS_COMPONENT_CONFIRMED":
+            raise ValueError(f"ADB-B6F-01 effective_evidence_class must be 'CROSS_COMPONENT_CONFIRMED', got '{c01.get('effective_evidence_class')}'")
+        split = c01.get("split_effective_semantics", {})
+        if not split.get("original_static_part") or not split.get("reference_interoperability_part"):
+            raise ValueError("ADB-B6F-01 must define split_effective_semantics (original_static_part and reference_interoperability_part)")
+
+    # 14. Effective Contract Taxonomy Verification
+    eff_d = _load(effective_contract) if effective_contract else None
+    if not eff_d:
+        try:
+            from tools.audit.build_b6f_effective_contract import build_b6f_effective_contract
+            eff_d = build_b6f_effective_contract(REPO_ROOT)
+        except Exception as e:
+            raise ValueError(f"Failed to build B6F effective contract: {e}")
+
+    eff_tc = eff_d.get("metadata", {}).get("taxonomy_counts", {})
+    if eff_tc.get("original_static_evidence") != 7:
+        raise ValueError(f"Effective contract original_static_evidence must be 7, got {eff_tc.get('original_static_evidence')}")
+    if eff_tc.get("cross_component_evidence") != 1:
+        raise ValueError(f"Effective contract cross_component_evidence must be 1, got {eff_tc.get('cross_component_evidence')}")
+    if eff_tc.get("reference_interoperability") != 1:
+        raise ValueError(f"Effective contract reference_interoperability must be 1, got {eff_tc.get('reference_interoperability')}")
+    if eff_tc.get("reference_background") != 1:
+        raise ValueError(f"Effective contract reference_background must be 1, got {eff_tc.get('reference_background')}")
+    if eff_tc.get("safe_scope_guard") != 1:
+        raise ValueError(f"Effective contract safe_scope_guard must be 1, got {eff_tc.get('safe_scope_guard')}")
+    if eff_tc.get("defensive_validation") != 0:
+        raise ValueError(f"Effective contract defensive_validation must be 0, got {eff_tc.get('defensive_validation')}")
+    if eff_tc.get("deferred_execution_boundary") != 1:
+        raise ValueError(f"Effective contract deferred_execution_boundary must be 1, got {eff_tc.get('deferred_execution_boundary')}")
+    if eff_tc.get("audit_provenance_guard") != 1:
+        raise ValueError(f"Effective contract audit_provenance_guard must be 1, got {eff_tc.get('audit_provenance_guard')}")
+    if eff_tc.get("unknown") != 0:
+        raise ValueError(f"Effective contract unknown must be 0, got {eff_tc.get('unknown')}")
 
     return {
         "status": "VALID",
@@ -200,19 +268,21 @@ def validate_adb_channel_semantics(
         "downstream_classification": top_cls,
         "external_tcp_dial_count": 0,
         "provenance_facts_validated": len(facts_list),
-        "contract_requirements_validated": len(reqs)
+        "contract_requirements_validated": len(reqs),
+        "effective_taxonomy_counts": eff_tc
     }
 
 
 def main():
     res = validate_adb_channel_semantics()
-    print("Shared Semantic Validator (Phase 2C.5B6F): PASS")
+    print("Shared Semantic Validator (Phase 2C.5B6F / B6FR): PASS")
     print(f"  Channel: {res['channel_label']} ({res['creator_side']} -> {res['consumer_side']})")
     print(f"  Modes: {res['dual_modes_validated']}")
     print(f"  Commands: {res['commands_validated']}")
     print(f"  Downstream: {res['downstream_classification']} (net.Dial: {res['external_tcp_dial_count']})")
     print(f"  Provenance Facts: {res['provenance_facts_validated']}")
     print(f"  Contract Requirements: {res['contract_requirements_validated']}")
+    print(f"  Effective Taxonomy: {res['effective_taxonomy_counts']}")
 
 
 if __name__ == "__main__":

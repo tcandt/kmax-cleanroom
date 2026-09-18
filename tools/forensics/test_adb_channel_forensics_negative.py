@@ -199,6 +199,27 @@ def run_negative_tests():
             raise AssertionError(f"Production scan failed: {violations}")
     test_cases.append(("Case 19: Reconstructed Production Tree ADB Inertness Scan", case_production_inertness_scan, None))
 
+    # Case 20: Rejection of Browser Creator Evidence Promoted to Pure Original STATIC
+    def case_promote_creator_to_static():
+        s = json.loads(SPEC_PATH.read_text(encoding="utf-8"))
+        s["channel_identity"]["creator_evidence_class"] = "STATIC_CONFIRMED"
+        validate_adb_channel_semantics(spec=s)
+    test_cases.append(("Case 20: Rejection of Browser Creator Evidence Promoted to Pure Original STATIC", case_promote_creator_to_static, ValueError))
+
+    # Case 21: Rejection of Removed OnOpen or OnClose Lifecycle Evidence
+    def case_remove_lifecycle_evidence():
+        cg = json.loads(CG_PATH.read_text(encoding="utf-8"))
+        del cg["nodes"]["ARM64"]["onclose_registration"]
+        validate_adb_channel_semantics(callgraph=cg)
+    test_cases.append(("Case 21: Rejection of Removed OnOpen or OnClose Lifecycle Evidence", case_remove_lifecycle_evidence, ValueError))
+
+    # Case 22: Rejection of Stale 'Only OnMessage / No OnClose' Lifecycle Claim
+    def case_stale_only_onmessage_claim():
+        cg = json.loads(CG_PATH.read_text(encoding="utf-8"))
+        cg["nodes"]["ARM64"]["lifecycle_policy"] = "ONLY_ONMESSAGE"
+        validate_adb_channel_semantics(callgraph=cg)
+    test_cases.append(("Case 22: Rejection of Stale 'Only OnMessage / No OnClose' Lifecycle Claim", case_stale_only_onmessage_claim, ValueError))
+
     passed = 0
     total = len(test_cases)
     for name, func, expected_exc in test_cases:
