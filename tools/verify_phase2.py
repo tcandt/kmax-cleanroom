@@ -3214,33 +3214,59 @@ def verify_all():
         if cons_passed else f"Consistency audit violations: {'; '.join(cons_violations)}"
     )
 
-    # 21.1d Production Source Code Frozen Invariant (Zero Unintended Mutations)
-    FROZEN_B2_PRODUCTION_HASHES = {
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/control.go": "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go": "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "f0736bcc0577396bc4d18b44eb4f05cd7ace246a706e834a7e7c92b08f50d03c",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "d01147d3ae29b6878931a7ac0bcbb87753be0673a7a6e0e966a17abc9d41ed5f",
-        "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "f05246801c9c6a099455544976c4242b4940af9b024d7735ed7333950c06a465",
-        "reconstructed_source/cloudphone-agent/pkg/webrtc/camera.go": "7fcaefe2fce85527f7b80da318be14fbd9667c22a313c469d1eca056bf45af9c",
-        "reconstructed_source/cloudphone-agent/go.mod": "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b",
-        "reconstructed_source/cloudphone-agent/go.sum": "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4",
-    }
+    # 21.1d Production Source Code Frozen Invariant (Historical B2 Baseline via git show)
+    # Per Phase 2C.5B4R Correction 8 & 9:
+    # Validate historical blobs from pinned commit c84d34aac31333298f45e2f66930bf05d8b20756
+    # Current evolved files must NOT be compared to historical B2 hashes.
+    b2_baseline_path = ROOT / "evidence" / "go_agent" / "webrtc" / "phase_baselines" / "B2_PRODUCTION_BASELINE.json"
     prod_frozen_passed = True
     prod_frozen_failures = []
-    for rel_p, exp_h in FROZEN_B2_PRODUCTION_HASHES.items():
-        fp = ROOT / rel_p
-        if not fp.exists():
+    if not b2_baseline_path.exists():
+        prod_frozen_passed = False
+        prod_frozen_failures.append("B2_PRODUCTION_BASELINE.json missing")
+    else:
+        try:
+            b2_bdata = json.loads(b2_baseline_path.read_text(encoding="utf-8"))
+            b2_commit = b2_bdata.get("closure_commit")
+            if b2_commit != "c84d34aac31333298f45e2f66930bf05d8b20756":
+                prod_frozen_passed = False
+                prod_frozen_failures.append(f"B2 baseline commit pinned mismatch: expected c84d34aac31333298f45e2f66930bf05d8b20756, got {b2_commit}")
+            else:
+                for rel_p, exp_h in b2_bdata.get("production_files", {}).items():
+                    show_res = subprocess.run(["git", "show", f"{b2_commit}:{rel_p}"], cwd=str(ROOT), capture_output=True)
+                    if show_res.returncode != 0:
+                        prod_frozen_passed = False
+                        prod_frozen_failures.append(f"{rel_p} missing in historical commit {b2_commit[:8]}")
+                        continue
+                    actual_h = hashlib.sha256(show_res.stdout).hexdigest()
+                    if actual_h != exp_h:
+                        prod_frozen_passed = False
+                        prod_frozen_failures.append(f"Historical {rel_p} SHA mismatch: {actual_h[:12]} != {exp_h[:12]}")
+                # Also verify current tree immutable core files (control.go, clipboard.go, go.mod, go.sum)
+                immutable_core = [
+                    ("reconstructed_source/cloudphone-agent/pkg/webrtc/control.go", "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe"),
+                    ("reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go", "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714"),
+                    ("reconstructed_source/cloudphone-agent/go.mod", "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b"),
+                    ("reconstructed_source/cloudphone-agent/go.sum", "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4"),
+                ]
+                for rel_p, exp_h in immutable_core:
+                    fp = ROOT / rel_p
+                    if not fp.exists():
+                        prod_frozen_passed = False
+                        prod_frozen_failures.append(f"Current {rel_p} missing")
+                        continue
+                    actual_h = hashlib.sha256(fp.read_bytes()).hexdigest()
+                    if actual_h != exp_h:
+                        prod_frozen_passed = False
+                        prod_frozen_failures.append(f"Current {rel_p} mutated: {actual_h[:12]} != {exp_h[:12]}")
+        except Exception as e:
             prod_frozen_passed = False
-            prod_frozen_failures.append(f"{rel_p} missing")
-            continue
-        actual_h = hashlib.sha256(fp.read_bytes()).hexdigest()
-        if actual_h != exp_h:
-            prod_frozen_passed = False
-            prod_frozen_failures.append(f"{rel_p} SHA mismatch: {actual_h[:12]} != {exp_h[:12]}")
+            prod_frozen_failures.append(f"Exception reading B2 baseline: {e}")
+
     record_check(
         "Phase 2C.5B2 Production Source Code Frozen Invariant",
         prod_frozen_passed,
-        "All 8 production files (control.go, clipboard.go, datachannel.go, peer.go, agent.go, camera.go, go.mod, go.sum) verified against baseline (control and clipboard strictly frozen, file-channel and camera-channel production wiring active)"
+        "Historical B2 baseline (7 files at c84d34a) verified via git show; immutable core files (control.go, clipboard.go, go.mod, go.sum) strictly intact in working tree"
         if prod_frozen_passed else f"Production file mutations detected: {'; '.join(prod_frozen_failures)}"
     )
 
@@ -3720,6 +3746,48 @@ def verify_all():
     except Exception as e:
         b3_eff_detail = f"Effective contract compilation failed: {e}"
     record_check("Phase 2C.5B3 Effective Implementation Contract View", b3_eff_valid, b3_eff_detail)
+
+    # 22.1d B3 Production Source Code Frozen Invariant (Historical B3 Baseline via git show)
+    # Per Phase 2C.5B4R Correction 8 & 9:
+    # Validate historical blobs from pinned commit 2a039510d7e5ae4ef3f067769b40660c705989ff
+    b3_baseline_path = ROOT / "evidence" / "go_agent" / "webrtc" / "phase_baselines" / "B3_PRODUCTION_BASELINE.json"
+    b3_base_valid = False
+    b3_base_detail = ""
+    if b3_baseline_path.exists():
+        try:
+            b3_bdata = json.loads(b3_baseline_path.read_text(encoding="utf-8"))
+            b3_commit = b3_bdata.get("closure_commit")
+            if b3_commit != "2a039510d7e5ae4ef3f067769b40660c705989ff":
+                b3_base_detail = f"B3 baseline commit pinned mismatch: expected 2a039510d7e5ae4ef3f067769b40660c705989ff, got {b3_commit}"
+            else:
+                b3_mismatches = []
+                for rel_p, exp_h in b3_bdata.get("production_files", {}).items():
+                    show_res = subprocess.run(["git", "show", f"{b3_commit}:{rel_p}"], cwd=str(ROOT), capture_output=True)
+                    if show_res.returncode != 0:
+                        b3_mismatches.append(f"{rel_p} missing in historical commit {b3_commit[:8]}")
+                        continue
+                    actual_h = hashlib.sha256(show_res.stdout).hexdigest()
+                    if actual_h != exp_h:
+                        b3_mismatches.append(f"Historical {rel_p} SHA mismatch: {actual_h[:12]} != {exp_h[:12]}")
+                # Also verify current on-disk file.go matches B3 baseline
+                file_go_fp = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "file.go"
+                if file_go_fp.exists():
+                    file_go_h = hashlib.sha256(file_go_fp.read_bytes()).hexdigest()
+                    if file_go_h != b3_bdata.get("production_files", {}).get("reconstructed_source/cloudphone-agent/pkg/webrtc/file.go"):
+                        b3_mismatches.append(f"Current file.go mutated: {file_go_h[:12]}")
+                else:
+                    b3_mismatches.append("Current file.go missing")
+
+                if len(b3_mismatches) == 0:
+                    b3_base_valid = True
+                    b3_base_detail = "Historical B3 baseline (8 files at 2a03951) verified via git show; current file.go strictly intact in working tree"
+                else:
+                    b3_base_detail = f"B3 baseline verification failures: {'; '.join(b3_mismatches)}"
+        except Exception as e:
+            b3_base_detail = f"Exception validating B3 baseline: {e}"
+    else:
+        b3_base_detail = "B3_PRODUCTION_BASELINE.json missing"
+    record_check("Phase 2C.5B3 Production Source Code Frozen Invariant", b3_base_valid, b3_base_detail)
 
     # 22.2 Safe FileSink Boundary & Deferred Installer Invariant
     file_go_path = ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg" / "webrtc" / "file.go"
@@ -4201,7 +4269,7 @@ def verify_all():
     b4_iso_detail = ""
     try:
         from tools.audit.b2_common import scan_deferred_channels_isolation
-        violations = scan_deferred_channels_isolation(ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg")
+        violations = scan_deferred_channels_isolation(ROOT / "reconstructed_source" / "cloudphone-agent" / "pkg", phase="B4")
         diff_b3_res = subprocess.run([sys.executable, str(ROOT / "tools" / "derive_b3_differential.py"), "--check"],
                                      cwd=str(ROOT), capture_output=True, text=True)
         if len(violations) == 0 and diff_b3_res.returncode == 0:
@@ -4212,6 +4280,37 @@ def verify_all():
     except Exception as e:
         b4_iso_detail = f"Exception testing isolation/regression: {e}"
     record_check("Phase 2C.5B4 Channel Scope Isolation & Non-Regression Invariant", b4_iso_valid, b4_iso_detail)
+
+    # 24.7 Phase 2C.5B4 Production Baseline Invariant
+    # Per Phase 2C.5B4R Correction 8:
+    # Baseline manifest points to COMMIT A (7e94bd48d3af3ab28e874f7b8b15901a482f2853)
+    b4_baseline_path = ROOT / "evidence" / "go_agent" / "webrtc" / "phase_baselines" / "B4_PRODUCTION_BASELINE.json"
+    b4_base_valid = False
+    b4_base_detail = ""
+    if b4_baseline_path.exists():
+        try:
+            b4_bdata = json.loads(b4_baseline_path.read_text(encoding="utf-8"))
+            b4_commit = b4_bdata.get("baseline_commit")
+            b4_files = b4_bdata.get("production_files", {})
+            b4_mismatches = []
+            for rel_p, exp_h in b4_files.items():
+                fp = ROOT / rel_p
+                if not fp.exists():
+                    b4_mismatches.append(f"{rel_p} missing")
+                    continue
+                actual_h = hashlib.sha256(fp.read_bytes()).hexdigest()
+                if actual_h != exp_h:
+                    b4_mismatches.append(f"{rel_p} SHA mismatch: {actual_h[:12]} != {exp_h[:12]}")
+            if len(b4_mismatches) == 0 and len(b4_files) == 9:
+                b4_base_valid = True
+                b4_base_detail = f"All 9 production files verified against B4 production baseline pinned to Commit A ({b4_commit[:8]})"
+            else:
+                b4_base_detail = f"B4 baseline verification failures: {'; '.join(b4_mismatches)}"
+        except Exception as e:
+            b4_base_detail = f"Exception validating B4 baseline manifest: {e}"
+    else:
+        b4_base_detail = "B4_PRODUCTION_BASELINE.json missing"
+    record_check("Phase 2C.5B4 Production Baseline Manifest Invariant", b4_base_valid, b4_base_detail)
 
     # 25. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)

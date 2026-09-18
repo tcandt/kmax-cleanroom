@@ -1,0 +1,16 @@
+{
+  "phase": "Phase 2C.5B4",
+  "baseline_commit": "7e94bd48d3af3ab28e874f7b8b15901a482f2853",
+  "description": "Production baseline for Phase 2C.5B4 Camera-Channel & Virtual Camera Data Plane (Commit A)",
+  "production_files": {
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/control.go": "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go": "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/file.go": "a5d9751762f0a99c858189b5944f51f6a012060af554ef0b2b15e0f0b8642249",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/camera.go": "14677adf1507e2de4a2e6b768c1df12448e850489cba05bc055397932cdfcb97",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "f0736bcc0577396bc4d18b44eb4f05cd7ace246a706e834a7e7c92b08f50d03c",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "d01147d3ae29b6878931a7ac0bcbb87753be0673a7a6e0e966a17abc9d41ed5f",
+    "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "55ff433bed085470c52a7d05f902c8222848a7b20d13aab915de8f21d904ae5d",
+    "reconstructed_source/cloudphone-agent/go.mod": "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b",
+    "reconstructed_source/cloudphone-agent/go.sum": "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4"
+  }
+}

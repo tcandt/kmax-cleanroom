@@ -1,0 +1,15 @@
+{
+  "phase": "Phase 2C.5B3",
+  "closure_commit": "2a039510d7e5ae4ef3f067769b40660c705989ff",
+  "description": "Historical production baseline for Phase 2C.5B3 File-Channel",
+  "production_files": {
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/control.go": "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go": "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/file.go": "a5d9751762f0a99c858189b5944f51f6a012060af554ef0b2b15e0f0b8642249",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "001bc7de58cb2742a0328b672f13180116e12b89d860724b9c34a6966fd63e53",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "7daf5f3c9bff2070c266dea8e7ff094f5b80fa283cc11375509139924315de74",
+    "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "f84989584b980906d530bf89d6018753d9867796ef116e9e9322ffc0c2bb92b0",
+    "reconstructed_source/cloudphone-agent/go.mod": "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b",
+    "reconstructed_source/cloudphone-agent/go.sum": "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "phase": "Phase 2C.5B2",
+  "closure_commit": "c84d34aac31333298f45e2f66930bf05d8b20756",
+  "description": "Historical production baseline for Phase 2C.5B2 DataChannel (input and clipboard channels)",
+  "production_files": {
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/control.go": "64cb09b302929105c34076697e45bcea1a8308fed3d161601c0681a9d133febe",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/clipboard.go": "1c5812b0ddaf404c5d79829baf7b165dc5e59de809cd0b5efbc6f4e65b80a714",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/datachannel.go": "7503b4b67b3d373860d03e430e02d344abdb8943295b9f887cb70ee2ca0b7c96",
+    "reconstructed_source/cloudphone-agent/pkg/webrtc/peer.go": "a316e275b1152a9526bb15c48198c49e5f5dcc07d9a2bbf0c25874c68e811bfb",
+    "reconstructed_source/cloudphone-agent/pkg/agent/agent.go": "6500ebe1dc3c84811ba9d2cd26950ebeb08cc78a823d1aeda6ad8e8cced0eb66",
+    "reconstructed_source/cloudphone-agent/go.mod": "62758ee97e7dccbfd6834b1c26b94f5c8c3724a789bf3d3fe5733a6077fe534b",
+    "reconstructed_source/cloudphone-agent/go.sum": "3ac9a4dc369d427e565fefdba667f825b4b79f659c75e6591e7f3be7330903a4"
+  }
+}
