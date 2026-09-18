@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B4F WebRTC Camera DataChannel & Virtual Camera Implementation Contract",
+    "phase": "Phase 2C.5B4F",
+    "status": "FROZEN_FORENSIC_BASELINE",
+    "base_commit": "2a039510d7e5ae4ef3f067769b40660c705989ff",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "toolchain_provenance": {
+      "disassembler": "llvm-objdump.exe",
+      "version": "22.1.8",
+      "sha256": "2225c03acd46d4dd9aee94ae2f431e42d305b9145a885462c1e5d1998983d64d",
+      "install_method": "WinGet package MartinStorsjo.LLVM-MinGW.UCRT (20260616-ucrt-x86_64)"
+    },
+    "governing_docs": [
+      "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+      "evidence/go_agent/webrtc/AGENT_HELPER_IPC_SOCKET_MATRIX.json",
+      "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "evidence/go_agent/DISASSEMBLY_FACTS.json",
+      "evidence/go_agent/STRINGS.json",
+      "evidence/reference/raw/web-app/src/composables/useWebRTC.js"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "CAM-B4-01",
+      "requirement": "Outbound Camera-Channel Creation and Ownership",
+      "observable_behavior": "Agent creates outbound DataChannel labeled 'camera-channel' with ordered=true before SDP offer creation if cameraSupport is true",
+      "source_artifact": "DATACHANNEL_LABEL_EVIDENCE.json",
+      "source_field_or_case": "confirmed_webrtc_channels.camera-channel",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Static disassembly proves CreateDataChannel call with ordered=1 byte pointer at AMD64 0x9e216d and ARM64 0x53e740 under cameraSupport condition at 0x53e704"
+    },
+    {
+      "id": "CAM-B4-02",
+      "requirement": "Camera HAL/Bridge Probe and Signaling Flag Parity",
+      "observable_behavior": "Agent probes default Camera HAL/bridge endpoint (default 127.0.0.1:9001, configurable via -camera-addr / CP_AGENT_CAMERA_ADDR); sets cameraSupport=true if responsive or overridden via -force-camera; transmits camera_support boolean in WebRTC offer payload",
+      "source_artifact": "STRINGS.json",
+      "source_field_or_case": "evidence/go_agent/STRINGS.json:23796,23852",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at ARM64 0x51ee80-0x51ef94 dials net.DialTimeout and logs '[Agent] Camera HAL is not available at %s (camera support disabled). Use -force-camera to override.' or '[Agent] Camera HAL is available at %s (camera support enabled)'"
+    },
+    {
+      "id": "CAM-B4-03",
+      "requirement": "DataChannel Lifecycle Binding (OnOpen, OnMessage, OnClose)",
+      "observable_behavior": "Agent attaches active OnOpen, OnMessage, and OnClose handlers to camera-channel upon creation",
+      "source_artifact": "DISASSEMBLY_FACTS.json",
+      "source_field_or_case": "ARM64 0x51a024-0x51a0f8",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Registers OnOpen closure 0x51a3d0, OnMessage closure 0x51a2e0, OnClose closure 0x51a120 on cameraDataChannel"
+    },
+    {
+      "id": "CAM-B4-04",
+      "requirement": "Camera HAL/Bridge TCP Connection and Handshake Framing",
+      "observable_behavior": "Upon camera-channel open, Agent connects to Camera HAL/bridge endpoint (default 127.0.0.1:9001) and transmits 4-byte little-endian length-prefixed JSON handshake with width, height, and frame_rate",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "camera_hal_tcp_protocol.handshake",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "ARM64 0x51a764 dials 'tcp', 0x51a9c4 marshals JSON with 'width', 'height', 'frame_rate', 0x51a9e0 transmits via 0x51c060 with 4-byte little-endian length prefix"
+    },
+    {
+      "id": "CAM-B4-05",
+      "requirement": "Camera HAL/Bridge Inbound Event Read Framing and Dispatch",
+      "observable_behavior": "Agent reads 4-byte little-endian length-prefixed ASCII event strings from Camera HAL/bridge socket, responding to VIRTUAL_DEVICE_START_CAMERA_SESSION, VIRTUAL_DEVICE_STOP_CAMERA_SESSION, and VIRTUAL_DEVICE_CAPTURE_IMAGE",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "camera_hal_tcp_protocol.inbound_event_framing",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly at ARM64 0x51aa8c-0x51af50 uses io.ReadFull for 4-byte length prefix, uint32 LE read, io.ReadFull for exact payload, and runtime.memequal comparisons"
+    },
+    {
+      "id": "CAM-B4-06",
+      "requirement": "Outbound Start and Stop Command Dispatch",
+      "observable_behavior": "Agent dispatches JSON text frames {'action':'start'} and {'action':'stop'} over camera-channel when Camera HAL starts or stops virtual camera session",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "datachannel_message_types.agent_to_browser",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "ARM64 0x51c980 marshals {'action': action} and calls DataChannel.SendText; matches browser useWebRTC.js:798-805"
+    },
+    {
+      "id": "CAM-B4-07",
+      "requirement": "Inbound Binary JPEG Frame Ingestion and Snapshot Cache Ordering",
+      "observable_behavior": "Agent receives binary JPEG ArrayBuffer frames on camera-channel and caches the latest frame in latestCameraJpeg under mutex protection BEFORE attempting non-blocking channel enqueue",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "datachannel_message_types.browser_to_agent",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "ARM64 0x51a318-0x51a364 locks latestCameraJpegMu, updates latestCameraJpeg slice, unlocks, then invokes selectnbsend. Even if streaming buffer is full, newest frame persists in snapshot cache"
+    },
+    {
+      "id": "CAM-B4-08",
+      "requirement": "Single-Element Channel Capacity and Non-Blocking Enqueue",
+      "observable_behavior": "Agent forwards incoming frames to cameraFrameChan (capacity=1) via non-blocking send (runtime.selectnbsend); current frame is not enqueued when channel buffer is saturated",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "backpressure_and_concurrency",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Channel allocation at ARM64 0x51ea3c passes size 1 to runtime.makechan64. Enqueue at 0x51a388 calls runtime.selectnbsend (0x230a0); dropped frame design rationale is INFERENCE (low-latency drop semantics)"
+    },
+    {
+      "id": "CAM-B4-09",
+      "requirement": "JPEG Decoding to Planar I420 (YUV420P) with Stride Support",
+      "observable_behavior": "Agent worker decodes incoming JPEG frames using image/jpeg.Decode, verifies *image.YCbCr with YCbCrSubsampleRatio420, and formats into contiguous planar YUV420P buffer (Y then Cb then Cr) with row-by-row stride handling and generic fallback",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "camera_hal_tcp_protocol.video_frame_stream",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "ARM64 0x51c250-0x51c780 validates SubsampleRatio==2, performs contiguous memmove when YStride==W and CStride==W/2, row-by-row copy if strides differ, and Rec.601 RGB conversion fallback"
+    },
+    {
+      "id": "CAM-B4-10",
+      "requirement": "Little-Endian Length-Prefixed YUV Frame Transmission",
+      "observable_behavior": "Agent transmits raw planar YUV420P frames to Camera HAL TCP connection with a 4-byte little-endian unsigned integer length prefix",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "camera_hal_tcp_protocol.wire_framing",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "ARM64 0x51c0a8 stores 32-bit length with str w3, [x0] without byte swap; AMD64 0x9b9845 stores with movl %edx, (%rax). Both target platforms are natively little-endian"
+    },
+    {
+      "id": "CAM-B4-11",
+      "requirement": "Virtual Camera JPEG Snapshot Extraction",
+      "observable_behavior": "Upon receipt of VIRTUAL_DEVICE_CAPTURE_IMAGE event from Camera HAL, Agent replies with 4-byte little-endian length-prefixed cached latestCameraJpeg frame under mutex protection",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "camera_hal_tcp_protocol.snapshot_response",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "ARM64 0x51af40-0x51b170 locks latestCameraJpegMu, reads latestCameraJpeg slice, unlocks, and writes 4-byte little-endian length prefix + payload to Camera HAL socket"
+    },
+    {
+      "id": "CAM-B4-12",
+      "requirement": "Physical-Camera vs Virtual-Camera Boundary Assertion",
+      "observable_behavior": "Virtual camera data plane routes exclusively through camera-channel and Camera HAL/bridge TCP socket (default 127.0.0.1:9001), strictly decoupled from scrcpy helper video UDS (@uds_sys_v_) and CameraCapture.java",
+      "source_artifact": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "source_field_or_case": "architectural_separation",
+      "evidence_class": "CROSS_COMPONENT_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "CameraCapture.java is positively bound to the physical-camera capture pipeline. No recovered call/data-flow evidence places CameraCapture.java on the virtual-camera injection path; the recovered injection path is camera-channel -> Agent JPEG decode -> camera TCP bridge"
+    },
+    {
+      "id": "CAM-B4-13",
+      "requirement": "Strict Isolation of Deferred Channels (AI and ADB)",
+      "observable_behavior": "Channels 'ai-command-channel' and 'adb-channel' remain strictly deferred with inert lifecycle references only and zero payload processing logic",
+      "source_artifact": "FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json",
+      "source_field_or_case": "FILE-B3-16",
+      "evidence_class": "STATIC_CONFIRMED",
+      "confidence": "HIGH",
+      "mandatory_for_parity": true,
+      "notes": "Preserves clean-room scope isolation across reconstruction phases"
+    }
+  ]
+}

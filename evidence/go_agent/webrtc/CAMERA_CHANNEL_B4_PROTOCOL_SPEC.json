@@ -1,0 +1,330 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B4F WebRTC Camera DataChannel & Bridge Protocol Specification",
+    "phase": "Phase 2C.5B4F",
+    "status": "FROZEN_FORENSIC_BASELINE",
+    "base_commit": "2a039510d7e5ae4ef3f067769b40660c705989ff",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "channel_label": "camera-channel",
+    "toolchain_provenance": {
+      "disassembler": "llvm-objdump.exe",
+      "version": "22.1.8",
+      "sha256": "2225c03acd46d4dd9aee94ae2f431e42d305b9145a885462c1e5d1998983d64d",
+      "install_method": "WinGet package MartinStorsjo.LLVM-MinGW.UCRT (20260616-ucrt-x86_64)"
+    },
+    "governing_docs": [
+      "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+      "evidence/go_agent/webrtc/AGENT_HELPER_IPC_SOCKET_MATRIX.json",
+      "evidence/go_agent/DISASSEMBLY_FACTS.json",
+      "evidence/go_agent/STRINGS.json",
+      "evidence/reference/raw/web-app/src/composables/useWebRTC.js"
+    ]
+  },
+  "channel_properties": {
+    "label": "camera-channel",
+    "channel_type": "OUTBOUND_AGENT_CREATED",
+    "creator_side": "Agent",
+    "consumer_side": "Browser Client",
+    "ordered": true,
+    "evidence_class": "STATIC_CONFIRMED",
+    "ordered_evidence": "Disassembly passes ordered=1 byte pointer in AMD64 0x9e216d and ARM64 0x53e740",
+    "conditional_creation": "Created if and only if cameraSupport == true (probed at cameraAddr or overridden via -force-camera)",
+    "framing": "MIXED_JSON_AND_RAW_BINARY",
+    "binary_type": "arraybuffer"
+  },
+  "datachannel_message_types": {
+    "agent_to_browser": {
+      "start_command": {
+        "evidence_class": "STATIC_CONFIRMED",
+        "framing": "JSON_TEXT",
+        "payload": {
+          "action": "start"
+        },
+        "trigger": "Received VIRTUAL_DEVICE_START_CAMERA_SESSION event from Camera HAL TCP socket",
+        "log_string": "[Camera] Android opened camera! Starting stream...",
+        "rodata_va": "0x6dbc4b"
+      },
+      "stop_command": {
+        "evidence_class": "STATIC_CONFIRMED",
+        "framing": "JSON_TEXT",
+        "payload": {
+          "action": "stop"
+        },
+        "trigger": "Received VIRTUAL_DEVICE_STOP_CAMERA_SESSION event from Camera HAL TCP socket",
+        "log_string": "[Camera] Android closed camera! Stopping stream...",
+        "rodata_va": "0x6dbc7d"
+      }
+    },
+    "browser_to_agent": {
+      "camera_frame": {
+        "evidence_class": "STATIC_CONFIRMED",
+        "framing": "RAW_BINARY",
+        "format": "image/jpeg (ArrayBuffer)",
+        "agent_decoder": "image/jpeg.Decode (*image.YCbCr expected)",
+        "reference_frontend_parameters": {
+          "evidence_class": "REFERENCE_ONLY",
+          "canvas_resolution": "640x480",
+          "fps": 30,
+          "mime_type": "image/jpeg",
+          "quality": 0.6,
+          "source": "Browser canvas.toBlob(..., 'image/jpeg', 0.6) from navigator.mediaDevices.getUserMedia"
+        },
+        "processing": "Cached in s.latestCameraJpeg (under latestCameraJpegMu); non-blocking send to s.cameraFrameChan; decoded to planar YUV420P for Camera HAL"
+      }
+    }
+  },
+  "camera_hal_tcp_protocol": {
+    "endpoint_classification": {
+      "classification": "STATIC_CONFIRMED",
+      "default_endpoint": "127.0.0.1:9001",
+      "configurable_flag": "-camera-addr",
+      "configurable_env": "CP_AGENT_CAMERA_ADDR",
+      "override_flag": "-force-camera",
+      "service_role": "default Camera HAL/bridge endpoint",
+      "runtime_behavior": "Dialed dynamically on startup; if dial fails without -force-camera, camera_support is disabled."
+    },
+    "wire_framing": {
+      "evidence_class": "STATIC_CONFIRMED",
+      "description": "4-byte little-endian uint32 length prefix preceding raw payload bytes",
+      "width_bytes": 4,
+      "byte_order": "little-endian",
+      "data_type": "uint32",
+      "arm64_instruction": "str w3, [x0] (native 32-bit register store, little-endian)",
+      "amd64_instruction": "movl %edx, (%rax) (native 32-bit register store, little-endian)",
+      "byte_swap_present": false,
+      "framing_test_vectors": [
+        {
+          "description": "Empty payload",
+          "payload_length": 0,
+          "prefix_bytes_le_hex": "00000000",
+          "prefix_bytes_be_hex": "00000000",
+          "prefix_bytes_le_list": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sample_wire_bytes_hex": "00000000"
+        },
+        {
+          "description": "Start session event",
+          "payload_length": 35,
+          "prefix_bytes_le_hex": "23000000",
+          "prefix_bytes_be_hex": "00000023",
+          "prefix_bytes_le_list": [
+            35,
+            0,
+            0,
+            0
+          ],
+          "sample_wire_bytes_hex": "230000005649525455414c5f4445564943455f53544152545f43414d4552415f53455353494f4e"
+        },
+        {
+          "description": "Stop session event",
+          "payload_length": 34,
+          "prefix_bytes_le_hex": "22000000",
+          "prefix_bytes_be_hex": "00000022",
+          "prefix_bytes_le_list": [
+            34,
+            0,
+            0,
+            0
+          ],
+          "sample_wire_bytes_hex": "220000005649525455414c5f4445564943455f53544f505f43414d4552415f53455353494f4e"
+        },
+        {
+          "description": "Capture image event",
+          "payload_length": 28,
+          "prefix_bytes_le_hex": "1c000000",
+          "prefix_bytes_be_hex": "0000001c",
+          "prefix_bytes_le_list": [
+            28,
+            0,
+            0,
+            0
+          ],
+          "sample_wire_bytes_hex": "1c0000005649525455414c5f4445564943455f434150545552455f494d414745"
+        },
+        {
+          "description": "Handshake JSON (approx)",
+          "payload_length": 44,
+          "prefix_bytes_le_hex": "2c000000",
+          "prefix_bytes_be_hex": "0000002c",
+          "prefix_bytes_le_list": [
+            44,
+            0,
+            0,
+            0
+          ],
+          "sample_wire_bytes_hex": "2c0000007b227769647468223a3634302c22686569676874223a3438302c226672616d655f72617465223a33307d"
+        },
+        {
+          "description": "Small YUV 2x2 frame",
+          "payload_length": 6,
+          "prefix_bytes_le_hex": "06000000",
+          "prefix_bytes_be_hex": "00000006",
+          "prefix_bytes_le_list": [
+            6,
+            0,
+            0,
+            0
+          ],
+          "sample_wire_bytes_hex": "06000000101010108080"
+        },
+        {
+          "description": "Standard 640x480 YUV420P frame",
+          "payload_length": 460800,
+          "prefix_bytes_le_hex": "00080700",
+          "prefix_bytes_be_hex": "00070800",
+          "prefix_bytes_le_list": [
+            0,
+            8,
+            7,
+            0
+          ]
+        }
+      ]
+    },
+    "inbound_event_framing": {
+      "classification": "STATIC_CONFIRMED",
+      "framing_type": "4-byte little-endian length prefix followed by exact ASCII event payload",
+      "read_mechanism": "io.ReadFull(conn, lenBuf[:4]) -> length = uint32(LE) -> io.ReadFull(conn, payload[:length])",
+      "supported_events": [
+        {
+          "event_name": "VIRTUAL_DEVICE_START_CAMERA_SESSION",
+          "length": 35,
+          "va": "0x6ceac7",
+          "action": "Set streaming active flag, invoke sendCameraCommand('start')"
+        },
+        {
+          "event_name": "VIRTUAL_DEVICE_STOP_CAMERA_SESSION",
+          "length": 34,
+          "va": "0x6cdb19",
+          "action": "Clear streaming active flag, invoke sendCameraCommand('stop')"
+        },
+        {
+          "event_name": "VIRTUAL_DEVICE_CAPTURE_IMAGE",
+          "length": 28,
+          "va": "0x6c7482",
+          "action": "Acquire latestCameraJpegMu, read latestCameraJpeg, send 4-byte LE length + JPEG snapshot to HAL"
+        }
+      ]
+    },
+    "handshake": {
+      "evidence_class": "STATIC_CONFIRMED",
+      "format": "JSON_TEXT inside 4-byte little-endian length prefix",
+      "default_fields": {
+        "width": 640,
+        "height": 480,
+        "frame_rate": 30.0
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "frame_rate": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "width",
+          "height",
+          "frame_rate"
+        ]
+      },
+      "success_log": "[Camera] Handshake settings sent successfully. (0x6d863a)",
+      "failure_log": "[Camera] Failed to send handshake configuration: %v (0x6dc5ac)"
+    },
+    "video_frame_stream": {
+      "evidence_class": "STATIC_CONFIRMED",
+      "format": "RAW_PLANAR_YUV420P inside 4-byte little-endian length prefix",
+      "planar_layout": {
+        "classification": "STATIC_CONFIRMED",
+        "format": "Planar I420 (YUV420P)",
+        "plane_order": [
+          "Y",
+          "U (Cb)",
+          "V (Cr)"
+        ],
+        "total_size_formula": "width * height * 3 / 2",
+        "y_plane_offset": 0,
+        "y_plane_size": "width * height",
+        "u_plane_offset": "width * height",
+        "u_plane_size": "(width/2) * (height/2)",
+        "v_plane_offset": "width * height + (width/2) * (height/2)",
+        "v_plane_size": "(width/2) * (height/2)",
+        "fast_path_conditions": "YStride == width AND CStride == width / 2",
+        "fast_path_action": "3 contiguous memmove calls (Y, Cb, Cr)",
+        "stride_fallback_action": "Iterate row-by-row with source stride offsets y*YStride and y*CStride",
+        "generic_fallback_action": "Rec.601 RGB-to-YUV conversion via img.At(x, y)"
+      },
+      "error_log": "[Camera] ERROR: failed to send YUV frame: %v (0x6d6bd0)"
+    },
+    "snapshot_response": {
+      "evidence_class": "STATIC_CONFIRMED",
+      "format": "RAW_JPEG inside 4-byte little-endian length prefix",
+      "source": "s.latestCameraJpeg (or fallback JPEG if unpopulated)",
+      "trigger": "Received VIRTUAL_DEVICE_CAPTURE_IMAGE event from Camera HAL",
+      "event_log": "[Camera] Android requested JPEG snapshot! (0x6d42d6)",
+      "error_log": "[Camera] Failed to send JPEG snapshot to HAL: %v (0x6da374)"
+    }
+  },
+  "backpressure_and_concurrency": {
+    "channel_capacity": {
+      "evidence_class": "STATIC_CONFIRMED",
+      "name": "cameraFrameChan",
+      "capacity": 1,
+      "allocation_callsite": "runtime.makechan64 with size = 1 (ARM64 0x51ea3c)"
+    },
+    "enqueue_semantics": {
+      "evidence_class": "STATIC_CONFIRMED",
+      "callsite": "runtime.selectnbsend(s.cameraFrameChan, msg.Data) (ARM64 0x51a388)",
+      "static_fact": "current frame is not enqueued when non-blocking send cannot proceed",
+      "drop_policy_rationale": {
+        "classification": "INFERENCE",
+        "rationale": "Non-blocking send discards newest incoming frame when single-element buffer is saturated to minimize transmission latency"
+      }
+    },
+    "snapshot_cache_ordering": {
+      "evidence_class": "STATIC_CONFIRMED",
+      "mutex": "latestCameraJpegMu (offset 0x488)",
+      "cache": "latestCameraJpeg (offset 0x470)",
+      "ordering": "latestCameraJpeg is updated under lock BEFORE selectnbsend into cameraFrameChan",
+      "dropped_frame_retention": "Frame discarded from streaming queue still persists in snapshot cache; VIRTUAL_DEVICE_CAPTURE_IMAGE always delivers latest frame"
+    }
+  },
+  "lifecycle_state_model": {
+    "classification": "RECONSTRUCTED_SEMANTIC_MODEL",
+    "model_type": "7-state clean-room reconstructive state machine",
+    "states": [
+      "STATE_UNINITIALIZED",
+      "STATE_CONNECTING_HAL",
+      "STATE_HAL_HANDSHAKE",
+      "STATE_IDLE_WAIT_HAL",
+      "STATE_ACTIVE_STREAMING",
+      "STATE_PAUSED",
+      "STATE_CLOSED"
+    ],
+    "nature": "Semantic reconstructive model for structured state management, not literal recovered original binary enum names"
+  },
+  "architectural_separation": {
+    "classification": "CROSS_COMPONENT_CONFIRMED",
+    "physical_camera_pipeline": {
+      "component": "raw_extraction/android/jadx/sources/com/android/helper/video/CameraCapture.java",
+      "framework": "android.hardware.camera2 (CameraDevice, CameraManager, SurfaceCapture)",
+      "direction": "Physical hardware camera -> Android MediaCodec / Surface -> video stream"
+    },
+    "virtual_camera_injection_pipeline": {
+      "component": "cloudphone-agent (pkg/agent)",
+      "framework": "WebRTC DataChannel -> JPEG decode -> Planar I420 YUV -> TCP camera bridge",
+      "direction": "Browser canvas -> camera-channel -> Agent -> 127.0.0.1:9001 (Camera HAL/bridge)"
+    },
+    "boundary_assertion": "CameraCapture.java is positively bound to the physical-camera capture pipeline. No recovered call/data-flow evidence places CameraCapture.java on the virtual-camera injection path; the recovered injection path is camera-channel -> Agent JPEG decode -> camera TCP bridge."
+  }
+}
