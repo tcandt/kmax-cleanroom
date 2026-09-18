@@ -28,12 +28,18 @@ In strict adherence to the approved B5F plan and all precision rules:
    - Committed and pushed as `dc4320f2f8fbd9817735366f1eb856b8ffdc98c4`.
 3. **Step B5F-R (Audit Precision Micro-Closure)**:
    - Preserved frozen contract base SHA-256 `64642e153dce...` and created formal errata layer `evidence/go_agent/webrtc/AI_COMMAND_B5F_CONTRACT_ERRATA.json`.
-   - Built effective contract builder `tools/audit/build_b5f_effective_contract.py` categorizing requirements into 6 distinct taxonomy families (10 static, 0 cross, 2 reference interop, 2 safe scope, 1 defensive, 1 deferred).
+   - Built effective contract builder `tools/audit/build_b5f_effective_contract.py`.
    - Implemented shared semantic validator `tools/forensics/ai_command/validate_ai_command_semantics.py`.
    - Created full protocol derivation pipeline `tools/forensics/ai_command/derive_ai_command_protocol.py`.
-   - Upgraded negative mutation test suite `tools/forensics/test_ai_command_forensics_negative.py` to 15/15 cases using real disk tempfile mutations, contract byte tampering, and test attribution stream validation.
+   - Upgraded negative mutation test suite to reject tampered bytes, broken correlation, and test stream corruptions.
    - Hardened Section 25.4 to use `go test -json -count=1` enforcing exact test attribution on all 7 mapped tests.
    - Reordered master verifier report writes before the final clean working tree audit invariant.
+4. **Step B5F-R2 (Final Semantic Derivation & Parity Taxonomy Closure)**:
+   - Replaced tautological file copying in `derive_ai_command_protocol.py` with true machine-bound semantic derivation from disassembly snippets, rodata strings, and Go type descriptors into intermediate `AICommandForensicFacts`.
+   - Classified `AI-B5F-16` as `AUDIT_PROVENANCE_GUARD` (`effective_mandatory_for_original_parity=false`, `mandatory_for_audit_scope=true`) to eliminate parity score inflation.
+   - Refined effective contract taxonomy: 9 original static evidence, 0 cross, 2 reference interop, 2 safe scope guards, 1 defensive validation, 1 deferred boundary, 1 audit provenance guard, 0 unknown (total 16).
+   - Added comprehensive source provenance validation in `validate_ai_command_semantics.py` (ARM64 & AMD64 binary checks, Send/Marshal/newproc callsites, request struct VAs, correlation echo dataflow, execution boundary scope).
+   - Upgraded negative mutation test suite to 19/19 cases including anti-tautology derivation check, static output-dependency guard, provenance fail-closed check, and AI-B5F-16 parity inflation check.
 
 ---
 
@@ -42,13 +48,15 @@ In strict adherence to the approved B5F plan and all precision rules:
 | Area | Former / Inexact State | B5F Authoritative Forensic Invariant | Classification |
 |---|---|---|---|
 | **Directional Framing** | Generic "JSON text" or "JSON_TEXT_IN_ARRAYBUFFER" | **Directional Split**: Browser &rarr; Agent request is `JSON_TEXT` (text frame in Lane D); Agent &rarr; Browser response is `BINARY_JSON_BYTES` sent via `(*DataChannel).Send([]byte)` (`0x49a3d0` / `0x9250c0`), NOT `SendText`. | `STATIC_CONFIRMED` |
+| **Channel Ownership** | Ambiguous channel initiation | **Browser Client** creates inbound `ai-command-channel`. Agent accepts channel via `pc.OnDataChannel` dispatcher and sets `(*DataChannel).OnMessage`. | `STATIC_CONFIRMED` |
+| **Wire Schemas** | Generic or assumed command payloads | **Request**: `request_id` (string), `command` (string). **Response**: `request_id` (string, echo), `exit_code` (int), `stdout` (string), `stderr` (string). | `STATIC_CONFIRMED` |
 | **Ordered Property** | Marked `STATIC_CONFIRMED` for inbound channel | `ordered=true` is set by browser `pc.createDataChannel('ai-command-channel', { ordered: true })`. Agent does not inspect or validate channel ordered flag. | `REFERENCE_ONLY` |
 | **Request Validation** | Inferred required fields from struct | Original binary performs zero non-empty checks. Fields `request_id` and `command` are `KNOWN_FIELDS`. Non-empty rejection in `ValidateAICommand()` is `IMPLEMENTATION_CHOICE / DEFENSIVE_VALIDATION`. | `STATIC_CONFIRMED` / `DEFENSIVE_VALIDATION` |
 | **Malformed JSON** | Inferred silent drop from frontend | Disassembly machine-binds: logs `[AI-Command] Error parsing request JSON: %v` (`0x6d5f36` / `0xb77ed7`) and immediately returns (`ret` / `retq`) with zero response sent over DataChannel (`LOG_AND_DROP`). | `STATIC_CONFIRMED` |
 | **RequestID Correlation** | Frontend Promise-map assumption | Worker closure captures `req.RequestID` and inserts it directly into response map key `"request_id"`. | `STATIC_CONFIRMED` |
 | **Execution Boundary** | Vague "AI automation engine" | Explicitly identified as external process boundary: `os/exec.Command("sh", "-c", req.Command)`. Clean-room agent strictly omits execution. | `DEFERRED_EXECUTION_BOUNDARY` |
 | **Concurrency** | Unspecified | Spawns worker goroutine via `runtime.newproc` (`0x5f730` / `0x451c40`) per accepted request. No worker pool or rate limiter. | `STATIC_CONFIRMED` |
-| **Parity Taxonomy** | Safety omission counted as original parity | `AI-B5F-10` and `AI-B5F-15` separated into `SAFE_SCOPE_GUARD` (parity=false, safe_scope=true). `AI-B5F-04` separated into `REFERENCE_INTEROPERABILITY`. | `FORMAL_ERRATA` |
+| **Parity Taxonomy** | Safety & audit requirements counted as original parity | `AI-B5F-10` and `AI-B5F-15` separated into `SAFE_SCOPE_GUARD`. `AI-B5F-04` separated into `REFERENCE_INTEROPERABILITY`. `AI-B5F-16` separated into `AUDIT_PROVENANCE_GUARD`. Original static parity strictly pure at 9 items. | `FORMAL_ERRATA` |
 
 ---
 
@@ -69,14 +77,14 @@ PASS: ok cloudphone-agent/pkg/webrtc
 ```
 
 ### 3.2 B5F Forensic Reproducer (`--check`)
-"Disassembly is independently regenerated; semantic forensic artifacts are deterministically re-derived and compared to frozen canonical artifacts."
+"Disassembly is independently regenerated; semantic forensic artifacts are deterministically re-derived from fresh binary/disassembly evidence and compared to frozen canonical artifacts."
 ```text
 === Phase 2C.5B5FR AI-Command Channel Forensic Reproducer ===
 Running in --check mode (non-mutating verification)...
 ✓ Original binary SHA256 and machine-bound disassembly invariants validated
 ✓ Fresh disassembly cleanly extracted in tempdir and matches frozen SHA
 ✓ Semantic forensic artifacts deterministically re-derived and byte-match canonical baseline
-✓ Effective contract view built: 10 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 0 unknown
+✓ Effective contract view built: 9 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 1 audit provenance, 0 unknown
 ✓ Shared semantic validator executed against canonical artifacts (PASS)
 ✓ AI_COMMAND_B5F_PROTOCOL_SPEC.json:         aef2aac903e0... (MATCH)
 ✓ AI_COMMAND_B5F_MESSAGE_INVENTORY.json:     3fa26da4d0c5... (MATCH)
@@ -87,7 +95,7 @@ Running in --check mode (non-mutating verification)...
 All B5F forensic reproduction checks PASSED.
 ```
 
-### 3.3 B5F Negative Mutation Test Suite (15/15)
+### 3.3 B5F Negative Mutation Test Suite (19/19)
 ```text
 [PASS] Case 1: Rejection of Response Framing Swapped to JSON_TEXT
 [PASS] Case 2: Rejection of Request Framing Swapped to RAW_BINARY
@@ -104,7 +112,11 @@ All B5F forensic reproduction checks PASSED.
 [PASS] Case 13: Unit Test Attribution Rejection of Missing Mapped Test
 [PASS] Case 14: Unit Test Attribution Rejection of Skipped Mapped Test
 [PASS] Case 15: Unit Test Attribution Rejection of Package Pass without Exact Tests
-B5F Negative Mutation Results: 15/15 PASSED
+[PASS] Case 16: Derivation Anti-Tautology Rejection of External Canonical Mutation
+[PASS] Case 17: Static Audit Output-Dependency Guard for Semantic Derivation Pipeline
+[PASS] Case 18: Provenance Validation Rejection of Corrupted Send Callsite
+[PASS] Case 19: Parity Taxonomy Rejection of AI-B5F-16 Inflation into Original Parity
+B5F Negative Mutation Results: 19/19 PASSED
 ```
 
 ### 3.4 Historical Differential & Master Verifier Gates

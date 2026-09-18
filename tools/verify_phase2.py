@@ -4491,19 +4491,20 @@ def verify_all():
             eff = build_b5f_effective_contract(ROOT)
             tc = eff["metadata"]["taxonomy_counts"]
             tc_valid = (
-                tc["original_static_evidence"] == 10 and
+                tc["original_static_evidence"] == 9 and
                 tc["cross_component_evidence"] == 0 and
                 tc["reference_interoperability"] == 2 and
                 tc["safe_scope_guard"] == 2 and
                 tc["defensive_validation"] == 1 and
                 tc["deferred_execution_boundary"] == 1 and
+                tc["audit_provenance_guard"] == 1 and
                 tc["unknown"] == 0
             )
             if c_sha == expected_b5f_contract_sha and s_sha == expected_b5f_spec_sha and errata_p.exists() and tc_valid:
                 b5f_contract_valid = True
                 b5f_contract_detail = (
                     f"AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json ({c_sha[:12]}) frozen; "
-                    f"formal errata applied; effective contract taxonomy confirmed (10 static, 2 safe scope, 2 reference, 1 defensive, 1 deferred)"
+                    f"formal errata applied; effective contract taxonomy confirmed (9 static, 2 safe scope, 2 reference, 1 defensive, 1 deferred, 1 audit provenance)"
                 )
             else:
                 b5f_contract_detail = f"B5F contract verification failed: c_sha={c_sha[:12]}, s_sha={s_sha[:12]}, tc_valid={tc_valid}"
@@ -4523,7 +4524,7 @@ def verify_all():
                                   cwd=str(ROOT), capture_output=True, text=True)
         if repro_proc.returncode == 0 and neg_proc.returncode == 0:
             b5f_repro_valid = True
-            b5f_repro_detail = "Forensic extraction and semantic protocol cleanly reproduced; 15/15 negative mutations and test attribution checks rejected"
+            b5f_repro_detail = "Forensic extraction and semantic protocol cleanly reproduced; 19/19 negative mutations and test attribution checks rejected"
         else:
             b5f_repro_detail = f"Reproducer/Negative failure: repro={repro_proc.returncode}, neg={neg_proc.returncode}, err={repro_proc.stderr or neg_proc.stderr}"
     except Exception as e:

@@ -170,6 +170,69 @@ def validate_ai_command_semantics(
         if not required_nodes.issubset(set(nodes.keys())):
             raise ValueError(f"Callgraph missing required nodes: {required_nodes - set(nodes.keys())}")
 
+    # 13. Source Provenance Artifact Validation (Item 11 & 12)
+    prov_checked = 0
+    if prov_data is not None:
+        binaries = prov_data.get("binaries", {})
+        if "arm64" not in binaries or "amd64" not in binaries:
+            raise ValueError("Source provenance missing arm64 or amd64 binary metadata")
+        for arch in ("arm64", "amd64"):
+            b_info = binaries[arch]
+            if not b_info.get("sha256") or not b_info.get("path"):
+                raise ValueError(f"Source provenance binary '{arch}' missing sha256 or path")
+
+        facts = prov_data.get("facts", [])
+        if len(facts) < 12:
+            raise ValueError(f"Source provenance must define at least 12 facts, got {len(facts)}")
+
+        facts_by_id = {f.get("fact_id"): f for f in facts}
+
+        # Check all STATIC_CONFIRMED facts have both ARM64 and AMD64 evidence
+        for f in facts:
+            if f.get("classification") == "STATIC_CONFIRMED":
+                fid = f.get("fact_id")
+                arm_ev = f.get("arm64_evidence")
+                amd_ev = f.get("amd64_evidence")
+                if not isinstance(arm_ev, dict) or not isinstance(amd_ev, dict):
+                    raise ValueError(f"Fact '{fid}' ({f.get('description')}) classified STATIC_CONFIRMED must include both arm64_evidence and amd64_evidence dicts")
+
+        # Specific Invariant Checks:
+        # A. Response Send callsites exist
+        f_send = facts_by_id.get("FACT-AI-11")
+        if not f_send or "0x49a3d0" not in f_send.get("arm64_evidence", {}).get("send_call", "") or "0x9250c0" not in f_send.get("amd64_evidence", {}).get("send_call", ""):
+            raise ValueError("Source provenance FACT-AI-11 missing (*DataChannel).Send callsites (ARM64: 0x49a3d0, AMD64: 0x9250c0)")
+        if f_send.get("arm64_evidence", {}).get("framing") != "BINARY_JSON_BYTES":
+            raise ValueError("Source provenance FACT-AI-11 framing must be BINARY_JSON_BYTES")
+
+        # B. json.Marshal callsites exist
+        f_marshal = facts_by_id.get("FACT-AI-09")
+        if not f_marshal or "0x1317c0" not in f_marshal.get("arm64_evidence", {}).get("marshal_call", "") or "0x531b60" not in f_marshal.get("amd64_evidence", {}).get("marshal_call", ""):
+            raise ValueError("Source provenance FACT-AI-09 missing json.Marshal callsites (ARM64: 0x1317c0, AMD64: 0x531b60)")
+
+        # C. runtime.newproc callsites exist
+        f_newproc = facts_by_id.get("FACT-AI-07")
+        if not f_newproc or "0x5f730" not in f_newproc.get("arm64_evidence", {}).get("spawn_site", "") or "0x451c40" not in f_newproc.get("amd64_evidence", {}).get("spawn_site", ""):
+            raise ValueError("Source provenance FACT-AI-07 missing runtime.newproc callsites (ARM64: 0x5f730, AMD64: 0x451c40)")
+
+        # D. Request schema source/type evidence exists
+        f_req = facts_by_id.get("FACT-AI-04")
+        if not f_req or f_req.get("arm64_evidence", {}).get("type_descriptor_va") != "0x60e660" or f_req.get("amd64_evidence", {}).get("type_descriptor_va") != "0xab0be0":
+            raise ValueError("Source provenance FACT-AI-04 missing request type descriptor VAs (ARM64: 0x60e660, AMD64: 0xab0be0)")
+
+        # E. Request-ID echo provenance exists
+        f_echo = facts_by_id.get("FACT-AI-10")
+        if not f_echo or "request_id" not in f_echo.get("arm64_evidence", {}).get("dataflow", "") or "request_id" not in f_echo.get("amd64_evidence", {}).get("dataflow", ""):
+            raise ValueError("Source provenance FACT-AI-10 missing request-id dataflow echo confirmation")
+
+        # F. External process boundary provenance exists
+        f_exec = facts_by_id.get("FACT-AI-08")
+        if not f_exec or f_exec.get("clean_room_scope") != "DEFERRED_EXECUTION_BOUNDARY. Zero process execution code permitted in clean-room agent.":
+            raise ValueError("Source provenance FACT-AI-08 missing clean_room_scope DEFERRED_EXECUTION_BOUNDARY invariant")
+        if "0x196e70" not in f_exec.get("arm64_evidence", {}).get("exec_cmd_call", "") or "0x5a1c00" not in f_exec.get("amd64_evidence", {}).get("exec_cmd_call", ""):
+            raise ValueError("Source provenance FACT-AI-08 missing exec.Command callsite evidence")
+
+        prov_checked = len(facts)
+
     return {
         "status": "VALID",
         "channel_label": lbl_spec,
@@ -179,7 +242,8 @@ def validate_ai_command_semantics(
         "fields_validated": len(req_fields) + len(resp_fields),
         "concurrency_model": conc.get("model"),
         "execution_boundary": exec_b.get("classification"),
-        "contract_requirements_checked": len(required_cids)
+        "contract_requirements_checked": len(required_cids),
+        "provenance_facts_checked": prov_checked
     }
 
 

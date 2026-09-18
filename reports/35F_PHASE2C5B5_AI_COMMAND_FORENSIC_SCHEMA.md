@@ -95,12 +95,13 @@ In compliance with audit rules, the frozen implementation contract `AI_COMMAND_B
    - `AI-B5F-14` (Inbound ordered flag) is `REFERENCE_ONLY` from frontend creation.
 2. **Effective Contract Breakdown (`tools/audit/build_b5f_effective_contract.py`)**:
    - Total Requirements: **16**
-   - Original Static Evidence: **10** (`AI-B5F-01`, `02`, `03`, `05`, `07`, `08`, `11`, `12`, `13`, `16`)
+   - Original Static Evidence: **9** (`AI-B5F-01`, `02`, `03`, `05`, `07`, `08`, `11`, `12`, `13`)
    - Cross-Component Evidence: **0**
    - Reference Interoperability: **2** (`AI-B5F-04`, `AI-B5F-14`)
    - Safe Scope Guards: **2** (`AI-B5F-10`, `AI-B5F-15`)
    - Defensive Validation: **1** (`AI-B5F-06`)
    - Deferred Execution Boundary: **1** (`AI-B5F-09`)
+   - Audit Provenance Guard: **1** (`AI-B5F-16`)
    - Unknown: **0**
 
 ---
@@ -108,6 +109,10 @@ In compliance with audit rules, the frozen implementation contract `AI_COMMAND_B
 ## 4. Reconstructed Safe Parser Implementation
 
 The safe parser is located in `reconstructed_source/cloudphone-agent/pkg/webrtc/ai_command.go`:
+- **Authoritative Wire Schema**:
+  - Inbound Channel Creator: **Browser Client** creates `ai-command-channel`.
+  - Request Envelope: `request_id` (string), `command` (string).
+  - Outbound Response: `request_id` (string, echo), `exit_code` (int), `stdout` (string), `stderr` (string).
 - **Data Structures**:
   - `type AICommandEnvelope struct { RequestID string, Command string }`
   - `type AICommandResponse struct { RequestID string, ExitCode int, Stdout string, Stderr string }`
@@ -152,14 +157,14 @@ PASS: ok cloudphone-agent/pkg/webrtc
 ```
 
 ### 6.2 Forensic Reproducer (`--check`)
-"Disassembly is independently regenerated; semantic forensic artifacts are deterministically re-derived and compared to frozen canonical artifacts."
+"Disassembly is independently regenerated; semantic forensic artifacts are deterministically re-derived from fresh binary/disassembly evidence and compared to frozen canonical artifacts."
 ```text
 === Phase 2C.5B5FR AI-Command Channel Forensic Reproducer ===
 Running in --check mode (non-mutating verification)...
 ✓ Original binary SHA256 and machine-bound disassembly invariants validated
 ✓ Fresh disassembly cleanly extracted in tempdir and matches frozen SHA
 ✓ Semantic forensic artifacts deterministically re-derived and byte-match canonical baseline
-✓ Effective contract view built: 10 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 0 unknown
+✓ Effective contract view built: 9 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 1 audit provenance, 0 unknown
 ✓ Shared semantic validator executed against canonical artifacts (PASS)
 ✓ AI_COMMAND_B5F_PROTOCOL_SPEC.json:         aef2aac903e0... (MATCH)
 ✓ AI_COMMAND_B5F_MESSAGE_INVENTORY.json:     3fa26da4d0c5... (MATCH)
@@ -170,7 +175,7 @@ Running in --check mode (non-mutating verification)...
 All B5F forensic reproduction checks PASSED.
 ```
 
-### 6.3 Negative Mutation & Fail-Closed Test Suite (15/15)
+### 6.3 Negative Mutation & Fail-Closed Test Suite (19/19)
 ```text
 [PASS] Case 1: Rejection of Response Framing Swapped to JSON_TEXT
 [PASS] Case 2: Rejection of Request Framing Swapped to RAW_BINARY
@@ -187,15 +192,19 @@ All B5F forensic reproduction checks PASSED.
 [PASS] Case 13: Unit Test Attribution Rejection of Missing Mapped Test
 [PASS] Case 14: Unit Test Attribution Rejection of Skipped Mapped Test
 [PASS] Case 15: Unit Test Attribution Rejection of Package Pass without Exact Tests
-B5F Negative Mutation Results: 15/15 PASSED
+[PASS] Case 16: Derivation Anti-Tautology Rejection of External Canonical Mutation
+[PASS] Case 17: Static Audit Output-Dependency Guard for Semantic Derivation Pipeline
+[PASS] Case 18: Provenance Validation Rejection of Corrupted Send Callsite
+[PASS] Case 19: Parity Taxonomy Rejection of AI-B5F-16 Inflation into Original Parity
+B5F Negative Mutation Results: 19/19 PASSED
 ```
 
 ### 6.4 Master Verifier Summary (`tools/verify_phase2.py`)
 ```text
 [PASS] Phase 2C.5B5F Frozen Forensic Contract Invariant
-[PASS] Phase 2C.5B5F Forensic Reproducer & Negative Mutation Invariant
+[PASS] Phase 2C.5B5F Forensic Reproducer & Negative Mutation Invariant (19/19 mutations rejected)
 [PASS] Phase 2C.5B5F Directional Framing & Errata Invariant
-[PASS] Phase 2C.5B5F Safe Parser & Unit Tests Invariant
+[PASS] Phase 2C.5B5F Safe Parser & Unit Tests Invariant (7/7 tests attributed)
 [PASS] Phase 2C.5B5F Production Boundary & Channel Inertness Invariant
 [PASS] Phase 2C.5B5F Historical Non-Regression & Differential Stability Invariant
 [PASS] Master Verifier Non-Mutating Audit Invariant (Working tree clean)

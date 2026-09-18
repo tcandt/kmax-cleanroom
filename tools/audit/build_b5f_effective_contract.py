@@ -62,6 +62,7 @@ def build_b5f_effective_contract(repo_root: Path = ROOT) -> Dict[str, Any]:
         "safe_scope_guard": [],
         "defensive_validation": [],
         "deferred_execution_boundary": [],
+        "audit_provenance_guard": [],
         "unknown": []
     }
 
@@ -87,9 +88,11 @@ def build_b5f_effective_contract(repo_root: Path = ROOT) -> Dict[str, Any]:
             eff_req["effective_mandatory_for_original_parity"] = corr.get("effective_mandatory_for_original_parity", False)
             eff_req["mandatory_for_safe_scope"] = corr.get("mandatory_for_safe_scope", False)
             eff_req["mandatory_for_interoperability"] = corr.get("mandatory_for_interoperability", False)
+            eff_req["mandatory_for_audit_scope"] = corr.get("mandatory_for_audit_scope", False)
             eff_req["non_original_compatibility_behavior"] = corr.get("non_original_compatibility_behavior", "")
             eff_req["reference_only_parts"] = corr.get("reference_only_parts", [])
             eff_req["phase_scope_parts"] = corr.get("phase_scope_parts", [])
+            eff_req["audit_scope_parts"] = corr.get("audit_scope_parts", [])
             eff_req["errata_rationale"] = corr.get("rationale", "")
         else:
             eff_req["has_errata_correction"] = False
@@ -98,9 +101,11 @@ def build_b5f_effective_contract(repo_root: Path = ROOT) -> Dict[str, Any]:
             eff_req["effective_mandatory_for_original_parity"] = req.get("mandatory_for_parity", False)
             eff_req["mandatory_for_safe_scope"] = False
             eff_req["mandatory_for_interoperability"] = False
+            eff_req["mandatory_for_audit_scope"] = False
             eff_req["non_original_compatibility_behavior"] = ""
             eff_req["reference_only_parts"] = []
             eff_req["phase_scope_parts"] = []
+            eff_req["audit_scope_parts"] = []
 
         eff_req["mandatory_for_parity"] = eff_req["effective_mandatory_for_original_parity"]
         eff_req["evidence_class"] = eff_req["effective_classification"]
@@ -116,6 +121,8 @@ def build_b5f_effective_contract(repo_root: Path = ROOT) -> Dict[str, Any]:
             by_classification["reference_interoperability"].append(cid)
         elif cid in ("AI-B5F-10", "AI-B5F-15") or e_cls == "SAFE_SCOPE_GUARD":
             by_classification["safe_scope_guard"].append(cid)
+        elif e_cls == "AUDIT_PROVENANCE_GUARD":
+            by_classification["audit_provenance_guard"].append(cid)
         elif e_cls == "STATIC_CONFIRMED":
             by_classification["original_static_evidence"].append(cid)
         elif e_cls == "CROSS_COMPONENT_CONFIRMED":
@@ -139,6 +146,7 @@ def build_b5f_effective_contract(repo_root: Path = ROOT) -> Dict[str, Any]:
                 "safe_scope_guard": len(by_classification["safe_scope_guard"]),
                 "defensive_validation": len(by_classification["defensive_validation"]),
                 "deferred_execution_boundary": len(by_classification["deferred_execution_boundary"]),
+                "audit_provenance_guard": len(by_classification["audit_provenance_guard"]),
                 "unknown": len(by_classification["unknown"])
             }
         },
@@ -164,6 +172,7 @@ def main():
         print(f"    - Safe Scope Guards:              {tc['safe_scope_guard']} ({', '.join(b['safe_scope_guard'])})")
         print(f"    - Defensive Validation:           {tc['defensive_validation']} ({', '.join(b['defensive_validation'])})")
         print(f"    - Deferred Execution Boundary:    {tc['deferred_execution_boundary']} ({', '.join(b['deferred_execution_boundary'])})")
+        print(f"    - Audit Provenance Guard:         {tc['audit_provenance_guard']} ({', '.join(b['audit_provenance_guard'])})")
         print(f"    - Unknown:                        {tc['unknown']}")
         if args.output:
             out_p = Path(args.output)

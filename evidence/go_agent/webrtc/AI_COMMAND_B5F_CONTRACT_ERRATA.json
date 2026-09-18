@@ -14,7 +14,8 @@
       "Browser request framing (AI-B5F-04) is classified as REFERENCE_INTEROPERABILITY from Lane D frontend evidence (mandatory_for_original_agent_parity=false, mandatory_for_interoperability=true).",
       "Defensive non-empty validation in ValidateAICommand (AI-B5F-06) remains an IMPLEMENTATION_CHOICE / DEFENSIVE_VALIDATION and is not counted toward original parity.",
       "Inbound ordered property (AI-B5F-14) remains REFERENCE_ONLY from browser creation and is not counted toward original parity.",
-      "Effective contract view is dynamically computed by combining the frozen base contract with this formal errata document."
+      "Effective contract view is dynamically computed by combining the frozen base contract with this formal errata document.",
+      "Historical errata tracking (AI-B5F-16) is classified as AUDIT_PROVENANCE_GUARD for clean-room verification governance and does not increase original protocol parity counters (effective_mandatory_for_original_parity=false, mandatory_for_audit_scope=true)."
     ]
   },
   "corrections": [
@@ -66,6 +67,22 @@
         "zero_adb_bridge_activation"
       ],
       "rationale": "Production inertness is a phase safety boundary, not an original binary parity requirement."
+    },
+    {
+      "contract_id": "AI-B5F-16",
+      "original_claim": "Historical Errata and Superseded Evidence Recorded: Historical artifacts remain immutable; errata and superseded framing/ordered claims are explicitly documented (STATIC_CONFIRMED, mandatory_for_parity: true)",
+      "problem": "AI-B5F-16 is an audit and provenance invariant established by this clean-room project, not an observable runtime or protocol behavior of the original Agent binary. Marking it as STATIC_CONFIRMED with mandatory_for_parity=true inflates original protocol parity scores with internal meta-rules.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "corrected_original_parity_claim": "N/A (Clean-Room Project Audit and Provenance Guard: Historical artifacts remain immutable while formal errata are recorded).",
+      "non_original_compatibility_behavior": "Historical artifacts remain immutable and formal errata tracking is maintained across project phases (AUDIT_PROVENANCE_GUARD).",
+      "effective_evidence_class": "AUDIT_PROVENANCE_GUARD",
+      "effective_mandatory_for_original_parity": false,
+      "mandatory_for_audit_scope": true,
+      "audit_scope_parts": [
+        "historical_artifacts_immutable",
+        "errata_and_superseded_evidence_recorded"
+      ],
+      "rationale": "AI-B5F-16 is an audit/provenance constraint of the clean-room verification framework, not original Agent binary behavior. It must not count toward original protocol parity."
     }
   ]
 }

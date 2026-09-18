@@ -184,13 +184,15 @@ def run_check():
     # Step 4: Fresh effective interpretation via errata layer
     eff = build_b5f_effective_contract(REPO_ROOT)
     tc = eff["metadata"]["taxonomy_counts"]
-    assert tc["original_static_evidence"] == 10, f"Expected 10 original static evidence, got {tc['original_static_evidence']}"
+    assert tc["original_static_evidence"] == 9, f"Expected 9 original static evidence, got {tc['original_static_evidence']}"
+    assert tc["cross_component_evidence"] == 0, f"Expected 0 cross component evidence, got {tc['cross_component_evidence']}"
     assert tc["safe_scope_guard"] == 2, f"Expected 2 safe scope guards, got {tc['safe_scope_guard']}"
     assert tc["reference_interoperability"] == 2, f"Expected 2 reference interop, got {tc['reference_interoperability']}"
     assert tc["defensive_validation"] == 1, f"Expected 1 defensive validation, got {tc['defensive_validation']}"
     assert tc["deferred_execution_boundary"] == 1, f"Expected 1 deferred boundary, got {tc['deferred_execution_boundary']}"
+    assert tc["audit_provenance_guard"] == 1, f"Expected 1 audit provenance guard, got {tc['audit_provenance_guard']}"
     assert tc["unknown"] == 0, f"Expected 0 unknown, got {tc['unknown']}"
-    print("✓ Effective contract view built: 10 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 0 unknown")
+    print("✓ Effective contract view built: 9 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 1 audit provenance, 0 unknown")
 
     # Step 5: Canonical semantic comparison via shared validator
     sem_res = validate_ai_command_semantics(

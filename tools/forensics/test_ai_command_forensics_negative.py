@@ -12,6 +12,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -27,6 +28,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from tools.forensics.ai_command.validate_ai_command_semantics import validate_ai_command_semantics
+from tools.forensics.ai_command.derive_ai_command_protocol import derive_ai_command_artifacts
 from tools.audit.build_b5f_effective_contract import build_b5f_effective_contract, FROZEN_BASE_SHA256
 
 EVID_DIR = REPO_ROOT / "evidence" / "go_agent" / "webrtc"
@@ -304,6 +306,80 @@ def run_negative_mutations():
             raise ValueError(f"Unexpected error message: {msg}")
 
     test_cases.append(("Case 15: Unit Test Attribution Rejection of Package Pass without Exact Tests", case_package_pass_without_exact_tests, None))
+
+    # Case 16: Derivation Anti-Tautology Negative Test (Item 14)
+    def case_derivation_anti_tautology():
+        with tempfile.TemporaryDirectory() as td:
+            # 1. Mutate canonical protocol spec in temp directory
+            mut_spec_path = Path(td) / "AI_COMMAND_B5F_PROTOCOL_SPEC.json"
+            s = json.loads(SPEC_PATH.read_text(encoding="utf-8"))
+            s["directional_framing"]["agent_to_browser_response"]["framing_type"] = "JSON_TEXT"
+            mut_spec_path.write_text(json.dumps(s), encoding="utf-8")
+
+            # 2. Run fresh derivation pipeline into temp derived dir
+            t_derived = Path(td) / "derived"
+            derived = derive_ai_command_artifacts(output_dir=t_derived)
+
+            # 3. Assert fresh derivation still produces BINARY_JSON_BYTES
+            fresh_spec = derived["AI_COMMAND_B5F_PROTOCOL_SPEC.json"]
+            fresh_framing = fresh_spec["directional_framing"]["agent_to_browser_response"]["framing_type"]
+            if fresh_framing != "BINARY_JSON_BYTES":
+                raise AssertionError(f"Fresh derivation was polluted by external artifact! Got {fresh_framing}")
+
+            # 4. Semantic comparison against mutated spec MUST FAIL
+            validate_ai_command_semantics(spec=mut_spec_path, contract=CONTRACT_PATH)
+
+    test_cases.append(("Case 16: Derivation Anti-Tautology Rejection of External Canonical Mutation", case_derivation_anti_tautology, ValueError))
+
+    # Case 17: Output-Dependency Guard (Item 15)
+    def case_output_dependency_guard():
+        derive_script = REPO_ROOT / "tools" / "forensics" / "ai_command" / "derive_ai_command_protocol.py"
+        src = derive_script.read_text(encoding="utf-8")
+        forbidden_targets = [
+            "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+            "AI_COMMAND_B5F_MESSAGE_INVENTORY.json",
+            "AI_COMMAND_B5F_CALLGRAPH.json",
+            "AI_COMMAND_B5F_SOURCE_PROVENANCE.json"
+        ]
+        # Check that the script does not read from canonical evidence directory for these files
+        for target in forbidden_targets:
+            for line in src.splitlines():
+                if target in line and ("read_text" in line or "read_bytes" in line or "open(" in line):
+                    raise AssertionError(f"Output dependency guard failed: line reads {target}: {line}")
+
+    test_cases.append(("Case 17: Static Audit Output-Dependency Guard for Semantic Derivation Pipeline", case_output_dependency_guard, None))
+
+    # Case 18: Provenance Validation Fail-Closed on Corrupted Send Callsite
+    def case_provenance_corrupted_send():
+        with tempfile.TemporaryDirectory() as td:
+            p_file = Path(td) / "provenance.json"
+            p = json.loads(PROVENANCE_PATH.read_text(encoding="utf-8"))
+            # Corrupt Send callsite in FACT-AI-11
+            f11 = next(f for f in p["facts"] if f["fact_id"] == "FACT-AI-11")
+            f11["arm64_evidence"]["send_call"] = "0x53f9e8 calling (*DataChannel).SendText (0x49a460)"
+            p_file.write_text(json.dumps(p), encoding="utf-8")
+            validate_ai_command_semantics(spec=SPEC_PATH, contract=CONTRACT_PATH, provenance=p_file)
+
+    test_cases.append(("Case 18: Provenance Validation Rejection of Corrupted Send Callsite", case_provenance_corrupted_send, ValueError))
+
+    # Case 19: AI-B5F-16 Parity Taxonomy Inflation Guard
+    def case_b5f16_parity_inflation_guard():
+        with tempfile.TemporaryDirectory() as td:
+            t_root = Path(td)
+            t_evid = t_root / "evidence" / "go_agent" / "webrtc"
+            t_evid.mkdir(parents=True)
+            shutil.copy(CONTRACT_PATH, t_evid / "AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json")
+            # Create errata missing AI-B5F-16 correction
+            err = json.loads(ERRATA_PATH.read_text(encoding="utf-8"))
+            err["corrections"] = [c for c in err["corrections"] if c["contract_id"] != "AI-B5F-16"]
+            (t_evid / "AI_COMMAND_B5F_CONTRACT_ERRATA.json").write_text(json.dumps(err), encoding="utf-8")
+            eff = build_b5f_effective_contract(t_root)
+            tc = eff["metadata"]["taxonomy_counts"]
+            # If AI-B5F-16 was not corrected, original_static_evidence would erroneously inflate to 10
+            if tc["original_static_evidence"] != 9:
+                raise ValueError(f"Taxonomy inflation detected! original_static_evidence = {tc['original_static_evidence']} (expected 9)")
+
+    test_cases.append(("Case 19: Parity Taxonomy Rejection of AI-B5F-16 Inflation into Original Parity", case_b5f16_parity_inflation_guard, ValueError))
 
     passed = 0
     total = len(test_cases)
