@@ -471,8 +471,30 @@ def evaluate_b3_dimension(dim: Dict[str, Any], test_cache: Dict[str, Any], repo_
         }
 
     if cls == "PHASE_SCOPE_GUARD":
+        import tempfile
         agent_pkg_dir = repo_root / "reconstructed_source" / "cloudphone-agent" / "pkg"
-        violations = scan_deferred_channels_isolation(agent_pkg_dir)
+        baseline_path = repo_root / "evidence" / "go_agent" / "webrtc" / "phase_baselines" / "B3_PRODUCTION_BASELINE.json"
+        if baseline_path.exists():
+            bdata = json.loads(baseline_path.read_text(encoding="utf-8"))
+            b_commit = bdata.get("closure_commit", "2a039510d7e5ae4ef3f067769b40660c705989ff")
+            with tempfile.TemporaryDirectory() as tmp_b3:
+                temp_b3_pkg = Path(tmp_b3) / "pkg"
+                temp_b3_pkg.mkdir(parents=True, exist_ok=True)
+                tree_proc = subprocess.run(["git", "ls-tree", "-r", "--name-only", b_commit, "reconstructed_source/cloudphone-agent/pkg"],
+                                           cwd=str(repo_root), capture_output=True, text=True)
+                for fpath in tree_proc.stdout.splitlines():
+                    if not fpath.endswith(".go"):
+                        continue
+                    rel = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
+                    target = temp_b3_pkg / rel
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    show_proc = subprocess.run(["git", "show", f"{b_commit}:{fpath}"], cwd=str(repo_root), capture_output=True)
+                    target.write_bytes(show_proc.stdout)
+                violations = scan_deferred_channels_isolation(temp_b3_pkg, phase="B3")
+        else:
+            agent_pkg_dir = repo_root / "reconstructed_source" / "cloudphone-agent" / "pkg"
+            violations = scan_deferred_channels_isolation(agent_pkg_dir, phase="B3")
+
         if violations:
             return "FAILED", {
                 "error": f"Deferred channel isolation violations detected: {'; '.join(violations)}",

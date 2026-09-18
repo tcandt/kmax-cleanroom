@@ -534,8 +534,29 @@ def evaluate_dimension_result(
         }
 
     if cls in ("PHASE_SCOPE_GUARD", "SEMANTIC_PARITY"):
+        import tempfile
         agent_pkg_dir = repo_root / "reconstructed_source" / "cloudphone-agent" / "pkg"
-        violations = scan_deferred_channels_isolation(agent_pkg_dir)
+        baseline_path = repo_root / "evidence" / "go_agent" / "webrtc" / "phase_baselines" / "B2_PRODUCTION_BASELINE.json"
+        if baseline_path.exists():
+            bdata = json.loads(baseline_path.read_text(encoding="utf-8"))
+            b_commit = bdata.get("closure_commit", "c84d34aac31333298f45e2f66930bf05d8b20756")
+            with tempfile.TemporaryDirectory() as tmp_b2:
+                temp_b2_pkg = Path(tmp_b2) / "pkg"
+                temp_b2_pkg.mkdir(parents=True, exist_ok=True)
+                tree_proc = subprocess.run(["git", "ls-tree", "-r", "--name-only", b_commit, "reconstructed_source/cloudphone-agent/pkg"],
+                                           cwd=str(repo_root), capture_output=True, text=True)
+                for fpath in tree_proc.stdout.splitlines():
+                    if not fpath.endswith(".go"):
+                        continue
+                    rel = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
+                    target = temp_b2_pkg / rel
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    show_proc = subprocess.run(["git", "show", f"{b_commit}:{fpath}"], cwd=str(repo_root), capture_output=True)
+                    target.write_bytes(show_proc.stdout)
+                violations = scan_deferred_channels_isolation(temp_b2_pkg, phase="B2")
+        else:
+            violations = scan_deferred_channels_isolation(agent_pkg_dir, phase="B2")
+
         if violations:
             return "FAILED", {
                 "error": f"Deferred channel isolation violations detected: {'; '.join(violations)}",

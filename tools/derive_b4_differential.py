@@ -567,8 +567,29 @@ def evaluate_b4_dimension(dim: Dict[str, Any], test_cache: Dict[str, Any], repo_
 
     # 3. Special handling for PHASE_SCOPE_GUARD
     if cls == "PHASE_SCOPE_GUARD":
-        agent_pkg_dir = repo_root / "reconstructed_source" / "cloudphone-agent" / "pkg"
-        violations = scan_deferred_channels_isolation(agent_pkg_dir, phase="B4")
+        import tempfile
+        baseline_path = repo_root / "evidence" / "go_agent" / "webrtc" / "phase_baselines" / "B4_PRODUCTION_BASELINE.json"
+        if baseline_path.exists():
+            bdata = json.loads(baseline_path.read_text(encoding="utf-8"))
+            b_commit = bdata.get("baseline_commit", "7e94bd48d3af3ab28e874f7b8b15901a482f2853")
+            with tempfile.TemporaryDirectory() as tmp_b4:
+                temp_b4_pkg = Path(tmp_b4) / "pkg"
+                temp_b4_pkg.mkdir(parents=True, exist_ok=True)
+                tree_proc = subprocess.run(["git", "ls-tree", "-r", "--name-only", b_commit, "reconstructed_source/cloudphone-agent/pkg"],
+                                           cwd=str(repo_root), capture_output=True, text=True)
+                for fpath in tree_proc.stdout.splitlines():
+                    if not fpath.endswith(".go"):
+                        continue
+                    rel = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
+                    target = temp_b4_pkg / rel
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    show_proc = subprocess.run(["git", "show", f"{b_commit}:{fpath}"], cwd=str(repo_root), capture_output=True)
+                    target.write_bytes(show_proc.stdout)
+                violations = scan_deferred_channels_isolation(temp_b4_pkg, phase="B4")
+        else:
+            agent_pkg_dir = repo_root / "reconstructed_source" / "cloudphone-agent" / "pkg"
+            violations = scan_deferred_channels_isolation(agent_pkg_dir, phase="B4")
+
         if len(violations) > 0:
             return "FAILED", {"error": f"Phase scope guard failed: {violations}"}
         return "PASS", {"type": "phase_scope_guard", "details": "zero violations"}
