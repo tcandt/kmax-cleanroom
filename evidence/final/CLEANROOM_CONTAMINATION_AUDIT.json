@@ -1,32 +1,33 @@
 {
   "metadata": {
-    "title": "Clean-Room Contamination and External Component Audit",
-    "phase": "Phase 3A",
+    "title": "Clean-Room Contamination and Git History Audit",
+    "phase": "Phase 3AR",
     "total_commits_audited": 69,
-    "total_tracked_files_audited": 1042,
-    "prohibited_source_patterns": [
-      "recovered_source",
-      "ScrcpyOverWebRTC-FullSource",
-      "ScrcpyOverWebRTC",
-      "D:\\KMAX\\recovered_source",
-      "D:/KMAX/recovered_source"
-    ],
-    "verdict": "PASS"
+    "pre_remediation_commits_count": 2,
+    "remediation_commit": "ef14fab6cb0725402758a40fb08f52c32adf4ab4",
+    "post_remediation_commits_count": 67,
+    "overall_verdict": "PASS",
+    "status_statements": [
+      "Current tree clean: CURRENT_TREE_CLEAN.",
+      "Historical external-source exposure identified (pre-ef14fab ScrcpyOverWebRTC gitlink & .gitmodules).",
+      "Remediation boundary documented at ef14fab (reports/00A_CLEANROOM_BOUNDARY_REMEDIATION.md).",
+      "All reachable post-remediation commits clean under declared audit policy: POST_REMEDIATION_HISTORY_CLEAN."
+    ]
+  },
+  "verdicts": {
+    "current_tree_verdict": "CURRENT_TREE_CLEAN",
+    "historical_tree_verdict": "HISTORICAL_TREE_AUDITED",
+    "remediation_status": "HISTORICAL_REMEDIATION_PRESENT",
+    "post_remediation_history_verdict": "POST_REMEDIATION_HISTORY_CLEAN"
   },
   "findings": {
-    "commit_history_findings_count": 0,
-    "commit_history_findings": [],
-    "historical_remediations": [
-      {
-        "commit": "ef14fab fix(boundary): remediate ScrcpyOverWebRTC external source exposure and restore strict clean-room isolation",
-        "role": "HISTORICAL_REMEDIATION_PURGE (reports/00A_CLEANROOM_BOUNDARY_REMEDIATION.md)"
-      }
-    ],
-    "tracked_path_findings_count": 0,
-    "tracked_path_findings": [],
-    "reconstructed_source_findings_count": 0,
-    "reconstructed_source_findings": [],
-    "git_submodules_present": false
+    "tracked_path_contamination_count": 0,
+    "tracked_path_contamination": [],
+    "reconstructed_source_contamination_count": 0,
+    "reconstructed_source_contamination": [],
+    "current_git_submodules_present": false,
+    "post_remediation_dirty_findings_count": 0,
+    "post_remediation_dirty_findings": []
   },
   "external_components": [
     {
@@ -55,10 +56,9 @@
     }
   ],
   "isolation_summary": {
-    "forbidden_source_contamination_detected": false,
-    "git_submodules_count": 0,
-    "vendored_directories_in_production": 0,
-    "unexplained_external_code_count": 0,
-    "provenance_purity": "100.00% CLEAN-ROOM COMPLIANT"
+    "current_tree_clean": true,
+    "post_remediation_history_clean": true,
+    "remediation_enforced": true,
+    "unexplained_external_code_count": 0
   }
 }

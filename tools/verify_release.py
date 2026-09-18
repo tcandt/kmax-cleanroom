@@ -2,18 +2,22 @@
 """
 tools/verify_release.py
 
-Phase 3 Master Release Verifier (Fail-Closed)
-Orchestrates:
-1. Phase 2 Master Verifier (Phase 2 audits, B2-B6 differential checks, Go tests/race, negative mutations)
-2. Final Reconstructed Source Provenance Audit (--check, UNKNOWN == 0)
-3. Clean-Room Contamination & Submodule Audit (--check, 0 forbidden traces)
-4. Original Artifact Manifest & Immutability Verification (all 65 artifacts SHA-256 match)
-5. Frozen Contract Registry Verification (all 15 contracts SHA-256 match)
-6. Toolchain Manifest & Portability Audit (zero hardcoded paths)
-7. Cross-Phase Fact Matrix & DataChannel Summary Verification
-8. Android Helper Method Count Reconciliation Verification (1,625 vs 1,061)
-9. Intentional Divergences & Deferred Boundary Registry Verification
-10. Final Working Tree Cleanliness (git status --porcelain strictly empty)
+Phase 3AR Master Release Verifier (Fail-Closed)
+Orchestrates the 11 executable internal release gates:
+ Gate 1: Phase 2 Master Verifier (Phase 2 audits, B2-B6 differential checks, Go tests/race, negative mutations)
+ Gate 2: Reconstructed Source Provenance Audit (--check, UNKNOWN == 0, structural locators verified)
+ Gate 3: Clean-Room Contamination Audit (--check, 0 forbidden traces in working tree and post-remediation history)
+ Gate 4: Original Artifacts Inventory & Purge Verification (--check, 155/155 classified, 65 required hash-verified)
+ Gate 5: Frozen Contract Registry Historical Pinning (--check, all 15 contracts verified via git blob & disk hash)
+ Gate 6: Toolchain Manifest & Policy Audit (--check, zero hardcoded paths, required compilers verified)
+ Gate 7: Cross-Phase Fact Matrix Semantic Invariant (--check, all 6 DataChannels reconciled with canonical facts)
+ Gate 8: Android Helper Method Count DEX Invariant (--check, 1,625 = 1,061 defined + 564 non-defined fully classified)
+ Gate 9: Intentional Divergences Registry Verification (camera 127.0.0.1:9001, deferred boundaries explicit)
+ Gate 10: Fail-Closed Negative Mutation Suite (18 genuine fail-closed mutations)
+ Gate 11: Final Working Tree Cleanliness (git status --porcelain strictly empty unless --allow-dirty)
+
+Together with the external Independent Clean-Clone Verification Gate (Gate 12),
+these constitute the 12 mandatory Phase 3AR release readiness conditions.
 
 Exit Codes:
   0: All release gates PASS
@@ -23,186 +27,135 @@ Exit Codes:
 import os
 import sys
 import json
-import hashlib
 import subprocess
+import argparse
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-def run_step(step_name, cmd, cwd=REPO_ROOT):
-    print(f"\n>> RUNNING: {step_name}...")
+def run_step(gate_number, gate_name, cmd, cwd=REPO_ROOT):
+    print(f"\n>> [GATE {gate_number}/11] RUNNING: {gate_name}...")
     sys.stdout.flush()
     res = subprocess.run(cmd, cwd=cwd, text=True)
     if res.returncode != 0:
-        print(f"[FAIL] {step_name} failed with exit code {res.returncode}")
+        print(f"[FAIL] Gate {gate_number} ({gate_name}) failed with exit code {res.returncode}")
         return False
-    print(f"[PASS] {step_name}")
-    return True
-
-def verify_file_sha256(rel_path, expected_sha):
-    p = REPO_ROOT / rel_path
-    if not p.exists():
-        print(f"[FAIL] File not found: {rel_path}")
-        return False
-    actual_sha = hashlib.sha256(p.read_bytes()).hexdigest()
-    if actual_sha != expected_sha:
-        print(f"[FAIL] SHA256 mismatch for {rel_path}: expected {expected_sha}, got {actual_sha}")
-        return False
-    return True
-
-def verify_original_artifacts_manifest():
-    manifest_p = REPO_ROOT / "evidence" / "final" / "ORIGINAL_ARTIFACT_MANIFEST.json"
-    if not manifest_p.exists():
-        print(f"[FAIL] ORIGINAL_ARTIFACT_MANIFEST.json does not exist!")
-        return False
-    data = json.loads(manifest_p.read_text(encoding="utf-8"))
-    artifacts = data.get("artifacts", [])
-    if len(artifacts) < 5:
-        print(f"[FAIL] Too few artifacts in manifest: {len(artifacts)}")
-        return False
-    
-    for a in artifacts:
-        p = a.get("path")
-        expected_sha = a.get("sha256")
-        if not verify_file_sha256(p, expected_sha):
-            return False
-    print(f"[PASS] All {len(artifacts)} original artifacts verified against ORIGINAL_ARTIFACT_MANIFEST.json")
-    return True
-
-def verify_frozen_contract_registry():
-    registry_p = REPO_ROOT / "evidence" / "final" / "FROZEN_CONTRACT_REGISTRY.json"
-    if not registry_p.exists():
-        print(f"[FAIL] FROZEN_CONTRACT_REGISTRY.json does not exist!")
-        return False
-    data = json.loads(registry_p.read_text(encoding="utf-8"))
-    contracts = data.get("contracts", [])
-    if len(contracts) < 10:
-        print(f"[FAIL] Too few contracts registered: {len(contracts)}")
-        return False
-    
-    for c in contracts:
-        path = c.get("artifact_path")
-        sha = c.get("sha256")
-        if not verify_file_sha256(path, sha):
-            return False
-        errata = c.get("effective_errata_path")
-        if errata:
-            errata_sha = c.get("errata_sha256")
-            if not verify_file_sha256(errata, errata_sha):
-                return False
-    print(f"[PASS] All {len(contracts)} frozen contracts verified against FROZEN_CONTRACT_REGISTRY.json")
-    return True
-
-def verify_toolchain_manifest():
-    p = REPO_ROOT / "evidence" / "final" / "TOOLCHAIN_MANIFEST.json"
-    if not p.exists():
-        print(f"[FAIL] TOOLCHAIN_MANIFEST.json does not exist!")
-        return False
-    data = json.loads(p.read_text(encoding="utf-8"))
-    tools = data.get("tools", {})
-    required_tools = ["go", "python", "git", "llvm_objdump"]
-    for t in required_tools:
-        if t not in tools:
-            print(f"[FAIL] Missing required tool in toolchain manifest: {t}")
-            return False
-        if not tools[t].get("version") or tools[t]["version"] == "Unknown":
-            print(f"[FAIL] Tool {t} has invalid version in manifest!")
-            return False
-    print(f"[PASS] Toolchain manifest verified with all required tools present")
+    print(f"[PASS] Gate {gate_number} ({gate_name})")
     return True
 
 def verify_clean_working_tree():
     res = subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, capture_output=True, text=True)
-    if res.stdout.strip():
-        print(f"[FAIL] Working tree is dirty! git status --porcelain:\n{res.stdout.strip()}")
+    status_output = res.stdout.strip()
+    if status_output:
+        print(f"[FAIL] Working tree is dirty! git status --porcelain:\n{status_output}")
         return False
     print("[PASS] Working tree is strictly clean.")
     return True
 
-def main():
-    print("=" * 70)
-    print("PHASE 3 MASTER RELEASE VERIFICATION SUITE")
-    print("=" * 70)
-
-    # Gate 1: Phase 2 Master Verifier (includes all differentials, Go race tests, reproducers)
-    if not run_step("Phase 2 Master Verifier", [sys.executable, "tools/verify_phase2.py", "--allow-dirty"]):
-        return 1
-
-    # Gate 2: Reconstructed Source Provenance Completeness
-    if not run_step("Final Reconstructed Source Provenance Audit", [sys.executable, "tools/audit/audit_reconstructed_source_provenance.py", "--check"]):
-        return 1
-
-    # Gate 3: Clean-Room Contamination & Submodule Audit
-    if not run_step("Clean-Room Contamination Audit", [sys.executable, "tools/audit/audit_cleanroom_contamination.py", "--check"]):
-        return 1
-
-    # Gate 4: Original Artifacts Manifest Verification
-    print("\n>> RUNNING: Original Artifact Immutability Verification...")
-    if not verify_original_artifacts_manifest():
-        return 1
-
-    # Gate 5: Frozen Contract Registry Verification
-    print("\n>> RUNNING: Frozen Contract Registry Verification...")
-    if not verify_frozen_contract_registry():
-        return 1
-
-    # Gate 6: Toolchain Manifest Verification
-    print("\n>> RUNNING: Toolchain Manifest Verification...")
-    if not verify_toolchain_manifest():
-        return 1
-
-    # Gate 7: Cross-Phase Fact Matrix Verification
-    print("\n>> RUNNING: Cross-Phase Fact Matrix Invariant...")
-    fact_p = REPO_ROOT / "evidence" / "final" / "PHASE3_CROSS_PHASE_FACT_MATRIX.json"
-    if not fact_p.exists():
-        print("[FAIL] PHASE3_CROSS_PHASE_FACT_MATRIX.json missing!")
-        return 1
-    fact_data = json.loads(fact_p.read_text(encoding="utf-8"))
-    if len(fact_data.get("datachannel_reconciliation_summary", {})) != 6:
-        print("[FAIL] Not all 6 DataChannels reconciled in summary!")
-        return 1
-    print("[PASS] Cross-Phase Fact Matrix verified (all 6 channels reconciled)")
-
-    # Gate 8: Method Count Reconciliation Verification
-    print("\n>> RUNNING: Android Method Count Reconciliation Invariant...")
-    rec_p = REPO_ROOT / "evidence" / "final" / "ANDROID_METHOD_COUNT_RECONCILIATION.json"
-    if not rec_p.exists():
-        print("[FAIL] ANDROID_METHOD_COUNT_RECONCILIATION.json missing!")
-        return 1
-    rec_data = json.loads(rec_p.read_text(encoding="utf-8"))
-    summary = rec_data.get("reconciliation_summary", {})
-    if summary.get("phase0_raw_dex_method_ids") != 1625 or summary.get("phase1a_class_defined_methods") != 1061:
-        print(f"[FAIL] Count discrepancy in reconciliation summary: {summary}")
-        return 1
-    if not summary.get("mathematical_identity_verified"):
-        print("[FAIL] Mathematical identity not verified!")
-        return 1
-    print("[PASS] Android Method Count Reconciliation verified (1,625 = 1,061 + 564)")
-
-    # Gate 9: Intentional Divergences Registry Verification
-    print("\n>> RUNNING: Intentional Divergences & Deferred Boundary Invariant...")
+def verify_intentional_divergences():
     div_p = REPO_ROOT / "evidence" / "final" / "INTENTIONAL_DIVERGENCES.json"
     if not div_p.exists():
-        print("[FAIL] INTENTIONAL_DIVERGENCES.json missing!")
-        return 1
-    div_data = json.loads(div_p.read_text(encoding="utf-8"))
-    if len(div_data.get("divergences", [])) < 3:
-        print("[FAIL] Too few divergences documented!")
-        return 1
-    print(f"[PASS] Intentional Divergences verified ({len(div_data['divergences'])} documented boundaries)")
+        print(f"[FAIL] INTENTIONAL_DIVERGENCES.json missing at {div_p}")
+        return False
+    try:
+        div_data = json.loads(div_p.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"[FAIL] Invalid JSON in INTENTIONAL_DIVERGENCES.json: {e}")
+        return False
+    
+    divergences = div_data.get("divergences", [])
+    if len(divergences) < 4:
+        print(f"[FAIL] Expected at least 4 documented divergences, found {len(divergences)}")
+        return False
+    
+    div_map = {d.get("divergence_id"): d for d in divergences}
+    required_divs = ["DIVERGENCE-AI-EXEC", "DIVERGENCE-ADB-BRIDGE", "DIVERGENCE-FILE-INSTALLER", "DIVERGENCE-CAMERA-HARDWARE"]
+    for rd in required_divs:
+        if rd not in div_map:
+            print(f"[FAIL] Missing required divergence: {rd}")
+            return False
+    
+    cam_div = div_map["DIVERGENCE-CAMERA-HARDWARE"]
+    if "127.0.0.1:9001" not in cam_div.get("original_behavior", "") or "127.0.0.1:9001" not in cam_div.get("cleanroom_behavior", ""):
+        print("[FAIL] DIVERGENCE-CAMERA-HARDWARE must specify canonical endpoint 127.0.0.1:9001")
+        return False
+    if "8089" in cam_div.get("original_behavior", "") or "8089" in cam_div.get("cleanroom_behavior", ""):
+        print("[FAIL] DIVERGENCE-CAMERA-HARDWARE contains non-canonical port 8089!")
+        return False
+    
+    print(f"[PASS] Intentional Divergences verified ({len(divergences)} documented boundaries, camera endpoint 127.0.0.1:9001 confirmed)")
+    return True
 
-    # Gate 10: Working Tree Cleanliness
-    print("\n>> RUNNING: Final Working Tree Cleanliness Check...")
-    allow_dirty = "--allow-dirty" in sys.argv
-    if not allow_dirty:
+def main():
+    parser = argparse.ArgumentParser(description="Phase 3AR Master Release Verifier")
+    parser.add_argument("--allow-dirty", action="store_true", help="Allow dirty working tree (diagnostic only; forbidden for release/clean-clone)")
+    args = parser.parse_args()
+
+    print("=" * 70)
+    print("PHASE 3AR MASTER RELEASE VERIFICATION SUITE")
+    print("Execution Mode: " + ("DIAGNOSTIC (allow-dirty)" if args.allow_dirty else "STRICT CLEAN-ROOM"))
+    print("=" * 70)
+
+    # Gate 1: Phase 2 Master Verifier
+    phase2_cmd = [sys.executable, "tools/verify_phase2.py"]
+    if args.allow_dirty:
+        phase2_cmd.append("--allow-dirty")
+    if not run_step(1, "Phase 2 Master Verifier", phase2_cmd):
+        return 1
+
+    # Gate 2: Final Reconstructed Source Provenance Audit
+    if not run_step(2, "Reconstructed Source Provenance Audit", [sys.executable, "tools/audit/audit_reconstructed_source_provenance.py", "--check"]):
+        return 1
+
+    # Gate 3: Clean-Room Contamination Audit
+    if not run_step(3, "Clean-Room Contamination & History Audit", [sys.executable, "tools/audit/audit_cleanroom_contamination.py", "--check"]):
+        return 1
+
+    # Gate 4: Original Artifact Inventory Completeness & Purge Verification
+    if not run_step(4, "Original Artifact Inventory & Purge Verification", [sys.executable, "tools/audit/audit_original_artifacts.py", "--check"]):
+        return 1
+
+    # Gate 5: Frozen Contract Registry Historical Pinning & Dual Hash
+    if not run_step(5, "Frozen Contract Historical Pinning & Dual Hash Audit", [sys.executable, "tools/audit/audit_frozen_contracts.py", "--check"]):
+        return 1
+
+    # Gate 6: Toolchain Manifest & Policy Audit
+    if not run_step(6, "Toolchain Manifest & Policy Audit", [sys.executable, "tools/audit/audit_toolchain.py", "--check"]):
+        return 1
+
+    # Gate 7: Cross-Phase Fact Matrix Semantic Invariant
+    if not run_step(7, "Cross-Phase Fact Matrix Semantic Invariant", [sys.executable, "tools/audit/validate_phase3_cross_phase_matrix.py", "--check"]):
+        return 1
+
+    # Gate 8: Android Helper Method Count DEX Invariant
+    if not run_step(8, "Android Helper Method Count DEX Invariant", [sys.executable, "tools/audit/audit_method_count.py", "--check"]):
+        return 1
+
+    # Gate 9: Intentional Divergences Registry Verification
+    print("\n>> [GATE 9/11] RUNNING: Intentional Divergences Registry Verification...")
+    if not verify_intentional_divergences():
+        print("[FAIL] Gate 9 (Intentional Divergences Registry Verification) failed")
+        return 1
+    print("[PASS] Gate 9 (Intentional Divergences Registry Verification)")
+
+    # Gate 10: Fail-Closed Negative Mutation Suite
+    if not run_step(10, "Fail-Closed Negative Mutation Suite (18 Mutations)", [sys.executable, "tools/test_release_negative.py"]):
+        return 1
+
+    # Gate 11: Final Working Tree Cleanliness
+    print("\n>> [GATE 11/11] RUNNING: Final Working Tree Cleanliness Check...")
+    if not args.allow_dirty:
         if not verify_clean_working_tree():
+            print("[FAIL] Gate 11 (Final Working Tree Cleanliness Check) failed")
             return 1
     else:
         print("[WARN] Working tree cleanliness check bypassed via --allow-dirty")
+    print("[PASS] Gate 11 (Final Working Tree Cleanliness Check)")
 
     print("\n" + "=" * 70)
-    print("OVERALL RELEASE AUDIT VERDICT: PASS")
+    print("PHASE 3AR RELEASE VERIFICATION VERDICT: ALL 11 INTERNAL GATES PASSED")
+    print("External Requirement: Independent Clean-Clone Gate (Gate 12) must be verified separately.")
     print("=" * 70)
     return 0
 

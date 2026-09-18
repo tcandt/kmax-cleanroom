@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "Final Intentional Divergence and Deferred Boundary Registry",
-    "phase": "Phase 3A",
+    "phase": "Phase 3AR",
     "date": "2026-09-18",
     "policy": "No intentional divergence or deferred execution boundary may be counted as exact literal runtime parity. All safe scope boundaries and deferred execution paths must be documented explicitly."
   },
@@ -41,8 +41,8 @@
       "component": "cloudphone-agent",
       "channel": "camera-channel",
       "classification": "INTENTIONAL_ABSTRACTION_BOUNDARY",
-      "original_behavior": "Streamed camera frames to Android CameraCapture.java virtual camera interface via local TCP socket 127.0.0.1:8089.",
-      "cleanroom_behavior": "Clean-room implementation provides full WebRTC SCTP data plane, 4-byte LE framing, dynamic probe gating, and planar I420 YUV conversion streaming to TCP endpoint 127.0.0.1:8089. Physical Android V4L2 virtual camera loopback kernel driver is abstracted via TCP bridge socket.",
+      "original_behavior": "Streamed camera frames to Android CameraCapture.java virtual camera interface via local TCP socket 127.0.0.1:9001.",
+      "cleanroom_behavior": "Clean-room implementation provides full WebRTC SCTP data plane, 4-byte LE framing, dynamic probe gating, and planar I420 YUV conversion streaming to TCP endpoint 127.0.0.1:9001. Physical Android V4L2 virtual camera loopback kernel driver is abstracted via TCP bridge socket.",
       "rationale": "Enable cross-platform testing and clean separation from Android kernel drivers.",
       "parity_scope": "Protocol/bridge parity: 100%; Physical hardware driver: ABSTRACTED."
     },

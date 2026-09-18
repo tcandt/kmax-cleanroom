@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "title": "Clean-Room Reconstructed Source Architectural Pattern & Provenance Rules",
+    "phase": "Phase 3AR",
+    "version": "1.0.0",
+    "date": "2026-09-18",
+    "description": "Authoritative registry of clean-room architectural rules, adapter specifications, and implementation choice guidelines governing functions without 1-to-1 binary disassemblies."
+  },
+  "rules": {
+    "RULE-ADAPTER-COORDINATOR": {
+      "rule_id": "RULE-ADAPTER-COORDINATOR",
+      "category": "GENERATED_ADAPTER",
+      "title": "Top-level lifecycle and coordinator adapter wiring",
+      "description": "Defines constructors, configuration mutators, and lifecycle coordination methods (e.g., NewCoordinator, SetCameraConfig, SetSignalingClient) that assemble independently reconstructed components into a unified service.",
+      "governing_phases": ["Phase 2C.4B", "Phase 2C.5B1", "Phase 2C.5B2", "Phase 2C.5B3", "Phase 2C.5B4", "Phase 2C.5B5", "Phase 2C.5B6"],
+      "allow_in_production": true
+    },
+    "RULE-BUILD-ENTRYPOINT": {
+      "rule_id": "RULE-BUILD-ENTRYPOINT",
+      "category": "GENERATED_BUILD_FILE",
+      "title": "Application entrypoints and CLI bootstrapping",
+      "description": "Defines CLI entrypoints (cmd/*/main.go) responsible for command-line flag parsing, signal handling, and service execution.",
+      "governing_phases": ["Phase 2C.4B", "Phase 2C.5B1"],
+      "allow_in_production": true
+    },
+    "RULE-INTERFACE-MOCK": {
+      "rule_id": "RULE-INTERFACE-MOCK",
+      "category": "GENERATED_TEST_INTERFACE",
+      "title": "In-memory test doubles and interface mocks",
+      "description": "Defines mock implementations (MemoryFileSink, MemoryClipboardProvider, MockDialer) for test execution without requiring Android kernel drivers or physical hardware.",
+      "governing_phases": ["Phase 2C.5B2", "Phase 2C.5B3", "Phase 2C.5B4"],
+      "allow_in_production": true
+    },
+    "RULE-CONFIG-DISPATCH": {
+      "rule_id": "RULE-CONFIG-DISPATCH",
+      "category": "GENERATED_ADAPTER",
+      "title": "Signaling and runtime configuration dispatch",
+      "description": "Handles configuration envelopes, environment variable overrides, and startup negotiation between signaling server and agent.",
+      "governing_phases": ["Phase 2C.5B1"],
+      "allow_in_production": true
+    },
+    "RULE-INERT-DISPATCHER": {
+      "rule_id": "RULE-INERT-DISPATCHER",
+      "category": "IMPLEMENTATION_CHOICE",
+      "title": "Inert channel topology and safe boundary enforcement",
+      "description": "Ensures that deferred subsystems (AI execution engine, ADB daemon bridge) remain strictly non-operational and safe in production clean-room runtime.",
+      "governing_phases": ["Phase 2C.5B5FR", "Phase 2C.5B6FR"],
+      "allow_in_production": true
+    },
+    "RULE-HTTP-MIDDLEWARE": {
+      "rule_id": "RULE-HTTP-MIDDLEWARE",
+      "category": "IMPLEMENTATION_CHOICE",
+      "title": "HTTP routing, CORS, and authentication middleware",
+      "description": "Standardized HTTP handler wrappers providing token verification, method enforcement, and cross-origin headers.",
+      "governing_phases": ["Phase 2C.2", "Phase 2C.3"],
+      "allow_in_production": true
+    },
+    "RULE-STORAGE-FILE": {
+      "rule_id": "RULE-STORAGE-FILE",
+      "category": "IMPLEMENTATION_CHOICE",
+      "title": "Atomic filesystem persistence and JSON store adapters",
+      "description": "Implements thread-safe in-memory cache with atomic file serialization (write to tmp + atomic rename) with 0600 permissions.",
+      "governing_phases": ["Phase 2C.3"],
+      "allow_in_production": true
+    },
+    "RULE-CRYPTO-UTILITY": {
+      "rule_id": "RULE-CRYPTO-UTILITY",
+      "category": "IMPLEMENTATION_CHOICE",
+      "title": "Cryptographic utility and token generation primitives",
+      "description": "Utility helpers wrapping crypto/rand and crypto/sha256 for session token generation and password verification.",
+      "governing_phases": ["Phase 2C.2", "Phase 2C.3"],
+      "allow_in_production": true
+    }
+  }
+}

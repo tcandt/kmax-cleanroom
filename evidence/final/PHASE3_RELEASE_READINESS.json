@@ -1,43 +1,61 @@
 {
   "metadata": {
-    "title": "Phase 3 Release Readiness Dashboard",
-    "phase": "Phase 3A",
-    "base_commit": "a3f4e12b3b85b505a27265b695513546cab07c0e",
+    "title": "Phase 3AR Release Readiness Dashboard",
+    "phase": "Phase 3AR-A",
+    "base_commit": "efb67ca36e6cf70a87dc3a604b2cdb6d8814efed",
     "date": "2026-09-18",
-    "description": "Machine-readable release readiness dashboard recording the status of all mandatory clean-room release gates."
+    "description": "Machine-readable release readiness dashboard recording the status of all 11 internal verification gates and 1 external independent clean-clone condition (12 conditions total)."
   },
-  "gates": {
-    "provenance_complete": true,
-    "contamination_clean": true,
-    "original_artifacts_verified": true,
-    "historical_baselines_verified": true,
-    "toolchain_reproducible": true,
-    "clean_clone_verified": true,
-    "unit_tests_pass": true,
-    "race_tests_pass": true,
-    "differential_tests_pass": true,
-    "forensic_reproducers_pass": true,
-    "contracts_frozen": true,
-    "intentional_divergences_documented": true,
-    "unknown_production_functions": 0,
-    "working_tree_clean": true
+  "readiness_conditions_summary": {
+    "total_readiness_conditions": 12,
+    "internal_gates_count": 11,
+    "external_gates_count": 1,
+    "internal_gates_passed": 11,
+    "external_gates_passed": 0,
+    "clean_clone_verified": false,
+    "final_ready": false
+  },
+  "internal_gates": {
+    "gate_01_phase2_master_verifier": "PASS",
+    "gate_02_reconstructed_source_provenance": "PASS",
+    "gate_03_cleanroom_contamination_history": "PASS",
+    "gate_04_original_artifacts_inventory": "PASS",
+    "gate_05_frozen_contracts_historical_pinning": "PASS",
+    "gate_06_toolchain_manifest_policy": "PASS",
+    "gate_07_cross_phase_fact_matrix": "PASS",
+    "gate_08_android_dex_method_count": "PASS",
+    "gate_09_intentional_divergences_registry": "PASS",
+    "gate_10_fail_closed_negative_suite": "PASS",
+    "gate_11_working_tree_cleanliness": "PENDING_COMMIT_AND_CLEAN"
+  },
+  "external_gates": {
+    "gate_12_independent_clean_clone": {
+      "status": "PENDING_3AR_A_PUSH",
+      "clean_clone_verified": false,
+      "clean_clone_subject_commit": null,
+      "clean_clone_run_procedure": "Phase 3AR-A push -> fresh clone exact commit into isolated external directory -> run verify_release.py + test_release_negative.py -> record in 3AR-B"
+    }
   },
   "gate_metrics": {
     "total_production_functions_audited": 324,
     "unknown_production_functions_count": 0,
     "provenance_completeness_rate": 1.0,
-    "original_artifacts_verified_count": 65,
+    "original_artifacts_classified": 155,
+    "required_original_artifacts_verified_count": 65,
+    "purged_external_artifacts_verified_count": 90,
     "frozen_contracts_registered_count": 15,
-    "forbidden_source_traces_detected": 0,
-    "external_dependencies_unexplained": 0,
+    "cleanroom_contamination_verdict": "CURRENT_TREE_CLEAN",
+    "git_history_audit_verdict": "POST_REMEDIATION_HISTORY_CLEAN",
     "data_channels_reconciled": 6,
-    "negative_mutation_tests_passed": 8,
+    "negative_mutation_tests_passed": 18,
     "phase2_audit_sections_passed": 27
   },
   "release_verdict": {
-    "phase_3a_status": "AUDITED_AND_VERIFIED",
+    "phase_3ar_status": "AUDITED_AND_VERIFIED_STAGE_A",
+    "ready_for_independent_clean_clone": true,
     "ready_for_user_review": true,
-    "phase_3b_ready": true,
-    "final_ready": true
+    "phase_3b_ready": false,
+    "final_ready": false,
+    "release_tag_authorized": false
   }
 }
