@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B5F WebRTC AI-Command Message Inventory",
+    "phase": "Phase 2C.5B5F",
+    "status": "FROZEN_FORENSIC_BASELINE",
+    "base_commit": "69aa5c7306456eb8257220a19b7f6754acbb2369",
+    "channel_label": "ai-command-channel"
+  },
+  "messages": [
+    {
+      "message_id": "MSG_AI_CMD_REQ",
+      "name": "AI_COMMAND_REQUEST",
+      "direction": "BROWSER_TO_AGENT",
+      "transport_lane": "Lane D (Frontend reference)",
+      "framing": "JSON_TEXT",
+      "wire_format": "JSON UTF-8 string transmitted over WebRTC DataChannel",
+      "go_struct_representation": {
+        "struct_type": "AICommandEnvelope",
+        "fields": [
+          {
+            "go_field": "RequestID",
+            "json_key": "request_id",
+            "type": "string",
+            "presence": "KNOWN_FIELD",
+            "required_in_original_binary": false,
+            "required_in_safe_defensive_parser": true,
+            "validation_note": "Original binary performs zero non-empty checks; safe parser enforces non-empty as defensive IMPLEMENTATION_CHOICE."
+          },
+          {
+            "go_field": "Command",
+            "json_key": "command",
+            "type": "string",
+            "presence": "KNOWN_FIELD",
+            "required_in_original_binary": false,
+            "required_in_safe_defensive_parser": true,
+            "validation_note": "Original binary performs zero non-empty checks; safe parser enforces non-empty as defensive IMPLEMENTATION_CHOICE."
+          }
+        ]
+      },
+      "agent_parse_action": "json.Unmarshal into anonymous struct { request_id string, command string }",
+      "error_action": "On unmarshal error, log '[AI-Command] Error parsing request JSON: %v' and return immediately without sending response."
+    },
+    {
+      "message_id": "MSG_AI_CMD_RESP",
+      "name": "AI_COMMAND_RESPONSE",
+      "direction": "AGENT_TO_BROWSER",
+      "transport_lane": "Lane A (Binary disassembly)",
+      "framing": "BINARY_JSON_BYTES",
+      "wire_format": "JSON serialized bytes transmitted via (*DataChannel).Send ([]byte)",
+      "go_struct_representation": {
+        "struct_type": "AICommandResponse",
+        "fields": [
+          {
+            "go_field": "RequestID",
+            "json_key": "request_id",
+            "type": "string",
+            "correlation": "EXACT_REQUEST_ID_ECHO (captured from incoming request, STATIC_CONFIRMED)"
+          },
+          {
+            "go_field": "ExitCode",
+            "json_key": "exit_code",
+            "type": "int",
+            "semantics": "0 on command success, ExitCode() on exec.ExitError, -1 on command execution launch/context failure"
+          },
+          {
+            "go_field": "Stdout",
+            "json_key": "stdout",
+            "type": "string",
+            "semantics": "Captured stdout bytes from external process"
+          },
+          {
+            "go_field": "Stderr",
+            "json_key": "stderr",
+            "type": "string",
+            "semantics": "Captured stderr bytes from external process"
+          }
+        ]
+      },
+      "agent_marshal_action": "json.Marshal of map with keys request_id, exit_code, stdout, stderr",
+      "agent_send_call": "(*DataChannel).Send ([]byte) [NOT SendText]"
+    }
+  ],
+  "correlation_guarantees": {
+    "request_id_echo": {
+      "status": "STATIC_CONFIRMED",
+      "provenance": "Worker closure copies request struct field 0 (NVGMf4S) directly into response map key 'request_id'.",
+      "frontend_reference": "useWebRTC.js:321 resolves Promise keyed by response.request_id (REFERENCE_ONLY corroboration)."
+    }
+  },
+  "negative_flow_semantics": {
+    "malformed_json": {
+      "wire_response": "NONE (drop)",
+      "log_emission": "TRUE",
+      "evidence_class": "STATIC_CONFIRMED"
+    },
+    "unknown_channel_label": {
+      "wire_response": "NONE (ignored in OnDataChannel dispatcher)",
+      "evidence_class": "STATIC_CONFIRMED"
+    }
+  }
+}

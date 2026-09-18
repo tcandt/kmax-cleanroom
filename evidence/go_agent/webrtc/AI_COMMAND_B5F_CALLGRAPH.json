@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B5F WebRTC AI-Command Channel Callgraph",
+    "phase": "Phase 2C.5B5F",
+    "status": "FROZEN_FORENSIC_BASELINE",
+    "base_commit": "69aa5c7306456eb8257220a19b7f6754acbb2369",
+    "channel_label": "ai-command-channel"
+  },
+  "nodes": {
+    "INBOUND_DISPATCH": {
+      "function_name": {
+        "arm64": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11 (0x53f210)",
+        "amd64": "main.(*IDhLgq).woxaqqFN5Km.func11 (0x9e2f20)"
+      },
+      "role": "pc.OnDataChannel dispatcher callback",
+      "disassembly_range": {
+        "arm64": "0x53f210 - 0x53f548",
+        "amd64": "0x9e2f20 - 0x9e3200"
+      }
+    },
+    "LABEL_MATCH": {
+      "role": "Label string comparison for 'ai-command-channel'",
+      "rodata_string": "ai-command-channel (len 18 / 0x12)",
+      "rodata_va": {
+        "arm64": "0x6bd173",
+        "amd64": "0xb5f1c2"
+      },
+      "compare_site": {
+        "arm64": "0x53f288 - 0x53f2ac",
+        "amd64": "0x9e2f80 - 0x9e2fa8"
+      },
+      "target_on_match": {
+        "arm64": "0x53f414",
+        "amd64": "0x9e30eb"
+      }
+    },
+    "ONMESSAGE_REGISTRATION": {
+      "role": "Closure allocation and registration on DataChannel",
+      "registration_call": {
+        "arm64": "0x53f45c calling (*DataChannel).OnMessage (0x499770)",
+        "amd64": "0x9e3129 calling (*DataChannel).OnMessage (0x9244a0)"
+      },
+      "registered_closure": {
+        "arm64": "0x53f5d0 (cemlVcjsE0LQ.2)",
+        "amd64": "0x9e32c0 (drnM2wXuIb.2)"
+      },
+      "other_handlers": "No branch-specific OnOpen or OnClose registration was recovered in the ai-command-channel dispatch path."
+    },
+    "ONMESSAGE_HANDLER": {
+      "function_name": {
+        "arm64": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11.(*JJffa1S1Zv6).cemlVcjsE0LQ.2 (0x53f5d0)",
+        "amd64": "main.(*IDhLgq).woxaqqFN5Km.func11.(*IDhLgq).drnM2wXuIb.2 (0x9e32c0)"
+      },
+      "role": "DataChannel message handler",
+      "steps": [
+        {
+          "step": "ALLOCATE_REQUEST_STRUCT",
+          "struct_type_va": {
+            "arm64": "0x60e660",
+            "amd64": "0xab0be0"
+          }
+        },
+        {
+          "step": "JSON_UNMARSHAL",
+          "call": {
+            "arm64": "0x53f62c calling g1gLI7afn.SEgb7sK (0x12c600)",
+            "amd64": "0x9e3323 calling JOaOfPm.OPQrPOkar (0x52ba00)"
+          }
+        },
+        {
+          "step": "CHECK_UNMARSHAL_ERROR",
+          "branch_on_error": {
+            "arm64": "0x53f630 (cbz x0 -> 0x53f66c on success; error path 0x53f634-0x53f668)",
+            "amd64": "0x9e3328 (testq %rax, %rax; je 0x9e336b on success; error path 0x9e332d-0x9e336a)"
+          },
+          "error_action": "Log '[AI-Command] Error parsing request JSON: %v' and return without response."
+        },
+        {
+          "step": "CHECK_FIELD_VALIDATION",
+          "presence": "NONE (zero validation checks for empty request_id or command)"
+        },
+        {
+          "step": "LOG_EXECUTION_INTENT",
+          "log_string": "[AI-Command] Executing P2P command (id=%s): %s",
+          "rodata_va": {
+            "arm64": "0x6d86f2",
+            "amd64": "0xb7a693"
+          }
+        },
+        {
+          "step": "SPAWN_WORKER_GOROUTINE",
+          "closure_function": {
+            "arm64": "0x53f740",
+            "amd64": "0x9e3460"
+          },
+          "newproc_call": {
+            "arm64": "0x53f704 calling runtime.newproc (0x5f730)",
+            "amd64": "0x9e3423 calling runtime.newproc (0x451c40)"
+          }
+        }
+      ]
+    },
+    "WORKER_GOROUTINE": {
+      "function_name": {
+        "arm64": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11.(*JJffa1S1Zv6).cemlVcjsE0LQ.2.1 (0x53f740)",
+        "amd64": "main.(*IDhLgq).woxaqqFN5Km.func11.(*IDhLgq).drnM2wXuIb.2.1 (0x9e3460)"
+      },
+      "role": "Asynchronous request worker",
+      "steps": [
+        {
+          "step": "ORIGINAL_EXECUTION_BOUNDARY",
+          "status": "DEFERRED_EXECUTION_BOUNDARY",
+          "command_setup": "exec.Command('sh', '-c', req.Command)",
+          "run_call": "cmd.Run()",
+          "exit_code_resolution": "0 if err == nil; ExitCode() if exec.ExitError; -1 otherwise"
+        },
+        {
+          "step": "BUILD_RESPONSE_MAP",
+          "map_keys": [
+            "request_id (echoes req.RequestID)",
+            "exit_code",
+            "stdout",
+            "stderr"
+          ]
+        },
+        {
+          "step": "JSON_MARSHAL",
+          "call": {
+            "arm64": "0x53f9d0 calling g1gLI7afn.ZZnttPPIyf0d (0x1317c0)",
+            "amd64": "0x9e3732 calling JOaOfPm.KNJ5EBt9V (0x531b60)"
+          }
+        },
+        {
+          "step": "SEND_RESPONSE",
+          "send_call": {
+            "arm64": "0x53f9e8 calling (*DataChannel).Send (0x49a3d0)",
+            "amd64": "0x9e374a calling (*DataChannel).Send (0x9250c0)"
+          },
+          "framing": "BINARY_JSON_BYTES"
+        }
+      ]
+    }
+  },
+  "edges": [
+    { "from": "INBOUND_DISPATCH", "to": "LABEL_MATCH", "type": "INTERNAL_CONTROL_FLOW" },
+    { "from": "LABEL_MATCH", "to": "ONMESSAGE_REGISTRATION", "type": "BRANCH_ON_LABEL_MATCH" },
+    { "from": "ONMESSAGE_REGISTRATION", "to": "ONMESSAGE_HANDLER", "type": "CALLBACK_BINDING" },
+    { "from": "ONMESSAGE_HANDLER", "to": "WORKER_GOROUTINE", "type": "RUNTIME_NEWPROC_SPAWN" },
+    { "from": "WORKER_GOROUTINE", "to": "DATACHANNEL_SEND", "type": "PION_DATACHANNEL_SEND_BYTES" }
+  ]
+}

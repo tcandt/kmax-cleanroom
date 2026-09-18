@@ -1,0 +1,227 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B5F WebRTC AI-Command DataChannel Protocol Specification",
+    "phase": "Phase 2C.5B5F",
+    "status": "FROZEN_FORENSIC_BASELINE",
+    "base_commit": "69aa5c7306456eb8257220a19b7f6754acbb2369",
+    "classification": "Clean-room behavioral and protocol forensic reconstruction",
+    "channel_label": "ai-command-channel",
+    "toolchain_provenance": {
+      "disassembler": "llvm-objdump.exe",
+      "version": "22.1.8",
+      "sha256": "2225c03acd46d4dd9aee94ae2f431e42d305b9145a885462c1e5d1998983d64d",
+      "install_method": "WinGet package MartinStorsjo.LLVM-MinGW.UCRT (20260616-ucrt-x86_64)"
+    },
+    "governing_docs": [
+      "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+      "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+      "evidence/go_agent/DISASSEMBLY_FACTS.json",
+      "evidence/go_agent/STRINGS.json",
+      "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+      "tools/forensics/ai_command/ai_command_disassembly_manifest.json"
+    ]
+  },
+  "channel_properties": {
+    "label": "ai-command-channel",
+    "channel_type": "INBOUND_CLIENT_CREATED",
+    "creator_side": "Browser Client",
+    "consumer_side": "Agent",
+    "ordered": {
+      "value": true,
+      "evidence_class": "REFERENCE_ONLY",
+      "basis": "Configured by browser frontend in useWebRTC.js:359: pc.createDataChannel('ai-command-channel', { ordered: true }). Agent binary accepts inbound channel via pc.OnDataChannel and does not inspect or validate channel ordered property."
+    },
+    "lifecycle_handlers": {
+      "on_message": {
+        "status": "REGISTERED",
+        "evidence_class": "STATIC_CONFIRMED",
+        "registration_site": {
+          "arm64": "0x53f45c (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11)",
+          "amd64": "0x9e3129 (main.(*IDhLgq).woxaqqFN5Km.func11)"
+        },
+        "target_closure": {
+          "arm64": "0x53f5d0 (cemlVcjsE0LQ.2)",
+          "amd64": "0x9e32c0 (drnM2wXuIb.2)"
+        }
+      },
+      "on_open": {
+        "status": "NOT_REGISTERED",
+        "evidence_class": "STATIC_CONFIRMED",
+        "scope_limitation": "No branch-specific OnOpen or OnClose registration was recovered in the ai-command-channel dispatch path."
+      },
+      "on_close": {
+        "status": "NOT_REGISTERED",
+        "evidence_class": "STATIC_CONFIRMED",
+        "scope_limitation": "No branch-specific OnOpen or OnClose registration was recovered in the ai-command-channel dispatch path."
+      }
+    }
+  },
+  "directional_framing": {
+    "browser_to_agent_request": {
+      "transport": "WebRTC DataChannel",
+      "framing_type": "JSON_TEXT",
+      "evidence_class": "REFERENCE_ONLY_PROVEN_BY_LANE_D_WITH_STATIC_DECODER",
+      "browser_send_method": "aiCommandChannel.send(JSON.stringify({ request_id: requestId, command: command })) [useWebRTC.js:311-314]",
+      "agent_receive_method": "(*DataChannel).OnMessage callback receiving webrtc.DataChannelMessage. msg.Data ([]byte) is passed directly to json.Unmarshal.",
+      "notes": "Browser transmits standard text frame (Lane D). Go Pion WebRTC delivers payload as []byte in msg.Data regardless of opcode."
+    },
+    "agent_to_browser_response": {
+      "transport": "WebRTC DataChannel",
+      "framing_type": "BINARY_JSON_BYTES",
+      "evidence_class": "STATIC_CONFIRMED",
+      "agent_send_method": "(*DataChannel).Send ([]byte) [ARM64: 0x53f9e8 calling 0x49a3d0; AMD64: 0x9e374a calling 0x9250c0]",
+      "agent_send_symbol": "IV04EXWpwj.(*F4TaFEL9SI).Send / v6LoFegGUKTA.(*W4J6chbzBu).Send",
+      "send_argument_type": "[]byte (JSON serialized bytes)",
+      "frontend_receive_handler": "useWebRTC.js:318-328: handles both string and ArrayBuffer (via TextDecoder), corroborating binary reception in browser as REFERENCE_ONLY.",
+      "distinction": "Original binary explicitly invokes (*DataChannel).Send, NOT (*DataChannel).SendText. Payload is serialized JSON bytes transmitted as a binary DataChannel frame."
+    }
+  },
+  "historical_errata_and_superseded_evidence": [
+    {
+      "target_artifact": "evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json",
+      "field": "ai-command-channel.framing",
+      "historical_value": "JSON_TEXT_IN_ARRAYBUFFER",
+      "status": "SUPERSEDED_BY_B5F",
+      "correction": "Directional framing resolved independently: Browser->Agent request is JSON_TEXT; Agent->Browser response is BINARY_JSON_BYTES via (*DataChannel).Send([]byte).",
+      "evidence": "Disassembly at ARM64 0x53f9e8 and AMD64 0x9e374a calls (*DataChannel).Send, not SendText."
+    },
+    {
+      "target_artifact": "evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json",
+      "field": "confirmed_webrtc_channels.ai-command-channel.ordered_evidence",
+      "historical_value": "STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel in AMD64 and ARM64)",
+      "status": "ERRATUM_CORRECTED_IN_B5F",
+      "correction": "ai-command-channel is an INBOUND browser-created channel. Agent binary does not invoke CreateDataChannel for this channel and does not inspect the ordered flag on dispatch. ordered=true is REFERENCE_ONLY from frontend useWebRTC.js:359.",
+      "evidence": "Agent binary only implements label comparison in pc.OnDataChannel callback; no CreateDataChannel callsite exists for ai-command-channel."
+    }
+  ],
+  "message_schemas": {
+    "request": {
+      "struct_vma": {
+        "arm64": "0x60e660",
+        "amd64": "0xab0be0"
+      },
+      "struct_size_bytes": 32,
+      "fields": [
+        {
+          "name": "RequestID",
+          "obfuscated_name": "NVGMf4S",
+          "offset": 0,
+          "go_type": "string",
+          "json_tag": "request_id",
+          "classification": "KNOWN_FIELD"
+        },
+        {
+          "name": "Command",
+          "obfuscated_name": "H4rjbPSQWLfJ",
+          "offset": 16,
+          "go_type": "string",
+          "json_tag": "command",
+          "classification": "KNOWN_FIELD"
+        }
+      ],
+      "field_validation_semantics": {
+        "original_binary_validation": "NONE (disassembly proceeds directly to logging and goroutine spawn if json.Unmarshal succeeds, without checking for empty request_id or command)",
+        "reconstructed_defensive_validation": "ValidateAICommand rejects empty RequestID or empty Command as IMPLEMENTATION_CHOICE / DEFENSIVE_VALIDATION, not original binary parity."
+      },
+      "malformed_json_semantics": {
+        "behavior": "LOG_AND_DROP",
+        "evidence_class": "STATIC_CONFIRMED",
+        "log_format": "[AI-Command] Error parsing request JSON: %v",
+        "log_string_va": {
+          "arm64": "0x6d5f36",
+          "amd64": "0xb77ed7"
+        },
+        "log_string_length": 43,
+        "response_sent": false,
+        "notes": "On json.Unmarshal error, execution branches to logger and immediately returns from the callback without calling (*DataChannel).Send."
+      }
+    },
+    "response": {
+      "structure": "map[string]interface{}",
+      "fields": [
+        {
+          "json_key": "request_id",
+          "go_type": "string",
+          "rodata_va": {
+            "arm64": "0x6b3a5b",
+            "amd64": "0xb55aee"
+          },
+          "key_length": 10,
+          "value_origin": "Direct echo of request.RequestID captured in worker closure (STATIC_CONFIRMED)"
+        },
+        {
+          "json_key": "exit_code",
+          "go_type": "int",
+          "rodata_va": {
+            "arm64": "0x6b1f17",
+            "amd64": "0xb53f84"
+          },
+          "key_length": 9,
+          "value_origin": "Process exit code (0 on success, ExitCode() on exec.ExitError, -1 on other errors)"
+        },
+        {
+          "json_key": "stdout",
+          "go_type": "string",
+          "rodata_va": {
+            "arm64": "0x6ade37",
+            "amd64": "0xb4fe64"
+          },
+          "key_length": 6,
+          "value_origin": "Captured stdout bytes from command execution converted to string"
+        },
+        {
+          "json_key": "stderr",
+          "go_type": "string",
+          "rodata_va": {
+            "arm64": "0x6ade3d",
+            "amd64": "0xb4fe6a"
+          },
+          "key_length": 6,
+          "value_origin": "Captured stderr bytes from command execution converted to string"
+        }
+      ],
+      "serialization": "json.Marshal",
+      "serialization_call": {
+        "arm64": "0x53f9d0 (g1gLI7afn.ZZnttPPIyf0d / 0x1317c0)",
+        "amd64": "0x9e3732 (JOaOfPm.KNJ5EBt9V / 0x531b60)"
+      }
+    }
+  },
+  "concurrency_model": {
+    "model": "GOROUTINE_PER_ACCEPTED_REQUEST",
+    "evidence_class": "STATIC_CONFIRMED",
+    "spawn_site": {
+      "arm64": "0x53f704 calling runtime.newproc (0x5f730)",
+      "amd64": "0x9e3423 calling runtime.newproc (0x451c40)"
+    },
+    "worker_function": {
+      "arm64": "0x53f740 (main.(*JJffa1S1Zv6).iIhwd_WXInS.func11.(*JJffa1S1Zv6).cemlVcjsE0LQ.2.1)",
+      "amd64": "0x9e3460 (main.(*IDhLgq).woxaqqFN5Km.func11.(*IDhLgq).drnM2wXuIb.2.1)"
+    },
+    "queuing_or_pool": "NONE (direct goroutine invocation per request, no worker pool or rate limiter recovered)"
+  },
+  "execution_boundary": {
+    "classification": "DEFERRED_EXECUTION_BOUNDARY",
+    "category": "EXTERNAL_PROCESS_CANDIDATE",
+    "original_command_boundary": {
+      "shell": "sh",
+      "shell_flag": "-c",
+      "shell_rodata": {
+        "arm64": "0x6ac000 ('sh') and 0x6ac002 ('-c')",
+        "amd64": "0xb4e032 ('sh') and 0xb4e034 ('-c')"
+      },
+      "exec_command_call": {
+        "arm64": "0x53f79c calling HvH5pmapH.RXi09bf9qp (0x196e70)",
+        "amd64": "0x9e34d6 calling dN51dOZj79iH.Egppnln (0x5a1c00)"
+      },
+      "exec_run_call": {
+        "arm64": "0x53f80c calling HvH5pmapH.(*QcMnoAPhGe1).Run (0x197f00)",
+        "amd64": "0x9e3555 calling dN51dOZj79iH.(*E7k1yG4).Run (0x5a2ea0)"
+      }
+    },
+    "clean_room_safety_restriction": {
+      "policy": "STRICTLY_DEFERRED",
+      "rule": "Clean-room safe implementation must NOT implement, invoke, or expose command execution. No os/exec import, no exec.Command, no sh -c, no shell simulator, and no command executor interface allowed in B5F."
+    }
+  }
+}

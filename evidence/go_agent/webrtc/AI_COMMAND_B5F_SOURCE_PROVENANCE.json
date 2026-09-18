@@ -1,0 +1,204 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B5F WebRTC AI-Command Source Provenance & Evidence Matrix",
+    "phase": "Phase 2C.5B5F",
+    "status": "FROZEN_FORENSIC_BASELINE",
+    "base_commit": "69aa5c7306456eb8257220a19b7f6754acbb2369",
+    "channel_label": "ai-command-channel"
+  },
+  "binaries": {
+    "arm64": {
+      "path": "cloudphone-v0.3.6 (1)/android/cloudphone-agent",
+      "sha256": "9cc32ea3cffe29db0a362102b49288ffe58a8f940d05d1a2449356bc7cc93dd4",
+      "arch": "elf64-littleaarch64",
+      "go_version": "go1.22.4"
+    },
+    "amd64": {
+      "path": "cloudphone-v0.3.6 (1)/agentd/cloudphone-agent-amd64",
+      "sha256": "15adc2a4c47c4d189d4e8e08e960434bdd55202d74bc3eeee0bf4713a6b8de16",
+      "arch": "elf64-x86-64",
+      "go_version": "go1.22.4"
+    }
+  },
+  "facts": [
+    {
+      "fact_id": "FACT-AI-01",
+      "description": "DataChannel label 'ai-command-channel' (18 bytes)",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "rodata_va": "0x6bd173",
+        "length": 18,
+        "string_literal": "ai-command-channel"
+      },
+      "amd64_evidence": {
+        "rodata_va": "0xb5f1c2",
+        "length": 18,
+        "string_literal": "ai-command-channel"
+      },
+      "frontend_evidence": {
+        "classification": "REFERENCE_ONLY",
+        "file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+        "line": 359,
+        "code": "pc.createDataChannel('ai-command-channel', { ordered: true })"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-02",
+      "description": "Inbound channel dispatch in pc.OnDataChannel callback",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "function": "main.(*JJffa1S1Zv6).iIhwd_WXInS.func11",
+        "va": "0x53f210",
+        "label_check_range": "0x53f288 - 0x53f2ac"
+      },
+      "amd64_evidence": {
+        "function": "main.(*IDhLgq).woxaqqFN5Km.func11",
+        "va": "0x9e2f20",
+        "label_check_range": "0x9e2f80 - 0x9e2fa8"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-03",
+      "description": "OnMessage registration without branch-specific OnOpen/OnClose",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "registration_site": "0x53f45c calling (*DataChannel).OnMessage (0x499770)",
+        "callback_func": "0x53f5d0 (cemlVcjsE0LQ.2)"
+      },
+      "amd64_evidence": {
+        "registration_site": "0x9e3129 calling (*DataChannel).OnMessage (0x9244a0)",
+        "callback_func": "0x9e32c0 (drnM2wXuIb.2)"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-04",
+      "description": "Request anonymous struct fields {request_id, command}",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "type_descriptor_va": "0x60e660",
+        "size": 32,
+        "field_0": "NVGMf4S string (`json:\"request_id\"`)",
+        "field_1": "H4rjbPSQWLfJ string (`json:\"command\"`)"
+      },
+      "amd64_evidence": {
+        "type_descriptor_va": "0xab0be0",
+        "size": 32,
+        "field_0": "string (`json:\"request_id\"`)",
+        "field_1": "string (`json:\"command\"`)"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-05",
+      "description": "Request field presence vs required validation",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "finding": "Disassembly from 0x53f630 to 0x53f66c checks only json.Unmarshal return code. Zero non-empty string validation checks."
+      },
+      "amd64_evidence": {
+        "finding": "Disassembly from 0x9e3328 to 0x9e336b checks only json.Unmarshal return code. Zero non-empty string validation checks."
+      },
+      "classification_note": "Request fields are KNOWN_FIELDS. Defensive validation in reconstructed code is an IMPLEMENTATION_CHOICE."
+    },
+    {
+      "fact_id": "FACT-AI-06",
+      "description": "Malformed JSON unmarshal error logging and drop",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "log_string_va": "0x6d5f36",
+        "log_string": "[AI-Command] Error parsing request JSON: %v",
+        "branch_action": "0x53f668: restores registers and executes ret without sending response."
+      },
+      "amd64_evidence": {
+        "log_string_va": "0xb77ed7",
+        "log_string": "[AI-Command] Error parsing request JSON: %v",
+        "branch_action": "0x9e336a: restores registers and executes retq without sending response."
+      }
+    },
+    {
+      "fact_id": "FACT-AI-07",
+      "description": "Goroutine per accepted request concurrency",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "spawn_site": "0x53f704 calling runtime.newproc (0x5f730)",
+        "worker_func": "0x53f740 (cemlVcjsE0LQ.2.1)"
+      },
+      "amd64_evidence": {
+        "spawn_site": "0x9e3423 calling runtime.newproc (0x451c40)",
+        "worker_func": "0x9e3460 (drnM2wXuIb.2.1)"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-08",
+      "description": "Original command execution boundary reaches external shell/process",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "shell": "0x6ac000 ('sh')",
+        "flag": "0x6ac002 ('-c')",
+        "exec_cmd_call": "0x53f79c calling HvH5pmapH.RXi09bf9qp (0x196e70)"
+      },
+      "amd64_evidence": {
+        "shell": "0xb4e032 ('sh')",
+        "flag": "0xb4e034 ('-c')",
+        "exec_cmd_call": "0x9e34d6 calling dN51dOZj79iH.Egppnln (0x5a1c00)"
+      },
+      "clean_room_scope": "DEFERRED_EXECUTION_BOUNDARY. Zero process execution code permitted in clean-room agent."
+    },
+    {
+      "fact_id": "FACT-AI-09",
+      "description": "Response schema keys: request_id, exit_code, stdout, stderr",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "request_id_key": "0x6b3a5b (len 10)",
+        "exit_code_key": "0x6b1f17 (len 9)",
+        "stdout_key": "0x6ade37 (len 6)",
+        "stderr_key": "0x6ade3d (len 6)",
+        "marshal_call": "0x53f9d0 calling g1gLI7afn.ZZnttPPIyf0d (0x1317c0)"
+      },
+      "amd64_evidence": {
+        "request_id_key": "0xb55aee (len 10)",
+        "exit_code_key": "0xb53f84 (len 9)",
+        "stdout_key": "0xb4fe64 (len 6)",
+        "stderr_key": "0xb4fe6a (len 6)",
+        "marshal_call": "0x9e3732 calling JOaOfPm.KNJ5EBt9V (0x531b60)"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-10",
+      "description": "Exact RequestID echo correlation",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "dataflow": "req.NVGMf4S at closure offset 0x80 loaded at 0x53f848 and inserted into map key 'request_id' at 0x53f868"
+      },
+      "amd64_evidence": {
+        "dataflow": "req.RequestID at closure offset 0x70 loaded at 0x9e358f and inserted into map key 'request_id' at 0x9e35b6"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-11",
+      "description": "Response sent via (*DataChannel).Send ([]byte) as BINARY_JSON_BYTES",
+      "classification": "STATIC_CONFIRMED",
+      "arm64_evidence": {
+        "send_call": "0x53f9e8 calling IV04EXWpwj.(*F4TaFEL9SI).Send (0x49a3d0)",
+        "framing": "BINARY_JSON_BYTES"
+      },
+      "amd64_evidence": {
+        "send_call": "0x9e374a calling v6LoFegGUKTA.(*W4J6chbzBu).Send (0x9250c0)",
+        "framing": "BINARY_JSON_BYTES"
+      }
+    },
+    {
+      "fact_id": "FACT-AI-12",
+      "description": "Ordered property is REFERENCE_ONLY from frontend",
+      "classification": "REFERENCE_ONLY",
+      "frontend_evidence": {
+        "file": "evidence/reference/raw/web-app/src/composables/useWebRTC.js",
+        "line": 359,
+        "code": "pc.createDataChannel('ai-command-channel', { ordered: true })"
+      },
+      "agent_binary_evidence": {
+        "status": "NO_CHECK",
+        "finding": "Agent receives inbound channel via pc.OnDataChannel; does not inspect or validate channel ordered flag."
+      }
+    }
+  ]
+}

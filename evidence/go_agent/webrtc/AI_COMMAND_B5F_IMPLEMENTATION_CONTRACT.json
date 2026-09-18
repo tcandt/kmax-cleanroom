@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B5F WebRTC AI-Command Implementation Contract",
+    "phase": "Phase 2C.5B5F",
+    "status": "FROZEN_FORENSIC_BASELINE",
+    "base_commit": "69aa5c7306456eb8257220a19b7f6754acbb2369",
+    "channel_label": "ai-command-channel",
+    "classification": "Clean-room behavioral/protocol reconstruction",
+    "toolchain_provenance": {
+      "disassembler": "llvm-objdump.exe",
+      "version": "22.1.8",
+      "sha256": "2225c03acd46d4dd9aee94ae2f431e42d305b9145a885462c1e5d1998983d64d",
+      "install_method": "WinGet package MartinStorsjo.LLVM-MinGW.UCRT (20260616-ucrt-x86_64)"
+    },
+    "governing_docs": [
+      "evidence/go_agent/webrtc/AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence/go_agent/webrtc/AI_COMMAND_B5F_MESSAGE_INVENTORY.json",
+      "evidence/go_agent/webrtc/AI_COMMAND_B5F_CALLGRAPH.json",
+      "evidence/go_agent/webrtc/AI_COMMAND_B5F_SOURCE_PROVENANCE.json",
+      "tools/forensics/ai_command/ai_command_disassembly_manifest.json"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "AI-B5F-01",
+      "requirement": "Inbound DataChannel Label Matching",
+      "observable_behavior": "Agent identifies 'ai-command-channel' in pc.OnDataChannel dispatcher via exact 18-byte string comparison",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "ARM64: rodata at 0x6bd173, runtime.memequal at 0x15440. AMD64: rodata at 0xb5f1c2, runtime.memequal at 0x406ce0."
+    },
+    {
+      "id": "AI-B5F-02",
+      "requirement": "OnMessage Handler Registration",
+      "observable_behavior": "Agent registers OnMessage callback closure on ai-command-channel via (*DataChannel).OnMessage",
+      "source_artifact": "AI_COMMAND_B5F_CALLGRAPH.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "ARM64: 0x53f45c calls 0x499770. AMD64: 0x9e3129 calls 0x9244a0."
+    },
+    {
+      "id": "AI-B5F-03",
+      "requirement": "No Branch-Specific OnOpen or OnClose Registration",
+      "observable_behavior": "No branch-specific OnOpen or OnClose registration was recovered in the ai-command-channel dispatch path",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "Dispatch setup code between label match and return sets only OnMessage; no calls to OnOpen or OnClose exist in this branch."
+    },
+    {
+      "id": "AI-B5F-04",
+      "requirement": "Inbound Request Directional Framing",
+      "observable_behavior": "Browser sends JSON_TEXT frame over DataChannel; Agent receives message and passes raw payload bytes to json.Unmarshal",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "REFERENCE_ONLY_PROVEN_BY_LANE_D_WITH_STATIC_DECODER",
+      "mandatory_for_parity": true,
+      "notes": "Browser useWebRTC.js:311 calls send(JSON.stringify(...)). Agent Pion OnMessage receives DataChannelMessage.Data."
+    },
+    {
+      "id": "AI-B5F-05",
+      "requirement": "Request Struct Schema",
+      "observable_behavior": "Agent unmarshals request payload into struct containing request_id (string) and command (string)",
+      "source_artifact": "AI_COMMAND_B5F_MESSAGE_INVENTORY.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "ARM64: type at 0x60e660 (NVGMf4S string `json:\"request_id\"`, H4rjbPSQWLfJ string `json:\"command\"`). AMD64: type at 0xab0be0."
+    },
+    {
+      "id": "AI-B5F-06",
+      "requirement": "Request Fields Classification and Validation Semantics",
+      "observable_behavior": "Request fields are KNOWN_FIELDS; original binary performs zero non-empty validation checks; defensive validation in clean-room code is an IMPLEMENTATION_CHOICE",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": false,
+      "notes": "Disassembly executes no branch or comparison on request_id or command emptiness. ValidateAICommand() non-empty checks are DEFENSIVE_VALIDATION."
+    },
+    {
+      "id": "AI-B5F-07",
+      "requirement": "Malformed JSON Log and Drop Semantics",
+      "observable_behavior": "Upon json.Unmarshal error, Agent logs '[AI-Command] Error parsing request JSON: %v' and returns immediately without sending response",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "ARM64: log string at 0x6d5f36; returns at 0x53f668. AMD64: log string at 0xb77ed7; returns at 0x9e336a."
+    },
+    {
+      "id": "AI-B5F-08",
+      "requirement": "Per-Accepted-Request Goroutine Concurrency",
+      "observable_behavior": "Agent logs execution intent and launches worker goroutine via runtime.newproc for each valid request",
+      "source_artifact": "AI_COMMAND_B5F_CALLGRAPH.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "ARM64: logs at 0x6d86f2, calls 0x5f730 (runtime.newproc). AMD64: logs at 0xb7a693, calls 0x451c40 (runtime.newproc)."
+    },
+    {
+      "id": "AI-B5F-09",
+      "requirement": "Original Execution Boundary Forensic Recognition",
+      "observable_behavior": "Original worker invokes os/exec.Command('sh', '-c', req.Command) and captures stdout/stderr",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": false,
+      "notes": "Classified as DEFERRED_EXECUTION_BOUNDARY / EXTERNAL_PROCESS_CANDIDATE."
+    },
+    {
+      "id": "AI-B5F-10",
+      "requirement": "Clean-Room Safety Restriction - Execution Boundary Deferred",
+      "observable_behavior": "Clean-room safe implementation must NOT implement, invoke, or expose command execution; zero os/exec, zero exec.Command, zero shell simulator",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "MANDATORY_SAFETY_GUARD",
+      "mandatory_for_parity": true,
+      "notes": "Safe reconstructed code provides only schema, parser, and response serialization data structures. No execution logic allowed."
+    },
+    {
+      "id": "AI-B5F-11",
+      "requirement": "Response Struct Schema",
+      "observable_behavior": "Agent builds response map with request_id (string), exit_code (int), stdout (string), and stderr (string) and serializes via json.Marshal",
+      "source_artifact": "AI_COMMAND_B5F_MESSAGE_INVENTORY.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "ARM64: keys at 0x6b3a5b, 0x6b1f17, 0x6ade37, 0x6ade3d; calls 0x1317c0. AMD64: keys at 0xb55aee, 0xb53f84, 0xb4fe64, 0xb4fe6a; calls 0x531b60."
+    },
+    {
+      "id": "AI-B5F-12",
+      "requirement": "Exact RequestID Echo Correlation",
+      "observable_behavior": "Worker copies incoming request.RequestID directly into response.request_id",
+      "source_artifact": "AI_COMMAND_B5F_SOURCE_PROVENANCE.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "Dataflow verified in disassembly closure environment to response map key 'request_id'."
+    },
+    {
+      "id": "AI-B5F-13",
+      "requirement": "Outbound Response Directional Framing",
+      "observable_behavior": "Agent transmits response via (*DataChannel).Send([]byte), sending serialized JSON as BINARY_JSON_BYTES",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "Disassembly invokes (*DataChannel).Send (ARM64: 0x49a3d0, AMD64: 0x9250c0), NOT SendText. Framing is strictly BINARY_JSON_BYTES."
+    },
+    {
+      "id": "AI-B5F-14",
+      "requirement": "Ordered Property Classification",
+      "observable_behavior": "ordered=true is classified as REFERENCE_ONLY from frontend browser creation; Agent binary does not inspect ordered flag",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "REFERENCE_ONLY",
+      "mandatory_for_parity": false,
+      "notes": "Corrects older erroneous classification of inbound ordered property as STATIC_CONFIRMED."
+    },
+    {
+      "id": "AI-B5F-15",
+      "requirement": "Channel Inertness in Clean-Room Agent Runtime",
+      "observable_behavior": "ai-command-channel remains strictly inert in clean-room production runtime; no OnMessage business handler attached, no ADB bridge activation",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "MANDATORY_SAFETY_GUARD",
+      "mandatory_for_parity": true,
+      "notes": "Parser existence does not equal channel activation. Channel must not be attached to any executor in production."
+    },
+    {
+      "id": "AI-B5F-16",
+      "requirement": "Historical Errata and Superseded Evidence Recorded",
+      "observable_behavior": "Historical artifacts remain immutable; errata and superseded framing/ordered claims are explicitly documented",
+      "source_artifact": "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "evidence_class": "STATIC_CONFIRMED",
+      "mandatory_for_parity": true,
+      "notes": "Supersedes 'JSON_TEXT_IN_ARRAYBUFFER' with directional split (JSON_TEXT request, BINARY_JSON_BYTES response) and corrects inbound ordered classification."
+    }
+  ]
+}
