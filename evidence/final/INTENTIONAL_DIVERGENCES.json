@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "title": "Final Intentional Divergence and Deferred Boundary Registry",
+    "phase": "Phase 3A",
+    "date": "2026-09-18",
+    "policy": "No intentional divergence or deferred execution boundary may be counted as exact literal runtime parity. All safe scope boundaries and deferred execution paths must be documented explicitly."
+  },
+  "divergences": [
+    {
+      "divergence_id": "DIVERGENCE-AI-EXEC",
+      "component": "cloudphone-agent",
+      "channel": "ai-command-channel",
+      "classification": "INTENTIONAL_DEFERRED_BOUNDARY",
+      "original_behavior": "Original agent binary parsed ai_command_request JSON payloads and dispatched commands to arbitrary local execution engines, shell subprocesses, or automated workflows.",
+      "cleanroom_behavior": "Clean-room implementation provides safe semantic parser and schema validator (ParseAICommand, ValidateAICommand, MarshalAICommandResponse) validating all KNOWN_FIELDS. Runtime OS process execution is intentionally deferred (AI-B5F-10); zero os/exec imports and zero active OnMessage production command dispatchers exist.",
+      "rationale": "Prevent unauthorized or arbitrary process execution within clean-room recovery boundaries.",
+      "parity_scope": "Protocol/schema parity: 100%; Runtime process execution parity: 0% (INTENTIONALLY DEFERRED)."
+    },
+    {
+      "divergence_id": "DIVERGENCE-ADB-BRIDGE",
+      "component": "cloudphone-agent",
+      "channel": "adb-channel",
+      "classification": "INTENTIONAL_DEFERRED_BOUNDARY",
+      "original_behavior": "Original agent binary handled dual-mode binary framing (CNXN 24-byte packet header or raw PTY stream) interacting with /dev/ptmx, /system/bin/sh, /bin/sh to provide terminal shell access. No external TCP connection to 127.0.0.1:5555 was recovered.",
+      "cleanroom_behavior": "Clean-room implementation provides forensic extraction, dual-mode packet parser, and topology contracts. Production channel wiring is strictly inert with multi-stage lifecycle hooks (attachInertLifecycleHooks); zero pty.Open, zero net.Dial, zero os/exec subprocess spawns exist.",
+      "rationale": "Prevent remote shell and unauthenticated PTY bridge execution in production clean-room artifact.",
+      "parity_scope": "Forensic/schema parity: 100%; Runtime terminal shell bridge parity: 0% (INTENTIONALLY DEFERRED)."
+    },
+    {
+      "divergence_id": "DIVERGENCE-FILE-INSTALLER",
+      "component": "cloudphone-agent",
+      "channel": "file-channel",
+      "classification": "INTENTIONAL_DEFERRED_BOUNDARY",
+      "original_behavior": "Original agent supported install: true flag in start_upload JSON metadata triggering Android package manager (pm install) execution on /data/local/tmp files.",
+      "cleanroom_behavior": "Clean-room implementation provides full stateful SCTP file transfer protocol (IDLE -> RECEIVING -> IDLE), chunk reassembly, and FileSink abstraction with 15 path traversal security rejection tests. Package installer execution is strictly deferred (FILE-B3-06); zero exec.Command calls exist in safe scope.",
+      "rationale": "Prevent privileged host APK package installation from remote DataChannel in clean-room environment.",
+      "parity_scope": "File transfer/storage parity: 100%; Package installer runtime parity: 0% (INTENTIONALLY DEFERRED)."
+    },
+    {
+      "divergence_id": "DIVERGENCE-CAMERA-HARDWARE",
+      "component": "cloudphone-agent",
+      "channel": "camera-channel",
+      "classification": "INTENTIONAL_ABSTRACTION_BOUNDARY",
+      "original_behavior": "Streamed camera frames to Android CameraCapture.java virtual camera interface via local TCP socket 127.0.0.1:8089.",
+      "cleanroom_behavior": "Clean-room implementation provides full WebRTC SCTP data plane, 4-byte LE framing, dynamic probe gating, and planar I420 YUV conversion streaming to TCP endpoint 127.0.0.1:8089. Physical Android V4L2 virtual camera loopback kernel driver is abstracted via TCP bridge socket.",
+      "rationale": "Enable cross-platform testing and clean separation from Android kernel drivers.",
+      "parity_scope": "Protocol/bridge parity: 100%; Physical hardware driver: ABSTRACTED."
+    },
+    {
+      "divergence_id": "DIVERGENCE-CLIPBOARD-MOCK",
+      "component": "cloudphone-agent",
+      "channel": "clipboard-channel",
+      "classification": "SAFE_SCOPE_ADAPTER",
+      "original_behavior": "Interacted with Android ClipboardManager system service via reflection/AIDL.",
+      "cleanroom_behavior": "Clean-room implementation provides full bidirectional JSON_TEXT clipboard protocol synchronization using thread-safe MemoryClipboardProvider abstraction.",
+      "rationale": "Cross-platform testability without requiring live Android OS runtime.",
+      "parity_scope": "Protocol parity: 100%; Platform service: MOCKED VIA ADAPTER."
+    },
+    {
+      "divergence_id": "DIVERGENCE-INPUT-UDS-MOCK",
+      "component": "cloudphone-agent",
+      "channel": "input-channel",
+      "classification": "SAFE_SCOPE_ADAPTER",
+      "original_behavior": "Connected to @uds_sys_t_ abstract UNIX domain socket on Android.",
+      "cleanroom_behavior": "Clean-room implementation provides complete JSON_TEXT parsing, discriminator routing, and big-endian scrcpy binary encoding delivered to ControlSink abstraction.",
+      "rationale": "Cross-platform testability and verification of exact binary byte vectors.",
+      "parity_scope": "Protocol/binary encoding parity: 100%; OS UDS socket: ADAPTER-BOUND."
+    }
+  ]
+}

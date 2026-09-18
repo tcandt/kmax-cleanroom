@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "title": "Clean-Clone Verification Specification and Results Matrix",
+    "phase": "Phase 3A",
+    "date": "2026-09-18",
+    "description": "Records clean-clone reproduction instructions, requirements, toolchain prerequisites, and verification commands."
+  },
+  "clean_clone_procedure": {
+    "step_1": "git clone <repository_url> <fresh_directory>",
+    "step_2": "git checkout <phase3a_commit_or_release_tag>",
+    "step_3": "python tools/verify_release.py",
+    "step_4": "python tools/test_release_negative.py",
+    "step_5": "git status --porcelain"
+  },
+  "prerequisites": {
+    "go": ">= 1.22.0",
+    "python": ">= 3.10.0",
+    "git": ">= 2.30.0",
+    "llvm_objdump": "LLVM/Clang >= 15.0 with llvm-objdump on PATH or discoverable via Winget/Registry/env"
+  },
+  "verification_matrix": [
+    {
+      "step": 1,
+      "command": "python tools/verify_phase2.py",
+      "working_directory": ".",
+      "expected_exit_code": 0,
+      "purpose": "Verify all Phase 2 audits, B2-B6 differential checkers, forensic reproducers, and Go race tests"
+    },
+    {
+      "step": 2,
+      "command": "python tools/audit/audit_reconstructed_source_provenance.py --check",
+      "working_directory": ".",
+      "expected_exit_code": 0,
+      "purpose": "Verify 100% reconstructed source provenance completeness (UNKNOWN == 0)"
+    },
+    {
+      "step": 3,
+      "command": "python tools/audit/audit_cleanroom_contamination.py --check",
+      "working_directory": ".",
+      "expected_exit_code": 0,
+      "purpose": "Verify clean-room isolation and zero forbidden source traces"
+    },
+    {
+      "step": 4,
+      "command": "python tools/test_release_negative.py",
+      "working_directory": ".",
+      "expected_exit_code": 0,
+      "purpose": "Validate fail-closed negative mutation suite"
+    },
+    {
+      "step": 5,
+      "command": "python tools/verify_release.py",
+      "working_directory": ".",
+      "expected_exit_code": 0,
+      "purpose": "Orchestrate master release verification across all 10 release gates"
+    },
+    {
+      "step": 6,
+      "command": "git status --porcelain",
+      "working_directory": ".",
+      "expected_exit_code": 0,
+      "expected_output": "",
+      "purpose": "Assert working tree is strictly clean with zero mutations"
+    }
+  ],
+  "pre_release_local_execution_status": {
+    "local_workspace_verified": true,
+    "scratch_dependencies_purged": true,
+    "workstation_hardcoded_paths_removed": true,
+    "fresh_clone_readiness": "READY_FOR_PHASE3B_INDEPENDENT_RUN"
+  }
+}

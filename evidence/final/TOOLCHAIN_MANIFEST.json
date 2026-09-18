@@ -1,0 +1,83 @@
+{
+  "metadata": {
+    "title": "Final Clean-Room Toolchain Provenance Manifest",
+    "phase": "Phase 3A",
+    "host_os": "win32",
+    "date": "2026-09-18"
+  },
+  "tools": {
+    "go": {
+      "role": "Production build, unit test execution, and data-race detector",
+      "version": "go version go1.26.3 windows/amd64",
+      "required": true,
+      "path_policy": "PORTABLE_PATH_DISCOVERY",
+      "discovery_mechanism": "shutil.which('go') or %GOROOT%/bin/go",
+      "resolved_executable": "go.EXE"
+    },
+    "python": {
+      "role": "Master release verifier, forensic reproduction engines, and differential derivation test suites",
+      "version": "3.13.13",
+      "required": true,
+      "path_policy": "CURRENT_RUNTIME_INTERPRETER",
+      "discovery_mechanism": "sys.executable",
+      "resolved_executable": "python.exe"
+    },
+    "git": {
+      "role": "Repository tree state validation, historical baseline commit pinning, and git status cleanliness check",
+      "version": "git version 2.54.0.windows.1",
+      "required": true,
+      "path_policy": "PORTABLE_PATH_DISCOVERY",
+      "discovery_mechanism": "shutil.which('git')",
+      "resolved_executable": "git.EXE"
+    },
+    "llvm_objdump": {
+      "role": "Machine binary disassembly extraction and cross-architecture forensic binding",
+      "version": "LLVM (http://llvm.org/):",
+      "sha256": "2225c03acd46d4dd9aee94ae2f431e42d305b9145a885462c1e5d1998983d64d",
+      "required": true,
+      "path_policy": "PORTABLE_MULTI_SOURCE_DISCOVERY",
+      "discovery_mechanism": "LLVM_OBJDUMP env -> PATH -> Windows User Registry -> WinGet Packages -> TOOLCHAIN.json",
+      "resolved_executable_provenance": "WINDOWS_USER_REGISTRY_PATH",
+      "resolved_executable_basename": "llvm-objdump.exe"
+    },
+    "c_compiler_cgo": {
+      "role": "CGO compiler for go test -race concurrency validation",
+      "version": "clang version 22.1.8 (Target: x86_64-w64-windows-gnu)",
+      "required": true,
+      "path_policy": "PORTABLE_MULTI_SOURCE_DISCOVERY",
+      "discovery_mechanism": "CC env -> PATH -> Windows User Registry -> TOOLCHAIN.json",
+      "resolved_executable_basename": "gcc.exe"
+    },
+    "jadx": {
+      "role": "Android Helper APK direct decompilation (Phase 1A archival)",
+      "version": "JADX v1.5.6",
+      "required": false,
+      "path_policy": "HISTORICAL_ARCHIVAL_EVIDENCE",
+      "discovery_mechanism": "Offline execution outputs frozen under raw_extraction/android/jadx/",
+      "output_location": "raw_extraction/android/jadx/"
+    },
+    "apktool": {
+      "role": "Android manifest and resources decoder (Phase 1A archival)",
+      "version": "Apktool v3.0.3",
+      "required": false,
+      "path_policy": "HISTORICAL_ARCHIVAL_EVIDENCE",
+      "discovery_mechanism": "Offline execution outputs frozen under raw_extraction/android/apktool/",
+      "output_location": "raw_extraction/android/apktool/"
+    },
+    "baksmali": {
+      "role": "Dalvik bytecode disassembler for classes.dex (Phase 1A archival)",
+      "version": "Baksmali v2.5.2",
+      "required": false,
+      "path_policy": "HISTORICAL_ARCHIVAL_EVIDENCE",
+      "discovery_mechanism": "Offline execution outputs frozen under raw_extraction/android/smali/",
+      "output_location": "raw_extraction/android/smali/"
+    }
+  },
+  "decompiler_fidelity_scope": {
+    "declared_fidelity_claim": "100.00% decompilation completeness for recovered class/method population (1,061 of 1,061 declared methods decompiled into valid Java syntax with full control-flow recovery; compiler-stripped comments and local variable names excluded)",
+    "prohibited_claims": [
+      "100% literal original source text recovery",
+      "100% comment recovery"
+    ]
+  }
+}

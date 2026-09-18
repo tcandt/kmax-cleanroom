@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "title": "Final Frozen Contract Registry",
+    "phase": "Phase 3A",
+    "total_registered_contracts": 15,
+    "frozen_immutable": true,
+    "date": "2026-09-18"
+  },
+  "contracts": [
+    {
+      "contract_id": "CONTRACT-B2-IMPL",
+      "subsystem": "webrtc-agent-input-clipboard",
+      "artifact_path": "evidence/go_agent/webrtc/DATACHANNEL_B2_IMPLEMENTATION_CONTRACT.json",
+      "sha256": "3d7ebd83a675b2eb2103813a063cf012def36b98b4303f146b8b1c60ebaaa6f7",
+      "freeze_commit": "a5bb9b1b866c1b3f240212f43d3e6484ae26f076",
+      "effective_errata_path": "evidence/go_agent/webrtc/DATACHANNEL_B2_CONTRACT_ERRATA.json",
+      "errata_sha256": "3c2e93a53693b2aca0cc14551ec6c62301af384aa811567bd2575ca5d6adce48",
+      "current_authoritative_status": "FROZEN_WITH_ERRATA"
+    },
+    {
+      "contract_id": "CONTRACT-B2-INPUT-SPEC",
+      "subsystem": "webrtc-agent-input",
+      "artifact_path": "evidence/go_agent/webrtc/INPUT_CHANNEL_PROTOCOL_SPEC.json",
+      "sha256": "da92982a431e154f34f30735a6fdfc77ef08403fb4cfd66557757b46661b8b1c",
+      "freeze_commit": "a5bb9b1b866c1b3f240212f43d3e6484ae26f076",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-B2-CLIPBOARD-SPEC",
+      "subsystem": "webrtc-agent-clipboard",
+      "artifact_path": "evidence/go_agent/webrtc/CLIPBOARD_CHANNEL_PROTOCOL_SPEC.json",
+      "sha256": "64df9a480356a55e49cfbe36456f935c394a178b7748056a12aebdd1dc793120",
+      "freeze_commit": "a5bb9b1b866c1b3f240212f43d3e6484ae26f076",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-B3-IMPL",
+      "subsystem": "webrtc-agent-file",
+      "artifact_path": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json",
+      "sha256": "1ff71090f6a16de538cad6cf93fc4096d34a913bed4008d1172f41b83da8e17b",
+      "freeze_commit": "2a0395105eb018ef6df1d3e8eec58f5043588265",
+      "effective_errata_path": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_CONTRACT_ERRATA.json",
+      "errata_sha256": "52b9e987225167f4556df501bc170a16049016d237e5e6d86854812e52253f39",
+      "current_authoritative_status": "FROZEN_WITH_ERRATA"
+    },
+    {
+      "contract_id": "CONTRACT-B3-FILE-SPEC",
+      "subsystem": "webrtc-agent-file",
+      "artifact_path": "evidence/go_agent/webrtc/FILE_CHANNEL_B3_PROTOCOL_SPEC.json",
+      "sha256": "076f5606795cabc8d8796e5c90a76ac4943888d3fb7aab4a06416381e15217c1",
+      "freeze_commit": "2a0395105eb018ef6df1d3e8eec58f5043588265",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-B4-IMPL",
+      "subsystem": "webrtc-agent-camera",
+      "artifact_path": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_IMPLEMENTATION_CONTRACT.json",
+      "sha256": "818abe7db2cc38df3563a0f6cf45ec047cf0c0a93338c994e60a327fc0d471ce",
+      "freeze_commit": "7e94bd4874b3d30b955403063f915f00e2bbdc32",
+      "effective_errata_path": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_CONTRACT_ERRATA.json",
+      "errata_sha256": "fb44cec08b353441c203d1e528836c1871ab91dc6c930b61ee976675edb6c87c",
+      "current_authoritative_status": "FROZEN_WITH_ERRATA"
+    },
+    {
+      "contract_id": "CONTRACT-B4-CAMERA-SPEC",
+      "subsystem": "webrtc-agent-camera",
+      "artifact_path": "evidence/go_agent/webrtc/CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json",
+      "sha256": "1a177531761d51ee280be5d9dce5bd8442c42f19f66ca5acde66b38dd4c48ff9",
+      "freeze_commit": "7e94bd4874b3d30b955403063f915f00e2bbdc32",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-B5F-IMPL",
+      "subsystem": "webrtc-agent-ai-command",
+      "artifact_path": "evidence/go_agent/webrtc/AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json",
+      "sha256": "64642e153dcefaa2857fdc37f16b7dc076915c56aa1b3777519eb0c0d6dbdf65",
+      "freeze_commit": "4b05495d7613084ac9b58b015292f71f27f9c9fb",
+      "effective_errata_path": "evidence/go_agent/webrtc/AI_COMMAND_B5F_CONTRACT_ERRATA.json",
+      "errata_sha256": "c293ec01694c1b156c4f4f9c12cb680425667679d297db597f8f9e83f13855f6",
+      "current_authoritative_status": "FROZEN_WITH_ERRATA"
+    },
+    {
+      "contract_id": "CONTRACT-B5F-AI-SPEC",
+      "subsystem": "webrtc-agent-ai-command",
+      "artifact_path": "evidence/go_agent/webrtc/AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "sha256": "aef2aac903e0fc1be312dc4c1bbf0e53eb5cb24c25ca373b06127c53fd36501f",
+      "freeze_commit": "4b05495d7613084ac9b58b015292f71f27f9c9fb",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-B6F-IMPL",
+      "subsystem": "webrtc-agent-adb-channel",
+      "artifact_path": "evidence/go_agent/webrtc/ADB_CHANNEL_B6F_IMPLEMENTATION_CONTRACT.json",
+      "sha256": "1b1aba53ef39786fadafaab772e11c0611198403f8910f951a507ff4b06fc3ea",
+      "freeze_commit": "a3f4e12b3b85b505a27265b695513546cab07c0e",
+      "effective_errata_path": "evidence/go_agent/webrtc/ADB_CHANNEL_B6F_CONTRACT_ERRATA.json",
+      "errata_sha256": "20f6288bb4d2ab1b3c687d7cbbcb58432268806de8af9c32fd847ad37925cdde",
+      "current_authoritative_status": "FROZEN_WITH_ERRATA"
+    },
+    {
+      "contract_id": "CONTRACT-B6F-ADB-SPEC",
+      "subsystem": "webrtc-agent-adb-channel",
+      "artifact_path": "evidence/go_agent/webrtc/ADB_CHANNEL_B6F_PROTOCOL_SPEC.json",
+      "sha256": "fc9e91c19d660030212db8d3dc2ddca34d0b6c22624f6ae59fd4482767267303",
+      "freeze_commit": "a3f4e12b3b85b505a27265b695513546cab07c0e",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-WEBRTC-CORE",
+      "subsystem": "webrtc-core-engine",
+      "artifact_path": "evidence/go_agent/webrtc/WEBRTC_CORE_IMPLEMENTATION_CONTRACT.json",
+      "sha256": "152a3545be161f596fe508e8e17b4c1bdbb762c62f6974dbe6cad9d0c29ef0db",
+      "freeze_commit": "a5bb9b1b866c1b3f240212f43d3e6484ae26f076",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-TRANSPORT-IMPL",
+      "subsystem": "signaling-transport",
+      "artifact_path": "evidence/go_signaling/transport/TRANSPORT_IMPLEMENTATION_CONTRACT.json",
+      "sha256": "8145652acff5acabeb395650afb3bab0658a7a4de8b58809240a307b4858d0fd",
+      "freeze_commit": "7a04f2cf768b7530eecfa9d46059d60e6e737089",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-TRANSPORT-WS-HANDSHAKE",
+      "subsystem": "signaling-transport",
+      "artifact_path": "evidence/go_signaling/transport/WEBSOCKET_HANDSHAKE_CONTRACT.json",
+      "sha256": "294505090cc3088b9c1084c56e91cc6ebc71abacb8c3989b9cc84fd58186aa0a",
+      "freeze_commit": "7a04f2cf768b7530eecfa9d46059d60e6e737089",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    },
+    {
+      "contract_id": "CONTRACT-TRANSPORT-WEBRTC-SIGNALING",
+      "subsystem": "signaling-transport",
+      "artifact_path": "evidence/go_signaling/transport/WEBRTC_SIGNALING_CONTRACT.json",
+      "sha256": "7e94f921c861611db5149282369f6b67fb01d07132901e31d9377cfe573bbbea",
+      "freeze_commit": "7a04f2cf768b7530eecfa9d46059d60e6e737089",
+      "effective_errata_path": null,
+      "current_authoritative_status": "FROZEN_CANONICAL"
+    }
+  ]
+}

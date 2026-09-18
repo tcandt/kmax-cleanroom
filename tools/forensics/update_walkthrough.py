@@ -1,10 +1,11 @@
+import os
 import json
 import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 CORR_PATH = REPO_ROOT / "evidence" / "go_signaling" / "auth" / "AUTH_CROSS_BUILD_CORRELATION.json"
-ARTIFACT_WALKTHROUGH = Path("C:/Users/TINH-NGUYEN/.gemini/antigravity-ide/brain/c611387b-9059-4701-8d25-caf056c3d4dc/walkthrough.md")
+ARTIFACT_WALKTHROUGH = Path(os.environ["WALKTHROUGH_OVERRIDE"]) if "WALKTHROUGH_OVERRIDE" in os.environ else None
 REPO_WALKTHROUGH = REPO_ROOT / "walkthrough.md"
 
 def generate_markdown_table(correlation):
@@ -37,7 +38,12 @@ def update_walkthrough():
 
     table_md = generate_markdown_table(correlation)
 
-    content = ARTIFACT_WALKTHROUGH.read_text(encoding="utf-8")
+    # Read from existing walkthrough
+    target_read = ARTIFACT_WALKTHROUGH if (ARTIFACT_WALKTHROUGH and ARTIFACT_WALKTHROUGH.exists()) else REPO_WALKTHROUGH
+    if not target_read.exists():
+        print("No walkthrough file found to update.")
+        return
+    content = target_read.read_text(encoding="utf-8")
 
     # Replace function list with generated table
     func_pattern = re.compile(
@@ -103,9 +109,10 @@ def update_walkthrough():
     )
 
     # Write both to artifact and repo
-    ARTIFACT_WALKTHROUGH.write_text(content, encoding="utf-8")
+    if ARTIFACT_WALKTHROUGH and ARTIFACT_WALKTHROUGH.parent.exists():
+        ARTIFACT_WALKTHROUGH.write_text(content, encoding="utf-8")
     REPO_WALKTHROUGH.write_text(content, encoding="utf-8")
-    print("Updated walkthrough.md in artifact directory and repo root.")
+    print("Updated walkthrough.md in repository root.")
 
 if __name__ == "__main__":
     update_walkthrough()

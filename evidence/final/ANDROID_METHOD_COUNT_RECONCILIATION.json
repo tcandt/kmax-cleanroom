@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "title": "Android Helper Method Count Reconciliation",
+    "phase": "Phase 3A",
+    "target_artifact": "cloudphone-v0.3.6 (1)/android/libsys_core.so",
+    "dex_file": "classes.dex",
+    "dex_magic": "dex\n035\u0000",
+    "date": "2026-09-18"
+  },
+  "reconciliation_summary": {
+    "phase0_raw_dex_method_ids": 1625,
+    "phase1a_class_defined_methods": 1061,
+    "external_framework_method_references": 564,
+    "mathematical_identity_verified": true
+  },
+  "dex_header_metrics": {
+    "magic": "6465780a30333500",
+    "checksum": "0x4b30e5ed",
+    "string_ids_count": 2661,
+    "type_ids_count": 419,
+    "proto_ids_count": 625,
+    "field_ids_count": 721,
+    "method_ids_count": 1625,
+    "class_defs_count": 154
+  },
+  "class_defined_population_breakdown": {
+    "total_defined_classes": 154,
+    "total_declared_methods": 1061,
+    "regular_declared_methods": 940,
+    "synthetic_lambda_methods": 121,
+    "reflection_invoking_methods": 78,
+    "dynamic_dispatch_methods": 0,
+    "try_catch_protected_methods": 158,
+    "successfully_decompiled_methods": 1061,
+    "failed_decompile_methods": 0,
+    "decompilation_completeness_rate": 1.0
+  },
+  "population_difference_rationale": {
+    "definition_phase0_1625": "Total size of DEX method_ids table (indexed method references across all bytecode opcodes invoke-virtual, invoke-direct, invoke-static, invoke-interface). Includes internal method definitions and external Android framework/JDK runtime APIs.",
+    "definition_phase1a_1061": "Total concrete and abstract direct_methods and virtual_methods declared inside class_data_item structures of the 154 defined classes.",
+    "difference_564": "Imported external methods from Android OS framework (android.*) and Java runtime (java.*) called by application code but not defined in classes.dex.",
+    "conclusion": "Zero population loss. The 1,625 vs 1,061 difference is an architectural property of Dalvik/ART bytecode specification separating method reference indices from class method declarations."
+  }
+}

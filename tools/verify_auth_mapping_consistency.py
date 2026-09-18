@@ -121,9 +121,10 @@ def verify_consistency():
 
     # 4. Check walkthrough.md consistency (check both repo copy and artifact if present)
     walkthrough_paths = [ROOT / "walkthrough.md"]
-    art_wt = Path("C:/Users/TINH-NGUYEN/.gemini/antigravity-ide/brain/c611387b-9059-4701-8d25-caf056c3d4dc/walkthrough.md")
-    if art_wt.exists():
-        walkthrough_paths.append(art_wt)
+    if "WALKTHROUGH_OVERRIDE" in os.environ:
+        art_wt = Path(os.environ["WALKTHROUGH_OVERRIDE"])
+        if art_wt.exists():
+            walkthrough_paths.append(art_wt)
 
     for wt_path in walkthrough_paths:
         wt_content = wt_path.read_text(encoding="utf-8")
