@@ -10,11 +10,14 @@ package webrtc
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"image"
 	"image/color"
 	"image/jpeg"
+	"io"
 	"net"
 	"strings"
 	"sync"
@@ -480,5 +483,405 @@ func TestCameraProbeBehavior(t *testing.T) {
 	}
 	if !ProbeCameraBridge(cfgAvail) {
 		t.Errorf("probe should return true when endpoint is listening")
+	}
+}
+
+type chunkWriter struct {
+	maxChunk int
+	buf      bytes.Buffer
+}
+
+func (w *chunkWriter) Write(p []byte) (int, error) {
+	if len(p) == 0 {
+		return 0, nil
+	}
+	n := len(p)
+	if n > w.maxChunk {
+		n = w.maxChunk
+	}
+	return w.buf.Write(p[:n])
+}
+
+type noProgressWriter struct{}
+
+func (w *noProgressWriter) Write(p []byte) (int, error) {
+	return 0, nil
+}
+
+type failingWriter struct {
+	failAfter int
+	written   int
+}
+
+func (w *failingWriter) Write(p []byte) (int, error) {
+	if w.written >= w.failAfter {
+		return 0, errors.New("write error injected")
+	}
+	remain := w.failAfter - w.written
+	toWrite := len(p)
+	if toWrite > remain {
+		toWrite = remain
+	}
+	w.written += toWrite
+	return toWrite, nil
+}
+
+// TestCameraShortWriterFraming validates that partial prefix and partial payload writes
+// loop until complete and produce exact wire framing, while permanent short-writes fail cleanly.
+func TestCameraShortWriterFraming(t *testing.T) {
+	payload := []byte("hello-virtual-camera-stream")
+
+	// 1. Partial writes (1 byte per write) must succeed and produce full framed message
+	cw := &chunkWriter{maxChunk: 1}
+	if err := writeCameraFrame(cw, payload); err != nil {
+		t.Fatalf("writeCameraFrame with chunkWriter failed: %v", err)
+	}
+	expectedLen := 4 + len(payload)
+	if cw.buf.Len() != expectedLen {
+		t.Fatalf("expected total length %d, got %d", expectedLen, cw.buf.Len())
+	}
+	readPayload, err := readCameraFrame(&cw.buf, MaxCameraHALMessageLen)
+	if err != nil {
+		t.Fatalf("failed to read back frame written via chunkWriter: %v", err)
+	}
+	if !bytes.Equal(readPayload, payload) {
+		t.Fatalf("payload mismatch after chunkWriter writes: expected %s, got %s", payload, readPayload)
+	}
+
+	// 2. Zero-progress writer must return io.ErrNoProgress
+	np := &noProgressWriter{}
+	if err := writeCameraFrame(np, payload); !errors.Is(err, io.ErrNoProgress) {
+		t.Fatalf("expected io.ErrNoProgress on zero-progress writer, got %v", err)
+	}
+
+	// 3. Failing writer mid-prefix must fail cleanly
+	fwPrefix := &failingWriter{failAfter: 2}
+	if err := writeCameraFrame(fwPrefix, payload); err == nil {
+		t.Fatal("expected error on failing writer mid-prefix, got nil")
+	}
+
+	// 4. Failing writer mid-payload must fail cleanly
+	fwPayload := &failingWriter{failAfter: 10}
+	if err := writeCameraFrame(fwPayload, payload); err == nil {
+		t.Fatal("expected error on failing writer mid-payload, got nil")
+	}
+}
+
+// TestCameraBridgeWriteConcurrency verifies that simultaneous framed writes from multiple workers
+// (such as streaming YUV frames and snapshot responses) are serialized without prefix/payload interleaving.
+func TestCameraBridgeWriteConcurrency(t *testing.T) {
+	clientConn, serverConn := net.Pipe()
+	defer serverConn.Close()
+
+	handler := NewCameraHandler(CameraConfig{Width: 640, Height: 480}, nil)
+	handler.mu.Lock()
+	handler.bridgeConn = clientConn
+	handler.state = StateActiveStreaming
+	handler.mu.Unlock()
+	defer handler.Close()
+
+	yuvPayload := bytes.Repeat([]byte{0xAA}, 1024)
+	snapPayload := bytes.Repeat([]byte{0xBB}, 512)
+	numIterations := 50
+
+	startBarrier := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	// Writer 1: Simulates processFrames writing YUV
+	go func() {
+		defer wg.Done()
+		<-startBarrier
+		for i := 0; i < numIterations; i++ {
+			if err := handler.writeBridgeFrame(yuvPayload); err != nil {
+				return
+			}
+		}
+	}()
+
+	// Writer 2: Simulates readBridgeEvents writing snapshot
+	go func() {
+		defer wg.Done()
+		<-startBarrier
+		for i := 0; i < numIterations; i++ {
+			if err := handler.writeBridgeFrame(snapPayload); err != nil {
+				return
+			}
+		}
+	}()
+
+	// Release both writers simultaneously
+	close(startBarrier)
+
+	// Receiver: Read all 2 * numIterations frames
+	totalExpected := numIterations * 2
+	for i := 0; i < totalExpected; i++ {
+		frame, err := readCameraFrame(serverConn, MaxCameraHALMessageLen)
+		if err != nil {
+			t.Fatalf("failed reading frame %d/%d: %v", i, totalExpected, err)
+		}
+
+		if len(frame) == 1024 {
+			if !bytes.Equal(frame, yuvPayload) {
+				t.Fatalf("corrupted YUV frame at index %d: bytes mixed or altered", i)
+			}
+		} else if len(frame) == 512 {
+			if !bytes.Equal(frame, snapPayload) {
+				t.Fatalf("corrupted Snapshot frame at index %d: bytes mixed or altered", i)
+			}
+		} else {
+			t.Fatalf("unexpected frame size %d at index %d (interleaved framing!)", len(frame), i)
+		}
+	}
+
+	wg.Wait()
+}
+
+// TestCameraBridgeLifecycleAndCancellation verifies centralized error signaling:
+// bridge EOF or write error terminates all workers, sets state to closed, without leaks or deadlocks.
+func TestCameraBridgeLifecycleAndCancellation(t *testing.T) {
+	// Case 1: Bridge EOF while event reader active terminates sibling worker
+	t.Run("ReaderEOFSignalsFailure", func(t *testing.T) {
+		clientConn, serverConn := net.Pipe()
+
+		handler := NewCameraHandler(CameraConfig{Width: 640, Height: 480}, nil)
+		handler.mu.Lock()
+		handler.bridgeConn = clientConn
+		handler.state = StateActiveStreaming
+		handler.wg.Add(2)
+		handler.workersStarted = true
+		handler.mu.Unlock()
+
+		go handler.readBridgeEvents(clientConn)
+		go handler.processFrames(clientConn)
+
+		// Close server connection -> causes EOF in readBridgeEvents
+		_ = serverConn.Close()
+
+		// Wait for handler to cancel and transition state
+		deadline := time.Now().Add(2 * time.Second)
+		for time.Now().Before(deadline) {
+			if handler.GetState() == StateClosed {
+				break
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+
+		if handler.GetState() != StateClosed {
+			t.Errorf("expected handler state StateClosed after bridge EOF, got %v", handler.GetState())
+		}
+
+		// Close must return without hanging or deadlock
+		closeDone := make(chan struct{})
+		go func() {
+			_ = handler.Close()
+			close(closeDone)
+		}()
+
+		select {
+		case <-closeDone:
+			// OK
+		case <-time.After(1 * time.Second):
+			t.Fatal("handler.Close() deadlocked or hung after worker failure")
+		}
+	})
+
+	// Case 2: Frame worker write failure terminates sibling worker
+	t.Run("WriterFailureSignalsFailure", func(t *testing.T) {
+		clientConn, serverConn := net.Pipe()
+
+		handler := NewCameraHandler(CameraConfig{Width: 640, Height: 480}, nil)
+		handler.mu.Lock()
+		handler.bridgeConn = clientConn
+		handler.state = StateActiveStreaming
+		handler.wg.Add(2)
+		handler.workersStarted = true
+		handler.mu.Unlock()
+
+		go handler.readBridgeEvents(clientConn)
+		go handler.processFrames(clientConn)
+
+		// Close server connection -> next frame write fails
+		_ = serverConn.Close()
+
+		// Create a small valid JPEG
+		img := image.NewRGBA(image.Rect(0, 0, 4, 4))
+		var jpegBuf bytes.Buffer
+		_ = jpeg.Encode(&jpegBuf, img, nil)
+
+		// Trigger frame processing
+		handler.onMessage(webrtc.DataChannelMessage{IsString: false, Data: jpegBuf.Bytes()})
+
+		// Wait for handler to cancel and transition state
+		deadline := time.Now().Add(2 * time.Second)
+		for time.Now().Before(deadline) {
+			if handler.GetState() == StateClosed {
+				break
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+
+		if handler.GetState() != StateClosed {
+			t.Errorf("expected handler state StateClosed after write failure, got %v", handler.GetState())
+		}
+
+		// Close must return without deadlock
+		closeDone := make(chan struct{})
+		go func() {
+			_ = handler.Close()
+			close(closeDone)
+		}()
+
+		select {
+		case <-closeDone:
+			// OK
+		case <-time.After(1 * time.Second):
+			t.Fatal("handler.Close() deadlocked or hung after writer failure")
+		}
+	})
+
+	// Case 3: Close during startup / handshake does not leak workers
+	t.Run("CloseDuringStartup", func(t *testing.T) {
+		dialStarted := make(chan struct{})
+		unblockDial := make(chan struct{})
+		dialer := func(ctx context.Context, network, address string) (net.Conn, error) {
+			close(dialStarted)
+			<-unblockDial
+			return nil, errors.New("dial aborted")
+		}
+
+		handler := NewCameraHandler(CameraConfig{Address: "127.0.0.1:9001"}, dialer)
+
+		onOpenDone := make(chan struct{})
+		go func() {
+			handler.onOpen()
+			close(onOpenDone)
+		}()
+
+		<-dialStarted
+		// External close while dial is blocked
+		_ = handler.Close()
+		close(unblockDial)
+
+		<-onOpenDone
+
+		if handler.GetState() != StateClosed {
+			t.Errorf("expected state StateClosed, got %v", handler.GetState())
+		}
+	})
+}
+
+// TestCameraActiveDialTimeout tests that active bridge connection dialing respects cfg.DialTimeout.
+func TestCameraActiveDialTimeout(t *testing.T) {
+	blockingDialer := func(ctx context.Context, network, address string) (net.Conn, error) {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-time.After(5 * time.Second):
+			return nil, errors.New("timeout not applied")
+		}
+	}
+
+	cfg := CameraConfig{
+		Address:     "127.0.0.1:9001",
+		DialTimeout: 50 * time.Millisecond,
+	}
+
+	handler := NewCameraHandler(cfg, blockingDialer)
+	start := time.Now()
+	handler.onOpen()
+	elapsed := time.Since(start)
+
+	if elapsed > 1*time.Second {
+		t.Fatalf("onOpen took %v, expected timeout around 50ms", elapsed)
+	}
+	if handler.GetState() != StateClosed {
+		t.Errorf("expected StateClosed after dial timeout, got %v", handler.GetState())
+	}
+}
+
+// TestCameraConfigNormalizationAndSources tests configuration normalization,
+// CLI flag parsing, and env variable resolution.
+func TestCameraConfigNormalizationAndSources(t *testing.T) {
+	// 1. Zero values normalized to defaults
+	cfg := NormalizeCameraConfig(CameraConfig{})
+	if cfg.Address != DefaultCameraAddress {
+		t.Errorf("expected default address %s, got %s", DefaultCameraAddress, cfg.Address)
+	}
+	if cfg.Width != 640 || cfg.Height != 480 || cfg.FrameRate != 30.0 || cfg.DialTimeout != 1*time.Second {
+		t.Errorf("unexpected normalized config: %+v", cfg)
+	}
+
+	// 2. CP_AGENT_CAMERA_ADDR resolution
+	mockEnv := map[string]string{
+		"CP_AGENT_CAMERA_ADDR": "192.168.1.100:9999",
+	}
+	getenv := func(key string) string { return mockEnv[key] }
+
+	cfgEnv := ResolveCameraConfigFromSources(CameraConfig{}, nil, getenv)
+	if cfgEnv.Address != "192.168.1.100:9999" {
+		t.Errorf("expected address from env 192.168.1.100:9999, got %s", cfgEnv.Address)
+	}
+	if cfgEnv.Width != 640 {
+		t.Errorf("expected normalized width 640, got %d", cfgEnv.Width)
+	}
+
+	// 3. -camera-addr flag overrides env
+	args := []string{"-camera-addr", "10.0.0.1:8888"}
+	cfgFlag := ResolveCameraConfigFromSources(CameraConfig{}, args, getenv)
+	if cfgFlag.Address != "10.0.0.1:8888" {
+		t.Errorf("expected address from flag 10.0.0.1:8888, got %s", cfgFlag.Address)
+	}
+
+	// 4. --camera-addr=VALUE syntax
+	argsEq := []string{"--camera-addr=10.0.0.2:7777", "-force-camera"}
+	cfgEq := ResolveCameraConfigFromSources(CameraConfig{}, argsEq, nil)
+	if cfgEq.Address != "10.0.0.2:7777" {
+		t.Errorf("expected address from flag 10.0.0.2:7777, got %s", cfgEq.Address)
+	}
+	if !cfgEq.ForceCamera {
+		t.Errorf("expected ForceCamera true from -force-camera")
+	}
+
+	// 5. Partial non-zero config preserved
+	customCfg := CameraConfig{Address: "127.0.0.1:5555"}
+	normCustom := NormalizeCameraConfig(customCfg)
+	if normCustom.Address != "127.0.0.1:5555" || normCustom.Width != 640 || normCustom.Height != 480 {
+		t.Errorf("unexpected config: %+v", normCustom)
+	}
+}
+
+// TestOddCameraDimensionsRejection validates that odd dimensions are rejected
+// with a deterministic error in exact-parity mode (disassembly w/2, h/2).
+func TestOddCameraDimensionsRejection(t *testing.T) {
+	// Odd width
+	imgOddW := image.NewRGBA(image.Rect(0, 0, 641, 480))
+	_, err := ConvertImageToI420(imgOddW)
+	if err == nil {
+		t.Fatal("expected error on odd width, got nil")
+	}
+	if !strings.Contains(err.Error(), "image dimensions must be even") {
+		t.Errorf("expected 'image dimensions must be even' in error, got %v", err)
+	}
+
+	// Odd height
+	imgOddH := image.NewRGBA(image.Rect(0, 0, 640, 481))
+	_, err = ConvertImageToI420(imgOddH)
+	if err == nil {
+		t.Fatal("expected error on odd height, got nil")
+	}
+	if !strings.Contains(err.Error(), "image dimensions must be even") {
+		t.Errorf("expected 'image dimensions must be even' in error, got %v", err)
+	}
+
+	// Even dimensions succeed
+	imgEven := image.NewRGBA(image.Rect(0, 0, 640, 480))
+	data, err := ConvertImageToI420(imgEven)
+	if err != nil {
+		t.Fatalf("expected even dimensions to succeed, got %v", err)
+	}
+	expectedSize := 640 * 480 * 3 / 2
+	if len(data) != expectedSize {
+		t.Errorf("expected size %d, got %d", expectedSize, len(data))
 	}
 }

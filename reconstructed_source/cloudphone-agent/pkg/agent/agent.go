@@ -68,8 +68,9 @@ func NewCoordinator(deviceID string, iceServers []webrtc.ICEServer) *Coordinator
 func (c *Coordinator) SetCameraConfig(cfg agentwebrtc.CameraConfig) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.cameraConfig = cfg
-	c.cameraSupport = agentwebrtc.ProbeCameraBridge(cfg)
+	normCfg := agentwebrtc.NormalizeCameraConfig(cfg)
+	c.cameraConfig = normCfg
+	c.cameraSupport = agentwebrtc.ProbeCameraBridge(normCfg)
 }
 
 // SetCameraSupport explicitly overrides the camera support state (e.g. for testing).

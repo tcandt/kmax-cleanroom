@@ -34,6 +34,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -121,19 +122,9 @@ func DefaultCameraConfig() CameraConfig {
 	}
 }
 
-// ResolveCameraConfig resolves camera configuration from environment variables and defaults.
-// Evidence: CP_AGENT_CAMERA_ADDR, -camera-addr, -force-camera (STRINGS.json lines 23796, 23852).
+// NormalizeCameraConfig ensures all fields have non-zero evidence-backed defaults.
 // Classification: GENERATED_ADAPTER / IMPLEMENTATION_CHOICE.
-func ResolveCameraConfig(base CameraConfig) CameraConfig {
-	cfg := base
-	if envAddr := os.Getenv("CP_AGENT_CAMERA_ADDR"); envAddr != "" {
-		cfg.Address = envAddr
-	}
-	if envForce := os.Getenv("CP_AGENT_FORCE_CAMERA"); envForce != "" {
-		if b, err := strconv.ParseBool(envForce); err == nil {
-			cfg.ForceCamera = b
-		}
-	}
+func NormalizeCameraConfig(cfg CameraConfig) CameraConfig {
 	if cfg.Address == "" {
 		cfg.Address = DefaultCameraAddress
 	}
@@ -152,20 +143,74 @@ func ResolveCameraConfig(base CameraConfig) CameraConfig {
 	return cfg
 }
 
+// ResolveCameraConfigFromSources resolves camera configuration from CLI flags, env vars, and defaults.
+// Evidence:
+//   -camera-addr, -force-camera (STRINGS.json lines 23796, 23852)
+//   CP_AGENT_CAMERA_ADDR (STRINGS.json line 23852)
+// Note: CP_AGENT_FORCE_CAMERA is an optional extension classified as IMPLEMENTATION_CHOICE_EXTENSION.
+// Classification: GENERATED_ADAPTER / RECONSTRUCTED_FROM_BINARY.
+func ResolveCameraConfigFromSources(base CameraConfig, args []string, getenv func(string) string) CameraConfig {
+	cfg := base
+	if getenv == nil {
+		getenv = os.Getenv
+	}
+
+	// 1. Environment variables
+	if envAddr := getenv("CP_AGENT_CAMERA_ADDR"); envAddr != "" {
+		cfg.Address = envAddr
+	}
+	if envForce := getenv("CP_AGENT_FORCE_CAMERA"); envForce != "" {
+		if b, err := strconv.ParseBool(envForce); err == nil {
+			cfg.ForceCamera = b
+		}
+	}
+
+	// 2. CLI flags (precedence over env)
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		if arg == "-camera-addr" || arg == "--camera-addr" {
+			if i+1 < len(args) {
+				cfg.Address = args[i+1]
+				i++
+			}
+		} else if strings.HasPrefix(arg, "-camera-addr=") {
+			cfg.Address = strings.TrimPrefix(arg, "-camera-addr=")
+		} else if strings.HasPrefix(arg, "--camera-addr=") {
+			cfg.Address = strings.TrimPrefix(arg, "--camera-addr=")
+		} else if arg == "-force-camera" || arg == "--force-camera" {
+			cfg.ForceCamera = true
+		} else if strings.HasPrefix(arg, "-force-camera=") {
+			val := strings.TrimPrefix(arg, "-force-camera=")
+			if b, err := strconv.ParseBool(val); err == nil {
+				cfg.ForceCamera = b
+			}
+		} else if strings.HasPrefix(arg, "--force-camera=") {
+			val := strings.TrimPrefix(arg, "--force-camera=")
+			if b, err := strconv.ParseBool(val); err == nil {
+				cfg.ForceCamera = b
+			}
+		}
+	}
+
+	return NormalizeCameraConfig(cfg)
+}
+
+// ResolveCameraConfig resolves camera configuration using os.Args and os.Getenv.
+// Classification: GENERATED_ADAPTER.
+func ResolveCameraConfig(base CameraConfig) CameraConfig {
+	var args []string
+	if len(os.Args) > 1 {
+		args = os.Args[1:]
+	}
+	return ResolveCameraConfigFromSources(base, args, os.Getenv)
+}
+
 // ProbeCameraBridge performs an independent TCP probe of the Camera HAL endpoint.
 // Returns true if probe succeeds or if ForceCamera override is active.
 // Classification: RECONSTRUCTED_FROM_BINARY.
 func ProbeCameraBridge(cfg CameraConfig) bool {
-	addr := cfg.Address
-	if addr == "" {
-		addr = DefaultCameraAddress
-	}
-	timeout := cfg.DialTimeout
-	if timeout <= 0 {
-		timeout = DefaultCameraTimeout
-	}
-
-	conn, err := net.DialTimeout("tcp", addr, timeout)
+	cfg = NormalizeCameraConfig(cfg)
+	conn, err := net.DialTimeout("tcp", cfg.Address, cfg.DialTimeout)
 	if err == nil {
 		_ = conn.Close()
 		return true
@@ -198,7 +243,28 @@ type CameraHandshake struct {
 	FrameRate float64 `json:"frame_rate"`
 }
 
-// writeCameraFrame transmits a 4-byte little-endian length prefix followed by the payload.
+// writeAll guarantees that all bytes of buf are written to w, looping until written == len(buf).
+// Returns io.ErrNoProgress if a Write returns n == 0 with err == nil.
+// Classification: IMPLEMENTATION_CHOICE / DEFENSIVE_ROBUSTNESS.
+func writeAll(w io.Writer, buf []byte) error {
+	written := 0
+	for written < len(buf) {
+		n, err := w.Write(buf[written:])
+		if n > 0 {
+			written += n
+		}
+		if err != nil {
+			return err
+		}
+		if n == 0 && err == nil {
+			return io.ErrNoProgress
+		}
+	}
+	return nil
+}
+
+// writeCameraFrame transmits a 4-byte little-endian length prefix followed by the payload
+// with complete-write semantics.
 // Wire vectors:
 //   0      => 00 00 00 00
 //   6      => 06 00 00 00
@@ -210,11 +276,11 @@ type CameraHandshake struct {
 func writeCameraFrame(w io.Writer, payload []byte) error {
 	var lenBuf [4]byte
 	binary.LittleEndian.PutUint32(lenBuf[:], uint32(len(payload)))
-	if _, err := w.Write(lenBuf[:]); err != nil {
+	if err := writeAll(w, lenBuf[:]); err != nil {
 		return err
 	}
 	if len(payload) > 0 {
-		if _, err := w.Write(payload); err != nil {
+		if err := writeAll(w, payload); err != nil {
 			return err
 		}
 	}
@@ -248,6 +314,8 @@ func readCameraFrame(r io.Reader, maxLen uint32) ([]byte, error) {
 //   V (Cr):   (width/2) * (height/2) bytes
 //   Total:    width * height * 3 / 2 bytes
 // Supports fast contiguous copy, row-by-row stride handling, and Rec.601 generic fallback.
+// Enforces exact parity: dimensions must be even (integer division w/2, h/2).
+// Disassembly: ARM64 0x51c2cc-0x51c2f8.
 // Classification: RECONSTRUCTED_FROM_BINARY.
 func ConvertImageToI420(img image.Image) ([]byte, error) {
 	if img == nil {
@@ -260,10 +328,13 @@ func ConvertImageToI420(img image.Image) ([]byte, error) {
 	if w <= 0 || h <= 0 {
 		return nil, fmt.Errorf("invalid image dimensions: %dx%d", w, h)
 	}
+	if w%2 != 0 || h%2 != 0 {
+		return nil, fmt.Errorf("image dimensions must be even for exact I420 conversion: %dx%d", w, h)
+	}
 
 	ySize := w * h
-	uvWidth := (w + 1) / 2
-	uvHeight := (h + 1) / 2
+	uvWidth := w / 2
+	uvHeight := h / 2
 	uvSize := uvWidth * uvHeight
 	totalSize := ySize + 2*uvSize
 
@@ -329,7 +400,8 @@ func ConvertImageToI420(img image.Image) ([]byte, error) {
 // CameraHandler manages the lifecycle and data plane of camera-channel and Camera HAL bridge.
 // Classification: RECONSTRUCTED_FROM_BINARY / GENERATED_ADAPTER.
 type CameraHandler struct {
-	mu sync.RWMutex
+	mu            sync.RWMutex
+	bridgeWriteMu sync.Mutex // Serializes all framed writes (prefix + payload) to bridgeConn
 
 	config CameraConfig
 	dialer CameraBridgeDialer
@@ -342,10 +414,11 @@ type CameraHandler struct {
 	latestCameraJpeg []byte
 	cameraFrameChan  chan []byte // Capacity strictly 1
 
-	ctx        context.Context
-	cancel     context.CancelFunc
-	wg         sync.WaitGroup
-	closedOnce sync.Once
+	ctx            context.Context
+	cancel         context.CancelFunc
+	wg             sync.WaitGroup
+	closedOnce     sync.Once
+	workersStarted bool
 }
 
 // NewCameraHandler creates a new CameraHandler for an active PeerSession.
@@ -356,7 +429,7 @@ func NewCameraHandler(cfg CameraConfig, dialer CameraBridgeDialer) *CameraHandle
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	return &CameraHandler{
-		config:          cfg,
+		config:          NormalizeCameraConfig(cfg),
 		dialer:          dialer,
 		state:           StateUninitialized,
 		cameraFrameChan: make(chan []byte, 1), // Strictly single-element capacity
@@ -377,10 +450,47 @@ func (h *CameraHandler) Attach(dc *webrtc.DataChannel) {
 	dc.OnClose(h.onClose)
 }
 
+// writeBridgeFrame serializes all framed message writes (prefix + payload) to the bridge connection.
+// Prevents interleaving of concurrent YUV stream writes and snapshot responses.
+// Classification: DEFENSIVE_ROBUSTNESS / IMPLEMENTATION_CHOICE.
+func (h *CameraHandler) writeBridgeFrame(payload []byte) error {
+	h.bridgeWriteMu.Lock()
+	defer h.bridgeWriteMu.Unlock()
+
+	h.mu.RLock()
+	conn := h.bridgeConn
+	closed := (h.state == StateClosed)
+	h.mu.RUnlock()
+
+	if closed || conn == nil {
+		return net.ErrClosed
+	}
+	return writeCameraFrame(conn, payload)
+}
+
+// signalFailure centralizes fatal bridge failure signaling.
+// Transitions state, cancels context, and closes bridge connection without self-waiting on wg.
+// Classification: DEFENSIVE_ROBUSTNESS / IMPLEMENTATION_CHOICE.
+func (h *CameraHandler) signalFailure(err error) {
+	h.closedOnce.Do(func() {
+		h.mu.Lock()
+		h.state = StateClosed
+		conn := h.bridgeConn
+		h.bridgeConn = nil
+		h.mu.Unlock()
+
+		h.cancel()
+
+		if conn != nil {
+			_ = conn.Close()
+		}
+	})
+}
+
 // onOpen establishes the bridge connection, sends handshake, and starts workers.
 func (h *CameraHandler) onOpen() {
 	h.mu.Lock()
-	if h.state == StateClosed {
+	if h.state == StateClosed || h.ctx.Err() != nil {
 		h.mu.Unlock()
 		return
 	}
@@ -389,7 +499,14 @@ func (h *CameraHandler) onOpen() {
 	dialer := h.dialer
 	h.mu.Unlock()
 
-	conn, err := dialer(h.ctx, "tcp", cfg.Address)
+	// Apply DialTimeout to active bridge connect
+	dialTimeout := cfg.DialTimeout
+	if dialTimeout <= 0 {
+		dialTimeout = DefaultCameraTimeout
+	}
+	dialCtx, dialCancel := context.WithTimeout(h.ctx, dialTimeout)
+	conn, err := dialer(dialCtx, "tcp", cfg.Address)
+	dialCancel()
 	if err != nil {
 		log.Printf("[Camera] ERROR: failed to connect to Camera HAL at %s: %v", cfg.Address, err)
 		_ = h.Close()
@@ -397,7 +514,7 @@ func (h *CameraHandler) onOpen() {
 	}
 
 	h.mu.Lock()
-	if h.state == StateClosed {
+	if h.state == StateClosed || h.ctx.Err() != nil {
 		h.mu.Unlock()
 		_ = conn.Close()
 		return
@@ -418,18 +535,24 @@ func (h *CameraHandler) onOpen() {
 		return
 	}
 
-	if err := writeCameraFrame(conn, handshakeBytes); err != nil {
+	if err := h.writeBridgeFrame(handshakeBytes); err != nil {
 		log.Printf("[Camera] ERROR: failed to send handshake to Camera HAL: %v", err)
 		_ = h.Close()
 		return
 	}
 
+	// Atomically verify lifecycle state before launching background workers
 	h.mu.Lock()
+	if h.state == StateClosed || h.ctx.Err() != nil {
+		h.mu.Unlock()
+		return
+	}
 	h.state = StateIdleWaitHAL
+	h.wg.Add(2)
+	h.workersStarted = true
 	h.mu.Unlock()
 
 	// Launch background workers
-	h.wg.Add(2)
 	go h.readBridgeEvents(conn)
 	go h.processFrames(conn)
 }
@@ -476,7 +599,8 @@ func (h *CameraHandler) readBridgeEvents(conn net.Conn) {
 	for {
 		payload, err := readCameraFrame(conn, MaxCameraHALMessageLen)
 		if err != nil {
-			// EOF or read error: exit worker cleanly
+			// Read error or EOF: signal centralized failure to terminate sibling worker
+			h.signalFailure(err)
 			return
 		}
 
@@ -511,8 +635,9 @@ func (h *CameraHandler) readBridgeEvents(conn net.Conn) {
 			snapshot := h.latestCameraJpeg
 			h.mu.RUnlock()
 
-			// Snapshot response: 4-byte LE length + raw JPEG bytes
-			if err := writeCameraFrame(conn, snapshot); err != nil {
+			// Snapshot response: serialized framed write via writeBridgeFrame
+			if err := h.writeBridgeFrame(snapshot); err != nil {
+				h.signalFailure(err)
 				return
 			}
 
@@ -551,8 +676,9 @@ func (h *CameraHandler) processFrames(conn net.Conn) {
 				continue
 			}
 
-			// Write 4-byte LE length-prefixed Planar I420 frame to HAL
-			if err := writeCameraFrame(conn, i420); err != nil {
+			// Write 4-byte LE length-prefixed Planar I420 frame to HAL via writeBridgeFrame
+			if err := h.writeBridgeFrame(i420); err != nil {
+				h.signalFailure(err)
 				return
 			}
 		}

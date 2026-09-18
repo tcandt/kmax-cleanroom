@@ -520,14 +520,14 @@
       "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (selectnbsend non-blocking drop)",
       "runtime_basis": "Fast producer does not block when queue is saturated",
       "go_test_target": {
-        "pkg": "./tests",
-        "test_name": "TestCameraBackpressureSCTPE2E"
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
       },
       "result": "PASS",
       "execution_evidence": {
         "test_target": {
-          "pkg": "./tests",
-          "test_name": "TestCameraBackpressureSCTPE2E"
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
         },
         "test_passed": true,
         "executed_events_count": 0
@@ -1281,14 +1281,14 @@
       "evidence_basis": "CAMERA_CHANNEL_B4_PROTOCOL_SPEC.json (selectnbsend non-blocking drop)",
       "runtime_basis": "Fast producer does not block when queue is saturated",
       "go_test_target": {
-        "pkg": "./tests",
-        "test_name": "TestCameraBackpressureSCTPE2E"
+        "pkg": "./pkg/webrtc",
+        "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
       },
       "result": "PASS",
       "execution_evidence": {
         "test_target": {
-          "pkg": "./tests",
-          "test_name": "TestCameraBackpressureSCTPE2E"
+          "pkg": "./pkg/webrtc",
+          "test_name": "TestBackpressureQueueCapacityAndSnapshotOrdering"
         },
         "test_passed": true,
         "executed_events_count": 0

@@ -139,58 +139,89 @@ def validate_evidence_ref(ref: Dict[str, Any], repo_root: Path) -> Tuple[bool, s
     return True, "OK"
 
 
-def scan_deferred_channels_isolation(agent_pkg_dir: Path) -> List[str]:
+def scan_deferred_channels_isolation(agent_pkg_dir: Path, phase: str = "B2") -> List[str]:
     """
-    Examines all production non-test Go files under cloudphone-agent/pkg.
-    Phase-scope guard:
-      - Phase B3 active: input-channel, clipboard-channel, file-channel
-      - Strictly deferred: camera-channel, ai-command-channel, adb-channel
+    Examines all production non-test Go files under cloudphone-agent/pkg according to phase policy.
+    Phase policies:
+      - 'B2': active = [input, clipboard]; deferred = [camera, file, ai, adb]
+      - 'B3': active = [input, clipboard, file]; deferred = [camera, ai, adb]
+      - 'B4': active = [input, clipboard, file, camera]; deferred = [ai, adb]
     """
     violations = []
-    deferred_vars = ["CameraChannel", "AICommandChannel", "ADBChannel", "camCh"]
-
     if not agent_pkg_dir.exists():
         return [f"Agent package directory missing: {agent_pkg_dir}"]
+
+    # 1. Structural Deferred Channels: AI-Command and ADB are deferred across ALL phases (B2, B3, B4)
+    ai_onmessage_patterns = [
+        "AICommandChannel.OnMessage", "aiCommandChannel.OnMessage",
+        "aiCh.OnMessage", "aiCmdCh.OnMessage", "aiDC.OnMessage",
+    ]
+    adb_onmessage_patterns = [
+        "ADBChannel.OnMessage", "adbChannel.OnMessage",
+        "adbCh.OnMessage", "adbCmdCh.OnMessage", "adbDC.OnMessage",
+    ]
+    ai_keywords = [
+        "ExecuteAICommand", "ParseAICommand", "RunAICommand",
+        "HandleAICommand", "ProcessAICommand", "aiCommandChan",
+    ]
+    adb_keywords = [
+        "AdbBridge", "AdbSocket", "ConnectAdb", "ForwardAdb",
+        "127.0.0.1:5555", "adbForwarder",
+    ]
+
+    # Camera deferred only in B2 and B3
+    camera_onmessage_patterns = ["CameraChannel.OnMessage", "camCh.OnMessage"]
+    camera_keywords = ["ProcessCameraFrame", "VirtualCamera", "CameraProcessor", "H264Camera", "OnCameraFrame"]
 
     for go_file in agent_pkg_dir.rglob("*.go"):
         if go_file.name.endswith("_test.go"):
             continue
         content = go_file.read_text(encoding="utf-8")
 
-        # 1. Check for OnMessage on deferred channels
-        for dvar in deferred_vars:
-            if f"{dvar}.OnMessage" in content:
-                violations.append(f"{go_file.name}: contains {dvar}.OnMessage handler")
-
-        # 2. Check for camera processing business logic
-        for kw in ["ProcessCameraFrame", "VirtualCamera", "CameraProcessor", "H264Camera", "OnCameraFrame"]:
-            if kw in content:
-                violations.append(f"{go_file.name}: contains camera business logic '{kw}'")
-
-        # 3. Check for AI command execution business logic
-        for kw in ["ExecuteAICommand", "ParseAICommand", "RunAICommand"]:
+        # Scan AI channel handlers and logic
+        for pat in ai_onmessage_patterns:
+            if pat in content:
+                violations.append(f"{go_file.name}: contains {pat} handler")
+        for kw in ai_keywords:
             if kw in content:
                 violations.append(f"{go_file.name}: contains AI command business logic '{kw}'")
-        if "os/exec" in content or "exec.Command(" in content:
-            violations.append(f"{go_file.name}: contains command execution call")
 
-        # 4. Check for ADB sockets/bridges
-        for kw in ["AdbBridge", "AdbSocket", "ConnectAdb", "ForwardAdb"]:
+        # Scan ADB channel handlers and logic
+        for pat in adb_onmessage_patterns:
+            if pat in content:
+                violations.append(f"{go_file.name}: contains {pat} handler")
+        for kw in adb_keywords:
             if kw in content:
                 violations.append(f"{go_file.name}: contains ADB business logic '{kw}'")
 
-    # In datachannel.go: only inputCh and clipCh may attach OnMessage
+        # Scan os/exec calls (strictly prohibited for AI/ADB deferred channels)
+        if "os/exec" in content or "exec.Command(" in content:
+            violations.append(f"{go_file.name}: contains command execution call")
+
+        # Scan Camera channel only if phase in B2, B3
+        if phase in ("B2", "B3"):
+            for pat in camera_onmessage_patterns:
+                if pat in content:
+                    violations.append(f"{go_file.name}: contains {pat} handler")
+            for kw in camera_keywords:
+                if kw in content:
+                    violations.append(f"{go_file.name}: contains camera business logic '{kw}'")
+
+    # In datachannel.go: check OnMessage registrations
     datachannel_go = agent_pkg_dir / "webrtc" / "datachannel.go"
     if datachannel_go.exists():
         dc_lines = datachannel_go.read_text(encoding="utf-8").splitlines()
-        on_message_targets = []
         for line in dc_lines:
             if ".OnMessage(" in line:
                 target = line.split(".OnMessage(")[0].strip()
-                on_message_targets.append(target)
-        invalid_on_messages = [t for t in on_message_targets if t not in ["inputCh", "clipCh"]]
-        if invalid_on_messages:
-            violations.append(f"datachannel.go: unexpected OnMessage registered on: {invalid_on_messages}")
+                # Check for prohibited AI/ADB targets in any phase
+                if any(ai_id in target for ai_id in ["ai", "AI", "aiCmd"]):
+                    violations.append(f"datachannel.go: prohibited AI OnMessage registered on: {target}")
+                if any(adb_id in target for adb_id in ["adb", "ADB"]):
+                    violations.append(f"datachannel.go: prohibited ADB OnMessage registered on: {target}")
+                # In B2, only inputCh and clipCh were allowed
+                if phase == "B2" and target not in ["inputCh", "clipCh"]:
+                    violations.append(f"datachannel.go: unexpected B2 OnMessage registered on: {target}")
     else:
         violations.append("datachannel.go missing")
 

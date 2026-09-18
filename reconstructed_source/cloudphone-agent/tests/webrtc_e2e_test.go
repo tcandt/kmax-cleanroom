@@ -1818,5 +1818,253 @@ func TestCameraBackpressureSCTPE2E(t *testing.T) {
 	t.Log("[PASS] TestCameraBackpressureSCTPE2E: rapid frame burst preserves newest snapshot in cache and on HAL capture")
 }
 
+// TestCameraInterleavedFrameSnapshotE2E tests that active streaming I420 frame production
+// and concurrent VIRTUAL_DEVICE_CAPTURE_IMAGE snapshot events produce cleanly serialized,
+// intact frames on the Camera HAL bridge without prefix/payload interleaving.
+func TestCameraInterleavedFrameSnapshotE2E(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("failed to start mock bridge: %v", err)
+	}
+	defer listener.Close()
+
+	activeBridgeConnChan := make(chan net.Conn, 1)
+	go func() {
+		var firstConn sync.Once
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				return
+			}
+			firstConn.Do(func() {
+				_ = conn.Close()
+				conn = nil
+			})
+			if conn != nil {
+				activeBridgeConnChan <- conn
+				return
+			}
+		}
+	}()
+
+	camWidth, camHeight := 16, 16
+	coord := agent.NewCoordinator("dev-e2e-cam-interleave", nil)
+	defer coord.Close()
+
+	coord.SetCameraConfig(agentwebrtc.CameraConfig{
+		Address:     listener.Addr().String(),
+		Width:       camWidth,
+		Height:      camHeight,
+		FrameRate:   30.0,
+		DialTimeout: 1 * time.Second,
+	})
+
+	clientME := &webrtc.MediaEngine{}
+	if err := clientME.RegisterDefaultCodecs(); err != nil {
+		t.Fatalf("failed to register client codecs: %v", err)
+	}
+	clientAPI := webrtc.NewAPI(webrtc.WithMediaEngine(clientME))
+	clientPC, err := clientAPI.NewPeerConnection(webrtc.Configuration{})
+	if err != nil {
+		t.Fatalf("failed to create client PeerConnection: %v", err)
+	}
+	defer clientPC.Close()
+
+	var (
+		clientCamDCMu sync.Mutex
+		clientCamDC   *webrtc.DataChannel
+	)
+	cameraDCOpen := make(chan struct{}, 1)
+	clientActionsReceived := make(chan string, 10)
+
+	clientPC.OnDataChannel(func(dc *webrtc.DataChannel) {
+		if dc.Label() == agentwebrtc.ChannelCamera {
+			clientCamDCMu.Lock()
+			clientCamDC = dc
+			clientCamDCMu.Unlock()
+
+			dc.OnOpen(func() {
+				select {
+				case cameraDCOpen <- struct{}{}:
+				default:
+				}
+			})
+
+			dc.OnMessage(func(msg webrtc.DataChannelMessage) {
+				if msg.IsString {
+					var act struct {
+						Action string `json:"action"`
+					}
+					if err := json.Unmarshal(msg.Data, &act); err == nil {
+						clientActionsReceived <- act.Action
+					}
+				}
+			})
+		}
+	})
+
+	clientID := uint32(1005)
+	coord.HandleForward(clientID, []byte(`{"type":"request-offer"}`))
+	session, ok := coord.GetSession(clientID)
+	if !ok || session == nil {
+		t.Fatalf("failed to get session")
+	}
+
+	clientPC.OnICECandidate(func(c *webrtc.ICECandidate) {
+		if c != nil {
+			candJSON, _ := json.Marshal(c.ToJSON())
+			coord.HandleForward(clientID, []byte(fmt.Sprintf(`{"type":"ice-candidate","candidate":%s}`, candJSON)))
+		}
+	})
+	session.OnICECandidate(func(cand webrtc.ICECandidateInit) {
+		_ = clientPC.AddICECandidate(cand)
+	})
+
+	localDesc := session.PC.LocalDescription()
+	if localDesc == nil {
+		t.Fatalf("missing local description")
+	}
+	if err := clientPC.SetRemoteDescription(*localDesc); err != nil {
+		t.Fatalf("client failed to set remote offer: %v", err)
+	}
+	answer, err := clientPC.CreateAnswer(nil)
+	if err != nil {
+		t.Fatalf("client failed to create answer: %v", err)
+	}
+	_ = clientPC.SetLocalDescription(answer)
+	coord.HandleForward(clientID, []byte(fmt.Sprintf(`{"type":"answer","sdp":%q}`, answer.SDP)))
+
+	select {
+	case <-cameraDCOpen:
+	case <-time.After(5 * time.Second):
+		t.Fatalf("timeout waiting for camera-channel open")
+	}
+
+	var bridgeConn net.Conn
+	select {
+	case bridgeConn = <-activeBridgeConnChan:
+		defer bridgeConn.Close()
+	case <-time.After(5 * time.Second):
+		t.Fatalf("timeout waiting for Agent to connect to mock bridge")
+	}
+
+	readBridgeFrame := func() ([]byte, error) {
+		var lenBuf [4]byte
+		if _, err := io.ReadFull(bridgeConn, lenBuf[:]); err != nil {
+			return nil, err
+		}
+		length := binary.LittleEndian.Uint32(lenBuf[:])
+		payload := make([]byte, length)
+		if length > 0 {
+			if _, err := io.ReadFull(bridgeConn, payload); err != nil {
+				return nil, err
+			}
+		}
+		return payload, nil
+	}
+
+	writeBridgeFrame := func(p []byte) error {
+		var lenBuf [4]byte
+		binary.LittleEndian.PutUint32(lenBuf[:], uint32(len(p)))
+		if _, err := bridgeConn.Write(lenBuf[:]); err != nil {
+			return err
+		}
+		if len(p) > 0 {
+			_, err := bridgeConn.Write(p)
+			return err
+		}
+		return nil
+	}
+
+	// 1. Handshake
+	_, err = readBridgeFrame()
+	if err != nil {
+		t.Fatalf("failed to read handshake: %v", err)
+	}
+
+	// 2. Start session
+	if err := writeBridgeFrame([]byte(agentwebrtc.HALEventStartCameraSession)); err != nil {
+		t.Fatalf("failed to write start event: %v", err)
+	}
+
+	select {
+	case act := <-clientActionsReceived:
+		if act != "start" {
+			t.Fatalf("expected action 'start', got %q", act)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatalf("timeout waiting for start action")
+	}
+
+	// Helper to create test JPEG
+	img := image.NewRGBA(image.Rect(0, 0, camWidth, camHeight))
+	for y := 0; y < camHeight; y++ {
+		for x := 0; x < camWidth; x++ {
+			img.Set(x, y, color.RGBA{R: 200, G: 100, B: 50, A: 255})
+		}
+	}
+	var jpegBuf bytes.Buffer
+	_ = jpeg.Encode(&jpegBuf, img, &jpeg.Options{Quality: 90})
+	sampleJPEG := jpegBuf.Bytes()
+
+	clientCamDCMu.Lock()
+	camDC := clientCamDC
+	clientCamDCMu.Unlock()
+
+	// 3. Concurrently stream frames and trigger capture image
+	stopStream := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-stopStream:
+				return
+			default:
+				_ = camDC.Send(sampleJPEG)
+				time.Sleep(10 * time.Millisecond)
+			}
+		}
+	}()
+
+	// Wait for stream to be active, then send CAPTURE_IMAGE event
+	time.Sleep(50 * time.Millisecond)
+	if err := writeBridgeFrame([]byte(agentwebrtc.HALEventCaptureImage)); err != nil {
+		t.Fatalf("failed to send capture event: %v", err)
+	}
+
+	// Verify all received frames are either exact I420 size (384 bytes) or valid JPEG (starts with 0xFF, 0xD8)
+	expectedYUVLen := camWidth * camHeight * 3 / 2
+	snapshotReceived := false
+
+	for i := 0; i < 15; i++ {
+		frame, err := readBridgeFrame()
+		if err != nil {
+			t.Fatalf("failed reading bridge frame at index %d: %v", i, err)
+		}
+
+		if len(frame) == expectedYUVLen {
+			// Intact YUV frame
+			continue
+		} else if len(frame) == len(sampleJPEG) && frame[0] == 0xFF && frame[1] == 0xD8 {
+			// Intact snapshot frame
+			snapshotReceived = true
+			break
+		} else {
+			hdrLen := 4
+			if len(frame) < hdrLen {
+				hdrLen = len(frame)
+			}
+			t.Fatalf("corrupted or interleaved frame received at index %d: length %d, header %x", i, len(frame), frame[:hdrLen])
+		}
+	}
+
+	close(stopStream)
+
+	if !snapshotReceived {
+		t.Fatalf("did not receive intact snapshot frame during concurrent streaming")
+	}
+
+	t.Log("[PASS] TestCameraInterleavedFrameSnapshotE2E: concurrent YUV frame production and snapshot capture serialized without corruption")
+}
+
 
 
