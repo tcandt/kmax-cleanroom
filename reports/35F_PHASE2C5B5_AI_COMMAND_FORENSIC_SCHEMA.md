@@ -1,9 +1,11 @@
 # Phase 2C.5B5F Audit Report: WebRTC AI-Command DataChannel Forensic Extraction & Safe Schema Reconstruction
 
-**Status**: FORMALLY CLOSED  
-**Phases Covered**: Phase 2C.5B5F-A (Forensic Extraction & Baseline Freeze) + Phase 2C.5B5F-B (Safe Schema/Parser Reconstruction & Audit Gate)  
+**Status**: FORMALLY CLOSED & VERIFIED  
+**Phases Covered**: Phase 2C.5B5F-A (Forensic Extraction & Baseline Freeze) + Phase 2C.5B5F-B (Safe Schema/Parser Reconstruction & Audit Gate) + Phase 2C.5B5FR (Audit Precision Micro-Closure)  
 **Base Commit**: `69aa5c7306456eb8257220a19b7f6754acbb2369`  
-**Step A Freeze Commit**: `ce3e2f8319f3ec7612f0049405d415b3a4a06aa6`  
+**Step A Freeze Commit**: `ce3e2f89ab06644a52aa7c4dd6118b511c850454`  
+**Step B Implementation Commit**: `dc4320f2f8fbd9817735366f1eb856b8ffdc98c4`  
+**B5F Documentation Baseline Commit**: `7c8c5149620fbe9f7ea1999e7d5558115ce2b364`  
 **Core Verdict**: **AI command wire schema is reconstructed; runtime command execution remains intentionally unimplemented.**
 
 ---
@@ -18,9 +20,10 @@ In accordance with precision corrections, all artifacts and descriptions maintai
 2. **RECONSTRUCTED SAFE PARSER**: Clean-room Go data structures and pure decoding/encoding functions (`AICommandEnvelope`, `AICommandResponse`, `ParseAICommand`, `ValidateAICommand`, `MarshalAICommandResponse`) containing zero execution logic.
 3. **DEFERRED EXECUTION BOUNDARY**: The original binary's invocation of an external process shell (`os/exec.Command("sh", "-c", req.Command)`), which is formally classified as `DEFERRED_EXECUTION_BOUNDARY` / `EXTERNAL_PROCESS_CANDIDATE` and strictly omitted from the reconstructed agent.
 
-### 1.2 Two-Step Closure Execution
-- **Step B5F-A**: Forensic extraction, protocol specification, message inventory, callgraph, provenance matrix, implementation contract freeze (`64642e153dce`), non-mutating reproducer (`--check`), and 12 negative mutation tests. Committed and pushed as `ce3e2f8`.
-- **Step B5F-B**: Safe parser/schema implementation (`pkg/webrtc/ai_command.go`), unit test suite (`ai_command_test.go`), B5F boundary scanner policy in `b2_common.py`, master verifier integration (Section 25 in `verify_phase2.py`), and comprehensive audit reporting.
+### 1.2 Multi-Step Closure Execution
+- **Step B5F-A**: Forensic extraction, protocol specification, message inventory, callgraph, provenance matrix, implementation contract freeze (`64642e153dce`), non-mutating reproducer (`--check`), and negative mutation tests. Committed and pushed as `ce3e2f89ab06644a52aa7c4dd6118b511c850454`.
+- **Step B5F-B**: Safe parser/schema implementation (`pkg/webrtc/ai_command.go`), unit test suite (`ai_command_test.go`), B5F boundary scanner policy in `b2_common.py`, master verifier integration (Section 25 in `verify_phase2.py`), and comprehensive audit reporting. Committed and pushed as `dc4320f2f8fbd9817735366f1eb856b8ffdc98c4`.
+- **Step B5F-R**: Audit precision micro-closure establishing formal contract errata (`AI_COMMAND_B5F_CONTRACT_ERRATA.json`), effective contract view (`build_b5f_effective_contract.py`), shared semantic validator (`validate_ai_command_semantics.py`), complete protocol derivation pipeline (`derive_ai_command_protocol.py`), upgraded 15/15 negative mutation suite with real disk tampering, and exact Go test attribution (`go test -json -count=1`).
 
 ---
 
@@ -81,16 +84,24 @@ Disassembly and reference evidence prove that framing differs across directions:
 
 ---
 
-## 3. Formal Historical Errata & Superseded Evidence
+## 3. Formal Historical Errata & Effective Contract Architecture
 
-In compliance with audit rules, historical evidence files remain immutable, while errata and superseding findings are formally cataloged in `AI_COMMAND_B5F_PROTOCOL_SPEC.json`:
+In compliance with audit rules, the frozen implementation contract `AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json` remains immutable (`64642e153dce...`). Formal errata and superseding findings are cataloged in `AI_COMMAND_B5F_CONTRACT_ERRATA.json`:
 
-1. **Directional Framing Supersession**:
-   - *Historical Artifact*: `evidence/go_agent/webrtc/DATACHANNEL_FRAMING_MATRIX.json` previously noted `JSON_TEXT_IN_ARRAYBUFFER`.
-   - *Superseded By*: Independent directional framing in B5F: Request is `JSON_TEXT`, Response is `BINARY_JSON_BYTES` via `(*DataChannel).Send([]byte)`.
-2. **Inbound Ordered Classification Erratum**:
-   - *Historical Artifact*: `evidence/go_agent/webrtc/DATACHANNEL_LABEL_EVIDENCE.json` previously marked inbound channel ordered property as `STATIC_CONFIRMED (Disassembly passes ordered=1 byte pointer to CreateDataChannel)`.
-   - *Erratum Corrected*: The agent binary never invokes `CreateDataChannel` for inbound channels and does not check the ordered flag. `ordered=true` is strictly `REFERENCE_ONLY` from browser creation in `useWebRTC.js:359`.
+1. **Parity Taxonomy Separation**:
+   - `AI-B5F-10` (Execution boundary deferred) and `AI-B5F-15` (Production channel inertness) are safety scope constraints (`SAFE_SCOPE_GUARD`, `mandatory_for_original_parity=false`, `mandatory_for_safe_scope=true`).
+   - `AI-B5F-04` (Browser request framing) is client interoperability from Lane D frontend evidence (`REFERENCE_INTEROPERABILITY`, `mandatory_for_original_agent_parity=false`, `mandatory_for_interoperability=true`).
+   - `AI-B5F-06` (Non-empty validation) is an `IMPLEMENTATION_CHOICE / DEFENSIVE_VALIDATION` and does not increase original parity.
+   - `AI-B5F-14` (Inbound ordered flag) is `REFERENCE_ONLY` from frontend creation.
+2. **Effective Contract Breakdown (`tools/audit/build_b5f_effective_contract.py`)**:
+   - Total Requirements: **16**
+   - Original Static Evidence: **10** (`AI-B5F-01`, `02`, `03`, `05`, `07`, `08`, `11`, `12`, `13`, `16`)
+   - Cross-Component Evidence: **0**
+   - Reference Interoperability: **2** (`AI-B5F-04`, `AI-B5F-14`)
+   - Safe Scope Guards: **2** (`AI-B5F-10`, `AI-B5F-15`)
+   - Defensive Validation: **1** (`AI-B5F-06`)
+   - Deferred Execution Boundary: **1** (`AI-B5F-09`)
+   - Unknown: **0**
 
 ---
 
@@ -114,11 +125,11 @@ The safe parser is located in `reconstructed_source/cloudphone-agent/pkg/webrtc/
 
 ## 5. Phase Policy & Boundary Scanner Hardening
 
-`tools/audit/b2_common.py` was updated with the explicit `phase="B5F"` policy:
+`tools/audit/b2_common.py` enforces the explicit `phase="B5F"` policy:
 - **ACTIVE_RUNTIME**: `input`, `clipboard`, `file`, `camera`.
 - **ACTIVE_SAFE**: AI parser and schema symbols (`AICommandEnvelope`, `AICommandResponse`, `ParseAICommand`, `ValidateAICommand`, `MarshalAICommandResponse`).
 - **DEFERRED_EXECUTION**: AI OnMessage handler, AI command executor, external process boundary, ADB channel.
-- **Historical Invariant Protection**: Historical B2, B3, and B4 scans are pinned to their respective baseline commits (`c84d34aa`, `2a039510`, `7e94bd48`), preserving their original scanner policies without weakening.
+- **Historical Invariant Protection**: Historical B2, B3, and B4 scans are evaluated against their pinned baseline commits (`c84d34aa`, `2a039510`, `7e94bd48`), strictly preserving their original scanner policies.
 
 ---
 
@@ -126,31 +137,30 @@ The safe parser is located in `reconstructed_source/cloudphone-agent/pkg/webrtc/
 
 All automated verification gates pass cleanly:
 
-### 6.1 Unit Tests & Race Detection
+### 6.1 Exact Go Unit Test Attribution
 ```text
-=== RUN   TestParseAICommand_Valid
---- PASS: TestParseAICommand_Valid (0.00s)
-=== RUN   TestParseAICommand_MalformedJSON
---- PASS: TestParseAICommand_MalformedJSON (0.00s)
-=== RUN   TestParseAICommand_EmptyJSON
---- PASS: TestParseAICommand_EmptyJSON (0.00s)
-=== RUN   TestValidateAICommand_DefensiveChecks
---- PASS: TestValidateAICommand_DefensiveChecks (0.00s)
-=== RUN   TestMarshalAICommandResponse_Valid
---- PASS: TestMarshalAICommandResponse_Valid (0.00s)
-=== RUN   TestMarshalAICommandResponse_Nil
---- PASS: TestMarshalAICommandResponse_Nil (0.00s)
-=== RUN   TestAICommand_CorrelationEcho
---- PASS: TestAICommand_CorrelationEcho (0.00s)
+{"Action":"pass","Test":"TestParseAICommand_Valid"}
+{"Action":"pass","Test":"TestParseAICommand_MalformedJSON"}
+{"Action":"pass","Test":"TestParseAICommand_EmptyJSON"}
+{"Action":"pass","Test":"TestValidateAICommand_DefensiveChecks"}
+{"Action":"pass","Test":"TestMarshalAICommandResponse_Valid"}
+{"Action":"pass","Test":"TestMarshalAICommandResponse_Nil"}
+{"Action":"pass","Test":"TestAICommand_CorrelationEcho"}
+{"Action":"pass","Package":"cloudphone-agent/pkg/webrtc"}
+Exact unit test attribution verified: All 7 required unit tests verified passed without skips
 PASS: ok cloudphone-agent/pkg/webrtc
 ```
 
 ### 6.2 Forensic Reproducer (`--check`)
+"Disassembly is independently regenerated; semantic forensic artifacts are deterministically re-derived and compared to frozen canonical artifacts."
 ```text
-=== Phase 2C.5B5F AI-Command Channel Forensic Reproducer ===
+=== Phase 2C.5B5FR AI-Command Channel Forensic Reproducer ===
 Running in --check mode (non-mutating verification)...
-✓ Binary disassembly and semantic invariants validated
-✓ Disassembly extraction cleanly regenerated in tempdir and matches frozen SHA
+✓ Original binary SHA256 and machine-bound disassembly invariants validated
+✓ Fresh disassembly cleanly extracted in tempdir and matches frozen SHA
+✓ Semantic forensic artifacts deterministically re-derived and byte-match canonical baseline
+✓ Effective contract view built: 10 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 0 unknown
+✓ Shared semantic validator executed against canonical artifacts (PASS)
 ✓ AI_COMMAND_B5F_PROTOCOL_SPEC.json:         aef2aac903e0... (MATCH)
 ✓ AI_COMMAND_B5F_MESSAGE_INVENTORY.json:     3fa26da4d0c5... (MATCH)
 ✓ AI_COMMAND_B5F_CALLGRAPH.json:             331952995081... (MATCH)
@@ -160,21 +170,24 @@ Running in --check mode (non-mutating verification)...
 All B5F forensic reproduction checks PASSED.
 ```
 
-### 6.3 Negative Mutation Test Suite
+### 6.3 Negative Mutation & Fail-Closed Test Suite (15/15)
 ```text
-[PASS] Case 1: Rejection of Response Framing Swapped to JSON_TEXT (AssertionError)
-[PASS] Case 2: Rejection of Request Framing Swapped to RAW_BINARY (AssertionError)
-[PASS] Case 3: Rejection of Field Validation Promoted to STATIC (AssertionError)
-[PASS] Case 4: Rejection of Inbound Ordered Promoted to Agent STATIC (AssertionError)
-[PASS] Case 5: Rejection of Execution Boundary Made Production Requirement (AssertionError)
-[PASS] Case 6: Rejection of Parser Presence Treated as Channel Activation (AssertionError)
-[PASS] Case 7: Rejection of Corrupted ARM64 Response Send Disassembly (AssertionError)
-[PASS] Case 8: Rejection of Corrupted AMD64 newproc Disassembly (AssertionError)
-[PASS] Case 9: Rejection of Tampered Channel Label (AssertionError)
-[PASS] Case 10: Rejection of Broken Request ID Correlation (AssertionError)
-[PASS] Case 11: Rejection of Altered Concurrency Model (AssertionError)
-[PASS] Case 12: Rejection of Tampered Implementation Contract Hash (AssertionError)
-B5F Negative Mutation Results: 12/12 PASSED
+[PASS] Case 1: Rejection of Response Framing Swapped to JSON_TEXT
+[PASS] Case 2: Rejection of Request Framing Swapped to RAW_BINARY
+[PASS] Case 3: Rejection of Field Validation Promoted to STATIC
+[PASS] Case 4: Rejection of Inbound Ordered Promoted to Agent STATIC
+[PASS] Case 5: Rejection of Execution Boundary Made Production Requirement
+[PASS] Case 6: Rejection of Parser Presence Treated as Channel Activation
+[PASS] Case 7: Rejection of Response Send Method Swapped to SendText
+[PASS] Case 8: Rejection of Broken Malformed JSON Semantics
+[PASS] Case 9: Rejection of Tampered Channel Label
+[PASS] Case 10: Rejection of Broken Request ID Correlation
+[PASS] Case 11: Rejection of Altered Concurrency Model
+[PASS] Case 12: Rejection of Tampered Contract Bytes on Disk
+[PASS] Case 13: Unit Test Attribution Rejection of Missing Mapped Test
+[PASS] Case 14: Unit Test Attribution Rejection of Skipped Mapped Test
+[PASS] Case 15: Unit Test Attribution Rejection of Package Pass without Exact Tests
+B5F Negative Mutation Results: 15/15 PASSED
 ```
 
 ### 6.4 Master Verifier Summary (`tools/verify_phase2.py`)
@@ -200,10 +213,15 @@ OVERALL AUDIT VERDICT: PASS
 | `evidence/go_agent/webrtc/AI_COMMAND_B5F_CALLGRAPH.json` | `331952995081030871416960df82ce4517f755cadfdb2e8fe9a50631babc9e15` | FROZEN_FORENSIC_BASELINE |
 | `evidence/go_agent/webrtc/AI_COMMAND_B5F_SOURCE_PROVENANCE.json` | `0bfedc7aff0661a951e4a9970a3d025812f65d2b6dfb1852e024fbb083661ccc` | FROZEN_FORENSIC_BASELINE |
 | `evidence/go_agent/webrtc/AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json` | `64642e153dcefaa2857fdc37f16b7dc076915c56aa1b3777519eb0c0d6dbdf65` | FROZEN_FORENSIC_BASELINE |
+| `evidence/go_agent/webrtc/AI_COMMAND_B5F_CONTRACT_ERRATA.json` | — | FORMAL_ERRATA_LAYER |
+| `tools/audit/build_b5f_effective_contract.py` | — | EFFECTIVE_CONTRACT_BUILDER |
 | `tools/forensics/ai_command/ai_command_disassembly_manifest.json` | `a5e968b78ce9c73abdf43c170d2d6f561be8428cb55ee9397b109faafdaf2217` | DISASSEMBLY_MANIFEST |
 | `tools/forensics/ai_command/extract_ai_command_disassembly.py` | — | REPO_LOCAL_TOOLING |
+| `tools/forensics/ai_command/derive_ai_command_protocol.py` | — | PROTOCOL_DERIVATION_PIPELINE |
+| `tools/forensics/ai_command/validate_ai_command_semantics.py` | — | SHARED_SEMANTIC_VALIDATOR |
 | `tools/forensics/reproduce_ai_command_forensics.py` | — | FORENSIC_REPRODUCER |
 | `tools/forensics/test_ai_command_forensics_negative.py` | — | NEGATIVE_MUTATION_SUITE |
 | `reconstructed_source/cloudphone-agent/pkg/webrtc/ai_command.go` | — | RECONSTRUCTED_SAFE_PARSER |
 | `reconstructed_source/cloudphone-agent/pkg/webrtc/ai_command_test.go` | — | UNIT_TEST_SUITE |
 | `reports/35F_PHASE2C5B5_AI_COMMAND_FORENSIC_SCHEMA.md` | — | AUDIT_REPORT |
+

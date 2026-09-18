@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """
 tools/forensics/reproduce_ai_command_forensics.py
+Phase 2C.5B5FR AI Command Channel Forensic Reproducer.
 
 Reproduces and validates the frozen AI command forensic interpretation against original
-binary disassembly and supporting artifacts.
+binary disassembly, derived semantic artifacts, effective contracts, and supporting evidence.
 
 Modes:
-  --check (default): Non-mutating verification. Regenerates artifacts into a temporary
-                     directory, computes cryptographic hashes, asserts exact match against
-                     frozen canonical values, validates machine-binding invariants, and
-                     leaves the repository untouched.
+  --check (default): Non-mutating verification. Regenerates disassembly and derived
+                     forensic JSON in a temporary directory, asserts cryptographic match
+                     against frozen canonical values, validates machine-binding invariants,
+                     runs the shared semantic validator, and leaves repository untouched.
   --write:           Explicitly writes regenerated canonical artifacts to evidence/ directory.
 
 Usage:
@@ -40,6 +41,7 @@ INVENTORY_PATH = EVIDENCE_DIR / "AI_COMMAND_B5F_MESSAGE_INVENTORY.json"
 CALLGRAPH_PATH = EVIDENCE_DIR / "AI_COMMAND_B5F_CALLGRAPH.json"
 PROVENANCE_PATH = EVIDENCE_DIR / "AI_COMMAND_B5F_SOURCE_PROVENANCE.json"
 CONTRACT_PATH = EVIDENCE_DIR / "AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json"
+ERRATA_PATH = EVIDENCE_DIR / "AI_COMMAND_B5F_CONTRACT_ERRATA.json"
 MANIFEST_PATH = TOOLS_AI / "ai_command_disassembly_manifest.json"
 
 EXPECTED_SPEC_SHA = "aef2aac903e0fc1be312dc4c1bbf0e53eb5cb24c25ca373b06127c53fd36501f"
@@ -60,6 +62,10 @@ from tools.forensics.ai_command.extract_ai_command_disassembly import (
     ARM64_BINARY,
     AMD64_BINARY
 )
+from tools.forensics.ai_command.derive_ai_command_protocol import derive_ai_command_artifacts
+from tools.forensics.ai_command.validate_ai_command_semantics import validate_ai_command_semantics
+from tools.audit.build_b5f_effective_contract import build_b5f_effective_contract, FROZEN_BASE_SHA256
+
 
 def hash_file(path):
     h = hashlib.sha256()
@@ -67,6 +73,7 @@ def hash_file(path):
         while chunk := f.read(65536):
             h.update(chunk)
     return h.hexdigest().lower()
+
 
 def validate_binary_invariants():
     # 1. Binary hashes
@@ -134,53 +141,68 @@ def validate_binary_invariants():
     assert "0x9250c0" in amd_send, "AMD64 (*DataChannel).Send missing (0x9250c0)"
     assert "0x531b60" in amd_send, "AMD64 json.Marshal missing (0x531b60)"
 
-    # Invariant G: Contract semantic checks
-    with open(CONTRACT_PATH, "r", encoding="utf-8") as f:
-        contract = json.load(f)
+    # Invariant G: Shared semantic validator execution
+    validate_ai_command_semantics(
+        spec=SPEC_PATH,
+        contract=CONTRACT_PATH,
+        inventory=INVENTORY_PATH,
+        callgraph=CALLGRAPH_PATH,
+        provenance=PROVENANCE_PATH
+    )
 
-    req_ids = {r["id"]: r for r in contract["requirements"]}
-    assert "AI-B5F-01" in req_ids
-    assert "AI-B5F-04" in req_ids
-    assert "AI-B5F-06" in req_ids
-    assert "AI-B5F-10" in req_ids
-    assert "AI-B5F-13" in req_ids
-    assert "AI-B5F-14" in req_ids
-    assert "AI-B5F-15" in req_ids
-
-    # Framing must be separate
-    spec = json.loads(SPEC_PATH.read_text(encoding="utf-8"))
-    req_framing = spec["directional_framing"]["browser_to_agent_request"]["framing_type"]
-    resp_framing = spec["directional_framing"]["agent_to_browser_response"]["framing_type"]
-    assert req_framing == "JSON_TEXT", f"Request framing expected JSON_TEXT, got {req_framing}"
-    assert resp_framing == "BINARY_JSON_BYTES", f"Response framing expected BINARY_JSON_BYTES, got {resp_framing}"
-
-    # Ordered flag must be REFERENCE_ONLY
-    ordered_class = spec["channel_properties"]["ordered"]["evidence_class"]
-    assert ordered_class == "REFERENCE_ONLY", f"Ordered evidence_class expected REFERENCE_ONLY, got {ordered_class}"
-
-    # Required fields must be KNOWN_FIELDS
-    req_f0 = spec["message_schemas"]["request"]["fields"][0]["classification"]
-    req_f1 = spec["message_schemas"]["request"]["fields"][1]["classification"]
-    assert req_f0 == "KNOWN_FIELD" and req_f1 == "KNOWN_FIELD", "Request fields must be KNOWN_FIELD"
 
 def run_check():
-    print("=== Phase 2C.5B5F AI-Command Channel Forensic Reproducer ===")
+    print("=== Phase 2C.5B5FR AI-Command Channel Forensic Reproducer ===")
     print("Running in --check mode (non-mutating verification)...")
 
-    # 1. Validate invariant properties
+    # Step 1: Original binary and disassembly invariants
     validate_binary_invariants()
-    print("✓ Binary disassembly and semantic invariants validated")
+    print("✓ Original binary SHA256 and machine-bound disassembly invariants validated")
 
-    # 2. Re-extract disassembly into temp directory
+    # Step 2: Fresh disassembly extraction in tempdir
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_manifest = os.path.join(tmpdir, "ai_command_disassembly_manifest.json")
         extract_all(output_file=tmp_manifest)
         tmp_hash = hash_file(tmp_manifest)
         if tmp_hash != EXPECTED_MANIFEST_SHA:
             raise ValueError(f"Regenerated manifest SHA mismatch: got {tmp_hash}, expected {EXPECTED_MANIFEST_SHA}")
-        print("✓ Disassembly extraction cleanly regenerated in tempdir and matches frozen SHA")
+        print("✓ Fresh disassembly cleanly extracted in tempdir and matches frozen SHA")
 
-    # 3. Verify canonical evidence hashes
+        # Step 3: Fresh derived forensic JSON from manifest in tempdir
+        tmp_derived_dir = os.path.join(tmpdir, "derived")
+        derived_artifacts = derive_ai_command_artifacts(
+            manifest_path=Path(tmp_manifest),
+            output_dir=Path(tmp_derived_dir)
+        )
+        for fname in ["AI_COMMAND_B5F_PROTOCOL_SPEC.json", "AI_COMMAND_B5F_MESSAGE_INVENTORY.json", "AI_COMMAND_B5F_CALLGRAPH.json", "AI_COMMAND_B5F_SOURCE_PROVENANCE.json"]:
+            fresh_bytes = (Path(tmp_derived_dir) / fname).read_bytes()
+            canon_bytes = (EVIDENCE_DIR / fname).read_bytes()
+            if fresh_bytes != canon_bytes:
+                raise ValueError(f"Freshly derived {fname} bytes differ from canonical baseline")
+        print("✓ Semantic forensic artifacts deterministically re-derived and byte-match canonical baseline")
+
+    # Step 4: Fresh effective interpretation via errata layer
+    eff = build_b5f_effective_contract(REPO_ROOT)
+    tc = eff["metadata"]["taxonomy_counts"]
+    assert tc["original_static_evidence"] == 10, f"Expected 10 original static evidence, got {tc['original_static_evidence']}"
+    assert tc["safe_scope_guard"] == 2, f"Expected 2 safe scope guards, got {tc['safe_scope_guard']}"
+    assert tc["reference_interoperability"] == 2, f"Expected 2 reference interop, got {tc['reference_interoperability']}"
+    assert tc["defensive_validation"] == 1, f"Expected 1 defensive validation, got {tc['defensive_validation']}"
+    assert tc["deferred_execution_boundary"] == 1, f"Expected 1 deferred boundary, got {tc['deferred_execution_boundary']}"
+    assert tc["unknown"] == 0, f"Expected 0 unknown, got {tc['unknown']}"
+    print("✓ Effective contract view built: 10 static, 2 safe scope, 2 reference interop, 1 defensive, 1 deferred, 0 unknown")
+
+    # Step 5: Canonical semantic comparison via shared validator
+    sem_res = validate_ai_command_semantics(
+        spec=SPEC_PATH,
+        contract=CONTRACT_PATH,
+        inventory=INVENTORY_PATH,
+        callgraph=CALLGRAPH_PATH,
+        provenance=PROVENANCE_PATH
+    )
+    print("✓ Shared semantic validator executed against canonical artifacts (PASS)")
+
+    # Step 6: Frozen SHA verification
     spec_sha = hash_file(SPEC_PATH)
     inv_sha = hash_file(INVENTORY_PATH)
     cg_sha = hash_file(CALLGRAPH_PATH)
@@ -203,6 +225,7 @@ def run_check():
     print(f"✓ ai_command_disassembly_manifest.json:      {manifest_sha} (MATCH)")
     print("All B5F forensic reproduction checks PASSED.")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Phase 2C.5B5F AI Command Forensic Reproducer")
     parser.add_argument("--check", action="store_true", default=True, help="Validate without modifying working tree")
@@ -210,8 +233,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.write:
-        print("Writing regenerated manifest...")
+        print("Writing regenerated manifest and derived artifacts...")
         extract_all(output_file=str(MANIFEST_PATH))
+        derive_ai_command_artifacts(manifest_path=MANIFEST_PATH, output_dir=EVIDENCE_DIR)
         print("Done.")
     else:
         run_check()

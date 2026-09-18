@@ -4474,7 +4474,7 @@ def verify_all():
     # 25. PHASE 2C.5B5F AI-COMMAND CHANNEL FORENSIC & SCHEMA INVARIANTS
     # =========================================================================
 
-    # 25.1 Phase 2C.5B5F Frozen Forensic Contract Invariant
+    # 25.1 Phase 2C.5B5F Frozen Forensic Contract, Errata & Effective Contract Invariant
     b5f_contract_path = ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json"
     expected_b5f_contract_sha = "64642e153dcefaa2857fdc37f16b7dc076915c56aa1b3777519eb0c0d6dbdf65"
     expected_b5f_spec_sha = "aef2aac903e0fc1be312dc4c1bbf0e53eb5cb24c25ca373b06127c53fd36501f"
@@ -4486,11 +4486,27 @@ def verify_all():
             c_sha = hashlib.sha256(c_data).hexdigest()
             spec_p = ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_PROTOCOL_SPEC.json"
             s_sha = hashlib.sha256(spec_p.read_bytes()).hexdigest() if spec_p.exists() else ""
-            if c_sha == expected_b5f_contract_sha and s_sha == expected_b5f_spec_sha:
+            errata_p = ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_CONTRACT_ERRATA.json"
+            from tools.audit.build_b5f_effective_contract import build_b5f_effective_contract
+            eff = build_b5f_effective_contract(ROOT)
+            tc = eff["metadata"]["taxonomy_counts"]
+            tc_valid = (
+                tc["original_static_evidence"] == 10 and
+                tc["cross_component_evidence"] == 0 and
+                tc["reference_interoperability"] == 2 and
+                tc["safe_scope_guard"] == 2 and
+                tc["defensive_validation"] == 1 and
+                tc["deferred_execution_boundary"] == 1 and
+                tc["unknown"] == 0
+            )
+            if c_sha == expected_b5f_contract_sha and s_sha == expected_b5f_spec_sha and errata_p.exists() and tc_valid:
                 b5f_contract_valid = True
-                b5f_contract_detail = f"AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json ({c_sha[:12]}) and PROTOCOL_SPEC ({s_sha[:12]}) verified against frozen baseline"
+                b5f_contract_detail = (
+                    f"AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json ({c_sha[:12]}) frozen; "
+                    f"formal errata applied; effective contract taxonomy confirmed (10 static, 2 safe scope, 2 reference, 1 defensive, 1 deferred)"
+                )
             else:
-                b5f_contract_detail = f"B5F contract SHA mismatch: contract={c_sha}, spec={s_sha}"
+                b5f_contract_detail = f"B5F contract verification failed: c_sha={c_sha[:12]}, s_sha={s_sha[:12]}, tc_valid={tc_valid}"
         else:
             b5f_contract_detail = "AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json missing"
     except Exception as e:
@@ -4507,7 +4523,7 @@ def verify_all():
                                   cwd=str(ROOT), capture_output=True, text=True)
         if repro_proc.returncode == 0 and neg_proc.returncode == 0:
             b5f_repro_valid = True
-            b5f_repro_detail = "Forensic extraction cleanly reproduced in tempdir (ARM64/AMD64 disassembly matched); 12/12 negative mutations rejected"
+            b5f_repro_detail = "Forensic extraction and semantic protocol cleanly reproduced; 15/15 negative mutations and test attribution checks rejected"
         else:
             b5f_repro_detail = f"Reproducer/Negative failure: repro={repro_proc.returncode}, neg={neg_proc.returncode}, err={repro_proc.stderr or neg_proc.stderr}"
     except Exception as e:
@@ -4518,40 +4534,48 @@ def verify_all():
     b5f_framing_valid = False
     b5f_framing_detail = ""
     try:
-        spec_doc = json.loads((ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_PROTOCOL_SPEC.json").read_text(encoding="utf-8"))
-        req_framing = spec_doc["directional_framing"]["browser_to_agent_request"]["framing_type"]
-        resp_framing = spec_doc["directional_framing"]["agent_to_browser_response"]["framing_type"]
-        ord_class = spec_doc["channel_properties"]["ordered"]["evidence_class"]
-        f0_class = spec_doc["message_schemas"]["request"]["fields"][0]["classification"]
-        f1_class = spec_doc["message_schemas"]["request"]["fields"][1]["classification"]
-        errata_count = len(spec_doc.get("historical_errata_and_superseded_evidence", []))
-
-        if (req_framing == "JSON_TEXT" and resp_framing == "BINARY_JSON_BYTES" and
-            ord_class == "REFERENCE_ONLY" and f0_class == "KNOWN_FIELD" and f1_class == "KNOWN_FIELD" and
-            errata_count >= 2):
+        from tools.forensics.ai_command.validate_ai_command_semantics import validate_ai_command_semantics
+        sem_res = validate_ai_command_semantics(
+            spec=ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+            contract=ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json",
+            inventory=ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_MESSAGE_INVENTORY.json",
+            callgraph=ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_CALLGRAPH.json",
+            provenance=ROOT / "evidence" / "go_agent" / "webrtc" / "AI_COMMAND_B5F_SOURCE_PROVENANCE.json"
+        )
+        if sem_res.get("status") == "VALID":
             b5f_framing_valid = True
-            b5f_framing_detail = "Directional framing split verified (request=JSON_TEXT, response=BINARY_JSON_BYTES via (*DataChannel).Send); ordered=REFERENCE_ONLY; KNOWN_FIELDS classification confirmed; errata recorded"
+            b5f_framing_detail = "Shared semantic validator PASS: directional framing split (req=JSON_TEXT, resp=BINARY_JSON_BYTES via (*DataChannel).Send); ordered=REFERENCE_ONLY; KNOWN_FIELDS confirmed; deferred execution boundary strictly recognized"
         else:
-            b5f_framing_detail = f"Framing classification mismatch: req={req_framing}, resp={resp_framing}, ord={ord_class}, errata={errata_count}"
+            b5f_framing_detail = f"Semantic validation returned non-valid: {sem_res}"
     except Exception as e:
         b5f_framing_detail = f"Exception verifying B5F framing: {e}"
     record_check("Phase 2C.5B5F Directional Framing & Errata Invariant", b5f_framing_valid, b5f_framing_detail)
 
-    # 25.4 Phase 2C.5B5F Safe Parser & Unit Tests Invariant
+    # 25.4 Phase 2C.5B5F Safe Parser & Exact Unit Tests Attribution Invariant
     b5f_tests_valid = False
     b5f_tests_detail = ""
     try:
         cmd_tests = [
-            "go", "test", "-v", "./pkg/webrtc",
+            "go", "test", "-json", "-count=1", "./pkg/webrtc",
             "-run", "TestParseAICommand|TestValidateAICommand|TestMarshalAICommandResponse|TestAICommand"
         ]
         test_res = subprocess.run(cmd_tests, cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
                                   capture_output=True, text=True)
-        if test_res.returncode == 0:
+        from tools.forensics.test_ai_command_forensics_negative import evaluate_ai_command_test_events, REQUIRED_AI_TESTS
+        events = []
+        for line in test_res.stdout.splitlines():
+            line = line.strip()
+            if line.startswith("{") and line.endswith("}"):
+                try:
+                    events.append(json.loads(line))
+                except Exception:
+                    pass
+        ok, eval_msg = evaluate_ai_command_test_events(events, REQUIRED_AI_TESTS)
+        if test_res.returncode == 0 and ok:
             b5f_tests_valid = True
-            b5f_tests_detail = "All AI command unit tests passed: envelope decode, malformed rejection, defensive non-empty validation, response marshal, correlation echo"
+            b5f_tests_detail = f"Exact unit test attribution verified: {eval_msg}"
         else:
-            b5f_tests_detail = f"AI command unit tests failed (code {test_res.returncode}): {test_res.stderr.strip() or test_res.stdout.strip()}"
+            b5f_tests_detail = f"Unit test attribution failed (code {test_res.returncode}): {eval_msg or test_res.stderr.strip()}"
     except Exception as e:
         b5f_tests_detail = f"Exception executing AI command unit tests: {e}"
     record_check("Phase 2C.5B5F Safe Parser & Unit Tests Invariant", b5f_tests_valid, b5f_tests_detail)
@@ -4590,22 +4614,7 @@ def verify_all():
         b5f_reg_detail = f"Exception evaluating historical differentials: {e}"
     record_check("Phase 2C.5B5F Historical Non-Regression & Differential Stability Invariant", b5f_reg_valid, b5f_reg_detail)
 
-    # 26. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
-    git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
-    is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
-    allow_dirty = "--allow-dirty" in sys.argv
-    clean_tree = is_clean or allow_dirty
-    record_check("Master Verifier Non-Mutating Audit Invariant", clean_tree,
-                 "git status --porcelain is strictly empty; verification and reproducers cause zero repository mutations")
-
-
-    # Summary
-    all_passed = all(c["passed"] for c in checks)
-    print("==================================================")
-    print(f"OVERALL AUDIT VERDICT: {'PASS' if all_passed else 'FAIL'}")
-    print("==================================================")
-
-    # Generate Reports 02B and 02C
+    # Generate Reports 02B and 02C BEFORE the cleanliness check (Rule 14)
     reports_dir = ROOT / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
 
@@ -4642,6 +4651,21 @@ def verify_all():
         f.write("```\n")
 
     print("[+] Wrote reports/02B_ROLE_MAPPING_VALIDATION.md and reports/02C_PHASE2_REPRODUCIBILITY.md")
+
+    # 26. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
+    # Executed strictly AFTER all verifier side effects and report writes
+    git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
+    is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
+    allow_dirty = "--allow-dirty" in sys.argv
+    clean_tree = is_clean or allow_dirty
+    record_check("Master Verifier Non-Mutating Audit Invariant", clean_tree,
+                 "git status --porcelain is strictly empty; verification and reproducers cause zero repository mutations")
+
+    # Summary
+    all_passed = all(c["passed"] for c in checks)
+    print("==================================================")
+    print(f"OVERALL AUDIT VERDICT: {'PASS' if all_passed else 'FAIL'}")
+    print("==================================================")
     return all_passed
 
 if __name__ == "__main__":

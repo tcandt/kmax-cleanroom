@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "title": "Phase 2C.5B5F AI-Command Implementation Contract Formal Errata and Provenance Amendment",
+    "phase": "Phase 2C.5B5FR",
+    "base_contract_path": "evidence/go_agent/webrtc/AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json",
+    "base_contract_sha256": "64642e153dcefaa2857fdc37f16b7dc076915c56aa1b3777519eb0c0d6dbdf65",
+    "base_contract_status": "FROZEN_FORENSIC_BASELINE",
+    "errata_phase": "Phase 2C.5B5FR",
+    "reason": "Correction of contract parity taxonomy and separation of safety guards from authentic original agent parity. Segregates original binary protocol parity from phase scope guards, defensive validation choices, and browser frontend reference interoperability.",
+    "effective_contract_rules": [
+      "Base contract AI_COMMAND_B5F_IMPLEMENTATION_CONTRACT.json remains strictly frozen and immutable with SHA256 64642e153dcefaa2857fdc37f16b7dc076915c56aa1b3777519eb0c0d6dbdf65.",
+      "Deferred execution boundary guard (AI-B5F-10) is classified as SAFE_SCOPE_GUARD and does not increase original protocol parity counters (mandatory_for_original_parity=false, mandatory_for_safe_scope=true).",
+      "Production channel inertness guard (AI-B5F-15) is classified as SAFE_SCOPE_GUARD and does not increase original protocol parity counters (mandatory_for_original_parity=false, mandatory_for_safe_scope=true).",
+      "Browser request framing (AI-B5F-04) is classified as REFERENCE_INTEROPERABILITY from Lane D frontend evidence (mandatory_for_original_agent_parity=false, mandatory_for_interoperability=true).",
+      "Defensive non-empty validation in ValidateAICommand (AI-B5F-06) remains an IMPLEMENTATION_CHOICE / DEFENSIVE_VALIDATION and is not counted toward original parity.",
+      "Inbound ordered property (AI-B5F-14) remains REFERENCE_ONLY from browser creation and is not counted toward original parity.",
+      "Effective contract view is dynamically computed by combining the frozen base contract with this formal errata document."
+    ]
+  },
+  "corrections": [
+    {
+      "contract_id": "AI-B5F-04",
+      "original_claim": "Inbound Request Directional Framing: Browser sends JSON_TEXT frame over DataChannel; Agent receives message and passes raw payload bytes to json.Unmarshal (REFERENCE_ONLY_PROVEN_BY_LANE_D_WITH_STATIC_DECODER, mandatory_for_parity: true)",
+      "problem": "Browser JSON_TEXT send is proven by Lane D frontend reference (useWebRTC.js), representing client interoperability framing rather than authentic original Agent static parity. Original Agent binary receives raw bytes (msg.Data) and passes them to json.Unmarshal.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/AI_COMMAND_B5F_PROTOCOL_SPEC.json and useWebRTC.js:311",
+      "corrected_original_parity_claim": "Agent receives DataChannel message payload as raw byte slice and passes it to json.Unmarshal.",
+      "non_original_compatibility_behavior": "Browser client formats command envelope as JSON text string and transmits it over WebRTC DataChannel (REFERENCE_INTEROPERABILITY).",
+      "effective_evidence_class": "REFERENCE_INTEROPERABILITY",
+      "effective_mandatory_for_original_parity": false,
+      "mandatory_for_interoperability": true,
+      "reference_only_parts": [
+        "browser_json_text_transmission"
+      ],
+      "rationale": "Browser-side text framing is proven by frontend reference for client interoperability. It must not be counted as original Agent binary parity."
+    },
+    {
+      "contract_id": "AI-B5F-10",
+      "original_claim": "Clean-Room Safety Restriction - Execution Boundary Deferred: Clean-room safe implementation must NOT implement, invoke, or expose command execution; zero os/exec, zero exec.Command, zero shell simulator (MANDATORY_SAFETY_GUARD, mandatory_for_parity: true)",
+      "problem": "Marking mandatory_for_parity=true for an intentional omission of original binary behavior is an epistemic contradiction. Original binary contains an external process execution boundary; clean-room reconstruction intentionally leaves it unimplemented for safety.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "corrected_original_parity_claim": "N/A (Engineering Safety Scope Guard: Runtime command execution is intentionally unimplemented in clean-room agent).",
+      "non_original_compatibility_behavior": "Runtime command execution is omitted; zero os/exec, zero exec.Command, zero shell simulator (SAFE_SCOPE_GUARD).",
+      "effective_evidence_class": "SAFE_SCOPE_GUARD",
+      "effective_mandatory_for_original_parity": false,
+      "mandatory_for_safe_scope": true,
+      "phase_scope_parts": [
+        "command_execution_deferred",
+        "zero_os_exec_imports",
+        "zero_shell_simulator"
+      ],
+      "rationale": "Safety omission is a clean-room scope constraint, not an original protocol parity requirement."
+    },
+    {
+      "contract_id": "AI-B5F-15",
+      "original_claim": "Channel Inertness in Clean-Room Agent Runtime: ai-command-channel remains strictly inert in clean-room production runtime; no OnMessage business handler attached, no ADB bridge activation (MANDATORY_SAFETY_GUARD, mandatory_for_parity: true)",
+      "problem": "Channel inertness in clean-room production runtime is a safety scope constraint, not an original binary behavior parity requirement. Original binary registers OnMessage and spawns worker goroutines.",
+      "supporting_original_artifact": "evidence/go_agent/webrtc/AI_COMMAND_B5F_PROTOCOL_SPEC.json",
+      "corrected_original_parity_claim": "N/A (Engineering Safety Scope Guard: ai-command-channel remains strictly inert without OnMessage business handler in clean-room production runtime).",
+      "non_original_compatibility_behavior": "Channel remains inert without production OnMessage handler attached in clean-room agent runtime (SAFE_SCOPE_GUARD).",
+      "effective_evidence_class": "SAFE_SCOPE_GUARD",
+      "effective_mandatory_for_original_parity": false,
+      "mandatory_for_safe_scope": true,
+      "phase_scope_parts": [
+        "ai_command_channel_inertness",
+        "zero_production_onmessage_handler",
+        "zero_adb_bridge_activation"
+      ],
+      "rationale": "Production inertness is a phase safety boundary, not an original binary parity requirement."
+    }
+  ]
+}
