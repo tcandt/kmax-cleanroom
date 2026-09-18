@@ -213,7 +213,7 @@ def test_mutation_11_method_count_discrepancy():
 
 # 12. Dirty working tree detection
 def test_mutation_12_dirty_working_tree():
-    test_file = REPO_ROOT / ".dirty_tree_test_sentinel.tmp"
+    test_file = REPO_ROOT / ".dirty_tree_test_sentinel_mutation"
     try:
         test_file.write_text("temporary dirty sentinel", encoding="utf-8")
         status = subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, capture_output=True, text=True).stdout
