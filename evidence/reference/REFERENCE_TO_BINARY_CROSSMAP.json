@@ -41,7 +41,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/connect_client",
           "file_offset": null,
@@ -64,7 +64,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
+          "artifact_sha256": "4fbf936a5e72894885d5d0763402cc09183ba4c9ae961412d4b13d8520f2090e",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-001",
           "function_symbol": "main.id8ybRmw69lm",
@@ -77,7 +77,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "raw_extraction/go_signaling/clean_oracle_results.json",
-          "artifact_sha256": "fbe1210892e047d4c30385b5fb4e38801483f3a9c51966a7ae69f078c6f34f6a",
+          "artifact_sha256": "fca56ff514f9480189e9f66b40931ed3365d4077c3f49adca2b9712d6b25af0d",
           "evidence_file": "clean_oracle_results.json",
           "selector": "/connect_client",
           "file_offset": null,
@@ -125,7 +125,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/register_agent",
           "file_offset": null,
@@ -148,7 +148,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
+          "artifact_sha256": "4fbf936a5e72894885d5d0763402cc09183ba4c9ae961412d4b13d8520f2090e",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-002",
           "function_symbol": "main.jdUaLc5NMO5",
@@ -199,7 +199,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/api/login",
           "file_offset": null,
@@ -222,7 +222,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
+          "artifact_sha256": "4fbf936a5e72894885d5d0763402cc09183ba4c9ae961412d4b13d8520f2090e",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-003",
           "function_symbol": "main.ltOjwqsMl5q8",
@@ -235,7 +235,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "evidence/go_signaling/http/AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
-          "artifact_sha256": "bb4a0db0dea42b6eb5ffb817334eee45b7d9a98fa7b53d943143f10fd1955f70",
+          "artifact_sha256": "a46962f8e185147d50a66d6f2d2749367ccd3afc74899040040b6ba84a01e5b6",
           "evidence_file": "AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
           "selector": "HTTP-01,HTTP-02,HTTP-03",
           "file_offset": null,
@@ -284,7 +284,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/devices",
           "file_offset": null,
@@ -307,7 +307,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
+          "artifact_sha256": "4fbf936a5e72894885d5d0763402cc09183ba4c9ae961412d4b13d8520f2090e",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-004",
           "function_symbol": "main.i2EgUTaLmQs",
@@ -320,7 +320,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "raw_extraction/go_signaling/clean_oracle_results.json",
-          "artifact_sha256": "fbe1210892e047d4c30385b5fb4e38801483f3a9c51966a7ae69f078c6f34f6a",
+          "artifact_sha256": "fca56ff514f9480189e9f66b40931ed3365d4077c3f49adca2b9712d6b25af0d",
           "evidence_file": "clean_oracle_results.json",
           "selector": "/devices",
           "file_offset": null,
@@ -368,7 +368,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/api/tags",
           "file_offset": null,
@@ -391,7 +391,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "raw_extraction/go_signaling/clean_oracle_results.json",
-          "artifact_sha256": "fbe1210892e047d4c30385b5fb4e38801483f3a9c51966a7ae69f078c6f34f6a",
+          "artifact_sha256": "fca56ff514f9480189e9f66b40931ed3365d4077c3f49adca2b9712d6b25af0d",
           "evidence_file": "clean_oracle_results.json",
           "selector": "/api/tags",
           "file_offset": null,
@@ -438,7 +438,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/api/share/create",
           "file_offset": null,
@@ -461,7 +461,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "raw_extraction/go_signaling/clean_oracle_results.json",
-          "artifact_sha256": "fbe1210892e047d4c30385b5fb4e38801483f3a9c51966a7ae69f078c6f34f6a",
+          "artifact_sha256": "fca56ff514f9480189e9f66b40931ed3365d4077c3f49adca2b9712d6b25af0d",
           "evidence_file": "clean_oracle_results.json",
           "selector": "/api/share/create",
           "file_offset": null,
@@ -508,7 +508,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/api/admin/users",
           "file_offset": null,
@@ -531,7 +531,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "raw_extraction/go_signaling/clean_oracle_results.json",
-          "artifact_sha256": "fbe1210892e047d4c30385b5fb4e38801483f3a9c51966a7ae69f078c6f34f6a",
+          "artifact_sha256": "fca56ff514f9480189e9f66b40931ed3365d4077c3f49adca2b9712d6b25af0d",
           "evidence_file": "clean_oracle_results.json",
           "selector": "/api/admin/users",
           "file_offset": null,
@@ -578,7 +578,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/api/logout",
           "file_offset": null,
@@ -601,7 +601,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "evidence/go_signaling/http/AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
-          "artifact_sha256": "bb4a0db0dea42b6eb5ffb817334eee45b7d9a98fa7b53d943143f10fd1955f70",
+          "artifact_sha256": "a46962f8e185147d50a66d6f2d2749367ccd3afc74899040040b6ba84a01e5b6",
           "evidence_file": "AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
           "selector": "HTTP-06",
           "file_offset": null,
@@ -649,7 +649,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/api/auth-status",
           "file_offset": null,
@@ -672,7 +672,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_signaling/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "d499dae436a4d1eb3721b93aa689cc0f2675c654b6f9cf8e6c8cd7f16791a0a6",
+          "artifact_sha256": "4fbf936a5e72894885d5d0763402cc09183ba4c9ae961412d4b13d8520f2090e",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "SIG-DCF-005",
           "function_symbol": "main.bwvBd1LWVr",
@@ -685,7 +685,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "evidence/go_signaling/http/AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
-          "artifact_sha256": "bb4a0db0dea42b6eb5ffb817334eee45b7d9a98fa7b53d943143f10fd1955f70",
+          "artifact_sha256": "a46962f8e185147d50a66d6f2d2749367ccd3afc74899040040b6ba84a01e5b6",
           "evidence_file": "AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
           "selector": "HTTP-07",
           "file_offset": null,
@@ -733,7 +733,7 @@
         {
           "evidence_class": "ROUTE_REGISTRATION",
           "artifact_path": "evidence/go_signaling/ROUTE_HANDLER_MAP.json",
-          "artifact_sha256": "c47ab10b03b99ad3367b70fc379b239b165004d52b2ed804b220bd394995b190",
+          "artifact_sha256": "d07ffe5fab0e3d027cc37cf2d6018fe2b4c61da37cbc5b0a49fe7e7dfd86e3b4",
           "evidence_file": "ROUTE_HANDLER_MAP.json",
           "selector": "/api/me",
           "file_offset": null,
@@ -756,7 +756,7 @@
         {
           "evidence_class": "DYNAMIC_ORACLE",
           "artifact_path": "evidence/go_signaling/http/AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
-          "artifact_sha256": "bb4a0db0dea42b6eb5ffb817334eee45b7d9a98fa7b53d943143f10fd1955f70",
+          "artifact_sha256": "a46962f8e185147d50a66d6f2d2749367ccd3afc74899040040b6ba84a01e5b6",
           "evidence_file": "AUTH_HTTP_DIFFERENTIAL_RESULTS.json",
           "selector": "HTTP-08",
           "file_offset": null,
@@ -812,7 +812,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
-          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "artifact_sha256": "618ab3cb97bdbe072c41ef451a98ebf2d45aa52a6633c9b3e672cdf6f1801ecb",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x7507c0 -> main.(*LG7nmxLRaW).WriteJSON",
           "caller_symbol": "main.id8ybRmw69lm",
@@ -870,7 +870,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
-          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "artifact_sha256": "618ab3cb97bdbe072c41ef451a98ebf2d45aa52a6633c9b3e672cdf6f1801ecb",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x754b40 -> main.(*A38AV00w_).Send",
           "caller_symbol": "main.jdUaLc5NMO5",
@@ -928,7 +928,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
-          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "artifact_sha256": "618ab3cb97bdbe072c41ef451a98ebf2d45aa52a6633c9b3e672cdf6f1801ecb",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x7507c0 -> _iYIJQCvEF4X.(*Yt_Fm_GhgcEh).ReadMessage",
           "caller_symbol": "main.id8ybRmw69lm",
@@ -986,7 +986,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
-          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "artifact_sha256": "618ab3cb97bdbe072c41ef451a98ebf2d45aa52a6633c9b3e672cdf6f1801ecb",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x7507c0 -> main.(*LG7nmxLRaW).WriteJSON",
           "caller_symbol": "main.id8ybRmw69lm",
@@ -1044,7 +1044,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_signaling/CALLGRAPH.json",
-          "artifact_sha256": "9bc6e7cb1642efe32052c9fe2559fdcd8fb2a1193aeed7184524f28cf40fe849",
+          "artifact_sha256": "618ab3cb97bdbe072c41ef451a98ebf2d45aa52a6633c9b3e672cdf6f1801ecb",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x7507c0 -> main.(*AoIDVQHamcx).Send",
           "caller_symbol": "main.id8ybRmw69lm",
@@ -1132,7 +1132,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_agent/CALLGRAPH.json",
-          "artifact_sha256": "3dc3039bc2d280c8bede4107f9f30994c476f0beb9291bd223233046d16f1c33",
+          "artifact_sha256": "a8fcf4f36f1bb4e91ffc24653dc3afd15393769103225dd91742e101aa96543f",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x53c730 -> IV04EXWpwj.(*VOMNaNery).CreateDataChannel",
           "caller_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1190,7 +1190,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_agent/CALLGRAPH.json",
-          "artifact_sha256": "3dc3039bc2d280c8bede4107f9f30994c476f0beb9291bd223233046d16f1c33",
+          "artifact_sha256": "a8fcf4f36f1bb4e91ffc24653dc3afd15393769103225dd91742e101aa96543f",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x53c730 -> IV04EXWpwj.(*VOMNaNery).OnDataChannel",
           "caller_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1248,7 +1248,7 @@
         {
           "evidence_class": "BINARY_XREF",
           "artifact_path": "evidence/go_agent/CALLGRAPH.json",
-          "artifact_sha256": "3dc3039bc2d280c8bede4107f9f30994c476f0beb9291bd223233046d16f1c33",
+          "artifact_sha256": "a8fcf4f36f1bb4e91ffc24653dc3afd15393769103225dd91742e101aa96543f",
           "evidence_file": "CALLGRAPH.json",
           "selector": "0x53c730 -> IV04EXWpwj.(*VOMNaNery).OnDataChannel",
           "caller_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1306,7 +1306,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-001",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1364,7 +1364,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-002",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1422,7 +1422,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-003",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1469,7 +1469,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-004",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1526,7 +1526,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-004",
           "function_symbol": "main.(*JJffa1S1Zv6).iIhwd_WXInS",
@@ -1584,7 +1584,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-005",
           "function_symbol": "main.init",
@@ -1642,7 +1642,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-005",
           "function_symbol": "main.init",
@@ -1700,7 +1700,7 @@
         {
           "evidence_class": "DISASSEMBLY_CONTROL_FLOW",
           "artifact_path": "evidence/go_agent/DISASSEMBLY_FACTS.json",
-          "artifact_sha256": "de4d57c189e60665026b5bac27a3c63ec7ca7f7caa318bd8105a14dc047f3942",
+          "artifact_sha256": "bccef0ae45ed81080aafafd5567aec3e4f272e42738542b4eb2a95bf3a3df93a",
           "evidence_file": "DISASSEMBLY_FACTS.json",
           "selector": "AGENT-DCF-005",
           "function_symbol": "main.init",

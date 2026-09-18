@@ -21,7 +21,10 @@ VALID_EVIDENCE_CLASSES = {
 def compute_file_sha256(path: Path) -> str:
     if not path.exists():
         return ""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    data = path.read_bytes()
+    if path.suffix.lower() in {".json", ".md", ".txt", ".js", ".html", ".css", ".go"}:
+        data = data.replace(b"\r\n", b"\n")
+    return hashlib.sha256(data).hexdigest()
 
 def find_string_in_binary(binary_bytes: bytes, target_str: str):
     raw = target_str.encode("utf-8")
