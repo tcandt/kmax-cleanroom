@@ -11,6 +11,7 @@ sys.path.insert(0, str(REPO_ROOT))
 from tools.forensics.pclntab_parser import get_repo_root
 
 ROOT = get_repo_root()
+LAYOUT_ROOT = ROOT.parent if ROOT.name == "cleanroom_archive" else ROOT
 SOURCE_DIRS = [
     ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "types",
     ROOT / "reconstructed_source" / "webrtc-signaling" / "pkg" / "storage",
@@ -112,7 +113,7 @@ def audit_reconstructed_provenance():
                 if not fname.endswith(".go") or fname.endswith("_test.go"):
                     continue
                 fpath = Path(root_dir) / fname
-                rel_path = fpath.relative_to(ROOT)
+                rel_path = fpath.relative_to(LAYOUT_ROOT)
 
                 with open(fpath, "r", encoding="utf-8") as f:
                     lines = f.readlines()

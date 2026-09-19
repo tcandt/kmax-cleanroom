@@ -25,6 +25,9 @@ from typing import Any, Dict, List, Tuple
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+
+from tools.forensics.pclntab_parser import get_repo_root
+ROOT = get_repo_root()
 AGENT_DIR = ROOT / "reconstructed_source" / "cloudphone-agent"
 B3_CONTRACT_PATH = ROOT / "evidence" / "go_agent" / "webrtc" / "FILE_CHANNEL_B3_IMPLEMENTATION_CONTRACT.json"
 B3_ERRATA_PATH = ROOT / "evidence" / "go_agent" / "webrtc" / "FILE_CHANNEL_B3_CONTRACT_ERRATA.json"
@@ -477,18 +480,19 @@ def evaluate_b3_dimension(dim: Dict[str, Any], test_cache: Dict[str, Any], repo_
         if baseline_path.exists():
             bdata = json.loads(baseline_path.read_text(encoding="utf-8"))
             b_commit = bdata.get("closure_commit", "2a039510d7e5ae4ef3f067769b40660c705989ff")
+            git_root = repo_root.parent if Path(repo_root).name == "cleanroom_archive" else repo_root
             with tempfile.TemporaryDirectory() as tmp_b3:
                 temp_b3_pkg = Path(tmp_b3) / "pkg"
                 temp_b3_pkg.mkdir(parents=True, exist_ok=True)
                 tree_proc = subprocess.run(["git", "ls-tree", "-r", "--name-only", b_commit, "reconstructed_source/cloudphone-agent/pkg"],
-                                           cwd=str(repo_root), capture_output=True, text=True)
+                                           cwd=str(git_root), capture_output=True, text=True)
                 for fpath in tree_proc.stdout.splitlines():
                     if not fpath.endswith(".go"):
                         continue
                     rel = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
                     target = temp_b3_pkg / rel
                     target.parent.mkdir(parents=True, exist_ok=True)
-                    show_proc = subprocess.run(["git", "show", f"{b_commit}:{fpath}"], cwd=str(repo_root), capture_output=True)
+                    show_proc = subprocess.run(["git", "show", f"{b_commit}:{fpath}"], cwd=str(git_root), capture_output=True)
                     target.write_bytes(show_proc.stdout)
                 violations = scan_deferred_channels_isolation(temp_b3_pkg, phase="B3")
         else:

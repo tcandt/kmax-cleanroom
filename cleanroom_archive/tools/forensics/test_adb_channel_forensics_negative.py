@@ -13,8 +13,11 @@ import sys
 import tempfile
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(REPO_ROOT))
+ARCHIVE_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ARCHIVE_ROOT))
+
+from tools.forensics.pclntab_parser import get_repo_root
+REPO_ROOT = get_repo_root()
 
 from tools.forensics.adb_channel.validate_adb_channel_semantics import validate_adb_channel_semantics
 from tools.forensics.adb_channel.derive_adb_channel_protocol import derive_adb_channel_artifacts

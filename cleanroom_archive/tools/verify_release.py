@@ -29,10 +29,35 @@ import sys
 import json
 import subprocess
 import argparse
+import contextlib
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
+
+from tools.forensics.pclntab_parser import get_repo_root
+REPO_ROOT = get_repo_root()
+
+@contextlib.contextmanager
+def temporary_legacy_link(git_root, archive_root, name="cloudphone-v0.3.6 (1)"):
+    link_path = git_root / name
+    target_path = archive_root / name
+    created = False
+    if not link_path.exists() and target_path.exists():
+        try:
+            subprocess.run(["cmd", "/c", "mklink", "/J", str(link_path), str(target_path)],
+                           capture_output=True, check=True)
+            created = True
+        except Exception:
+            pass
+    try:
+        yield
+    finally:
+        if created and link_path.exists():
+            try:
+                os.rmdir(link_path)
+            except Exception:
+                pass
 
 from tools.audit.b2_common import evaluate_go_test_events
 
@@ -170,8 +195,11 @@ def execute_and_validate_webrtc_core_tests(repo_root=REPO_ROOT):
     Returns (valid: bool, issues: list).
     """
     target_dir = repo_root / "reconstructed_source" / "cloudphone-agent"
-    res = subprocess.run(["go", "test", "-v", "-json", "-count=1", "./..."],
-                         cwd=str(target_dir), capture_output=True, text=True)
+    git_root = repo_root.parent if repo_root.name == "cleanroom_archive" else repo_root
+    archive_dir = getattr(repo_root, "archive_root", repo_root)
+    with temporary_legacy_link(git_root, archive_dir):
+        res = subprocess.run(["go", "test", "-v", "-json", "-count=1", "./..."],
+                             cwd=str(target_dir), capture_output=True, text=True)
     if res.returncode != 0:
         return False, [f"go test -json failed with exit code {res.returncode}"]
 

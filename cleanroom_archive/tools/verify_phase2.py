@@ -9,6 +9,7 @@ import capstone
 import shutil
 import copy
 import subprocess
+import contextlib
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -16,6 +17,28 @@ sys.path.insert(0, str(REPO_ROOT))
 from tools.forensics.pclntab_parser import get_repo_root, parse_elf_sections, parse_pclntab
 
 ROOT = get_repo_root()
+GIT_ROOT = ROOT.parent if ROOT.name == "cleanroom_archive" else ROOT
+
+@contextlib.contextmanager
+def temporary_legacy_link(git_root, archive_root, name="cloudphone-v0.3.6 (1)"):
+    link_path = git_root / name
+    target_path = archive_root / name
+    created = False
+    if not link_path.exists() and target_path.exists():
+        try:
+            subprocess.run(["cmd", "/c", "mklink", "/J", str(link_path), str(target_path)],
+                           capture_output=True, check=True)
+            created = True
+        except Exception:
+            pass
+    try:
+        yield
+    finally:
+        if created and link_path.exists():
+            try:
+                os.rmdir(link_path)
+            except Exception:
+                pass
 
 EXPECTED_HASHES = {
     "cloudphone-v0.3.6 (1)/bin/linux_amd64/webrtc-signaling": "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3",
@@ -3137,9 +3160,11 @@ def verify_all():
                  "go build ./... in reconstructed_source/cloudphone-agent compiles cleanly with zero errors")
 
     # 20.3 Agent Go WebRTC Core Unit, Integration, and E2E Tests (Exact JSON Event Attribution)
-    agent_test_res = subprocess.run(["go", "test", "-v", "-json", "-count=1", "./..."],
-                                    cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
-                                    capture_output=True, text=True)
+    archive_dir = getattr(ROOT, "archive_root", ROOT)
+    with temporary_legacy_link(GIT_ROOT, archive_dir):
+        agent_test_res = subprocess.run(["go", "test", "-v", "-json", "-count=1", "./..."],
+                                        cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
+                                        capture_output=True, text=True)
     events = []
     test_stdout_combined = ""
     for line in agent_test_res.stdout.splitlines():
@@ -3258,7 +3283,7 @@ def verify_all():
                 prod_frozen_failures.append(f"B2 baseline commit pinned mismatch: expected c84d34aac31333298f45e2f66930bf05d8b20756, got {b2_commit}")
             else:
                 for rel_p, exp_h in b2_bdata.get("production_files", {}).items():
-                    show_res = subprocess.run(["git", "show", f"{b2_commit}:{rel_p}"], cwd=str(ROOT), capture_output=True)
+                    show_res = subprocess.run(["git", "show", f"{b2_commit}:{rel_p}"], cwd=str(GIT_ROOT), capture_output=True)
                     if show_res.returncode != 0:
                         prod_frozen_passed = False
                         prod_frozen_failures.append(f"{rel_p} missing in historical commit {b2_commit[:8]}")
@@ -3318,7 +3343,7 @@ def verify_all():
             # Materialize all Go files under pkg in historical B2 commit
             ls_res = subprocess.run(
                 ["git", "ls-tree", "-r", "--name-only", b2_commit, "reconstructed_source/cloudphone-agent/pkg"],
-                cwd=str(ROOT), capture_output=True, text=True
+                cwd=str(GIT_ROOT), capture_output=True, text=True
             )
             for fpath in ls_res.stdout.splitlines():
                 fpath = fpath.strip()
@@ -3327,7 +3352,7 @@ def verify_all():
                 rel_in_pkg = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
                 target_file = temp_b2_pkg / rel_in_pkg
                 target_file.parent.mkdir(parents=True, exist_ok=True)
-                show_f = subprocess.run(["git", "show", f"{b2_commit}:{fpath}"], cwd=str(ROOT), capture_output=True)
+                show_f = subprocess.run(["git", "show", f"{b2_commit}:{fpath}"], cwd=str(GIT_ROOT), capture_output=True)
                 target_file.write_bytes(show_f.stdout)
 
             b2_violations = scan_deferred_channels_isolation(temp_b2_pkg, phase="B2")
@@ -3815,7 +3840,7 @@ def verify_all():
             else:
                 b3_mismatches = []
                 for rel_p, exp_h in b3_bdata.get("production_files", {}).items():
-                    show_res = subprocess.run(["git", "show", f"{b3_commit}:{rel_p}"], cwd=str(ROOT), capture_output=True)
+                    show_res = subprocess.run(["git", "show", f"{b3_commit}:{rel_p}"], cwd=str(GIT_ROOT), capture_output=True)
                     if show_res.returncode != 0:
                         b3_mismatches.append(f"{rel_p} missing in historical commit {b3_commit[:8]}")
                         continue
@@ -3855,7 +3880,7 @@ def verify_all():
             # Materialize all Go files under pkg in historical B3 commit
             ls_res_b3 = subprocess.run(
                 ["git", "ls-tree", "-r", "--name-only", b3_commit, "reconstructed_source/cloudphone-agent/pkg"],
-                cwd=str(ROOT), capture_output=True, text=True
+                cwd=str(GIT_ROOT), capture_output=True, text=True
             )
             for fpath in ls_res_b3.stdout.splitlines():
                 fpath = fpath.strip()
@@ -3864,7 +3889,7 @@ def verify_all():
                 rel_in_pkg = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
                 target_file = temp_b3_pkg / rel_in_pkg
                 target_file.parent.mkdir(parents=True, exist_ok=True)
-                show_f = subprocess.run(["git", "show", f"{b3_commit}:{fpath}"], cwd=str(ROOT), capture_output=True)
+                show_f = subprocess.run(["git", "show", f"{b3_commit}:{fpath}"], cwd=str(GIT_ROOT), capture_output=True)
                 target_file.write_bytes(show_f.stdout)
 
             b3_violations = scan_deferred_channels_isolation(temp_b3_pkg, phase="B3")
@@ -4370,14 +4395,14 @@ def verify_all():
             temp_b4_pkg = Path(tmp_b4) / "pkg"
             temp_b4_pkg.mkdir(parents=True, exist_ok=True)
             tree_proc = subprocess.run(["git", "ls-tree", "-r", "--name-only", b4_hist_commit, "reconstructed_source/cloudphone-agent/pkg"],
-                                       cwd=str(ROOT), capture_output=True, text=True)
+                                       cwd=str(GIT_ROOT), capture_output=True, text=True)
             for fpath in tree_proc.stdout.splitlines():
                 if not fpath.endswith(".go"):
                     continue
                 rel = Path(fpath).relative_to("reconstructed_source/cloudphone-agent/pkg")
                 target = temp_b4_pkg / rel
                 target.parent.mkdir(parents=True, exist_ok=True)
-                show_proc = subprocess.run(["git", "show", f"{b4_hist_commit}:{fpath}"], cwd=str(ROOT), capture_output=True)
+                show_proc = subprocess.run(["git", "show", f"{b4_hist_commit}:{fpath}"], cwd=str(GIT_ROOT), capture_output=True)
                 target.write_bytes(show_proc.stdout)
             violations = scan_deferred_channels_isolation(temp_b4_pkg, phase="B4")
 
@@ -4412,7 +4437,7 @@ def verify_all():
                 b4_mismatches = []
                 for rel_p, exp_h in b4_files.items():
                     # Check Commit A blob via git show
-                    show_res = subprocess.run(["git", "show", f"{expected_b4_commit}:{rel_p}"], cwd=str(ROOT), capture_output=True)
+                    show_res = subprocess.run(["git", "show", f"{expected_b4_commit}:{rel_p}"], cwd=str(GIT_ROOT), capture_output=True)
                     if show_res.returncode != 0:
                         b4_mismatches.append(f"{rel_p} missing in Commit A {expected_b4_commit[:8]}")
                         continue
@@ -4457,7 +4482,7 @@ def verify_all():
             if len(fls) != 9:
                 return False
             for p, eh in fls.items():
-                s_res = subprocess.run(["git", "show", f"{expected_b4_commit}:{p}"], cwd=str(ROOT), capture_output=True)
+                s_res = subprocess.run(["git", "show", f"{expected_b4_commit}:{p}"], cwd=str(GIT_ROOT), capture_output=True)
                 if s_res.returncode != 0 or hashlib.sha256(s_res.stdout).hexdigest() != eh:
                     return False
             return True
@@ -4468,7 +4493,7 @@ def verify_all():
                 return False
             fls = m_data.get("production_files", {})
             for p, eh in fls.items():
-                s_res = subprocess.run(["git", "show", f"{exp_c}:{p}"], cwd=str(ROOT), capture_output=True)
+                s_res = subprocess.run(["git", "show", f"{exp_c}:{p}"], cwd=str(GIT_ROOT), capture_output=True)
                 if s_res.returncode != 0 or hashlib.sha256(s_res.stdout).hexdigest() != eh:
                     return False
             return True
@@ -4790,7 +4815,7 @@ def verify_all():
 
     # 27. Master Verifier Non-Mutating Audit Invariant (Working Tree Cleanliness)
     # Executed strictly AFTER all verifier side effects and report writes
-    git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
+    git_res = subprocess.run(["git", "status", "--porcelain"], cwd=str(GIT_ROOT), capture_output=True, text=True)
     is_clean = (git_res.returncode == 0) and (git_res.stdout.strip() == "")
     allow_dirty = "--allow-dirty" in sys.argv
     clean_tree = is_clean or allow_dirty

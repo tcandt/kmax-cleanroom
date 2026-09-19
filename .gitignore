@@ -10,6 +10,9 @@ Desktop.ini
 scratch/
 tmp/
 *.tmp
+cleanroom_archive/local_only/
+cleanroom_archive/scratch/
+cleanroom_archive/tmp/
 
 # Transient Build & Runtime Logs
 build/*
@@ -17,6 +20,11 @@ build/*
 logs/*
 !logs/.gitkeep
 !logs/README.md
+cleanroom_archive/build/*
+!cleanroom_archive/build/.gitkeep
+cleanroom_archive/logs/*
+!cleanroom_archive/logs/.gitkeep
+!cleanroom_archive/logs/README.md
 
 # Dependencies if built locally
 node_modules/
@@ -28,4 +36,5 @@ __pycache__/
 *.exe
 *-linux
 storage-tool*
+
 

@@ -60,40 +60,32 @@ Full forensic analysis is available in [reports/00_INVENTORY.md](reports/00_INVE
 ## 4. Repository Structure
 
 ```text
-D:\KMAX-CLEANROOM\
-├── README.md                       # Project overview & roadmap
-├── RULES.md                        # Strict clean-room rules
-├── CLEANROOM_AUDIT_LOG.md          # Comprehensive audit trail
-├── .gitmodules                     # Submodule definition for ScrcpyOverWebRTC
+KMAX-CLEANROOM/
+├── cleanroom_archive/              # Consolidated forensic archive & audit toolchain
+│   ├── cloudphone-v0.3.6 (1)/      # Original binaries and release distribution
+│   ├── cloudphone-agent-magisk-v0.3.6 (1)/ # Original Magisk module package
+│   ├── original_snapshot/          # Original unpacked artifacts snapshot
+│   ├── raw_extraction/             # Raw extraction outputs (DEX/APK/disassembly)
+│   ├── tools/                      # Forensic derivation engines & verification tools
+│   ├── evidence/                   # Frozen forensic evidence & contracts
+│   ├── reports/                    # Milestone audit & attestation reports
+│   ├── tests/                      # Negative mutations & forensic unit tests
+│   ├── build/                      # Build scaffolding
+│   ├── logs/                       # Audit & verification execution logs
+│   ├── requirements-forensics.txt  # Forensic Python environment dependencies
+│   ├── CLEANROOM_AUDIT_LOG.md      # Comprehensive audit trail
+│   ├── RULES.md                    # Clean-room governance & operational rules
+│   └── walkthrough.md              # Historical verification walkthroughs
 │
-├── evidence/                       # Forensic evidence archive
-│   ├── hashes/                     # SHA256 and MD5 checksum tables
-│   ├── metadata/                   # Binary headers and build metadata
-│   ├── strings/                    # Extracted string tables
-│   ├── symbols/                    # Recovered symbol maps
-│   ├── callgraphs/                 # Call tree reconstructions
-│   ├── protocol/                   # Protocol specifications
-│   ├── ARTIFACT_MANIFEST.json      # Structured manifest
-│   └── ARTIFACT_MANIFEST.md        # Formatted manifest
-│
-├── raw_extraction/                 # Immutable extraction outputs
-│   ├── android/                    # JADX, apktool, smali outputs
-│   ├── go_signaling/               # Extracted signaling structures
-│   ├── go_agent/                   # Extracted agent structures
-│   ├── native/                     # Native symbol & header dumps
-│   └── web/                        # Beautified web code
-│
-├── reconstructed_source/           # Clean reconstructed source
-│   ├── webrtc-signaling/           # Go WebRTC signaling server
-│   ├── cloudphone-agent/           # Go device agent daemon
-│   ├── android-helper/             # Android Scrcpy helper service
+├── reconstructed_source/           # Full clean-room reconstructed production source
 │   ├── android-app/                # Android companion application
-│   └── web-app/                    # Vue 3 management console
+│   ├── android-helper/             # Android Scrcpy helper service
+│   ├── cloudphone-agent/           # Go device agent daemon
+│   ├── web-app/                    # Vue 3 management console
+│   └── webrtc-signaling/           # Go WebRTC signaling server
 │
-├── tests/                          # Automated parity & behavioral tests
-├── reports/                        # Milestone forensic reports
-├── build/                          # Independent build workspace
-└── logs/                           # Runtime & verification logs
+├── README.md                       # Repository entry point & orientation
+└── .gitignore                      # Git ignore rules
 ```
 
 ---

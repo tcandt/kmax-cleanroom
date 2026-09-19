@@ -36,6 +36,10 @@ from pathlib import Path
 from collections import defaultdict
 
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(DEFAULT_REPO_ROOT))
+
+from tools.forensics.pclntab_parser import get_repo_root
+DEFAULT_REPO_ROOT = get_repo_root()
 
 VALID_CLASSIFICATIONS = {
     "RECONSTRUCTED_FROM_BINARY",
@@ -101,6 +105,13 @@ def structural_symbol_exists(data, symbol):
     return False
 
 def validate_entry(entry, repo_root, rules_set, json_cache):
+    archive_root = Path(repo_root).resolve()
+    if archive_root.name == "cleanroom_archive":
+        project_root = archive_root.parent
+    else:
+        project_root = archive_root
+        archive_root = project_root / "cleanroom_archive" if (project_root / "cleanroom_archive").exists() else project_root
+
     cls = entry.get("provenance_class")
     if cls not in VALID_CLASSIFICATIONS:
         return False, f"Invalid classification: {cls}"
@@ -113,7 +124,7 @@ def validate_entry(entry, repo_root, rules_set, json_cache):
     if not art:
         return False, "Missing supporting_artifact"
     
-    art_path = repo_root / art
+    art_path = archive_root / art if (archive_root / art).exists() else project_root / art
     if not art_path.exists():
         return False, f"Artifact file does not exist: {art}"
     
@@ -123,7 +134,8 @@ def validate_entry(entry, repo_root, rules_set, json_cache):
     
     def get_json(p_rel):
         if p_rel not in json_cache:
-            json_cache[p_rel] = json.loads((repo_root / p_rel).read_text(encoding="utf-8"))
+            target = archive_root / p_rel if (archive_root / p_rel).exists() else project_root / p_rel
+            json_cache[p_rel] = json.loads(target.read_text(encoding="utf-8"))
         return json_cache[p_rel]
     
     if loc_type == "PHASE_RULE":
@@ -175,13 +187,21 @@ def validate_entry(entry, repo_root, rules_set, json_cache):
     return False, f"Unknown check for {loc_type}"
 
 def audit_all_production_functions(repo_root=DEFAULT_REPO_ROOT, check_mode=False):
+    archive_root = Path(repo_root).resolve()
+    if archive_root.name == "cleanroom_archive":
+        project_root = archive_root.parent
+    else:
+        project_root = archive_root
+        archive_root = project_root / "cleanroom_archive" if (project_root / "cleanroom_archive").exists() else project_root
+
     print("=" * 60)
     print("MASTER RECONSTRUCTED SOURCE PROVENANCE AUDIT (PHASE 3AR)")
-    print(f"Repository Root: {repo_root}")
+    print(f"Project Root: {project_root}")
+    print(f"Archive Root: {archive_root}")
     print("=" * 60)
 
-    src_root = repo_root / "reconstructed_source"
-    rules_path = repo_root / "evidence" / "final" / "PROVENANCE_RULES.json"
+    src_root = project_root / "reconstructed_source"
+    rules_path = archive_root / "evidence" / "final" / "PROVENANCE_RULES.json"
     if not rules_path.exists():
         print(f"[FAIL] Missing PROVENANCE_RULES.json at {rules_path}")
         return False
@@ -189,7 +209,7 @@ def audit_all_production_functions(repo_root=DEFAULT_REPO_ROOT, check_mode=False
     rules_data = json.loads(rules_path.read_text(encoding="utf-8"))
     valid_phase_rules = set(rules_data.get("rules", {}).keys())
 
-    fmap_path = repo_root / "evidence" / "go_signaling" / "FUNCTION_MAP.json"
+    fmap_path = archive_root / "evidence" / "go_signaling" / "FUNCTION_MAP.json"
     fmap_symbols = set()
     if fmap_path.exists():
         fmap_data = json.loads(fmap_path.read_text(encoding="utf-8"))
@@ -206,7 +226,7 @@ def audit_all_production_functions(repo_root=DEFAULT_REPO_ROOT, check_mode=False
             if not fname.endswith(".go") or fname.endswith("_test.go"):
                 continue
             fpath = Path(root_dir) / fname
-            rel_path = fpath.relative_to(repo_root).as_posix()
+            rel_path = fpath.relative_to(project_root).as_posix()
             lines = fpath.read_text(encoding="utf-8").splitlines()
             funcs = get_function_decl_from_lines(lines)
 
@@ -719,7 +739,7 @@ def audit_all_production_functions(repo_root=DEFAULT_REPO_ROOT, check_mode=False
         print(f"  - {cls:36}: {counts_by_class[cls]:3d}")
     print(f"  - {'UNKNOWN':36}: {counts_by_class['UNKNOWN']:3d}")
 
-    out_file = repo_root / "evidence" / "final" / "RECONSTRUCTED_SOURCE_PROVENANCE_FINAL.json"
+    out_file = archive_root / "evidence" / "final" / "RECONSTRUCTED_SOURCE_PROVENANCE_FINAL.json"
     manifest = {
         "metadata": {
             "title": "Final Reconstructed Source Provenance Manifest",
@@ -736,17 +756,31 @@ def audit_all_production_functions(repo_root=DEFAULT_REPO_ROOT, check_mode=False
 
     if check_mode:
         if not out_file.exists():
-            print(f"\n[FAIL] Check mode failed: {out_file.relative_to(repo_root)} does not exist!")
+            print(f"\n[FAIL] Check mode failed: {out_file.relative_to(archive_root)} does not exist!")
             return False
         existing = json.loads(out_file.read_text(encoding="utf-8"))
         if existing != manifest:
-            print(f"\n[FAIL] Check mode failed: current provenance does not match {out_file.relative_to(repo_root)}!")
+            print(f"\n[FAIL] Check mode failed: current provenance does not match {out_file.relative_to(archive_root)}!")
+            for k in manifest:
+                if manifest[k] != existing.get(k):
+                    print(f"Diff in key: {k}")
+                    if k == 'metadata':
+                        print("Manifest metadata:", manifest[k])
+                        print("Existing metadata:", existing.get(k))
+                    if k == 'functions':
+                        print(f"len manifest: {len(manifest[k])}, len existing: {len(existing.get(k))}")
+                        for i in range(min(len(manifest[k]), len(existing.get(k, [])))):
+                            if manifest[k][i] != existing[k][i]:
+                                print(f"First diff at index {i}:")
+                                print("Manifest:", manifest[k][i])
+                                print("Existing:", existing[k][i])
+                                break
             return False
-        print(f"\n[+] Check mode verified: manifest matches on-disk {out_file.relative_to(repo_root)}")
+        print(f"\n[+] Check mode verified: manifest matches on-disk {out_file.relative_to(archive_root)}")
     else:
         out_file.parent.mkdir(parents=True, exist_ok=True)
         out_file.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-        print(f"\n[+] Manifest written to: {out_file.relative_to(repo_root)}")
+        print(f"\n[+] Manifest written to: {out_file.relative_to(archive_root)}")
 
     if counts_by_class["UNKNOWN"] > 0:
         print(f"\n[FAIL] Found {counts_by_class['UNKNOWN']} UNKNOWN production functions!")

@@ -48,7 +48,10 @@ import subprocess
 from pathlib import Path
 import capstone
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+ARCHIVE_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ARCHIVE_ROOT))
+from tools.forensics.pclntab_parser import get_repo_root
+REPO_ROOT = get_repo_root()
 ELF_LINUX = REPO_ROOT / "cloudphone-v0.3.6 (1)" / "bin" / "linux_amd64" / "webrtc-signaling"
 EXE_WIN = REPO_ROOT / "cloudphone-v0.3.6 (1)" / "bin" / "windows_amd64" / "webrtc-signaling.exe"
 ASSETS = REPO_ROOT / "cloudphone-v0.3.6 (1)" / "assets"

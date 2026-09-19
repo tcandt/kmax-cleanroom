@@ -45,7 +45,8 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+from tools.forensics.pclntab_parser import get_repo_root
+REPO_ROOT = get_repo_root()
 
 ORIGINAL_EXE = REPO_ROOT / "cloudphone-v0.3.6 (1)" / "bin" / "windows_amd64" / "webrtc-signaling.exe"
 RECONSTRUCTED_EXE = REPO_ROOT / "reconstructed_source" / "webrtc-signaling" / "http-server.exe"

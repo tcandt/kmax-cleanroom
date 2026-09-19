@@ -12,7 +12,10 @@ import sys
 import json
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+ARCHIVE_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ARCHIVE_ROOT))
+from tools.forensics.pclntab_parser import get_repo_root
+REPO_ROOT = get_repo_root()
 EVIDENCE_DIR = REPO_ROOT / "evidence" / "go_signaling" / "license"
 OUTPUT_JSON = EVIDENCE_DIR / "LICENSE_FORENSIC_GATE_RESULT.json"
 

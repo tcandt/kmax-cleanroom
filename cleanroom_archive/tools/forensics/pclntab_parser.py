@@ -3,15 +3,29 @@ import sys
 import struct
 from pathlib import Path
 
+class ArchiveRoot(type(Path())):
+    """
+    Path resolver that transparently falls back to repo root for reconstructed_source
+    when tools run from within cleanroom_archive.
+    """
+    def __truediv__(self, other):
+        res = super().__truediv__(other)
+        other_str = str(other).replace('\\', '/')
+        if (other_str == 'reconstructed_source' or other_str.startswith('reconstructed_source/')) and not res.exists():
+            alt = self.parent / other
+            if alt.exists():
+                return alt
+        return res
+
 def get_repo_root() -> Path:
     env_root = os.environ.get("KMAX_CLEANROOM_ROOT")
     if env_root and Path(env_root).exists():
-        return Path(env_root).resolve()
+        return ArchiveRoot(Path(env_root).resolve())
     curr = Path(__file__).resolve()
     for parent in [curr] + list(curr.parents):
         if (parent / "RULES.md").exists() or (parent / "CLEANROOM_AUDIT_LOG.md").exists():
-            return parent
-    return Path.cwd().resolve()
+            return ArchiveRoot(parent)
+    return ArchiveRoot(Path.cwd().resolve())
 
 def parse_elf_sections(data: bytes):
     if len(data) < 64 or data[:4] != b"\x7fELF":

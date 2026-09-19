@@ -1,0 +1,31 @@
+{
+  "layout_version": "v2",
+  "date": "2026-09-19",
+  "pre_layout_commit": "3de4e96e07da4a3a9dcd0c3593acf9fb41fabd29",
+  "release_tag": "cleanroom-v1.0.0",
+  "release_commit": "4ee87c6db0b201375dc9795e812072dd9f2f71da",
+  "frozen_source_tree": "734997b044e8f492e5b2978ba4f634975cc14306",
+  "production_source_changed": false,
+  "top_level_layout": [
+    "reconstructed_source/",
+    "cleanroom_archive/",
+    "README.md",
+    ".gitignore"
+  ],
+  "moves": [
+    { "old": "cloudphone-v0.3.6 (1)/", "new": "cleanroom_archive/cloudphone-v0.3.6 (1)/" },
+    { "old": "cloudphone-agent-magisk-v0.3.6 (1)/", "new": "cleanroom_archive/cloudphone-agent-magisk-v0.3.6 (1)/" },
+    { "old": "original_snapshot/", "new": "cleanroom_archive/original_snapshot/" },
+    { "old": "raw_extraction/", "new": "cleanroom_archive/raw_extraction/" },
+    { "old": "tools/", "new": "cleanroom_archive/tools/" },
+    { "old": "evidence/", "new": "cleanroom_archive/evidence/" },
+    { "old": "reports/", "new": "cleanroom_archive/reports/" },
+    { "old": "tests/", "new": "cleanroom_archive/tests/" },
+    { "old": "build/", "new": "cleanroom_archive/build/" },
+    { "old": "logs/", "new": "cleanroom_archive/logs/" },
+    { "old": "requirements-forensics.txt", "new": "cleanroom_archive/requirements-forensics.txt" },
+    { "old": "CLEANROOM_AUDIT_LOG.md", "new": "cleanroom_archive/CLEANROOM_AUDIT_LOG.md" },
+    { "old": "RULES.md", "new": "cleanroom_archive/RULES.md" },
+    { "old": "walkthrough.md", "new": "cleanroom_archive/walkthrough.md" }
+  ]
+}

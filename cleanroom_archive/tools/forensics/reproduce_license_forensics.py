@@ -33,12 +33,13 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+ARCHIVE_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ARCHIVE_ROOT))
+from tools.forensics.pclntab_parser import get_repo_root
+REPO_ROOT = get_repo_root()
 ELF_LINUX = REPO_ROOT / "cloudphone-v0.3.6 (1)" / "bin" / "linux_amd64" / "webrtc-signaling"
 CANONICAL_SHA256 = "6865f05fe59838b71b91e9879d44c85a61b74c414b098b8d8763abbebba308c3"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "evidence" / "go_signaling" / "license"
-
-sys.path.insert(0, str(REPO_ROOT))
 
 from tools.forensics.generate_license_forensics import (
     generate_license_evidence,
