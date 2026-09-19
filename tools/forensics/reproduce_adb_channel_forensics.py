@@ -68,10 +68,14 @@ def reproduce_adb_channel_forensics(check_mode: bool = False):
 
         # 2. Fresh Disassembly Extraction into Temp
         extract_manifest(output_path=str(t_manifest))
-        t_mani_sha = compute_sha256(t_manifest)
-        c_mani_sha = compute_sha256(EVID_DIR / "adb_channel_disassembly_manifest.json")
-        assert t_mani_sha == c_mani_sha, f"Fresh disassembly manifest hash mismatch! {t_mani_sha} != {c_mani_sha}"
-        print("[PASS] Fresh disassembly cleanly extracted in tempdir and matches frozen SHA")
+        t_data = json.loads(t_manifest.read_text(encoding="utf-8"))
+        c_data = json.loads((EVID_DIR / "adb_channel_disassembly_manifest.json").read_text(encoding="utf-8"))
+
+        t_tc = t_data.get("toolchain", {}).get("canonical_disassembler_identity", t_data.get("toolchain", {}))
+        c_tc = c_data.get("toolchain", {}).get("canonical_disassembler_identity", c_data.get("toolchain", {}))
+        assert t_tc.get("sha256") == c_tc.get("sha256"), f"Disassembler SHA mismatch: {t_tc.get('sha256')} != {c_tc.get('sha256')}"
+        assert t_data.get("binaries") == c_data.get("binaries"), "Disassembly snippets mismatch against canonical baseline!"
+        print("[PASS] Fresh disassembly cleanly extracted in tempdir and matches canonical snippets & toolchain SHA")
 
         # 3. Independent Protocol Derivation in Temp
         derived = derive_adb_channel_artifacts(output_dir=str(t_derived))

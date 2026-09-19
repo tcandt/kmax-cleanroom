@@ -3136,16 +3136,41 @@ def verify_all():
     record_check("Phase 2C.5B1 Agent Go WebRTC Core Build Validation", agent_build_passed,
                  "go build ./... in reconstructed_source/cloudphone-agent compiles cleanly with zero errors")
 
-    # 20.3 Agent Go WebRTC Core Unit, Integration, and E2E Tests
-    agent_test_res = subprocess.run(["go", "test", "-v", "./..."],
+    # 20.3 Agent Go WebRTC Core Unit, Integration, and E2E Tests (Exact JSON Event Attribution)
+    agent_test_res = subprocess.run(["go", "test", "-v", "-json", "-count=1", "./..."],
                                     cwd=str(ROOT / "reconstructed_source" / "cloudphone-agent"),
                                     capture_output=True, text=True)
-    agent_test_passed = (agent_test_res.returncode == 0) and ("PASS" in agent_test_res.stdout) and ("NEGOTIATION_CONFIRMED" in agent_test_res.stdout) and ("MEDIA_DELIVERY_CONFIRMED" in agent_test_res.stdout)
+    events = []
+    test_stdout_combined = ""
+    for line in agent_test_res.stdout.splitlines():
+        line_s = line.strip()
+        if line_s.startswith("{") and line_s.endswith("}"):
+            try:
+                ev = json.loads(line_s)
+                events.append(ev)
+                if ev.get("Action") == "output" and ev.get("Output"):
+                    test_stdout_combined += ev["Output"]
+            except Exception:
+                pass
+
+    from tools.audit.b2_common import evaluate_go_test_events
+    mat_file = ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
+    required_cases = []
+    if mat_file.exists():
+        try:
+            m_data = json.loads(mat_file.read_text(encoding="utf-8"))
+            for lvl in m_data.get("levels", {}).values():
+                required_cases.extend(lvl.get("cases", []))
+        except Exception:
+            pass
+
+    eval_ok, eval_issues = evaluate_go_test_events(events, required_cases=required_cases)
+    agent_test_passed = (agent_test_res.returncode == 0) and eval_ok and ("NEGOTIATION_CONFIRMED" in test_stdout_combined) and ("MEDIA_DELIVERY_CONFIRMED" in test_stdout_combined)
     record_check("Phase 2C.5B1 Agent WebRTC Core Unit, Integration, and Real E2E Tests", agent_test_passed,
-                 "go test ./... in cloudphone-agent passes all 18 test cases with verified NEGOTIATION_CONFIRMED and MEDIA_DELIVERY_CONFIRMED")
+                 f"go test -json ./... in cloudphone-agent: {eval_issues[0] if eval_issues else f'All {len(required_cases)} required test cases verified with Action=pass, NEGOTIATION_CONFIRMED, and MEDIA_DELIVERY_CONFIRMED'}")
 
     # 20.4 Level C Original Signaling Oracle Compatibility
-    oracle_compat_passed = (agent_test_res.returncode == 0) and ("EXACT_PROTOCOL_PARITY: Reconstructed Agent successfully negotiated PeerConnection via Original Oracle" in agent_test_res.stdout)
+    oracle_compat_passed = (agent_test_res.returncode == 0) and ("EXACT_PROTOCOL_PARITY: Reconstructed Agent successfully negotiated PeerConnection via Original Oracle" in test_stdout_combined)
     record_check("Phase 2C.5B1 Level C Original Signaling Oracle Compatibility", oracle_compat_passed,
                  "Reconstructed Agent negotiates PeerConnection via authentic original Windows binary oracle (SHA256 verified)")
 
@@ -3319,9 +3344,9 @@ def verify_all():
     # 21.3 Input & Clipboard Real SCTP DataChannel E2E Parity
     sctp_dc_passed = (
         agent_test_res.returncode == 0 and
-        "input-channel SCTP E2E: Browser JSON -> Agent -> ControlSink verified with exact 32-byte scrcpy frame" in agent_test_res.stdout and
-        "clipboard-channel set_clipboard SCTP E2E verified in ClipboardProvider" in agent_test_res.stdout and
-        "clipboard-channel get_clipboard SCTP E2E verified: Agent -> Browser response confirmed" in agent_test_res.stdout
+        "input-channel SCTP E2E: Browser JSON -> Agent -> ControlSink verified with exact 32-byte scrcpy frame" in test_stdout_combined and
+        "clipboard-channel set_clipboard SCTP E2E verified in ClipboardProvider" in test_stdout_combined and
+        "clipboard-channel get_clipboard SCTP E2E verified: Agent -> Browser response confirmed" in test_stdout_combined
     )
     record_check("Phase 2C.5B2 Input & Clipboard Real SCTP DataChannel E2E Parity", sctp_dc_passed,
                  "Real SCTP E2E verified for input-channel (32-byte scrcpy frame), set_clipboard, and get_clipboard response")
@@ -3908,7 +3933,7 @@ def verify_all():
     # 22.3 Real SCTP File-Channel DataChannel E2E Parity
     sctp_file_passed = (
         agent_test_res.returncode == 0 and
-        "file-channel real SCTP E2E: metadata JSON frame -> production coordinator file handler -> binary chunks -> FileSink -> exact reconstructed payload -> clean completion" in agent_test_res.stdout
+        "file-channel real SCTP E2E: metadata JSON frame -> production coordinator file handler -> binary chunks -> FileSink -> exact reconstructed payload -> clean completion" in test_stdout_combined
     )
     record_check("Phase 2C.5B3 File-Channel Real SCTP DataChannel E2E Parity", sctp_file_passed,
                  "Real SCTP E2E verified for file-channel (text metadata -> production coordinator file handler -> binary chunks -> FileSink -> exact byte reconstruction)")
@@ -3916,7 +3941,7 @@ def verify_all():
     # 22.3b Negative Wiring Mutation Test Invariant
     neg_wiring_passed = (
         agent_test_res.returncode == 0 and
-        "Unwired Coordinator correctly leaves file-channel unhandled with 0 side-effects" in agent_test_res.stdout
+        "Unwired Coordinator correctly leaves file-channel unhandled with 0 side-effects" in test_stdout_combined
     )
     record_check("Phase 2C.5B3 Production Wiring Negative Test Invariant", neg_wiring_passed,
                  "Mutation test confirms unwired Coordinator leaves inbound file-channel inert (0 side-effects, transfer aborted)")
@@ -3924,7 +3949,7 @@ def verify_all():
     # 22.3c Strict Text/Binary Framing Invariant
     strict_framing_passed = (
         agent_test_res.returncode == 0 and
-        "TestFileChannelStrictFraming" in agent_test_res.stdout
+        "TestFileChannelStrictFraming" in test_stdout_combined
     )
     record_check("Phase 2C.5B3 Strict Text/Binary SCTP Framing Invariant", strict_framing_passed,
                  "Strict framing enforced: text metadata JSON only in IDLE, raw binary chunks only in RECEIVING; cross-framing rejected")
@@ -3932,7 +3957,7 @@ def verify_all():
     # 22.4 File-Channel Path Traversal Security & Defensiveness
     path_sec_passed = (
         agent_test_res.returncode == 0 and
-        "TestPathSanitizationDefensive" in agent_test_res.stdout
+        "TestPathSanitizationDefensive" in test_stdout_combined
     )
     record_check("Phase 2C.5B3 File-Channel Path Traversal Security & Defensiveness", path_sec_passed,
                  "Unit test suite confirms 15 path traversal vectors rejected/sanitized; zero host filesystem leakage")

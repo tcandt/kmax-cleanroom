@@ -34,6 +34,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
+from tools.audit.b2_common import evaluate_go_test_events
+
 def run_step(gate_number, gate_name, cmd, cwd=REPO_ROOT):
     print(f"\n>> [GATE {gate_number}/11] RUNNING: {gate_name}...")
     sys.stdout.flush()
@@ -154,28 +156,105 @@ def validate_mapped_test_matrix(matrix_path, required_test_ids=None):
         print(f"[FAIL] validate_mapped_test_matrix failed: {issues}")
     return is_valid, issues
 
-def validate_test_attribution(test_results_or_path, mandatory_test_ids=None):
+def execute_and_validate_webrtc_core_tests(repo_root=REPO_ROOT):
     """
-    Validates test execution evidence for conclusive attribution:
-    - Strictly rejects any non-PASS status (e.g. SKIP, SKIPPED, UNATTRIBUTED, TODO, FAIL)
-    - If mandatory_test_ids provided, ensures all are represented and passed
+    Executes `go test -json -count=1 ./...` in reconstructed_source/cloudphone-agent.
+    Extracts Go test events, binds 18/18 cases from WEBRTC_CORE_TEST_MATRIX.json,
+    and invokes evaluate_go_test_events to enforce:
+    - process returncode == 0
+    - test name exists
+    - Action == 'pass' (never 'skip')
+    - package Action == 'pass'
+    - NEGOTIATION_CONFIRMED and MEDIA_DELIVERY_CONFIRMED present in output
     Returns (valid: bool, issues: list).
     """
-    if isinstance(test_results_or_path, (str, Path)):
-        p = Path(test_results_or_path)
+    target_dir = repo_root / "reconstructed_source" / "cloudphone-agent"
+    res = subprocess.run(["go", "test", "-v", "-json", "-count=1", "./..."],
+                         cwd=str(target_dir), capture_output=True, text=True)
+    if res.returncode != 0:
+        return False, [f"go test -json failed with exit code {res.returncode}"]
+
+    events = []
+    output_text = ""
+    for line in res.stdout.splitlines():
+        line_s = line.strip()
+        if line_s.startswith("{") and line_s.endswith("}"):
+            try:
+                ev = json.loads(line_s)
+                events.append(ev)
+                if ev.get("Action") == "output" and ev.get("Output"):
+                    output_text += ev["Output"]
+            except Exception:
+                pass
+
+    if "NEGOTIATION_CONFIRMED" not in output_text:
+        return False, ["Missing NEGOTIATION_CONFIRMED in WebRTC Core test execution output"]
+    if "MEDIA_DELIVERY_CONFIRMED" not in output_text:
+        return False, ["Missing MEDIA_DELIVERY_CONFIRMED in WebRTC Core test execution output"]
+
+    mat_p = repo_root / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
+    cases = []
+    if mat_p.exists():
+        try:
+            mdata = json.loads(mat_p.read_text(encoding="utf-8"))
+            for lvl in mdata.get("levels", {}).values():
+                cases.extend(lvl.get("cases", []))
+        except Exception:
+            pass
+
+    return evaluate_go_test_events(events, required_cases=cases)
+
+def validate_test_attribution(test_results_or_events_or_path, required_cases=None, mandatory_test_ids=None):
+    """
+    Validates machine-readable execution attribution for critical tests:
+    - If input is/contains Go test JSON events (dicts with 'Action' and 'Test'):
+      calls evaluate_go_test_events to enforce test existence, Action == 'pass', never skip, package pass.
+    - If input is raw output / file path: parses Go test JSON events or test matrix/results.
+    - Strictly rejects any non-PASS status (e.g. SKIP, SKIPPED, UNATTRIBUTED, TODO, FAIL)
+    - If mandatory_test_ids provided, ensures all are represented and passed.
+    Returns (valid: bool, issues: list).
+    """
+    if isinstance(test_results_or_events_or_path, list):
+        if test_results_or_events_or_path and isinstance(test_results_or_events_or_path[0], dict) and "Action" in test_results_or_events_or_path[0]:
+            return evaluate_go_test_events(test_results_or_events_or_path, required_cases=required_cases)
+        tests = test_results_or_events_or_path
+    elif isinstance(test_results_or_events_or_path, (str, Path)):
+        p = Path(test_results_or_events_or_path)
         if not p.exists():
             return False, [f"Test results file missing: {p}"]
+        text = p.read_text(encoding="utf-8")
+        events = []
+        is_event_stream = False
+        for line in text.splitlines():
+            line_s = line.strip()
+            if line_s.startswith("{") and line_s.endswith("}"):
+                try:
+                    ev = json.loads(line_s)
+                    if "Action" in ev:
+                        events.append(ev)
+                        is_event_stream = True
+                except Exception:
+                    pass
+        if is_event_stream and events:
+            return evaluate_go_test_events(events, required_cases=required_cases)
         try:
-            data = json.loads(p.read_text(encoding="utf-8"))
+            data = json.loads(text)
         except Exception as e:
             return False, [f"JSON parse error: {e}"]
-    else:
-        data = test_results_or_path
-
-    tests = []
-    if isinstance(data, list):
-        tests = data
-    elif isinstance(data, dict):
+        tests = []
+        if isinstance(data, list):
+            tests = data
+        elif isinstance(data, dict):
+            if "levels" in data:
+                for lvl in data["levels"].values():
+                    tests.extend(lvl.get("cases", []))
+            elif "tests" in data:
+                tests = data["tests"]
+            elif "test_cases" in data:
+                tests = data["test_cases"]
+    elif isinstance(test_results_or_events_or_path, dict):
+        data = test_results_or_events_or_path
+        tests = []
         if "levels" in data:
             for lvl in data["levels"].values():
                 tests.extend(lvl.get("cases", []))
@@ -183,6 +262,8 @@ def validate_test_attribution(test_results_or_path, mandatory_test_ids=None):
             tests = data["tests"]
         elif "test_cases" in data:
             tests = data["test_cases"]
+    else:
+        return False, ["Unsupported test results input type"]
 
     issues = []
     seen_ids = set()
@@ -205,6 +286,19 @@ def validate_test_attribution(test_results_or_path, mandatory_test_ids=None):
     if not is_valid:
         print(f"[FAIL] validate_test_attribution failed: {issues}")
     return is_valid, issues
+
+def verify_git_checkout_policy(repo_root=REPO_ROOT):
+    """
+    Verifies adherence to CANONICAL_LF_CHECKOUT_POLICY (core.autocrlf = false).
+    Guarantees byte-level cryptographic hash parity for frozen contracts and source trees.
+    """
+    res = subprocess.run(["git", "config", "core.autocrlf"], cwd=repo_root, capture_output=True, text=True)
+    val = res.stdout.strip().lower()
+    if val in ("true", "input"):
+        print(f"[FAIL] core.autocrlf is '{val}'. Canonical release policy strictly requires core.autocrlf=false!")
+        return False, [f"core.autocrlf is '{val}' (must be false)"]
+    print("[PASS] Canonical Git checkout policy verified (core.autocrlf=false).")
+    return True, []
 
 def verify_clean_clone_dependencies(repo_root=REPO_ROOT, candidate_paths=None, required_files=None):
     """
@@ -287,17 +381,18 @@ def main():
     if not run_step(1, "Phase 2 Master Verifier", phase2_cmd):
         return 1
 
-    # Gate 1 Sub-checks: Mapped Test Matrix & Conclusive Test Attribution
+    # Gate 1 Sub-checks: Mapped Test Matrix & Conclusive Execution Attribution
     mat_p = REPO_ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
     mat_ok, mat_issues = validate_mapped_test_matrix(mat_p)
     if not mat_ok:
         print(f"[FAIL] Gate 1 Sub-check (Mapped Test Matrix) failed: {mat_issues}")
         return 1
-    attr_ok, attr_issues = validate_test_attribution(mat_p)
-    if not attr_ok:
-        print(f"[FAIL] Gate 1 Sub-check (Test Attribution) failed: {attr_issues}")
+
+    exec_ok, exec_issues = execute_and_validate_webrtc_core_tests(repo_root=REPO_ROOT)
+    if not exec_ok:
+        print(f"[FAIL] Gate 1 Sub-check (WebRTC Core Execution Attribution) failed: {exec_issues}")
         return 1
-    print("[PASS] Gate 1 Sub-check: Mapped Test Matrix & Conclusive Attribution verified.")
+    print("[PASS] Gate 1 Sub-checks: Mapped Test Matrix & Conclusive Execution Attribution (18/18 tests Action=pass) verified.")
 
     # Gate 2: Final Reconstructed Source Provenance Audit
     if not run_step(2, "Reconstructed Source Provenance Audit", [sys.executable, "tools/audit/audit_reconstructed_source_provenance.py", "--check"]):
@@ -324,7 +419,13 @@ def main():
     if not deps_ok:
         print(f"[FAIL] Gate 6 Sub-check (Clean-Clone Dependencies) failed: {untracked}")
         return 1
-    print("[PASS] Gate 6 Sub-check: All canonical release assets tracked in Git with zero local dependencies.")
+
+    # Gate 6 Sub-check: Canonical Git Checkout Policy (core.autocrlf=false)
+    crlf_ok, crlf_issues = verify_git_checkout_policy(repo_root=REPO_ROOT)
+    if not crlf_ok:
+        print(f"[FAIL] Gate 6 Sub-check (Git Checkout Policy) failed: {crlf_issues}")
+        return 1
+    print("[PASS] Gate 6 Sub-check: All canonical release assets tracked in Git with zero local dependencies and canonical LF checkout policy confirmed.")
 
     # Gate 7: Cross-Phase Fact Matrix Semantic Invariant
     if not run_step(7, "Cross-Phase Fact Matrix Semantic Invariant", [sys.executable, "tools/audit/validate_phase3_cross_phase_matrix.py", "--check"]):

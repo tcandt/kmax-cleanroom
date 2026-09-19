@@ -49,11 +49,13 @@ from tools.audit.audit_reconstructed_source_provenance import (
     validate_entry,
     audit_all_production_functions
 )
+from tools.audit.b2_common import evaluate_go_test_events
 from tools.verify_release import (
     verify_clean_working_tree,
     validate_mapped_test_matrix,
     validate_test_attribution,
-    verify_clean_clone_dependencies
+    verify_clean_clone_dependencies,
+    verify_git_checkout_policy
 )
 
 def run_mutation_test(test_id, description, test_fn):
@@ -127,14 +129,15 @@ def test_mutation_04_missing_artifact_file():
     finally:
         os.unlink(temp_path)
 
-# 5. Missing required tool in toolchain manifest
-def test_mutation_05_missing_tool():
+# 5. Toolchain LLVM SHA mismatch against manifest policy
+def test_mutation_05_toolchain_binding_mismatch():
     with tempfile.TemporaryDirectory() as td:
         temp_root = Path(td)
         out_dir = temp_root / "evidence" / "final"
         out_dir.mkdir(parents=True, exist_ok=True)
         orig_manifest = json.loads((REPO_ROOT / "evidence" / "final" / "TOOLCHAIN_MANIFEST.json").read_text(encoding="utf-8"))
-        del orig_manifest["tools"]["go"]
+        # Tamper llvm_objdump sha256 to cause strict binding mismatch
+        orig_manifest["tools"]["llvm_objdump"]["sha256"] = "0" * 64
         (out_dir / "TOOLCHAIN_MANIFEST.json").write_text(json.dumps(orig_manifest), encoding="utf-8")
         res = audit_toolchain(repo_root=temp_root, check_mode=True)
         return res is False
@@ -260,42 +263,46 @@ def test_mutation_13_workstation_path_leak():
     finally:
         os.unlink(temp_path)
 
-# 14. Missing mapped critical test in test matrix
-def test_mutation_14_missing_mapped_critical_test():
-    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
-        mat_p = REPO_ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
-        data = json.loads(mat_p.read_text(encoding="utf-8"))
-        # Remove a critical required test case (TC-WTC-UNIT-01) from LEVEL_A_UNIT
-        if "levels" in data and "LEVEL_A_UNIT" in data["levels"]:
-            data["levels"]["LEVEL_A_UNIT"]["cases"] = [
-                c for c in data["levels"]["LEVEL_A_UNIT"].get("cases", [])
-                if c.get("id") != "TC-WTC-UNIT-01"
-            ]
-        tf.write(json.dumps(data))
-        temp_path = tf.name
-    try:
-        is_valid, issues = validate_mapped_test_matrix(matrix_path=temp_path)
-        return is_valid is False
-    finally:
-        os.unlink(temp_path)
+def _build_synthetic_go_test_events(cases, omitted_test=None, skipped_test=None):
+    events = []
+    packages = set()
+    for c in cases:
+        pkg = "cloudphone-agent/" + c["package"]
+        packages.add(pkg)
+        t_name = c["name"]
+        if t_name == omitted_test:
+            continue
+        events.append({"Action": "run", "Package": pkg, "Test": t_name})
+        if t_name == skipped_test:
+            events.append({"Action": "skip", "Package": pkg, "Test": t_name, "Elapsed": 0.01})
+        else:
+            events.append({"Action": "pass", "Package": pkg, "Test": t_name, "Elapsed": 0.05})
 
-# 15. Skipped critical test in execution results
-def test_mutation_15_skipped_critical_test():
-    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
-        mat_p = REPO_ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
-        data = json.loads(mat_p.read_text(encoding="utf-8"))
-        # Corrupt one test case with non-conclusive 'SKIP' status
-        if "levels" in data and "LEVEL_A_UNIT" in data["levels"]:
-            cases = data["levels"]["LEVEL_A_UNIT"].get("cases", [])
-            if cases:
-                cases[0]["status"] = "SKIP"
-        tf.write(json.dumps(data))
-        temp_path = tf.name
-    try:
-        is_valid, issues = validate_test_attribution(test_results_or_path=temp_path)
-        return is_valid is False
-    finally:
-        os.unlink(temp_path)
+    for pkg in packages:
+        events.append({"Action": "pass", "Package": pkg, "Elapsed": 0.2})
+    return events
+
+# 14. Missing required actual Go test in execution attribution
+def test_mutation_14_missing_actual_go_test():
+    mat_p = REPO_ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
+    data = json.loads(mat_p.read_text(encoding="utf-8"))
+    cases = []
+    for lvl in data.get("levels", {}).values():
+        cases.extend(lvl.get("cases", []))
+    events = _build_synthetic_go_test_events(cases, omitted_test="TestEvidenceBoundMediaEngine")
+    is_valid, issues = evaluate_go_test_events(events, required_cases=cases)
+    return is_valid is False
+
+# 15. Skipped actual Go test in execution attribution
+def test_mutation_15_skipped_actual_go_test():
+    mat_p = REPO_ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
+    data = json.loads(mat_p.read_text(encoding="utf-8"))
+    cases = []
+    for lvl in data.get("levels", {}).values():
+        cases.extend(lvl.get("cases", []))
+    events = _build_synthetic_go_test_events(cases, skipped_test="TestEvidenceBoundMediaEngine")
+    is_valid, issues = evaluate_go_test_events(events, required_cases=cases)
+    return is_valid is False
 
 # 16. Missing required formal errata
 def test_mutation_16_missing_required_errata():
@@ -342,22 +349,14 @@ def test_mutation_17_clean_clone_untracked_dependency():
         )
         return is_clean is False
 
-# 18. Wrong errata freeze commit or blob hash
-def test_mutation_18_wrong_errata_commit_hash():
-    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
-        reg_p = REPO_ROOT / "evidence" / "final" / "FROZEN_CONTRACT_REGISTRY.json"
-        data = json.loads(reg_p.read_text(encoding="utf-8"))
-        for c in data["contracts"]:
-            if c.get("errata_freeze_commit"):
-                c["errata_freeze_commit"] = "0" * 40
-                break
-        tf.write(json.dumps(data))
-        temp_path = tf.name
-    try:
-        res = audit_frozen_contracts(registry_path=temp_path, repo_root=REPO_ROOT, check_mode=True)
-        return res is False
-    finally:
-        os.unlink(temp_path)
+# 18. Line-ending checkout policy violation (core.autocrlf == true)
+def test_mutation_18_line_ending_policy_violation():
+    with tempfile.TemporaryDirectory() as td:
+        temp_repo = Path(td)
+        subprocess.run(["git", "init"], cwd=temp_repo, capture_output=True, check=True)
+        subprocess.run(["git", "config", "core.autocrlf", "true"], cwd=temp_repo, capture_output=True, check=True)
+        is_clean, issues = verify_git_checkout_policy(repo_root=temp_repo)
+        return is_clean is False
 
 def run_all_negative_tests():
     print("=" * 60)
@@ -369,7 +368,7 @@ def run_all_negative_tests():
         ("MUTATION-02", "Wrong historical baseline commit in registry", test_mutation_02_wrong_baseline_commit),
         ("MUTATION-03", "Tampered original artifact hash in manifest", test_mutation_03_tampered_artifact_hash),
         ("MUTATION-04", "Missing original artifact file from disk", test_mutation_04_missing_artifact_file),
-        ("MUTATION-05", "Missing required tool in toolchain manifest", test_mutation_05_missing_tool),
+        ("MUTATION-05", "Toolchain LLVM SHA mismatch against manifest policy", test_mutation_05_toolchain_binding_mismatch),
         ("MUTATION-06", "UNKNOWN production function in provenance auditor", test_mutation_06_unknown_production_function),
         ("MUTATION-07", "Invalid provenance locator / non-existent fact ID", test_mutation_07_invalid_provenance_locator),
         ("MUTATION-08", "Clean-room contamination injection (prohibited pattern)", test_mutation_08_contamination_injection),
@@ -378,11 +377,11 @@ def run_all_negative_tests():
         ("MUTATION-11", "Method count discrepancy in Android Helper DEX invariant", test_mutation_11_method_count_discrepancy),
         ("MUTATION-12", "Dirty working tree detection", test_mutation_12_dirty_working_tree),
         ("MUTATION-13", "Absolute workstation path dependency leak", test_mutation_13_workstation_path_leak),
-        ("MUTATION-14", "Missing mapped critical test in test matrix", test_mutation_14_missing_mapped_critical_test),
-        ("MUTATION-15", "Skipped critical test in execution results", test_mutation_15_skipped_critical_test),
+        ("MUTATION-14", "Missing required actual Go test in execution attribution", test_mutation_14_missing_actual_go_test),
+        ("MUTATION-15", "Skipped actual Go test in execution attribution", test_mutation_15_skipped_actual_go_test),
         ("MUTATION-16", "Missing required formal errata file for frozen contract", test_mutation_16_missing_required_errata),
         ("MUTATION-17", "Clean-clone dependency on untracked/local-only file", test_mutation_17_clean_clone_untracked_dependency),
-        ("MUTATION-18", "Wrong errata freeze commit or blob hash", test_mutation_18_wrong_errata_commit_hash),
+        ("MUTATION-18", "Line-ending checkout policy violation (core.autocrlf == true)", test_mutation_18_line_ending_policy_violation),
     ]
 
     passed_count = 0

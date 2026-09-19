@@ -275,6 +275,94 @@ def parse_go_test_json(stdout: str) -> Dict[str, Any]:
     }
 
 
+def evaluate_go_test_events(
+    events: List[Dict[str, Any]],
+    required_cases: Optional[List[Dict[str, Any]]] = None,
+    required_test_names: Optional[List[str]] = None
+) -> Tuple[bool, List[str]]:
+    """
+    Evaluates machine-readable events from `go test -json` against required test cases.
+    Enforces fail-closed requirements:
+    1. Zero test events -> FAIL ('no tests to run').
+    2. Every required test must exist in the execution stream.
+    3. Every required test must have final Action == 'pass'.
+    4. Action == 'skip' is strictly FORBIDDEN.
+    5. Test package must match expected package (if specified).
+    6. Enclosing package must achieve Action == 'pass'.
+    Returns (valid: bool, issues: List[str]).
+    """
+    issues = []
+    if not events:
+        return False, ["No tests to run: zero Go test events parsed from execution"]
+
+    test_records = {}       # name -> {"action": action, "package": pkg, "elapsed": ...}
+    package_actions = {}    # pkg -> final action
+
+    for ev in events:
+        if not isinstance(ev, dict):
+            continue
+        action = ev.get("Action")
+        test_name = ev.get("Test")
+        pkg = ev.get("Package", "")
+
+        if test_name:
+            if action in ("pass", "fail", "skip"):
+                test_records[test_name] = {
+                    "action": action,
+                    "package": pkg,
+                    "elapsed": ev.get("Elapsed", 0.0)
+                }
+        else:
+            if action in ("pass", "fail", "skip"):
+                package_actions[pkg] = action
+
+    if not test_records:
+        return False, ["No tests executed: test event stream contains zero executed tests"]
+
+    # Target test list
+    targets = []
+    if required_cases:
+        targets = required_cases
+    elif required_test_names:
+        targets = [{"name": n, "id": n} for n in required_test_names]
+    else:
+        # Default to all discovered tests
+        targets = [{"name": n, "id": n} for n in test_records.keys()]
+
+    for c in targets:
+        c_id = c.get("id", c.get("name", "UNKNOWN"))
+        c_name = c.get("name")
+        c_pkg = c.get("package")
+
+        if not c_name or c_name not in test_records:
+            issues.append(f"Required test '{c_name}' ({c_id}) missing from actual Go test execution stream")
+            continue
+
+        rec = test_records[c_name]
+        act = rec["action"]
+        act_pkg = rec["package"]
+
+        if act == "skip":
+            issues.append(f"Test '{c_name}' ({c_id}) was SKIPPED in actual execution (fail-closed release requirement: SKIP is forbidden)")
+        elif act != "pass":
+            issues.append(f"Test '{c_name}' ({c_id}) failed with action '{act}' in actual execution")
+
+        if c_pkg:
+            c_pkg_norm = c_pkg.replace("\\", "/").strip("/")
+            act_pkg_norm = act_pkg.replace("\\", "/").strip("/")
+            if not act_pkg_norm.endswith(c_pkg_norm):
+                issues.append(f"Test '{c_name}' ({c_id}) ran in unexpected package '{act_pkg}', expected '{c_pkg}'")
+
+        if act_pkg in package_actions:
+            if package_actions[act_pkg] != "pass":
+                issues.append(f"Enclosing package '{act_pkg}' for test '{c_name}' failed with package action '{package_actions[act_pkg]}'")
+        else:
+            issues.append(f"Enclosing package '{act_pkg}' for test '{c_name}' missing final package pass event")
+
+    is_valid = (len(issues) == 0)
+    return is_valid, issues
+
+
 def evaluate_android_runtime_prerequisites(repo_root: Optional[Path] = None) -> Dict[str, Any]:
     """
     Evaluates authentic Android runtime prerequisites dynamically.

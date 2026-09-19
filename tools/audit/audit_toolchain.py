@@ -42,9 +42,16 @@ PORTABILITY_AUDITED_FILES = [
     "tools/audit/audit_method_count.py",
     "tools/audit/validate_phase3_cross_phase_matrix.py",
     "tools/audit/audit_reconstructed_source_provenance.py",
+    "tools/audit/audit_cleanroom_contamination.py",
     "tools/forensics/camera/extract_camera_disassembly.py",
     "tools/forensics/adb_channel/extract_adb_channel_disassembly.py",
+    "tools/forensics/ai_command/extract_ai_command_disassembly.py",
     "tools/forensics/reproduce_adb_channel_forensics.py",
+    "tools/forensics/reproduce_ai_command_forensics.py",
+    "tools/forensics/reproduce_camera_forensics.py",
+    "tools/derive_b2_differential.py",
+    "tools/derive_b3_differential.py",
+    "tools/derive_b4_differential.py",
     "evidence/final/TOOLCHAIN_MANIFEST.json",
     "evidence/final/FROZEN_CONTRACT_REGISTRY.json",
     "evidence/final/PHASE3_CROSS_PHASE_FACT_MATRIX.json",
@@ -283,6 +290,15 @@ def audit_toolchain(repo_root=REPO_ROOT, check_mode=False):
                 "100% literal original source text recovery",
                 "100% comment recovery"
             ]
+        },
+        "git_checkout_policy": {
+            "policy_name": "CANONICAL_LF_CHECKOUT_POLICY",
+            "required_core_autocrlf": "false",
+            "rationale": "Enforces byte-exact LF line endings for cryptographic hash parity across frozen contract JSONs, reconstructed Go source code, and release reports.",
+            "clean_clone_setup_commands": [
+                "git config core.autocrlf false",
+                "git reset --hard HEAD"
+            ]
         }
     }
 
@@ -302,13 +318,55 @@ def audit_toolchain(repo_root=REPO_ROOT, check_mode=False):
                 print(f"[FAIL] Tool {req} has invalid version in manifest!")
                 return False
 
-        # Validate path portability across canonical tools and manifests
+        # 1. Compare actual discovered Python against minimum policy
+        if parse_version_tuple(py_ver) < (3, 10, 0):
+            print(f"[FAIL] Actual Python version {py_ver} < policy minimum 3.10.0")
+            return False
+
+        # 2. Compare actual discovered Go against minimum policy
+        if parse_version_tuple(go_ver) < (1, 22, 0):
+            print(f"[FAIL] Actual Go version {go_ver} < policy minimum 1.22.0")
+            return False
+
+        # 3. Compare actual discovered Git against minimum policy
+        if parse_version_tuple(git_ver) < (2, 30, 0):
+            print(f"[FAIL] Actual Git version {git_ver} < policy minimum 2.30.0")
+            return False
+
+        # 4. Strict binding: llvm-objdump actual SHA256 == manifest SHA256
+        manifest_llvm_sha = tools["llvm_objdump"].get("sha256")
+        if not manifest_llvm_sha:
+            print(f"[FAIL] Manifest missing sha256 for llvm_objdump!")
+            return False
+        if llvm_sha.lower() != manifest_llvm_sha.lower():
+            print(f"[FAIL] llvm-objdump runtime SHA mismatch: actual {llvm_sha} != manifest {manifest_llvm_sha}")
+            return False
+        if llvm_ver_clean == "Unknown":
+            print("[FAIL] llvm-objdump failed to report valid version!")
+            return False
+
+        # 5. Strict binding: CGO C compiler must be actually discovered
+        if not cc_path or not Path(cc_path).exists():
+            print("[FAIL] CGO C compiler not found on system (required for go test -race)!")
+            return False
+        if cc_ver == "Unknown":
+            print("[FAIL] CGO C compiler failed to report valid version!")
+            return False
+
+        # 6. Validate Canonical LF Git Checkout Policy (core.autocrlf = false)
+        crlf_proc = subprocess.run(["git", "config", "core.autocrlf"], cwd=repo_root, capture_output=True, text=True)
+        crlf_val = crlf_proc.stdout.strip().lower()
+        if crlf_val in ("true", "input"):
+            print(f"[FAIL] Git core.autocrlf is '{crlf_val}'. Canonical release policy strictly requires core.autocrlf=false!")
+            return False
+
+        # 7. Validate path portability across canonical tools and manifests
         portable, leaks = audit_path_portability(repo_root=repo_root)
         if not portable:
             print(f"[FAIL] Non-portable workstation path leak detected: {leaks}")
             return False
 
-        print(f"[PASS] Toolchain Manifest verified with all required tools present and valid (zero workstation path leaks).")
+        print(f"[PASS] Toolchain Manifest verified: runtime tools bound to policy (Go >= 1.22, Git >= 2.30, llvm SHA matched, CGO compiler verified, core.autocrlf=false confirmed, zero workstation path leaks).")
         return True
 
     out_file.parent.mkdir(parents=True, exist_ok=True)

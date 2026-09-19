@@ -38,13 +38,13 @@
       "required": true,
       "path_policy": "PORTABLE_MULTI_SOURCE_DISCOVERY",
       "discovery_mechanism": "LLVM_OBJDUMP env -> PATH -> Windows User Registry -> WinGet Packages -> TOOLCHAIN.json",
-      "resolved_executable_provenance": "WINDOWS_USER_REGISTRY_PATH",
-      "resolved_executable_basename": "llvm-objdump.exe"
+      "resolved_executable_provenance": "SYSTEM_PATH",
+      "resolved_executable_basename": "llvm-objdump.EXE"
     },
     "c_compiler_cgo": {
       "role": "CGO compiler for go test -race concurrency validation",
       "version": "clang version 22.1.8 (https://github.com/llvm/llvm-project.git ca7933e47d3a3451d81e72ac174dcb5aa28b59d1)",
-      "driver_basename": "gcc.exe",
+      "driver_basename": "gcc.EXE",
       "backend_engine": "clang",
       "compiler_relationship": "gcc.exe is the LLVM-MinGW GCC-compatible driver wrapper calling Clang backend engine for CGO compilation.",
       "required": true,
@@ -84,6 +84,15 @@
     "prohibited_claims": [
       "100% literal original source text recovery",
       "100% comment recovery"
+    ]
+  },
+  "git_checkout_policy": {
+    "policy_name": "CANONICAL_LF_CHECKOUT_POLICY",
+    "required_core_autocrlf": "false",
+    "rationale": "Enforces byte-exact LF line endings for cryptographic hash parity across frozen contract JSONs, reconstructed Go source code, and release reports.",
+    "clean_clone_setup_commands": [
+      "git config core.autocrlf false",
+      "git reset --hard HEAD"
     ]
   }
 }
