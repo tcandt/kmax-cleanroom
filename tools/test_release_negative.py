@@ -41,12 +41,19 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from tools.audit.audit_frozen_contracts import audit_frozen_contracts
 from tools.audit.audit_original_artifacts import audit_original_artifacts
-from tools.audit.audit_toolchain import audit_toolchain
+from tools.audit.audit_toolchain import audit_toolchain, audit_path_portability
+from tools.audit.audit_cleanroom_contamination import audit_source_tree_contamination
 from tools.audit.validate_phase3_cross_phase_matrix import validate_matrix
 from tools.audit.audit_method_count import audit_method_count
 from tools.audit.audit_reconstructed_source_provenance import (
     validate_entry,
     audit_all_production_functions
+)
+from tools.verify_release import (
+    verify_clean_working_tree,
+    validate_mapped_test_matrix,
+    validate_test_attribution,
+    verify_clean_clone_dependencies
 )
 
 def run_mutation_test(test_id, description, test_fn):
@@ -160,11 +167,16 @@ def test_mutation_07_invalid_provenance_locator():
 
 # 8. Clean-room contamination injection (prohibited pattern)
 def test_mutation_08_contamination_injection():
-    # Test that scanning source for prohibited pattern detects it
-    from tools.audit.audit_cleanroom_contamination import FORBIDDEN_PATTERNS
-    bad_code = "// Reconstructed using recovered_source from decompiled archive\npackage test\n"
-    found = any(p in bad_code for p in FORBIDDEN_PATTERNS)
-    return found is True
+    with tempfile.TemporaryDirectory() as td:
+        temp_root = Path(td)
+        src_dir = temp_root / "reconstructed_source" / "cloudphone-agent" / "pkg" / "probe"
+        src_dir.mkdir(parents=True, exist_ok=True)
+        bad_file = src_dir / "contaminated.go"
+        bad_file.write_text("// Reconstructed using recovered_source from decompiled archive\npackage probe\n", encoding="utf-8")
+
+        # Invoke actual contamination auditor on temp repo view
+        is_clean, findings = audit_source_tree_contamination(temp_root / "reconstructed_source", repo_root=temp_root)
+        return is_clean is False
 
 # 9. Inverted DataChannel creator/consumer
 def test_mutation_09_inverted_datachannel_creator():
@@ -213,58 +225,77 @@ def test_mutation_11_method_count_discrepancy():
 
 # 12. Dirty working tree detection
 def test_mutation_12_dirty_working_tree():
-    test_file = REPO_ROOT / ".dirty_tree_test_sentinel_mutation"
-    try:
-        test_file.write_text("temporary dirty sentinel", encoding="utf-8")
-        status = subprocess.run(["git", "status", "--porcelain"], cwd=REPO_ROOT, capture_output=True, text=True).stdout
-        is_dirty = bool(status.strip())
-        return is_dirty is True
-    finally:
-        if test_file.exists():
-            test_file.unlink()
+    with tempfile.TemporaryDirectory() as td:
+        temp_repo = Path(td)
+        # Initialize isolated temporary Git repository (zero mutation to live tree)
+        subprocess.run(["git", "init"], cwd=temp_repo, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "CleanroomTester"], cwd=temp_repo, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "tester@cleanroom.local"], cwd=temp_repo, capture_output=True, check=True)
+        # Commit a baseline file
+        baseline = temp_repo / "README.md"
+        baseline.write_text("# Clean Tree\n", encoding="utf-8")
+        subprocess.run(["git", "add", "README.md"], cwd=temp_repo, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "initial commit"], cwd=temp_repo, capture_output=True, check=True)
+
+        # Inject untracked sentinel
+        sentinel = temp_repo / ".dirty_tree_test_sentinel_mutation"
+        sentinel.write_text("temporary dirty sentinel", encoding="utf-8")
+
+        # Actual release cleanliness helper must fail-closed on dirty tree
+        is_clean = verify_clean_working_tree(repo_root=temp_repo)
+        return is_clean is False
 
 # 13. Absolute workstation path dependency leak
 def test_mutation_13_workstation_path_leak():
-    forbidden_prefixes = ["C:\\Users\\", "D:\\KMAX", "/home/", "/Users/"]
-    leaked_manifest = {
-        "build_output": "C:\\Users\\TINH-NGUYEN\\Desktop\\cloudphone-agent.exe",
-        "workstation_root": "D:\\KMAX-CLEANROOM\\scratch\\build"
-    }
-    leaks = []
-    for k, v in leaked_manifest.items():
-        if any(prefix.lower() in str(v).lower() for prefix in forbidden_prefixes):
-            leaks.append((k, v))
-    return len(leaks) == 2
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
+        manifest_p = REPO_ROOT / "evidence" / "final" / "TOOLCHAIN_MANIFEST.json"
+        data = json.loads(manifest_p.read_text(encoding="utf-8"))
+        # Inject non-portable workstation path leak
+        data["tools"]["go"]["resolved_path"] = "C:\\Users\\TINH-NGUYEN\\Desktop\\cloudphone-agent.exe"
+        tf.write(json.dumps(data))
+        temp_path = tf.name
+    try:
+        is_portable, leaks = audit_path_portability(target_or_path=temp_path)
+        return is_portable is False
+    finally:
+        os.unlink(temp_path)
 
 # 14. Missing mapped critical test in test matrix
 def test_mutation_14_missing_mapped_critical_test():
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
         mat_p = REPO_ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
         data = json.loads(mat_p.read_text(encoding="utf-8"))
-        # Remove a critical required test
-        if "test_cases" in data:
-            data["test_cases"] = [tc for tc in data["test_cases"] if tc.get("test_id") != "TC-CORE-01"]
+        # Remove a critical required test case (TC-WTC-UNIT-01) from LEVEL_A_UNIT
+        if "levels" in data and "LEVEL_A_UNIT" in data["levels"]:
+            data["levels"]["LEVEL_A_UNIT"]["cases"] = [
+                c for c in data["levels"]["LEVEL_A_UNIT"].get("cases", [])
+                if c.get("id") != "TC-WTC-UNIT-01"
+            ]
         tf.write(json.dumps(data))
         temp_path = tf.name
     try:
-        test_data = json.loads(Path(temp_path).read_text(encoding="utf-8"))
-        tc_ids = {tc.get("test_id") for tc in test_data.get("test_cases", [])}
-        return "TC-CORE-01" not in tc_ids
+        is_valid, issues = validate_mapped_test_matrix(matrix_path=temp_path)
+        return is_valid is False
     finally:
         os.unlink(temp_path)
 
 # 15. Skipped critical test in execution results
 def test_mutation_15_skipped_critical_test():
-    test_result = {
-        "suite": "WebRTC_Core_Test_Suite",
-        "tests": [
-            {"id": "TC-CORE-01", "status": "PASS"},
-            {"id": "TC-CORE-02-OFFER-CREATION", "status": "SKIP", "reason": "Environment unavailable"}
-        ]
-    }
-    # Verifier must reject any SKIP status in critical mandatory tests
-    has_skipped_critical = any(t["status"] == "SKIP" for t in test_result["tests"])
-    return has_skipped_critical is True
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
+        mat_p = REPO_ROOT / "evidence" / "go_agent" / "webrtc" / "WEBRTC_CORE_TEST_MATRIX.json"
+        data = json.loads(mat_p.read_text(encoding="utf-8"))
+        # Corrupt one test case with non-conclusive 'SKIP' status
+        if "levels" in data and "LEVEL_A_UNIT" in data["levels"]:
+            cases = data["levels"]["LEVEL_A_UNIT"].get("cases", [])
+            if cases:
+                cases[0]["status"] = "SKIP"
+        tf.write(json.dumps(data))
+        temp_path = tf.name
+    try:
+        is_valid, issues = validate_test_attribution(test_results_or_path=temp_path)
+        return is_valid is False
+    finally:
+        os.unlink(temp_path)
 
 # 16. Missing required formal errata
 def test_mutation_16_missing_required_errata():
@@ -286,11 +317,30 @@ def test_mutation_16_missing_required_errata():
 
 # 17. Clean-clone dependency on untracked/local-only file
 def test_mutation_17_clean_clone_untracked_dependency():
-    tracked_files = set(subprocess.run(["git", "ls-files"], cwd=REPO_ROOT, capture_output=True, text=True).stdout.splitlines())
-    local_untracked = "scratch/local_only_config.json"
-    # An untracked file is not in git-tracked set
-    is_untracked = local_untracked not in tracked_files
-    return is_untracked is True
+    with tempfile.TemporaryDirectory() as td:
+        temp_repo = Path(td)
+        # Initialize isolated temporary Git repository (zero mutation to live tree)
+        subprocess.run(["git", "init"], cwd=temp_repo, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "CleanroomTester"], cwd=temp_repo, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "tester@cleanroom.local"], cwd=temp_repo, capture_output=True, check=True)
+
+        # Commit a tracked required file
+        tracked_file = temp_repo / "tracked_config.json"
+        tracked_file.write_text("{\"tracked\": true}\n", encoding="utf-8")
+        subprocess.run(["git", "add", "tracked_config.json"], cwd=temp_repo, capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "add tracked config"], cwd=temp_repo, capture_output=True, check=True)
+
+        # Leave an untracked local file
+        untracked_file = temp_repo / "local_only_secret.json"
+        untracked_file.write_text("{\"secret\": true}\n", encoding="utf-8")
+
+        # Actual clean-clone dependency validator must reject untracked candidate
+        is_clean, untracked = verify_clean_clone_dependencies(
+            repo_root=temp_repo,
+            candidate_paths=["local_only_secret.json"],
+            required_files=["tracked_config.json"]
+        )
+        return is_clean is False
 
 # 18. Wrong errata freeze commit or blob hash
 def test_mutation_18_wrong_errata_commit_hash():

@@ -13,7 +13,7 @@ This report documents the deterministic binary and mathematical decomposition of
   - **7** internal-class-owner non-defined method references (methods invoked via helper subclasses but declared in superclasses)
   - **9** DEX synthetic array-owner `clone()` method references on helper enum arrays (`[Lcom/android/helper/...;`)
 
-There is zero missing code and zero population loss: $1,625 = 1,061 + (279 + 269 + 7 + 9) = 1,061 + 564$. 100.00% of defined methods (1,061 of 1,061) decompiled cleanly.
+There is zero method-population loss relative to the 1,061 class-defined method inventory: $1,625 = 1,061 + (279 + 269 + 7 + 9) = 1,061 + 564$. 1,061/1,061 declared methods are represented in the recovered decompilation output. Literal original source-text identity, comments, local names, and compiler-stripped metadata are not claimed.
 
 ---
 
@@ -98,7 +98,7 @@ Total DEX method IDs: $1,061 + 564 = 1,625$.
 
 ### Precision Language Rule
 - We do **not** claim "100% literal original source text recovery" (local parameter names and original comments stripped by D8/R8 during helper compilation are naturally absent).
-- We **do** claim **100.00% decompilation completeness for the recovered class/method population** (all 1,061 declared methods decompiled into valid Java syntax with full control-flow recovery).
+- We **do** claim **100.00% decompilation completeness for the recovered class/method population** (all 1,061 declared methods represented in the recovered decompilation output; literal source-text identity, comments, local names, and compiler-stripped metadata are not claimed).
 
 ---
 

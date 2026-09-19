@@ -26,8 +26,99 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from tools.forensics.camera.extract_camera_disassembly import discover_llvm_objdump
 
+import re
+
+PORTABILITY_PATTERN = re.compile(
+    r'(?:[A-Za-z]:[\\/]+Users[\\/]+[A-Za-z0-9_.-]+|(?:^|[\"\'`(\s])[\\/](?:home|Users)[\\/][A-Za-z0-9_.-]+)',
+    re.IGNORECASE
+)
+
+PORTABILITY_AUDITED_FILES = [
+    "tools/verify_release.py",
+    "tools/verify_phase2.py",
+    "tools/audit/audit_toolchain.py",
+    "tools/audit/audit_frozen_contracts.py",
+    "tools/audit/audit_original_artifacts.py",
+    "tools/audit/audit_method_count.py",
+    "tools/audit/validate_phase3_cross_phase_matrix.py",
+    "tools/audit/audit_reconstructed_source_provenance.py",
+    "tools/forensics/camera/extract_camera_disassembly.py",
+    "tools/forensics/adb_channel/extract_adb_channel_disassembly.py",
+    "tools/forensics/reproduce_adb_channel_forensics.py",
+    "evidence/final/TOOLCHAIN_MANIFEST.json",
+    "evidence/final/FROZEN_CONTRACT_REGISTRY.json",
+    "evidence/final/PHASE3_CROSS_PHASE_FACT_MATRIX.json",
+    "evidence/final/ANDROID_METHOD_COUNT_RECONCILIATION.json",
+    "evidence/final/INTENTIONAL_DIVERGENCES.json",
+    "evidence/final/RECONSTRUCTED_SOURCE_PROVENANCE_FINAL.json",
+    "evidence/final/PROVENANCE_RULES.json"
+]
+
+def audit_path_portability(target_or_path=None, repo_root=REPO_ROOT, pattern=None, audited_files=None):
+    """
+    Audits manifests, configuration objects, or canonical runtime scripts for hardcoded workstation paths.
+    Returns (portable: bool, leaks: list).
+    """
+    pat = pattern if pattern is not None else PORTABILITY_PATTERN
+    files_to_check = audited_files if audited_files is not None else PORTABILITY_AUDITED_FILES
+    leaks = []
+
+    def _scan_obj(val, loc_prefix):
+        if isinstance(val, str):
+            if pat.search(val):
+                leaks.append({"location": loc_prefix, "value": val})
+        elif isinstance(val, dict):
+            for k, v in val.items():
+                _scan_obj(v, f"{loc_prefix}.{k}" if loc_prefix else str(k))
+        elif isinstance(val, list):
+            for i, item in enumerate(val):
+                _scan_obj(item, f"{loc_prefix}[{i}]")
+
+    # If target_or_path is provided directly (e.g. dict or specific file during test):
+    if target_or_path is not None:
+        if isinstance(target_or_path, (dict, list)):
+            _scan_obj(target_or_path, "target_obj")
+        else:
+            p = Path(target_or_path)
+            if not p.is_absolute() and repo_root:
+                p = Path(repo_root) / p
+            if p.exists():
+                if p.suffix == ".json":
+                    try:
+                        data = json.loads(p.read_text(encoding="utf-8"))
+                        _scan_obj(data, p.name)
+                    except Exception as e:
+                        leaks.append({"location": str(p), "value": f"JSON parse error: {e}"})
+                else:
+                    text = p.read_text(encoding="utf-8", errors="ignore")
+                    for line_no, line in enumerate(text.splitlines(), start=1):
+                        if pat.search(line):
+                            leaks.append({"location": f"{p.name}:{line_no}", "value": line.strip()})
+            else:
+                leaks.append({"location": str(p), "value": "File not found"})
+        return (len(leaks) == 0), leaks
+
+    # Otherwise audit all canonical PORTABILITY_AUDITED_FILES
+    for rel_path in files_to_check:
+        fp = Path(repo_root) / rel_path
+        if not fp.exists():
+            continue
+        if fp.suffix == ".json":
+            try:
+                data = json.loads(fp.read_text(encoding="utf-8"))
+                _scan_obj(data, rel_path)
+            except Exception as e:
+                leaks.append({"location": rel_path, "value": f"JSON parse error: {e}"})
+        else:
+            text = fp.read_text(encoding="utf-8", errors="ignore")
+            for line_no, line in enumerate(text.splitlines(), start=1):
+                if pat.search(line):
+                    leaks.append({"location": f"{rel_path}:{line_no}", "value": line.strip()})
+
+    is_portable = (len(leaks) == 0)
+    return is_portable, leaks
+
 def parse_version_tuple(ver_str):
-    import re
     match = re.search(r"(\d+)\.(\d+)(?:\.(\d+))?", ver_str)
     if match:
         parts = [int(p) for p in match.groups() if p is not None]
@@ -187,7 +278,7 @@ def audit_toolchain(repo_root=REPO_ROOT, check_mode=False):
             }
         },
         "decompiler_fidelity_scope": {
-            "declared_fidelity_claim": "100.00% decompilation completeness for recovered class/method population (1,061 of 1,061 declared methods decompiled into valid Java syntax with full control-flow recovery; compiler-stripped comments and local variable names excluded)",
+            "declared_fidelity_claim": "100.00% decompilation completeness for recovered class/method population (1,061 of 1,061 declared methods represented in the recovered decompilation output; literal source-text identity, comments, local names, and compiler-stripped metadata are not claimed)",
             "prohibited_claims": [
                 "100% literal original source text recovery",
                 "100% comment recovery"
@@ -210,7 +301,14 @@ def audit_toolchain(repo_root=REPO_ROOT, check_mode=False):
             if not tools[req].get("version") or tools[req]["version"] == "Unknown":
                 print(f"[FAIL] Tool {req} has invalid version in manifest!")
                 return False
-        print(f"[PASS] Toolchain Manifest verified with all required tools present and valid.")
+
+        # Validate path portability across canonical tools and manifests
+        portable, leaks = audit_path_portability(repo_root=repo_root)
+        if not portable:
+            print(f"[FAIL] Non-portable workstation path leak detected: {leaks}")
+            return False
+
+        print(f"[PASS] Toolchain Manifest verified with all required tools present and valid (zero workstation path leaks).")
         return True
 
     out_file.parent.mkdir(parents=True, exist_ok=True)

@@ -80,7 +80,7 @@
     }
   },
   "decompiler_fidelity_scope": {
-    "declared_fidelity_claim": "100.00% decompilation completeness for recovered class/method population (1,061 of 1,061 declared methods decompiled into valid Java syntax with full control-flow recovery; compiler-stripped comments and local variable names excluded)",
+    "declared_fidelity_claim": "100.00% decompilation completeness for recovered class/method population (1,061 of 1,061 declared methods represented in the recovered decompilation output; literal source-text identity, comments, local names, and compiler-stripped metadata are not claimed)",
     "prohibited_claims": [
       "100% literal original source text recovery",
       "100% comment recovery"

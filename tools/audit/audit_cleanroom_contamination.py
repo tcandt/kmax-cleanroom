@@ -37,6 +37,30 @@ FORBIDDEN_PATTERNS = [
 
 REMEDIATION_COMMIT_PREFIX = "ef14fab"
 
+def audit_source_tree_contamination(src_dir, repo_root=None):
+    """
+    Audits a source directory for prohibited clean-room contamination patterns.
+    Returns (clean: bool, findings: list).
+    """
+    src_findings = []
+    src_path = Path(src_dir)
+    if not src_path.exists():
+        return True, []
+
+    for r, _, files in os.walk(src_path):
+        for fname in files:
+            if fname.endswith(".go"):
+                p = Path(r) / fname
+                text = p.read_text(encoding="utf-8", errors="ignore")
+                for pat in FORBIDDEN_PATTERNS:
+                    if pat.lower() in text.lower():
+                        rel = p.relative_to(repo_root).as_posix() if repo_root else p.as_posix()
+                        src_findings.append({
+                            "pattern": pat,
+                            "file": rel
+                        })
+    return (len(src_findings) == 0), src_findings
+
 def audit_cleanroom_contamination(repo_root=REPO_ROOT, check_mode=False):
     print("=" * 60)
     print("CLEAN-ROOM CONTAMINATION & GIT HISTORY AUDIT (PHASE 3AR)")
@@ -93,19 +117,7 @@ def audit_cleanroom_contamination(repo_root=REPO_ROOT, check_mode=False):
                     tracked_findings.append({"pattern": pat, "path": f})
 
     # 3. Audit Reconstructed Source Code Content
-    src_findings = []
-    src_dir = repo_root / "reconstructed_source"
-    for r, _, files in os.walk(src_dir):
-        for fname in files:
-            if fname.endswith(".go"):
-                p = Path(r) / fname
-                text = p.read_text(encoding="utf-8", errors="ignore")
-                for pat in FORBIDDEN_PATTERNS:
-                    if pat.lower() in text.lower():
-                        src_findings.append({
-                            "pattern": pat,
-                            "file": p.relative_to(repo_root).as_posix()
-                        })
+    src_clean, src_findings = audit_source_tree_contamination(repo_root / "reconstructed_source", repo_root=repo_root)
 
     # 4. Audit Current Submodules
     sub_status = subprocess.check_output(["git", "submodule", "status"], cwd=repo_root, text=True).strip()

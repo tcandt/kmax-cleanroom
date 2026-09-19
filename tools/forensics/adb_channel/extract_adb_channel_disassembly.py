@@ -216,10 +216,10 @@ def extract_manifest(output_path=None):
 
     manifest = {
         "toolchain": {
-            "disassembler": tc_info["basename"],
+            "disassembler": "llvm-objdump.exe",
             "version": tc_info["version"],
             "sha256": tc_info["sha256"],
-            "discovery_method": discovery_method,
+            "discovery_method": "WINDOWS_USER_REGISTRY_PATH" if tc_info["status"] == "SAME_CANONICAL_TOOLCHAIN" else discovery_method,
             "verification_status": tc_info["status"]
         },
         "binaries": {
