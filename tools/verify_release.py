@@ -64,7 +64,8 @@ CANONICAL_RELEASE_FILES = [
     "evidence/final/ANDROID_METHOD_COUNT_RECONCILIATION.json",
     "evidence/final/INTENTIONAL_DIVERGENCES.json",
     "evidence/final/RECONSTRUCTED_SOURCE_PROVENANCE_FINAL.json",
-    "evidence/final/PROVENANCE_RULES.json"
+    "evidence/final/PROVENANCE_RULES.json",
+    "evidence/final/PHASE3_RELEASE_MANIFEST.json"
 ]
 
 def verify_clean_working_tree(repo_root=REPO_ROOT):
@@ -294,9 +295,9 @@ def verify_git_checkout_policy(repo_root=REPO_ROOT):
     """
     res = subprocess.run(["git", "config", "core.autocrlf"], cwd=repo_root, capture_output=True, text=True)
     val = res.stdout.strip().lower()
-    if val in ("true", "input"):
-        print(f"[FAIL] core.autocrlf is '{val}'. Canonical release policy strictly requires core.autocrlf=false!")
-        return False, [f"core.autocrlf is '{val}' (must be false)"]
+    if val != "false":
+        print(f"[FAIL] core.autocrlf is '{val or '<unset>'}'. Canonical release policy strictly requires core.autocrlf=false!")
+        return False, [f"core.autocrlf is '{val or '<unset>'}' (must be explicitly 'false')"]
     print("[PASS] Canonical Git checkout policy verified (core.autocrlf=false).")
     return True, []
 
@@ -425,7 +426,18 @@ def main():
     if not crlf_ok:
         print(f"[FAIL] Gate 6 Sub-check (Git Checkout Policy) failed: {crlf_issues}")
         return 1
-    print("[PASS] Gate 6 Sub-check: All canonical release assets tracked in Git with zero local dependencies and canonical LF checkout policy confirmed.")
+
+    # Gate 6 Sub-check: Phase 3B Release Manifest & Hash Freeze
+    rel_manifest_path = REPO_ROOT / "evidence" / "final" / "PHASE3_RELEASE_MANIFEST.json"
+    if rel_manifest_path.exists():
+        from tools.audit.validate_phase3_release_manifest import validate_release_manifest
+        rel_ok, rel_issues = validate_release_manifest(repo_root=REPO_ROOT)
+        if not rel_ok:
+            print(f"[FAIL] Gate 6 Sub-check (Phase 3B Release Manifest) failed: {rel_issues}")
+            return 1
+        print("[PASS] Gate 6 Sub-check: Phase 3B Release Manifest & Hash Freeze verified (all 8 evidence hashes and tree hash match).")
+
+    print("[PASS] Gate 6 Sub-check: All canonical release assets tracked in Git with zero local dependencies, canonical LF checkout policy, and release manifest freeze confirmed.")
 
     # Gate 7: Cross-Phase Fact Matrix Semantic Invariant
     if not run_step(7, "Cross-Phase Fact Matrix Semantic Invariant", [sys.executable, "tools/audit/validate_phase3_cross_phase_matrix.py", "--check"]):

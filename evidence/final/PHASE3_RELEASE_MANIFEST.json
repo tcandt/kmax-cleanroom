@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "title": "Phase 3B Clean-Room Release Manifest & Evidence Freeze",
+    "release_name": "cleanroom-v1.0.0",
+    "phase": "Phase 3B",
+    "date": "2026-09-19",
+    "base_verified_commit": "720fe198acfe57821174ba6c035d45ac0a101019",
+    "target_release_tag": "cleanroom-v1.0.0",
+    "policy": "CLEANROOM_RECOVERY_FROZEN_RELEASE",
+    "reconstructed_source_tree_hash": "734997b044e8f492e5b2978ba4f634975cc14306",
+    "checkout_policy": "CANONICAL_LF_CHECKOUT_POLICY (core.autocrlf=false)"
+  },
+  "release_scope_and_accounting": {
+    "methodology": "clean-room recovery",
+    "provenance_accounting": "100% provenance accounting (324/324 production functions mapped to verifiable structural locators)",
+    "approved_runtime_scope": "WebRTC signaling, WebSocket transport relay, Pclntab symbol reconstruction, HTTP REST APIs (devices, users, tags), WebRTC Core DataChannels (input, clipboard, file chunking with FileSink abstraction, camera SCTP framing with TCP bridge, AI command safe parser, ADB dual-mode topology hooks)",
+    "prohibited_claims": [
+      "literal original source recovered",
+      "100% source-text identity",
+      "literal comment or local variable recovery"
+    ]
+  },
+  "deferred_runtime_boundaries": [
+    {
+      "boundary_id": "DEFERRED-AI-EXEC",
+      "subsystem": "ai-command-channel",
+      "status": "SAFE_PARSER_ONLY",
+      "description": "AI command parsing and framing validated; local system process execution strictly deferred with zero os/exec calls."
+    },
+    {
+      "boundary_id": "DEFERRED-ADB-BRIDGE",
+      "subsystem": "adb-channel",
+      "status": "INERT_TOPOLOGY_HOOKS",
+      "description": "ADB CNXN/PTY dual-mode framing validated; live PTY host shell bridge and net.Dial connection to adbd strictly deferred."
+    },
+    {
+      "boundary_id": "DEFERRED-FILE-INSTALLER",
+      "subsystem": "file-channel",
+      "status": "FILE_TRANSFER_ONLY",
+      "description": "File metadata and binary chunk reassembly with FileSink abstraction validated; APK installer execution (pm install) strictly deferred."
+    },
+    {
+      "boundary_id": "DEFERRED-HARDWARE-MOCK-DIVERGENCES",
+      "subsystem": "camera/input/clipboard",
+      "status": "CONTROLLED_DIVERGENCES",
+      "description": "Kernel camera driver abstracted to TCP bridge at 127.0.0.1:9001; Android input UDS abstracted via ControlSink; clipboard service abstracted via MemoryClipboardProvider."
+    }
+  ],
+  "frozen_evidence_hashes": {
+    "original_artifact_manifest_sha256": "5ec861e1ba9c001b85af7ad23e514cce32054c9bd7127b27257557629cb701a0",
+    "frozen_contract_registry_sha256": "45ff984d947c16feb28c6d503193a34fdc4938e6971b864f2eb56c12e2900183",
+    "reconstructed_source_provenance_sha256": "8b355ca666e49ab888b59ce433972628683642a189fcf3fc622524058abe2393",
+    "cross_phase_fact_matrix_sha256": "bbfd76c273dae47bda68d6b62eb90e47ab041a20e68b98569bad010eb530bda8",
+    "toolchain_manifest_sha256": "fa5781f560b35b5ae26c48632bf365874f3db42fb051d835a62511a5aa2b0231",
+    "clean_clone_verification_results_sha256": "7b5c59f43dbbcd5872f892fa72c950f5e330c52f0c7b6d458904c0cd8f240d7d",
+    "intentional_divergences_sha256": "b69fa8f575d8f9878aacff26cf6601f22ff9bda21251756a02aeea514aa04f7d",
+    "release_audit_report_sha256": "24a88f9df1e3e8f3f695af75d2a8928f2cf7f22e0cb78f99985748b0f2ca20a9"
+  },
+  "verification_gates_binding": {
+    "total_gates": 12,
+    "internal_gates": 11,
+    "external_clean_clone_gate": 1,
+    "negative_mutation_suite_cases": 18,
+    "webrtc_core_attributed_tests": 18,
+    "concurrency_race_gate": "go test -race -count=1 ./... (ZERO DATA RACES)",
+    "provenance_coverage": "324 / 324 (100.00%)"
+  }
+}

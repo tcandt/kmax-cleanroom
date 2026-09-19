@@ -52,13 +52,15 @@ PORTABILITY_AUDITED_FILES = [
     "tools/derive_b2_differential.py",
     "tools/derive_b3_differential.py",
     "tools/derive_b4_differential.py",
+    "tools/audit/validate_phase3_release_manifest.py",
     "evidence/final/TOOLCHAIN_MANIFEST.json",
     "evidence/final/FROZEN_CONTRACT_REGISTRY.json",
     "evidence/final/PHASE3_CROSS_PHASE_FACT_MATRIX.json",
     "evidence/final/ANDROID_METHOD_COUNT_RECONCILIATION.json",
     "evidence/final/INTENTIONAL_DIVERGENCES.json",
     "evidence/final/RECONSTRUCTED_SOURCE_PROVENANCE_FINAL.json",
-    "evidence/final/PROVENANCE_RULES.json"
+    "evidence/final/PROVENANCE_RULES.json",
+    "evidence/final/PHASE3_RELEASE_MANIFEST.json"
 ]
 
 def audit_path_portability(target_or_path=None, repo_root=REPO_ROOT, pattern=None, audited_files=None):
@@ -297,6 +299,7 @@ def audit_toolchain(repo_root=REPO_ROOT, check_mode=False):
             "rationale": "Enforces byte-exact LF line endings for cryptographic hash parity across frozen contract JSONs, reconstructed Go source code, and release reports.",
             "clean_clone_setup_commands": [
                 "git config core.autocrlf false",
+                "git rm --cached -r .",
                 "git reset --hard HEAD"
             ]
         }
@@ -356,8 +359,8 @@ def audit_toolchain(repo_root=REPO_ROOT, check_mode=False):
         # 6. Validate Canonical LF Git Checkout Policy (core.autocrlf = false)
         crlf_proc = subprocess.run(["git", "config", "core.autocrlf"], cwd=repo_root, capture_output=True, text=True)
         crlf_val = crlf_proc.stdout.strip().lower()
-        if crlf_val in ("true", "input"):
-            print(f"[FAIL] Git core.autocrlf is '{crlf_val}'. Canonical release policy strictly requires core.autocrlf=false!")
+        if crlf_val != "false":
+            print(f"[FAIL] Git core.autocrlf is '{crlf_val or '<unset>'}'. Canonical release policy strictly requires core.autocrlf=false!")
             return False
 
         # 7. Validate path portability across canonical tools and manifests

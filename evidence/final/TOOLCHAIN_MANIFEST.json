@@ -92,6 +92,7 @@
     "rationale": "Enforces byte-exact LF line endings for cryptographic hash parity across frozen contract JSONs, reconstructed Go source code, and release reports.",
     "clean_clone_setup_commands": [
       "git config core.autocrlf false",
+      "git rm --cached -r .",
       "git reset --hard HEAD"
     ]
   }

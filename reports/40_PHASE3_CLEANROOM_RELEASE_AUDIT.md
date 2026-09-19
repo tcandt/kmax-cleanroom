@@ -133,7 +133,7 @@ Audited via `tools/audit/audit_toolchain.py`:
 - **Git**: 2.54.0.windows.1 (which git, policy: $\ge$ 2.30)
 - **LLVM / llvm-objdump**: LLVM version 22.1.8 with exact manifest SHA-256 match (`2225c03acd46...`)
 - **CGO C Compiler**: `gcc.exe` driver wrapper invoking Clang backend (version 22.1.8, available and functional)
-- **Workstation Paths**: Zero hardcoded paths in production or tooling across 25 canonical files.
+- **Workstation Paths**: Zero hardcoded workstation runtime dependencies. Canonical serialization-only path tokens are explicitly classified.
 - **Git Checkout Policy (LF Enforcement)**:
   `CANONICAL_GIT_CHECKOUT_POLICY: core.autocrlf=false`.
   Required commands for clean-clone setup:
@@ -227,7 +227,7 @@ HALT FOR USER REVIEW (No release tag created)
 | **Condition 3** | Contamination & History Audit | Internal | 0 forbidden traces, post-remediation clean | **PASS** |
 | **Condition 4** | Original Artifacts Inventory | Internal | 155/155 classified, 65/65 required hash-verified | **PASS** |
 | **Condition 5** | Frozen Contract Historical Pinning | Internal | 15/15 git-blob & disk hashes verified | **PASS** |
-| **Condition 6** | Toolchain Manifest & Policy | Internal | Zero hardcoded paths, runtime toolchain bound, core.autocrlf=false | **PASS** |
+| **Condition 6** | Toolchain Manifest & Policy | Internal | Zero runtime workstation dependencies, runtime toolchain bound, core.autocrlf=false | **PASS** |
 | **Condition 7** | Cross-Phase Fact Matrix | Internal | 6 DataChannels verified with canonical facts | **PASS** |
 | **Condition 8** | Android DEX Method Count | Internal | 1,625 = 1,061 defined + 564 non-defined | **PASS** |
 | **Condition 9** | Intentional Divergences Registry | Internal | Camera 127.0.0.1:9001, deferred boundaries explicit | **PASS** |
