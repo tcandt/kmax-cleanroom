@@ -1,7 +1,7 @@
 # KMAX Clean-Room Reverse Engineering & Source Recovery
 
 [![Clean-Room Protocol](https://img.shields.io/badge/Clean--Room-Authorized%20Source%20Recovery-blue.svg)](cleanroom_archive/RULES.md)
-[![Release](https://img.shields.io/badge/Release-cleanroom--v1.0.0-success.svg)](https://github.com/tcandt/kmax-cleanroom/releases/tag/cleanroom-v1.0.0)
+[![Release](https://img.shields.io/badge/Release-cleanroom--v1.0.0-success.svg)](https://github.com/tcandt/kmax-cleanroom/tree/cleanroom-v1.0.0)
 [![Provenance Coverage](https://img.shields.io/badge/Provenance-100%25%20Traceable%20(324%2F324)-brightgreen.svg)](cleanroom_archive/evidence/final/RECONSTRUCTED_SOURCE_PROVENANCE_FINAL.json)
 [![Verification Gates](https://img.shields.io/badge/Release%20Gates-11%2F11%20PASS-success.svg)](cleanroom_archive/reports/41_PHASE3B_FINAL_RELEASE_ATTESTATION.md)
 
@@ -23,7 +23,7 @@ This project operates under strict clean-room isolation rules documented in [cle
 
 ## 2. Release Status & Phase Milestones
 
-The project achieved formal clean-room release closure at tag [`cleanroom-v1.0.0`](https://github.com/tcandt/kmax-cleanroom/releases/tag/cleanroom-v1.0.0) (commit `4ee87c6db0b201375dc9795e812072dd9f2f71da`).
+The project achieved formal clean-room release closure at tag [`cleanroom-v1.0.0`](https://github.com/tcandt/kmax-cleanroom/tree/cleanroom-v1.0.0) (commit `4ee87c6db0b201375dc9795e812072dd9f2f71da`).
 
 | Milestone | Scope & Description | Status | Key Deliverables & Reports |
 |---|---|---|---|
@@ -33,8 +33,8 @@ The project achieved formal clean-room release closure at tag [`cleanroom-v1.0.0
 | **Phase 1B** | Go Signaling & Agent Binary Forensics | **DONE** | [02_GO_SIGNALING_FORENSICS.md](cleanroom_archive/reports/02_GO_SIGNALING_FORENSICS.md), [03_GO_AGENT_FORENSICS.md](cleanroom_archive/reports/03_GO_AGENT_FORENSICS.md) |
 | **Phase 2** | Differential Engines, Protocol Contracts & Forensic Gates | **DONE** | [02B_ROLE_MAPPING_VALIDATION.md](cleanroom_archive/reports/02B_ROLE_MAPPING_VALIDATION.md), [02C_PHASE2_REPRODUCIBILITY.md](cleanroom_archive/reports/02C_PHASE2_REPRODUCIBILITY.md) |
 | **Phase 3A** | Clean-Room Go Source Reconstruction & Provenance Binding | **DONE** | 324/324 functions audited; 15 frozen contracts verified |
-| **Phase 3ARR2** | Master Verifier Hardening & Clean-Clone Verification | **DONE** | [PHASE3ARR2_READINESS_DASHBOARD.json](cleanroom_archive/evidence/final/PHASE3ARR2_READINESS_DASHBOARD.json) |
-| **Phase 3B** | Release Closure, Final Manifest Freeze & Tagging | **RELEASED** | Tag [`cleanroom-v1.0.0`](https://github.com/tcandt/kmax-cleanroom/releases/tag/cleanroom-v1.0.0), [41_PHASE3B_FINAL_RELEASE_ATTESTATION.md](cleanroom_archive/reports/41_PHASE3B_FINAL_RELEASE_ATTESTATION.md) |
+| **Phase 3ARR2** | Master Verifier Hardening & Clean-Clone Verification | **DONE** | [PHASE3_RELEASE_READINESS.json](cleanroom_archive/evidence/final/PHASE3_RELEASE_READINESS.json) |
+| **Phase 3B** | Release Closure, Final Manifest Freeze & Tagging | **RELEASED** | Tag [`cleanroom-v1.0.0`](https://github.com/tcandt/kmax-cleanroom/tree/cleanroom-v1.0.0), [41_PHASE3B_FINAL_RELEASE_ATTESTATION.md](cleanroom_archive/reports/41_PHASE3B_FINAL_RELEASE_ATTESTATION.md) |
 | **Post-Release** | Layout V2 Root Consolidation (`cleanroom_archive/`) | **DONE** | [POST_RELEASE_LAYOUT_V2_MAPPING.json](cleanroom_archive/evidence/post_release/POST_RELEASE_LAYOUT_V2_MAPPING.json) |
 
 ---
