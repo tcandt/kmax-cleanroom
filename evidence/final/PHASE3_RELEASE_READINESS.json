@@ -1,10 +1,10 @@
 {
   "metadata": {
     "title": "Phase 3AR Release Readiness Dashboard",
-    "phase": "Phase 3AR-B",
-    "base_commit": "efb67ca36e6cf70a87dc3a604b2cdb6d8814efed",
-    "subject_commit": "ff1476db14588d4d621be5f446987cee74bbebb8",
-    "date": "2026-09-18",
+    "phase": "Phase 3ARR-B",
+    "base_commit": "3b2248ba5ad512f70678ef3982f08a444aef6f04",
+    "subject_commit": "e6491910475b6cbf0703915844dd70ec657393e6",
+    "date": "2026-09-19",
     "description": "Machine-readable release readiness dashboard recording the status of all 11 internal verification gates and 1 external independent clean-clone condition (12 conditions total)."
   },
   "readiness_conditions_summary": {
@@ -33,9 +33,9 @@
     "gate_12_independent_clean_clone": {
       "status": "PASS",
       "clean_clone_verified": true,
-      "clean_clone_subject_commit": "ff1476db14588d4d621be5f446987cee74bbebb8",
+      "clean_clone_subject_commit": "e6491910475b6cbf0703915844dd70ec657393e6",
       "clean_clone_results_artifact": "evidence/final/CLEAN_CLONE_VERIFICATION_RESULTS.json",
-      "clean_clone_run_procedure": "Phase 3AR-A push -> fresh clone exact commit into isolated external directory -> run verify_release.py + test_release_negative.py -> record in 3AR-B"
+      "clean_clone_run_procedure": "Phase 3ARR-A push -> fresh clone exact commit into isolated external directory -> run verify_release.py + test_release_negative.py -> record in 3ARR-B"
     }
   },
   "gate_metrics": {
@@ -53,7 +53,7 @@
     "phase2_audit_sections_passed": 27
   },
   "release_verdict": {
-    "phase_3ar_status": "AUDITED_AND_VERIFIED_STAGE_B",
+    "phase_3ar_status": "AUDITED_AND_VERIFIED_STAGE_3ARR_B",
     "ready_for_independent_clean_clone": true,
     "clean_clone_verified": true,
     "ready_for_user_review": true,

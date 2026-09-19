@@ -224,7 +224,7 @@ HALT FOR USER REVIEW (No release tag created)
 | **Condition 12**| Independent Clean-Clone | External | Fresh clone of 3AR-A passes all verifiers | **PASS** |
 
 ### Phase 3AR Status: **STAGE-B VERIFIED — ALL 12 READINESS CONDITIONS SATISFIED**
-- **Independent Clean Clone Verified**: Gate 12 verified on subject commit `ff1476db14588d4d621be5f446987cee74bbebb8` in isolated directory `C:\Users\TINH-NGUYEN\AppData\Local\Temp\cleanroom_clone_3ara`.
+- **Independent Clean Clone Verified**: Gate 12 verified on subject commit `e6491910475b6cbf0703915844dd70ec657393e6` in isolated directory `C:\Users\TINH-NGUYEN\AppData\Local\Temp\cleanroom_clone_3arra`.
 - **Evidence Artifact**: `evidence/final/CLEAN_CLONE_VERIFICATION_RESULTS.json`.
 - **Release Readiness State**: `clean_clone_verified = true`, `final_ready = false`.
 - **Boundary Guarantee**: Release tag `cleanroom-v1.0.0` is strictly NOT created in Phase 3AR; Phase 3B deferred pending explicit user review.

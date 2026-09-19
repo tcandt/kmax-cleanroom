@@ -1,12 +1,12 @@
 {
   "metadata": {
     "title": "Phase 3AR Gate 12: Independent Clean-Clone Verification Results",
-    "phase": "Phase 3AR-B",
-    "execution_timestamp": "2026-09-18T20:55:00+07:00",
-    "subject_commit": "ff1476db14588d4d621be5f446987cee74bbebb8",
-    "clone_directory": "C:\\Users\\TINH-NGUYEN\\AppData\\Local\\Temp\\cleanroom_clone_3ara",
+    "phase": "Phase 3ARR-B",
+    "execution_timestamp": "2026-09-19T10:02:00+07:00",
+    "subject_commit": "e6491910475b6cbf0703915844dd70ec657393e6",
+    "clone_directory": "C:\\Users\\TINH-NGUYEN\\AppData\\Local\\Temp\\cleanroom_clone_3arra",
     "clone_remote": "https://github.com/tcandt/kmax-cleanroom.git",
-    "description": "Records the authentic execution results of all verification gates within an isolated, freshly cloned repository tree."
+    "description": "Records the authentic execution results of all verification gates within an isolated, freshly cloned repository tree at commit e6491910475b6cbf0703915844dd70ec657393e6."
   },
   "verification_summary": {
     "total_gates_evaluated": 12,
@@ -22,7 +22,7 @@
       "command": "python tools/verify_phase2.py",
       "verdict": "PASS",
       "exit_code": 0,
-      "details": "All 27 Phase 2 verification sections passed (Signaling & Agent Pclntab Invariants, Function Maps, Callgraphs, Role Counts, Boundary Scopes, Auth Consistency, HTTP Differentials, Reference Reproducibility, Crossmaps, Route Reconciliation, Device Types & Lifecycles, Concurrency Race Gates, B2/B3/B4/B5F/B6F Contracts & Differentials, and Zero Mutations)."
+      "details": "All 27 Phase 2 verification sections passed (Signaling & Agent Pclntab Invariants, Function Maps, Callgraphs, Role Counts, Boundary Scopes, Auth Consistency, HTTP Differentials, Reference Reproducibility, Crossmaps, Route Reconciliation, Device Types & Lifecycles, Concurrency Race Gates, B2/B3/B4/B5F/B6F Contracts & Differentials, and Zero Mutations); Gate 1 sub-checks validated WEBRTC_CORE_TEST_MATRIX structure and conclusive attribution for 18 required test cases."
     },
     "gate_02_reconstructed_source_provenance": {
       "command": "python tools/audit/audit_reconstructed_source_provenance.py --check",
@@ -31,7 +31,7 @@
       "details": "324 production functions audited; 0 UNKNOWN provenance; 100% compliant with cleanroom provenance classification standards."
     },
     "gate_03_cleanroom_contamination_history": {
-      "command": "python tools/audit/audit_cleanroom_contamination.py",
+      "command": "python tools/audit/audit_cleanroom_contamination.py --check",
       "verdict": "PASS",
       "exit_code": 0,
       "details": "0 forbidden source patterns, external package dependencies, or foreign repository traces detected in production codebase; Git history post-remediation verified clean."
@@ -43,42 +43,44 @@
       "details": "155/155 Phase 0 artifacts accounted for: 65 required original artifacts bit-exact verified; 90 purged external artifacts verified absent."
     },
     "gate_05_frozen_contracts_historical_pinning": {
-      "command": "python tools/audit/audit_frozen_contracts.py",
+      "command": "python tools/audit/audit_frozen_contracts.py --check",
       "verdict": "PASS",
       "exit_code": 0,
       "details": "All 15 frozen contracts verified against historical git blob hashes and dual-hash disk representations."
     },
     "gate_06_toolchain_manifest_policy": {
-      "command": "python tools/audit/audit_toolchain_manifest.py --check",
+      "command": "python tools/audit/audit_toolchain.py --check",
       "verdict": "PASS",
       "exit_code": 0,
-      "details": "All 5 required toolchain components verified present and policy compliant (Python 3.13.13, Go go1.26.3, Git 2.54.0.windows.1, llvm-objdump 22.1.8, clang/CGO compiler 22.1.8)."
+      "details": "All 5 required toolchain components verified present and policy compliant (Python 3.13.13, Go go1.26.3, Git 2.54.0.windows.1, llvm-objdump 22.1.8, clang/CGO compiler 22.1.8); workstation path portability audit passed cleanly across audited canonical tools and manifest; clean clone dependency tracking verified."
     },
     "gate_07_cross_phase_fact_matrix": {
-      "command": "python tools/audit/audit_fact_matrix.py",
+      "command": "python tools/audit/validate_phase3_cross_phase_matrix.py --check",
       "verdict": "PASS",
       "exit_code": 0,
       "details": "All 22 cross-phase facts verified against canonical binary, contract, and differential evidence."
     },
     "gate_08_android_dex_method_count": {
-      "command": "python tools/audit/audit_android_method_count.py --check",
+      "command": "python tools/audit/audit_method_count.py --check",
       "verdict": "PASS",
       "exit_code": 0,
-      "details": "Complete DEX decomposition verified: 1,625 total raw method IDs = 1,061 class-defined methods + 564 non-defined references (279 java.*, 269 android.*, 7 internal helper inherited, 9 synthetic array clone)."
+      "details": "Complete DEX decomposition verified: 1,625 total raw method IDs = 1,061 class-defined methods + 564 non-defined references (279 java.*, 269 android.*, 7 internal helper inherited, 9 synthetic array clone); zero method-population loss relative to 1,061 class-defined methods confirmed."
     },
     "gate_09_intentional_divergences_registry": {
-      "command": "python tools/audit/audit_intentional_divergences.py --check",
+      "execution_source": "tools/verify_release.py::verify_intentional_divergences",
+      "command": null,
       "verdict": "PASS",
       "exit_code": 0,
-      "details": "All 8 intentional divergences verified with authoritative justification, scope boundary, and implementation references."
+      "details": "All intentional divergences verified with authoritative justification, scope boundary, and implementation references; camera endpoint 127.0.0.1:9001 and deferred execution boundaries confirmed."
     },
     "gate_10_fail_closed_negative_suite": {
       "command": "python tools/test_release_negative.py",
       "verdict": "PASS",
       "exit_code": 0,
-      "details": "18/18 negative mutations rejected by fail-closed verifier gates."
+      "details": "18/18 negative mutations rejected by fail-closed verifier gates; MUTATION-08/12/13/14/15/17 invoke actual reusable production gate validators."
     },
     "gate_11_working_tree_cleanliness": {
+      "execution_source": "tools/verify_release.py::verify_clean_working_tree",
       "command": "git status --porcelain",
       "verdict": "PASS",
       "exit_code": 0,
@@ -86,8 +88,8 @@
     },
     "gate_12_independent_clean_clone": {
       "verdict": "PASS",
-      "subject_commit": "ff1476db14588d4d621be5f446987cee74bbebb8",
-      "environment": "Isolated temporary clone directory (cleanroom_clone_3ara)",
+      "subject_commit": "e6491910475b6cbf0703915844dd70ec657393e6",
+      "environment": "Isolated temporary clone directory (cleanroom_clone_3arra)",
       "details": "Full test and verification suite executed independently from clean git clone with zero local dependency leaks."
     }
   },
