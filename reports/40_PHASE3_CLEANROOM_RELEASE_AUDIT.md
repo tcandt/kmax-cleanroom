@@ -125,15 +125,24 @@ Audited via `tools/audit/audit_cleanroom_contamination.py` across all 69 reachab
 
 ---
 
-## 9. Toolchain Reproducibility & Portability
+## 9. Toolchain Reproducibility, Portability & Checkout Policy
 
 Audited via `tools/audit/audit_toolchain.py`:
-- **Python**: 3.13.13 (sys.executable)
-- **Go**: go1.26.3 (which go / GOROOT)
-- **Git**: 2.54.0.windows.1 (which git)
-- **LLVM / llvm-objdump**: LLVM version 22.1.8
-- **CGO C Compiler**: `gcc.exe` driver wrapper invoking Clang backend (version 22.1.8)
-- **Workstation Paths**: Zero hardcoded paths in production or tooling.
+- **Python**: 3.13.13 (sys.executable, policy: $\ge$ 3.10)
+- **Go**: go1.26.3 (which go / GOROOT, policy: $\ge$ 1.22)
+- **Git**: 2.54.0.windows.1 (which git, policy: $\ge$ 2.30)
+- **LLVM / llvm-objdump**: LLVM version 22.1.8 with exact manifest SHA-256 match (`2225c03acd46...`)
+- **CGO C Compiler**: `gcc.exe` driver wrapper invoking Clang backend (version 22.1.8, available and functional)
+- **Workstation Paths**: Zero hardcoded paths in production or tooling across 25 canonical files.
+- **Git Checkout Policy (LF Enforcement)**:
+  `CANONICAL_GIT_CHECKOUT_POLICY: core.autocrlf=false`.
+  Required commands for clean-clone setup:
+  ```powershell
+  git config core.autocrlf false
+  git rm --cached -r .
+  git reset --hard HEAD
+  ```
+  Default Windows clone inherits global `core.autocrlf=true`, causing line-ending conversions that mutate HTTP static asset SHA-256 digests. Enforcing canonical LF checkout restores byte-identical asset reproducibility.
 - **Baksmali Tooling Classification**:
   `HISTORICAL_ARCHIVAL_OUTPUT_PRESENT` (Archival artifact present from Phase 1A; not independently re-verified in Phase 3AR).
 
@@ -147,7 +156,7 @@ Audited via `tools/test_release_negative.py`:
 2. `MUTATION-02`: Wrong historical baseline commit $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 3. `MUTATION-03`: Tampered original artifact hash $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 4. `MUTATION-04`: Missing original artifact file $\rightarrow$ **REJECTED (FAIL-CLOSED)**
-5. `MUTATION-05`: Missing required tool in toolchain manifest $\rightarrow$ **REJECTED (FAIL-CLOSED)**
+5. `MUTATION-05`: Toolchain LLVM SHA mismatch against manifest $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 6. `MUTATION-06`: UNKNOWN production function $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 7. `MUTATION-07`: Invalid provenance locator / non-existent fact ID $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 8. `MUTATION-08`: Clean-room contamination injection $\rightarrow$ **REJECTED (FAIL-CLOSED)**
@@ -156,11 +165,11 @@ Audited via `tools/test_release_negative.py`:
 11. `MUTATION-11`: Method count discrepancy $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 12. `MUTATION-12`: Dirty working tree detection $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 13. `MUTATION-13`: Absolute workstation path dependency leak $\rightarrow$ **REJECTED (FAIL-CLOSED)**
-14. `MUTATION-14`: Missing mapped critical test $\rightarrow$ **REJECTED (FAIL-CLOSED)**
-15. `MUTATION-15`: Skipped critical test $\rightarrow$ **REJECTED (FAIL-CLOSED)**
+14. `MUTATION-14`: Missing required actual Go test in execution attribution $\rightarrow$ **REJECTED (FAIL-CLOSED)**
+15. `MUTATION-15`: Skipped actual Go test in execution attribution $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 16. `MUTATION-16`: Missing required formal errata $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 17. `MUTATION-17`: Clean-clone dependency on untracked file $\rightarrow$ **REJECTED (FAIL-CLOSED)**
-18. `MUTATION-18`: Wrong errata freeze commit or blob hash $\rightarrow$ **REJECTED (FAIL-CLOSED)**
+18. `MUTATION-18`: Line-ending checkout policy violation (`core.autocrlf == true`) $\rightarrow$ **REJECTED (FAIL-CLOSED)**
 
 ---
 
@@ -178,24 +187,27 @@ Audited via `evidence/final/INTENTIONAL_DIVERGENCES.json`:
 
 ## 12. Two-Stage Clean Clone & Readiness Verification Architecture
 
-To prevent self-referential clean-clone paradoxes, Phase 3AR is staged across two distinct commits:
+To prevent self-referential clean-clone paradoxes, Phase 3ARR2 is staged across two distinct commits:
 
 ```text
-Phase 3AR-A: Audit Hardening & Reconciliation
+Phase 3ARR2-A: Audit Hardening & Execution Attribution Closure
   - All 11 internal gates hardened & verified
+  - Exact Go test execution attribution (Action=pass, no skips, exit=0)
+  - Runtime toolchain binding (Go, Git, Python, LLVM SHA, CGO compiler)
   - clean_clone_verified = false
   - final_ready = false
-  - Commit & Push to origin/main
+  - Commit & Push to origin/main (Commit 3f6026c1c56409dcbf12803b2453ab1e1bd68ddd)
         ↓
 Independent Clean-Clone Execution
-  - git clone d:\KMAX-CLEANROOM <external_temp>
-  - git checkout <Phase 3AR-A SHA>
+  - git clone https://github.com/tcandt/kmax-cleanroom.git <external_temp>
+  - git checkout 3f6026c1c56409dcbf12803b2453ab1e1bd68ddd
+  - git config core.autocrlf false; git rm --cached -r .; git reset --hard HEAD
   - python tools/verify_release.py
   - python tools/test_release_negative.py
   - git status strictly clean
         ↓
-Phase 3AR-B: Evidence-Only Closure
-  - Record CLEAN_CLONE_VERIFICATION_RESULTS.json with subject commit = <Phase 3AR-A SHA>
+Phase 3ARR2-B: Evidence-Only Closure
+  - Record CLEAN_CLONE_VERIFICATION_RESULTS.json with subject commit = 3f6026c1c56409dcbf12803b2453ab1e1bd68ddd
   - clean_clone_verified = true
   - final_ready = false (MANDATORY)
   - Zero production code edits
@@ -210,21 +222,22 @@ HALT FOR USER REVIEW (No release tag created)
 
 | Condition # | Gate Name | Type | Target Criteria | Status |
 |---|---|---|---|---|
-| **Condition 1** | Phase 2 Master Verifier | Internal | 27 audit sections, Go race tests, differentials | **PASS** |
+| **Condition 1** | Phase 2 Master Verifier | Internal | 27 audit sections, Go race tests, 18/18 live test execution attribution | **PASS** |
 | **Condition 2** | Source Provenance Audit | Internal | 324 funcs, 0 UNKNOWN, structural locators verified | **PASS** |
 | **Condition 3** | Contamination & History Audit | Internal | 0 forbidden traces, post-remediation clean | **PASS** |
 | **Condition 4** | Original Artifacts Inventory | Internal | 155/155 classified, 65/65 required hash-verified | **PASS** |
 | **Condition 5** | Frozen Contract Historical Pinning | Internal | 15/15 git-blob & disk hashes verified | **PASS** |
-| **Condition 6** | Toolchain Manifest & Policy | Internal | Zero hardcoded paths, required compilers valid | **PASS** |
+| **Condition 6** | Toolchain Manifest & Policy | Internal | Zero hardcoded paths, runtime toolchain bound, core.autocrlf=false | **PASS** |
 | **Condition 7** | Cross-Phase Fact Matrix | Internal | 6 DataChannels verified with canonical facts | **PASS** |
 | **Condition 8** | Android DEX Method Count | Internal | 1,625 = 1,061 defined + 564 non-defined | **PASS** |
 | **Condition 9** | Intentional Divergences Registry | Internal | Camera 127.0.0.1:9001, deferred boundaries explicit | **PASS** |
 | **Condition 10**| Negative Mutation Suite | Internal | 18/18 fail-closed mutations rejected | **PASS** |
 | **Condition 11**| Working Tree Cleanliness | Internal | git status --porcelain strictly empty | **PASS** |
-| **Condition 12**| Independent Clean-Clone | External | Fresh clone of 3AR-A passes all verifiers | **PASS** |
+| **Condition 12**| Independent Clean-Clone | External | Fresh clone of 3ARR2-A passes all verifiers | **PASS** |
 
 ### Phase 3AR Status: **STAGE-B VERIFIED — ALL 12 READINESS CONDITIONS SATISFIED**
-- **Independent Clean Clone Verified**: Gate 12 verified on subject commit `e6491910475b6cbf0703915844dd70ec657393e6` in isolated directory `C:\Users\TINH-NGUYEN\AppData\Local\Temp\cleanroom_clone_3arra`.
+- **Independent Clean Clone Verified**: Gate 12 verified on subject commit `3f6026c1c56409dcbf12803b2453ab1e1bd68ddd` in isolated directory `C:\Users\TINH-NGUYEN\AppData\Local\Temp\cleanroom_clone_3arr2`.
 - **Evidence Artifact**: `evidence/final/CLEAN_CLONE_VERIFICATION_RESULTS.json`.
 - **Release Readiness State**: `clean_clone_verified = true`, `final_ready = false`.
 - **Boundary Guarantee**: Release tag `cleanroom-v1.0.0` is strictly NOT created in Phase 3AR; Phase 3B deferred pending explicit user review.
+
