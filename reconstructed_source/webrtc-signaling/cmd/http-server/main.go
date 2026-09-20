@@ -41,6 +41,10 @@ func main() {
 	debug := flag.Bool("debug", false, "Enable debug mode")
 	flag.Parse()
 
+	if err := os.MkdirAll(*dataDir, 0755); err != nil {
+		log.Fatalf("Failed to create data directory: %v", err)
+	}
+
 	usersPath := filepath.Join(*dataDir, "users.json")
 	usersStore := storage.NewUsersStore(usersPath)
 	if err := usersStore.LoadOrCreate(); err != nil {
@@ -94,7 +98,7 @@ func main() {
 	snapshotMgr := storage.NewSnapshotManager()
 	server.SetSnapshotManager(snapshotMgr)
 
-	addr := fmt.Sprintf("127.0.0.1:%d", *port)
+	addr := fmt.Sprintf("0.0.0.0:%d", *port)
 	log.Printf("[HTTP] Reconstructed server listening on %s", addr)
 	if err := http.ListenAndServe(addr, server); err != nil {
 		log.Fatalf("HTTP server failed: %v", err)

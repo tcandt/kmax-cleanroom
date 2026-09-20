@@ -165,7 +165,7 @@ func (h *Hub) authenticateClient(r *http.Request) (role string, assignedDevices 
 		token = r.URL.Query().Get("token")
 	}
 
-	if token != "" && h.authMgr != nil {
+	if h.authMgr != nil {
 		if username, err := h.authMgr.ValidateToken(token); err == nil {
 			if profile, err := h.authMgr.GetUserProfile(username); err == nil && profile != nil {
 				return profile.Role, profile.AssignedDevices, true

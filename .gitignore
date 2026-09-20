@@ -37,4 +37,10 @@ __pycache__/
 *-linux
 storage-tool*
 
-
+# Frontend & runtime data
+dist/
+**/dist/
+data/
+**/data/
+.idea/
+deploy_agent/

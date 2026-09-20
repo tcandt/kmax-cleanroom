@@ -1,0 +1,14 @@
+{
+  "name": "cloudphone-web",
+  "version": "0.3.6",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3111 --host",
+    "build": "vite build",
+    "preview": "vite preview --port 3111"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}
