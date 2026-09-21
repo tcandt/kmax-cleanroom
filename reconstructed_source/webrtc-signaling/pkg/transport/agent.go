@@ -100,9 +100,9 @@ func (h *Hub) HandleRegisterAgent(w http.ResponseWriter, r *http.Request) {
 			boundDeviceID = reg.DeviceID
 			agentConn.DeviceID = boundDeviceID
 
-			// Update device registry entry if present
+			// Mark agent online without destroying existing physical DeviceInfo (R5.3.2)
 			if h.deviceReg != nil {
-				h.deviceReg.RegisterDevice(boundDeviceID, nil, reg.IsWebRTC)
+				h.deviceReg.MarkAgentOnline(boundDeviceID, reg.IsWebRTC)
 			}
 
 			// Register in Hub (replaces previous agent connection if duplicate)

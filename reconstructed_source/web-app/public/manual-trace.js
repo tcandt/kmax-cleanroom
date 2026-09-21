@@ -183,24 +183,26 @@
     console.log(`[CTRL-LIFE] panelSession=${session} ${event}`, details || '');
   };
 
-  // --- R5.6: Coordinate Mapping Diagnostic Hook ---
+  // --- R5.3: Coordinate & Geometry Mapping Diagnostic Hook ---
   window.__recordCoordDiag = function(diag) {
     window.__lastCoordDiag = {
       timestamp: Date.now(),
       elementRect: diag.elementRect,
-      videoWidth: diag.videoWidth,
-      videoHeight: diag.videoHeight,
+      frameW: diag.videoWidth,
+      frameH: diag.videoHeight,
       actualW: diag.actualW,
       actualH: diag.actualH,
       offsetX: diag.offsetX,
       offsetY: diag.offsetY,
       relativeX: diag.relativeX,
       relativeY: diag.relativeY,
+      u: diag.u,
+      v: diag.v,
+      rotation: diag.rotation,
       finalX: diag.finalX,
       finalY: diag.finalY,
-      deviceTargetW: diag.targetW,
-      deviceTargetH: diag.targetH,
-      rotationState: diag.isRotated ? 'rotated' : 'standard'
+      targetW: diag.targetW,
+      targetH: diag.targetH
     };
   };
 

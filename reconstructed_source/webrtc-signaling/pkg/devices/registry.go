@@ -82,10 +82,17 @@ func (r *Registry) GetDevices(role string, assignedDevices []string) []types.Dev
 			continue
 		}
 
+		entry.Mu.Lock()
+		if entry.DeviceInfo == nil {
+			entry.DeviceInfo = ResolveDeviceGeometry(entry.DeviceID)
+		}
+		devInfo := entry.DeviceInfo
+		entry.Mu.Unlock()
+
 		entry.Mu.RLock()
 		dto := types.DeviceDTO{
 			DeviceID:    entry.DeviceID,
-			DeviceInfo:  entry.DeviceInfo,
+			DeviceInfo:  devInfo,
 			Online:      entry.Online,
 			FirstSeen:   entry.FirstSeen,
 			LastSeen:    entry.LastSeen,
@@ -105,7 +112,7 @@ func (r *Registry) GetDevices(role string, assignedDevices []string) []types.Dev
 // Mapping Scope: GENERATED_ADAPTER
 // Original Function Mapping: NONE
 // Purpose: Registers or reconnects a device into the registry
-// Source Behavior: Updates device record or creates new entry
+// Source Behavior: Updates device record or creates new entry without destroying existing DeviceInfo (R5.3.2)
 // Confidence: HIGH
 func (r *Registry) RegisterDevice(deviceID string, deviceInfo interface{}, isWebRTC bool) *types.DeviceEntry {
 	r.mu.Lock()
@@ -115,13 +122,87 @@ func (r *Registry) RegisterDevice(deviceID string, deviceInfo interface{}, isWeb
 	entry, exists := r.devices[deviceID]
 	if exists {
 		entry.Mu.Lock()
-		entry.DeviceInfo = deviceInfo
+		if deviceInfo != nil {
+			entry.DeviceInfo = deviceInfo
+		} else if entry.DeviceInfo == nil {
+			entry.DeviceInfo = ResolveDeviceGeometry(deviceID)
+		}
 		entry.Online = true
 		entry.LastSeen = now
 		entry.Mu.Unlock()
 		return entry
 	}
 
+	if deviceInfo == nil {
+		deviceInfo = ResolveDeviceGeometry(deviceID)
+	}
+
+	newEntry := &types.DeviceEntry{
+		DeviceID:    deviceID,
+		DeviceInfo:  deviceInfo,
+		Online:      true,
+		FirstSeen:   now,
+		LastSeen:    now,
+		ClientCount: 0,
+		Clients:     nil,
+	}
+	r.devices[deviceID] = newEntry
+	return newEntry
+}
+
+// RegisterPhysicalDeviceInfo updates or records the physical/logical device metadata without resetting agent state (R5.3.2).
+func (r *Registry) RegisterPhysicalDeviceInfo(deviceID string, deviceInfo interface{}) *types.DeviceEntry {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	now := time.Now()
+	entry, exists := r.devices[deviceID]
+	if exists {
+		entry.Mu.Lock()
+		if deviceInfo != nil {
+			entry.DeviceInfo = deviceInfo
+		}
+		entry.LastSeen = now
+		entry.Mu.Unlock()
+		return entry
+	}
+
+	if deviceInfo == nil {
+		deviceInfo = ResolveDeviceGeometry(deviceID)
+	}
+
+	newEntry := &types.DeviceEntry{
+		DeviceID:    deviceID,
+		DeviceInfo:  deviceInfo,
+		Online:      true,
+		FirstSeen:   now,
+		LastSeen:    now,
+		ClientCount: 0,
+		Clients:     nil,
+	}
+	r.devices[deviceID] = newEntry
+	return newEntry
+}
+
+// MarkAgentOnline marks an agent online for a device without overwriting existing DeviceInfo (R5.3.2).
+func (r *Registry) MarkAgentOnline(deviceID string, isWebRTC bool) *types.DeviceEntry {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	now := time.Now()
+	entry, exists := r.devices[deviceID]
+	if exists {
+		entry.Mu.Lock()
+		if entry.DeviceInfo == nil {
+			entry.DeviceInfo = ResolveDeviceGeometry(deviceID)
+		}
+		entry.Online = true
+		entry.LastSeen = now
+		entry.Mu.Unlock()
+		return entry
+	}
+
+	deviceInfo := ResolveDeviceGeometry(deviceID)
 	newEntry := &types.DeviceEntry{
 		DeviceID:    deviceID,
 		DeviceInfo:  deviceInfo,
@@ -194,9 +275,17 @@ func (r *Registry) DeleteDevice(deviceID string) error {
 // Confidence: HIGH
 func (r *Registry) GetDevice(deviceID string) (*types.DeviceEntry, bool) {
 	r.mu.RLock()
-	defer r.mu.RUnlock()
-
 	entry, exists := r.devices[deviceID]
+	r.mu.RUnlock()
+
+	if exists && entry != nil {
+		entry.Mu.Lock()
+		if entry.DeviceInfo == nil {
+			entry.DeviceInfo = ResolveDeviceGeometry(deviceID)
+		}
+		entry.Mu.Unlock()
+	}
+
 	return entry, exists
 }
 

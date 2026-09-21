@@ -159,14 +159,34 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 			clientConn.DeviceID = boundDeviceID
 			h.BindClientToDevice(clientConn, boundDeviceID)
 
-			// Update device registry client count and active clients
+			// Update device registry client count and active clients, and retrieve DeviceInfo
+			var devInfo interface{}
 			if h.deviceReg != nil {
 				if dev, exists := h.deviceReg.GetDevice(boundDeviceID); exists {
 					dev.Mu.Lock()
 					dev.ClientCount++
 					dev.Clients = append(dev.Clients, clientID)
+					if dev.DeviceInfo == nil {
+						dev.DeviceInfo = devices.ResolveDeviceGeometry(boundDeviceID)
+					}
+					devInfo = dev.DeviceInfo
 					dev.Mu.Unlock()
+				} else {
+					devInfo = devices.ResolveDeviceGeometry(boundDeviceID)
 				}
+			} else {
+				devInfo = devices.ResolveDeviceGeometry(boundDeviceID)
+			}
+
+			// R5.3.3: Restore server -> client device_info message BEFORE config
+			if devInfo != nil {
+				deviceInfoMsg := DeviceInfoMessage{
+					MessageType: "device_info",
+					DeviceID:    boundDeviceID,
+					DeviceInfo:  devInfo,
+				}
+				_ = clientConn.WriteJSON(deviceInfoMsg)
+				log.Printf("[Signaling] Sent device_info to client %d for device %s: %+v", clientID, boundDeviceID, devInfo)
 			}
 
 			// Reply with config message containing ICE servers

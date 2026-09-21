@@ -25,6 +25,14 @@ type RegisterMessage struct {
 	DeviceInfo  interface{} `json:"device_info,omitempty"`
 }
 
+// DeviceInfoMessage represents the server-to-client frame delivering device metadata (R5.3.3).
+// Consumed by upstream useWebRTC.js: case "device_info": handleDeviceInfo(msg.device_info).
+type DeviceInfoMessage struct {
+	MessageType string      `json:"message_type"`
+	DeviceID    string      `json:"device_id"`
+	DeviceInfo  interface{} `json:"device_info"`
+}
+
 // ConfigMessage represents the server configuration response pushing STUN/TURN ICE servers.
 // Observed in oracle case TR-E2E-DEV-REGISTER; confirmed in binary symbol main.rQffYkwYhw.
 type ConfigMessage struct {
