@@ -73,6 +73,9 @@ Phase E6: English UI Normalization Verification (V2 Complete)
 
 --- Gate 3: Replacement Rule Integrity Verification ---
   [PASS] All 207/207 active replacement rules verified
+         (= 71 V1 replacement rules + 136 E6 replacement rules)
+  [PASS] ui-english-map.json: 216 total entries
+         (= 207 active replacement rules + 9 protected definitions)
 
 --- Gate 4: HTML lang="en" Normalization Verification ---
   [PASS] public_html: lang="en" verified, lang="zh-CN" absent
@@ -95,12 +98,24 @@ All 6 static and structural verification gates PASSED.
 
 ---
 
-## 5. Interactive Live DOM CJK Sweep (14 Views & Modals)
+## 5. Interactive Live DOM CJK Sweep (10 Automated Scenarios Covering 14 Views & Modals)
 
-A deep interactive Chrome DevTools Protocol (CDP) sweep was executed across all user-interactive views, dropdowns, context menus, and modals:
+A deep interactive Chrome DevTools Protocol (CDP) sweep was executed across 10 automated scenarios covering 14 interactive views, dialogs, dropdowns, and modals:
+- Matrix Grid & Navigation Header
+- Display Options Popover (Resolution scale, FPS, direct preview interaction)
+- Device Card Context Menu (Actions, terminal, restart, settings)
+- Tag Management Modal (Tag list, input, submit, close)
+- Group Control Mode & Batch Action Bar
+- User Permissions & Global Settings Modal
+- Connection Settings Modal (Video, Preview, Audio, Advanced tabs)
+- Single Device Streaming View (DeviceClient canvas, in-use banner)
+- Streaming Toolbar & WebRTC ↔ WebSocket Mode Switch
+- Telemetry Overlay & Stream Status Badges
+- Route `/deploy` (Deployment matrix)
+- Route `/share` (Share link generator)
 
-| View / Scenario | Scope Tested | Visible CJK Found | Status |
-|:----------------|:-------------|:-----------------:|:------:|
+| Scenario | Scope / Views Covered | Visible CJK Found | Status |
+|:---------|:----------------------|:-----------------:|:------:|
 | 1. Dashboard / Matrix View (Main) | Header, grid, statistics badges, device cards | 0 | **PASS** |
 | 2. Display Options Dropdown | Resolution scale, FPS, interactive card toggles | 0 | **PASS** |
 | 3. Device Card More Actions Menu | Context actions, restart, terminal, settings | 0 | **PASS** |
