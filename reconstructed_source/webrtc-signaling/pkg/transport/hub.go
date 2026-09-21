@@ -95,6 +95,8 @@ type ClientConn struct {
 	Conn            *websocket.Conn
 	UserRole        string
 	AssignedDevices []string
+	Generation      uint64
+	IsWebRTC        bool
 	WriteMu         sync.Mutex
 	Closed          sync.Once
 }
@@ -162,6 +164,10 @@ type Hub struct {
 	coreTrackersMu sync.RWMutex
 	coreTrackers   map[string]*DeviceCoreTracker
 
+	// Device session generation tracking (Phase R5.4A)
+	deviceGenMu sync.RWMutex
+	deviceGen   map[string]uint64
+
 	// Monotonically increasing atomic client ID generator (IMPLEMENTATION_CHOICE)
 	nextClientID uint32
 }
@@ -193,8 +199,34 @@ func NewHub(deviceReg *devices.Registry, authMgr *auth.Authenticator, sharesStor
 		deviceClients:      make(map[string]map[uint32]*ClientConn),
 		previewSubscribers: make(map[string]map[uint32]*ClientConn),
 		coreTrackers:       make(map[string]*DeviceCoreTracker),
+		deviceGen:          make(map[string]uint64),
 		nextClientID:       0,
 	}
+}
+
+// GetDeviceGeneration returns the active generation for a device.
+func (h *Hub) GetDeviceGeneration(deviceID string) uint64 {
+	h.deviceGenMu.RLock()
+	defer h.deviceGenMu.RUnlock()
+	return h.deviceGen[deviceID]
+}
+
+// NextDeviceGeneration increments and returns the new generation for a device.
+func (h *Hub) NextDeviceGeneration(deviceID string) uint64 {
+	h.deviceGenMu.Lock()
+	defer h.deviceGenMu.Unlock()
+	h.deviceGen[deviceID]++
+	return h.deviceGen[deviceID]
+}
+
+// SetDeviceGeneration explicitly aligns the server generation with a client attempt epoch.
+func (h *Hub) SetDeviceGeneration(deviceID string, gen uint64) uint64 {
+	h.deviceGenMu.Lock()
+	defer h.deviceGenMu.Unlock()
+	if gen > h.deviceGen[deviceID] {
+		h.deviceGen[deviceID] = gen
+	}
+	return h.deviceGen[deviceID]
 }
 
 // GetCoreTracker retrieves or creates the DeviceCoreTracker for a device.
@@ -418,22 +450,34 @@ func (h *Hub) SubscribePreview(clientID uint32, deviceID string) bool {
 	return wasFirst
 }
 
-// UnsubscribePreview removes a client from a device's preview subscribers.
-// Returns wasLast = true if subscriber count reached zero.
-func (h *Hub) UnsubscribePreview(clientID uint32, deviceID string) bool {
+// RemovePreviewSubscriber removes a client from a device's preview subscribers.
+// Returns removed = true if the client was actively subscribed and removed now.
+// Returns wasLast = true if subscriber count reached zero after removal.
+func (h *Hub) RemovePreviewSubscriber(clientID uint32, deviceID string) (removed bool, wasLast bool) {
 	h.previewSubscribersMu.Lock()
 	defer h.previewSubscribersMu.Unlock()
 
 	subs, exists := h.previewSubscribers[deviceID]
 	if !exists {
-		return false
+		return false, false
+	}
+	if _, ok := subs[clientID]; !ok {
+		return false, false
 	}
 	delete(subs, clientID)
+	removed = true
 	if len(subs) == 0 {
 		delete(h.previewSubscribers, deviceID)
-		return true
+		wasLast = true
 	}
-	return false
+	return removed, wasLast
+}
+
+// UnsubscribePreview removes a client from a device's preview subscribers.
+// Returns wasLast = true if subscriber count reached zero.
+func (h *Hub) UnsubscribePreview(clientID uint32, deviceID string) bool {
+	_, wasLast := h.RemovePreviewSubscriber(clientID, deviceID)
+	return wasLast
 }
 
 // UnsubscribeClientFromAllPreviews removes a client from all preview subscriptions upon disconnect.

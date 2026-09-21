@@ -10,6 +10,8 @@
 
 package transport
 
+import "log"
+
 // CleanupDevice performs deterministic and idempotent teardown of a device connection.
 // Safely closes the socket, removes registration from the hub, marks device offline in registry,
 // and broadcasts device_list_update.
@@ -74,13 +76,31 @@ func (h *Hub) CleanupClient(deviceID string, cc *ClientConn) {
 				dev.Mu.Unlock()
 			}
 
-			// Notify agent of client disconnection matching original binary behavior
-			if ag, ok := h.GetAgentConn(deviceID); ok && ag != nil {
-				_ = ag.WriteJSON(map[string]interface{}{
-					"message_type": "client_disconnected",
-					"device_id":    deviceID,
-					"client_id":    cc.ClientID,
-				})
+			// Stale Cleanup Guard:
+			// Check if this cleanup is from an older generation.
+			// If a newer live consumer exists OR a handoff is active, suppress destructive agent notifications!
+			tracker := h.GetCoreTracker(deviceID)
+			currentGen := h.GetDeviceGeneration(deviceID)
+			isStale := cc.Generation > 0 && cc.Generation < currentGen
+
+			shouldNotifyAgent := cc.IsWebRTC
+			if isStale && tracker != nil {
+				if tracker.HasNewerLiveConsumer(cc.Generation) || tracker.HasActiveHandoff() {
+					log.Printf("[Signaling] Suppressing client_disconnected for stale client %d (gen %d < current %d) on %s: newer session active",
+						cc.ClientID, cc.Generation, currentGen, deviceID)
+					shouldNotifyAgent = false
+				}
+			}
+
+			// Notify agent of client disconnection ONLY for genuine WebRTC session owners
+			if shouldNotifyAgent {
+				if ag, ok := h.GetAgentConn(deviceID); ok && ag != nil {
+					_ = ag.WriteJSON(map[string]interface{}{
+						"message_type": "client_disconnected",
+						"device_id":    deviceID,
+						"client_id":    cc.ClientID,
+					})
+				}
 			}
 
 			h.BroadcastDeviceListUpdate()

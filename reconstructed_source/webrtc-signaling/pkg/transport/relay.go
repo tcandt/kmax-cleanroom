@@ -39,8 +39,35 @@ func (h *Hub) RelayClientToAgent(deviceID string, clientID uint32, payload json.
 		Payload:     payload,
 	}
 
-	if tracker := h.GetCoreTracker(deviceID); tracker != nil {
-		tracker.OnAddWebRTCClient(clientID)
+	// Parse payload type to detect initial session request vs in-session trickle ICE / answer
+	var sigHeader struct {
+		Type       string `json:"type"`
+		Generation uint64 `json:"generation"`
+		AttemptID  uint32 `json:"attempt_id"`
+	}
+	_ = json.Unmarshal(payload, &sigHeader)
+
+	if sigHeader.Type == "request-offer" {
+		// Increment or align device generation for this new WebRTC attempt
+		gen := sigHeader.Generation
+		if gen == 0 {
+			gen = h.NextDeviceGeneration(deviceID)
+		} else {
+			h.SetDeviceGeneration(deviceID, gen)
+		}
+
+		if cc, exists := h.GetClientConn(clientID); exists && cc != nil {
+			cc.Generation = gen
+			cc.IsWebRTC = true
+		}
+
+		if tracker := h.GetCoreTracker(deviceID); tracker != nil {
+			// Bidirectional handoff check: If device currently has active WS preview, begin handoff WS -> WebRTC
+			if tracker.WSCount() > 0 {
+				tracker.BeginHandoff("websocket", "webrtc", gen, sigHeader.AttemptID, 0, clientID)
+			}
+			tracker.OnAddWebRTCClient(clientID, gen)
+		}
 	}
 
 	log.Printf("[Signaling-Relay] Forwarding client %d -> agent %s: %s", clientID, deviceID, string(payload))

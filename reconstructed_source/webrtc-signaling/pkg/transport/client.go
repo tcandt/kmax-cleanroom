@@ -13,6 +13,7 @@ package transport
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -228,9 +229,18 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
+			// Generate or align session generation
+			gen := h.NextDeviceGeneration(devID)
+			clientConn.Generation = gen
+			clientConn.IsWebRTC = false
+
 			tracker := h.GetCoreTracker(devID)
 			if tracker != nil {
-				tracker.OnStartPreviewSubscriber(clientID)
+				// Bidirectional handoff check: If device currently has active WebRTC, begin handoff WebRTC -> WS
+				if tracker.WebRTCCount() > 0 {
+					tracker.BeginHandoff("webrtc", "websocket", gen, 0, 0, clientID)
+				}
+				tracker.OnStartPreviewSubscriber(clientID, gen)
 			}
 
 			wasFirst := h.SubscribePreview(clientID, devID)
@@ -262,10 +272,16 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
+			// Idempotent removal: only proceed if this client was actually subscribed
+			removed, wasLast := h.RemovePreviewSubscriber(clientID, devID)
+			if !removed {
+				// Already unsubscribed, ignore duplicate stop
+				continue
+			}
+
 			tracker := h.GetCoreTracker(devID)
 			if tracker != nil {
 				tracker.OnStopPreviewSubscriber(clientID, 1500*time.Millisecond, func() {
-					wasLast := h.UnsubscribePreview(clientID, devID)
 					if wasLast {
 						req.DeviceID = devID
 						req.MessageType = "stop_preview"
@@ -274,14 +290,57 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 						log.Printf("[Signaling] Forwarding debounced stop_preview to %s", devID)
 					}
 				})
-			} else {
-				wasLast := h.UnsubscribePreview(clientID, devID)
-				if wasLast {
-					req.DeviceID = devID
-					req.MessageType = "stop_preview"
-					req.Type = "stop_preview"
-					_ = h.RelayToAgent(devID, req)
-					log.Printf("[Signaling] Forwarding stop_preview to %s", devID)
+			} else if wasLast {
+				req.DeviceID = devID
+				req.MessageType = "stop_preview"
+				req.Type = "stop_preview"
+				_ = h.RelayToAgent(devID, req)
+				log.Printf("[Signaling] Forwarding stop_preview to %s", devID)
+			}
+
+		case "stream_ready":
+			var req struct {
+				MessageType string `json:"message_type"`
+				DeviceID    string `json:"device_id"`
+				Mode        string `json:"mode"`
+				Generation  uint64 `json:"generation"`
+				AttemptID   uint32 `json:"attempt_id"`
+			}
+			if err := json.Unmarshal(data, &req); err == nil {
+				devID := req.DeviceID
+				if devID == "" {
+					devID = boundDeviceID
+				}
+				if devID != "" {
+					if tracker := h.GetCoreTracker(devID); tracker != nil {
+						tracker.UpdateHandoffState("COMPLETE")
+						tracker.MarkReady(fmt.Sprintf("stream_ready_ack_%s_gen_%d", req.Mode, req.Generation))
+					}
+					log.Printf("[Signaling] Client %d confirmed stream_ready: dev=%s mode=%s gen=%d attempt=%d",
+						clientID, devID, req.Mode, req.Generation, req.AttemptID)
+				}
+			}
+
+		case "stream_failed":
+			var req struct {
+				MessageType string `json:"message_type"`
+				DeviceID    string `json:"device_id"`
+				Mode        string `json:"mode"`
+				Generation  uint64 `json:"generation"`
+				AttemptID   uint32 `json:"attempt_id"`
+				Reason      string `json:"reason"`
+			}
+			if err := json.Unmarshal(data, &req); err == nil {
+				devID := req.DeviceID
+				if devID == "" {
+					devID = boundDeviceID
+				}
+				if devID != "" {
+					if tracker := h.GetCoreTracker(devID); tracker != nil {
+						tracker.UpdateHandoffState("ROLLBACK")
+					}
+					log.Printf("[Signaling] Client %d reported stream_failed: dev=%s mode=%s gen=%d attempt=%d reason=%s",
+						clientID, devID, req.Mode, req.Generation, req.AttemptID, req.Reason)
 				}
 			}
 
