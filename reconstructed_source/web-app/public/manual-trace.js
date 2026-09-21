@@ -1,7 +1,7 @@
 /**
  * manual-trace.js
  * 
- * Phase R5 — Direct Input Hot-Path Recovery & Passive Observability.
+ * Phase R5.1b — Direct Input Hot-Path Recovery & Passive Observability.
  * 
  * Strict Guarantees:
  * 1. ZERO monkey-patching on WebSocket.prototype.send or RTCDataChannel.prototype.send.
@@ -10,6 +10,8 @@
  * 4. In-memory circular ring buffer (200 events max) to prevent DevTools console overhead.
  * 5. Console output restricted to DOWN, UP, errors/drops, and 1-in-30 MOVEs.
  * 6. Interactive diagnostic helpers: window.__dumpControlTrace(), window.__dumpCoordDiag(), window.__dumpStreamStats().
+ * 7. Unified Controller Session ID tracking across DevicePanel, PeerConnection, and DataChannel.
+ * 8. Delta-based WebRTC stream metrics (actualFps, avgJitterBufferMs, avgDecodeMs, bitrateKbps).
  */
 
 (function() {
@@ -29,6 +31,11 @@
     }
   }
 
+  // --- Global Session State ---
+  window.__globalSessionSeq = window.__globalSessionSeq || 0;
+  window.__activeSessionId = window.__activeSessionId || 0;
+  window.__lastTouchTs = 0;
+
   // --- Diagnostic Dump API ---
   window.__dumpControlTrace = function(count = 100) {
     const slice = traceBuffer.slice(-Math.min(count, traceBuffer.length));
@@ -39,9 +46,10 @@
         cat: e.category,
         action: e.action || e.event || '',
         seq: e.seq ?? '-',
-        gen: e.ctrlGen ?? e.dcGen ?? '-',
+        sess: e.session ?? '-',
+        dcSess: e.dcSession ?? '-',
         result: e.result ?? e.reason ?? '-',
-        coords: (e.x !== undefined && e.y !== undefined) ? `${e.x},${e.y}` : '-',
+        coords: (e.x !== undefined && e.y !== undefined) ? `${e.x},${e.y}` : (e.clientX !== undefined ? `${e.clientX},${e.clientY}` : '-'),
         details: typeof e.details === 'object' ? JSON.stringify(e.details) : (e.details || '')
       })));
     } else {
@@ -75,15 +83,35 @@
     return window.__streamStats;
   };
 
-  // --- R5.3: Direct Touch Observability Hooks ---
+  // --- R5.1b: Native DOM Input Observability Hook ---
+  window.__recordInput = function(info) {
+    const sess = info.session ?? window.__activeSessionId ?? '-';
+    pushTrace({
+      category: 'INPUT',
+      session: sess,
+      event: info.event,
+      clientX: info.clientX,
+      clientY: info.clientY,
+      target: info.target
+    });
+    console.log(`[INPUT] session=${sess} event=${info.event} clientX=${info.clientX} clientY=${info.clientY}`);
+  };
+
+  // --- R5.1b: Direct Touch Observability Hook ---
   window.__recordTouchSent = function(info) {
+    const panelSession = info.session ?? window.__activeSessionId;
+    const dcSession = info.dcSession ?? info.dcId;
+    const isStale = (info.dcSession !== undefined && info.dcSession !== null && info.dcSession !== 'ws' && info.dcSession !== panelSession);
+
     pushTrace({
       category: 'TOUCH',
+      session: panelSession,
+      dcSession: dcSession,
+      pcSession: info.pcSession,
+      isStale: isStale,
       action: info.action,
       seq: info.seq,
       result: 'SENT',
-      ctrlGen: info.ctrlGen,
-      dcGen: info.dcGen,
       dcState: info.dcState,
       dcId: info.dcId,
       pcState: info.pcState,
@@ -95,23 +123,27 @@
       overheadMs: info.overheadMs
     });
 
+    if (isStale) {
+      console.warn(
+        `[STALE_CONTROLLER] panelSession=${panelSession} controllerSession=${panelSession} pcSession=${info.pcSession ?? '-'} dcSession=${dcSession}`
+      );
+    }
+
     const isDown = info.action === 'DOWN' || info.action === 0;
     const isUp = info.action === 'UP' || info.action === 1;
     const isMove = info.action === 'MOVE' || info.action === 2;
 
     if (isDown || isUp) {
       console.log(
-        `[TOUCH] seq=${info.seq} action=${isDown ? 'DOWN' : 'UP'} result=SENT ` +
-        `dcState=${info.dcState} dcId=${info.dcId ?? '-'} pcState=${info.pcState ?? '-'} ` +
-        `buf=${info.bufferedAmount ?? 0} x=${info.x} y=${info.y} w=${info.w} h=${info.h} ` +
-        `activeGen=${info.ctrlGen ?? '-'} dcGen=${info.dcGen ?? '-'}`
+        `[TOUCH] session=${panelSession} dcSession=${dcSession ?? '-'} seq=${info.seq} action=${isDown ? 'DOWN' : 'UP'} result=SENT ` +
+        `dcState=${info.dcState} bufferedAmount=${info.bufferedAmount ?? 0} finalX=${info.x} finalY=${info.y} w=${info.w} h=${info.h}`
       );
     } else if (isMove) {
       moveLogCounter++;
       if (moveLogCounter % 30 === 0) {
         console.log(
-          `[TOUCH] seq=${info.seq} action=MOVE (#${moveLogCounter}) result=SENT ` +
-          `dcState=${info.dcState} x=${info.x} y=${info.y} activeGen=${info.ctrlGen ?? '-'} dcGen=${info.dcGen ?? '-'}`
+          `[TOUCH] session=${panelSession} dcSession=${dcSession ?? '-'} seq=${info.seq} action=MOVE (#${moveLogCounter}) result=SENT ` +
+          `dcState=${info.dcState} bufferedAmount=${info.bufferedAmount ?? 0} finalX=${info.x} finalY=${info.y}`
         );
       }
     }
@@ -120,6 +152,7 @@
   window.__recordTouchDrop = function(reason, details) {
     pushTrace({
       category: 'TOUCH-DROP',
+      session: window.__activeSessionId,
       reason: reason,
       result: 'DROPPED',
       details: details,
@@ -129,46 +162,25 @@
     console.warn(`[TOUCH-DROP] reason=${reason} dcState=${details && details.dcState ? details.dcState : 'none'}`, details);
   };
 
-  // --- R5.4: Controller & DataChannel Lifecycle Hooks ---
-  window.__recordDcLife = function(event, gen, details) {
+  // --- R5.1b: Controller & DataChannel Lifecycle Hooks ---
+  window.__recordDcLife = function(event, session, details) {
     pushTrace({
       category: 'DC-LIFE',
       event: event,
-      dcGen: gen,
+      dcSession: session,
       details: details
     });
-    console.log(`[DC-LIFE] gen=${gen} ${event}`, details || '');
+    console.log(`[DC-LIFE] dcSession=${session} ${event}`, details || '');
   };
 
-  window.__recordCtrlLife = function(event, gen, details) {
+  window.__recordCtrlLife = function(event, session, details) {
     pushTrace({
       category: 'CTRL-LIFE',
       event: event,
-      ctrlGen: gen,
+      session: session,
       details: details
     });
-    console.log(`[CTRL-LIFE] activeGen=${gen} ${event}`, details || '');
-  };
-
-  // --- R5.5: Pointer Event Observability Hook ---
-  window.__recordPointer = function(info) {
-    pushTrace({
-      category: 'POINTER',
-      event: info.event,
-      pointerId: info.pointerId,
-      buttons: info.buttons,
-      target: info.target,
-      insideVideo: info.insideVideo,
-      ctrlGen: info.controllerGen
-    });
-
-    if (info.event === 'down' || info.event === 'up' || info.event === 'cancel') {
-      console.log(
-        `[POINTER] event=${info.event} pointerId=${info.pointerId ?? '-'} ` +
-        `buttons=${info.buttons ?? 0} target=${info.target} insideVideo=${info.insideVideo} ` +
-        `controllerGen=${info.controllerGen ?? '-'}`
-      );
-    }
+    console.log(`[CTRL-LIFE] panelSession=${session} ${event}`, details || '');
   };
 
   // --- R5.6: Coordinate Mapping Diagnostic Hook ---
@@ -192,7 +204,10 @@
     };
   };
 
-  // --- R5.8: Low-Overhead Periodic Stream Metrics Collector ---
+  // --- R5.1b: Low-Overhead Periodic Stream Metrics Collector with Delta Calculations ---
+  let prevInboundStats = null;
+  let prevInboundTime = null;
+
   setInterval(() => {
     const video = document.querySelector('video');
     const canvas = document.querySelector('canvas');
@@ -201,19 +216,56 @@
       window.__activePeerConnection.getStats().then(stats => {
         stats.forEach(report => {
           if (report.type === 'inbound-rtp' && report.kind === 'video') {
-            window.__streamStats = {
-              timestamp: Date.now(),
-              mode: 'webrtc',
-              packetsReceived: report.packetsReceived,
-              framesReceived: report.framesReceived,
-              framesDecoded: report.framesDecoded,
-              framesDropped: report.framesDropped,
-              jitter: report.jitter ? Math.round(report.jitter * 1000) : 0,
-              jitterBufferDelay: report.jitterBufferDelay ? Math.round(report.jitterBufferDelay * 1000) : 0,
-              totalDecodeTime: report.totalDecodeTime ? Math.round(report.totalDecodeTime * 1000) : 0,
-              framesPerSecond: report.framesPerSecond || 0,
-              videoCurrentTime: video.currentTime
+            const now = Date.now();
+            if (prevInboundStats && prevInboundTime) {
+              const deltaTimeSec = (now - prevInboundTime) / 1000;
+              if (deltaTimeSec > 0) {
+                const deltaDecoded = (report.framesDecoded || 0) - (prevInboundStats.framesDecoded || 0);
+                const deltaReceived = (report.framesReceived || 0) - (prevInboundStats.framesReceived || 0);
+                const deltaDropped = (report.framesDropped || 0) - (prevInboundStats.framesDropped || 0);
+                const deltaPackets = (report.packetsReceived || 0) - (prevInboundStats.packetsReceived || 0);
+                const deltaPacketsLost = (report.packetsLost || 0) - (prevInboundStats.packetsLost || 0);
+                const deltaBytes = (report.bytesReceived || 0) - (prevInboundStats.bytesReceived || 0);
+                const deltaJitterDelay = (report.jitterBufferDelay || 0) - (prevInboundStats.jitterBufferDelay || 0);
+                const deltaJitterEmitted = (report.jitterBufferEmittedCount || 0) - (prevInboundStats.jitterBufferEmittedCount || 0);
+                const deltaDecodeTime = (report.totalDecodeTime || 0) - (prevInboundStats.totalDecodeTime || 0);
+
+                const actualFps = Math.round((deltaDecoded / deltaTimeSec) * 10) / 10;
+                const avgJitterBufferMs = deltaJitterEmitted > 0 ? Math.round((deltaJitterDelay / deltaJitterEmitted) * 1000) : 0;
+                const avgDecodeMs = deltaDecoded > 0 ? Math.round((deltaDecodeTime / deltaDecoded) * 1000 * 10) / 10 : 0;
+                const bitrateKbps = Math.round(((deltaBytes * 8) / deltaTimeSec) / 1000);
+
+                window.__streamStats = {
+                  timestamp: now,
+                  mode: 'webrtc',
+                  actualFps: actualFps,
+                  avgJitterBufferMs: avgJitterBufferMs,
+                  avgDecodeMs: avgDecodeMs,
+                  packetLossDelta: Math.max(0, deltaPacketsLost),
+                  frameDropDelta: Math.max(0, deltaDropped),
+                  bitrateKbps: bitrateKbps,
+                  // Raw cumulative counters for reference
+                  packetsReceived: report.packetsReceived,
+                  framesReceived: report.framesReceived,
+                  framesDecoded: report.framesDecoded,
+                  framesDropped: report.framesDropped,
+                  jitter: report.jitter ? Math.round(report.jitter * 1000) : 0,
+                  videoCurrentTime: video.currentTime
+                };
+              }
+            }
+            prevInboundStats = {
+              framesDecoded: report.framesDecoded || 0,
+              framesReceived: report.framesReceived || 0,
+              framesDropped: report.framesDropped || 0,
+              packetsReceived: report.packetsReceived || 0,
+              packetsLost: report.packetsLost || 0,
+              bytesReceived: report.bytesReceived || 0,
+              jitterBufferDelay: report.jitterBufferDelay || 0,
+              jitterBufferEmittedCount: report.jitterBufferEmittedCount || 0,
+              totalDecodeTime: report.totalDecodeTime || 0
             };
+            prevInboundTime = now;
           }
         });
       }).catch(() => {});
@@ -227,5 +279,5 @@
     }
   }, 5000);
 
-  console.log('[MANUAL-TRACE] Phase R5 Direct Input Hot-Path Recovery initialized (zero send-interception, ring-buffer observability active).');
+  console.log('[MANUAL-TRACE] Phase R5.1b Direct Input Hot-Path Recovery initialized (unified session tracking, delta metrics, native event path).');
 })();
