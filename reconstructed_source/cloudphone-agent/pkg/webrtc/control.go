@@ -376,11 +376,18 @@ func HandleInputMessage(raw []byte, sink ControlSink) error {
 		tBegin := time.Now().UnixMilli()
 		err := sink.WriteControlMessage(frame)
 		t4 := time.Now().UnixMilli()
+		writeMs := t4 - tBegin
+		state := "connected"
+		if err != nil {
+			state = "disconnected"
+		}
+		log.Printf("[TOUCH-UDS] seq=%v socket=@uds_sys_t_ state=%s writeBytes=%d writeMs=%d error=%v",
+			seq, state, len(frame), writeMs, err)
 		var totalLagStr string
 		if clientTs > 0 {
 			totalLagStr = fmt.Sprintf(" total_lag_ms=%d", t4-clientTs)
 		}
-		log.Printf("[CTRL] seq=%v write end err=%v uds_write_ms=%d t4=%d%s", seq, err, t4-tBegin, t4, totalLagStr)
+		log.Printf("[CTRL] seq=%v write end err=%v uds_write_ms=%d t4=%d%s", seq, err, writeMs, t4, totalLagStr)
 		return err
 	}
 	return nil

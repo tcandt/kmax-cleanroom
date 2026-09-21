@@ -13,6 +13,7 @@ package agent
 
 import (
 	"encoding/json"
+	"log"
 	"sync"
 
 	agentwebrtc "cloudphone-agent/pkg/webrtc"
@@ -103,8 +104,9 @@ func (c *Coordinator) SetControlSink(sink agentwebrtc.ControlSink) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.controlSink = sink
-	for _, s := range c.sessions {
+	for clientID, s := range c.sessions {
 		s.SetControlSink(sink)
+		log.Printf("[CONTROL-SINK] clientID=%d session=%p bound=%t sinkType=%T", clientID, s, sink != nil, sink)
 	}
 }
 
@@ -203,9 +205,12 @@ func (c *Coordinator) handleRequestOffer(clientID uint32) {
 		return
 	}
 
+	bound := false
 	if sink != nil {
 		session.SetControlSink(sink)
+		bound = true
 	}
+	log.Printf("[CONTROL-SINK] clientID=%d session=%p bound=%t sinkType=%T", clientID, session, bound, sink)
 	if provider != nil {
 		session.SetClipboardProvider(provider)
 	}

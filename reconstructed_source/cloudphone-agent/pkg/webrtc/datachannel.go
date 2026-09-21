@@ -14,7 +14,9 @@
 package webrtc
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/pion/webrtc/v3"
@@ -37,6 +39,8 @@ const (
 // Classification: RECONSTRUCTED_FROM_BINARY.
 type DataChannels struct {
 	mu sync.RWMutex
+
+	ClientID uint32
 
 	// Outbound
 	InputChannel     *webrtc.DataChannel
@@ -119,10 +123,30 @@ func (dc *DataChannels) SetupOutboundChannels(pc *webrtc.PeerConnection, cameraS
 	inputCh.OnMessage(func(msg webrtc.DataChannelMessage) {
 		dc.mu.RLock()
 		sink := dc.ControlSink
+		clientID := dc.ClientID
 		dc.mu.RUnlock()
-		if sink != nil {
-			_ = HandleInputMessage(msg.Data, sink)
+
+		var env RawInputEnvelope
+		_ = json.Unmarshal(msg.Data, &env)
+		var rawMap map[string]interface{}
+		var seq interface{} = "none"
+		if err := json.Unmarshal(msg.Data, &rawMap); err == nil {
+			if s, ok := rawMap["control_seq"]; ok {
+				seq = s
+			} else if s, ok := rawMap["seq"]; ok {
+				seq = s
+			}
 		}
+
+		log.Printf("[DC-RX] clientID=%d channel=input-channel bytes=%d type=%s seq=%v sinkNil=%t",
+			clientID, len(msg.Data), env.Type, seq, sink == nil)
+
+		if sink == nil {
+			log.Printf("[TOUCH-DROP-AGENT] reason=CONTROL_SINK_NIL clientID=%d seq=%v", clientID, seq)
+			return
+		}
+
+		_ = HandleInputMessage(msg.Data, sink)
 	})
 	dc.InputChannel = inputCh
 

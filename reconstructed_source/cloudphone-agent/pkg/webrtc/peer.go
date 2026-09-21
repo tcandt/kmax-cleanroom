@@ -114,6 +114,7 @@ func NewPeerSessionWithOptions(opts PeerSessionOptions) (*PeerSession, error) {
 
 	// Setup confirmed DataChannels
 	channels := NewDataChannels()
+	channels.ClientID = opts.ClientID
 
 	var camHandler *CameraHandler
 	if opts.CameraSupport {
