@@ -38,6 +38,9 @@ func (s *Server) SetICEServers(servers []types.ICEServer) {
 	s.iceServersMu.Lock()
 	defer s.iceServersMu.Unlock()
 	s.iceServers = servers
+	if s.transportHub != nil {
+		s.transportHub.SetICEServers(servers)
+	}
 }
 
 // CLEANROOM-PROVENANCE:

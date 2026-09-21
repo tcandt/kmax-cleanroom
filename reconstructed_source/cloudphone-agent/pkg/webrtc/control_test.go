@@ -205,10 +205,28 @@ func TestHandleInputMessageEndToEnd(t *testing.T) {
 			expectedLen:  5 + len("antigravity"),
 		},
 		{
-			name:         "scroll",
-			jsonPayload:  `{"type":"inject_scroll","x":500,"y":500,"w":1080,"h":1920,"scroll_h":0,"scroll_v":-2.5}`,
+			name:         "scroll_webrtc_snake",
+			jsonPayload:  `{"type":"inject_scroll","seq":10,"client_ts_ms":1000,"x":500,"y":500,"w":1080,"h":1920,"scroll_h":0.5,"scroll_v":-2.5}`,
 			expectedType: ScrcpyTypeInjectScrollEvent,
 			expectedLen:  21,
+		},
+		{
+			name:         "scroll_websocket_camel",
+			jsonPayload:  `{"type":"scroll","action":0,"x":500,"y":500,"w":1080,"h":1920,"scrollH":0.5,"scrollV":-2.5}`,
+			expectedType: ScrcpyTypeInjectScrollEvent,
+			expectedLen:  21,
+		},
+		{
+			name:         "keycode_alias",
+			jsonPayload:  `{"type":"keycode","action":0,"keycode":4}`,
+			expectedType: ScrcpyTypeInjectKeycode,
+			expectedLen:  14,
+		},
+		{
+			name:         "text_alias",
+			jsonPayload:  `{"type":"text","text":"hello"}`,
+			expectedType: ScrcpyTypeInjectText,
+			expectedLen:  5 + len("hello"),
 		},
 		{
 			name:         "hard_keyboard",
@@ -300,3 +318,44 @@ func TestInputConcurrency(t *testing.T) {
 		t.Fatalf("expected %d messages in sink, got %d", expectedTotal, len(msgs))
 	}
 }
+
+// TestScrollPayloadParityWebRTCAndWebSocket verifies that WebRTC snake_case payload
+// and WebSocket camelCase payload produce 100% byte-for-byte identical scrcpy control frames.
+func TestScrollPayloadParityWebRTCAndWebSocket(t *testing.T) {
+	sinkWebRTC := NewMemoryControlSink()
+	sinkWS := NewMemoryControlSink()
+
+	// 1. WebRTC format
+	webrtcPayload := `{"type":"inject_scroll","seq":42,"client_ts_ms":1720000000,"x":350,"y":700,"w":1080,"h":1920,"scroll_h":1.5,"scroll_v":-3.0}`
+	if err := HandleInputMessage([]byte(webrtcPayload), sinkWebRTC); err != nil {
+		t.Fatalf("WebRTC handle error: %v", err)
+	}
+
+	// 2. WebSocket format (camelCase scrollH/scrollV, action=0)
+	wsPayload := `{"type":"scroll","action":0,"x":350,"y":700,"w":1080,"h":1920,"scrollH":1.5,"scrollV":-3.0}`
+	if err := HandleInputMessage([]byte(wsPayload), sinkWS); err != nil {
+		t.Fatalf("WebSocket handle error: %v", err)
+	}
+
+	msgsWebRTC := sinkWebRTC.GetMessages()
+	msgsWS := sinkWS.GetMessages()
+
+	if len(msgsWebRTC) != 1 || len(msgsWS) != 1 {
+		t.Fatalf("expected 1 message in each sink, got %d and %d", len(msgsWebRTC), len(msgsWS))
+	}
+
+	frameWebRTC := msgsWebRTC[0]
+	frameWS := msgsWS[0]
+
+	if len(frameWebRTC) != 21 || len(frameWS) != 21 {
+		t.Fatalf("expected 21 bytes frame, got webrtc=%d ws=%d", len(frameWebRTC), len(frameWS))
+	}
+
+	for i := 0; i < 21; i++ {
+		if frameWebRTC[i] != frameWS[i] {
+			t.Fatalf("byte mismatch at index %d: webrtc=0x%02x, ws=0x%02x\nwebrtc=%v\nws    =%v",
+				i, frameWebRTC[i], frameWS[i], frameWebRTC, frameWS)
+		}
+	}
+}
+

@@ -10,9 +10,12 @@
 package transport
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/gorilla/websocket"
 
@@ -35,6 +38,13 @@ func (dc *DeviceConn) WriteJSON(v interface{}) error {
 	dc.WriteMu.Lock()
 	defer dc.WriteMu.Unlock()
 	return dc.Conn.WriteJSON(v)
+}
+
+// WriteMessage sends a raw WebSocket frame with serialized write protection.
+func (dc *DeviceConn) WriteMessage(messageType int, data []byte) error {
+	dc.WriteMu.Lock()
+	defer dc.WriteMu.Unlock()
+	return dc.Conn.WriteMessage(messageType, data)
 }
 
 // Close safely closes the WebSocket connection.
@@ -61,6 +71,13 @@ func (ac *AgentConn) WriteJSON(v interface{}) error {
 	return ac.Conn.WriteJSON(v)
 }
 
+// WriteMessage sends a raw WebSocket frame with serialized write protection.
+func (ac *AgentConn) WriteMessage(messageType int, data []byte) error {
+	ac.WriteMu.Lock()
+	defer ac.WriteMu.Unlock()
+	return ac.Conn.WriteMessage(messageType, data)
+}
+
 // Close safely closes the WebSocket connection.
 func (ac *AgentConn) Close() error {
 	var err error
@@ -74,6 +91,7 @@ func (ac *AgentConn) Close() error {
 type ClientConn struct {
 	ClientID        uint32
 	DeviceID        string
+	Username        string
 	Conn            *websocket.Conn
 	UserRole        string
 	AssignedDevices []string
@@ -86,6 +104,20 @@ func (cc *ClientConn) WriteJSON(v interface{}) error {
 	cc.WriteMu.Lock()
 	defer cc.WriteMu.Unlock()
 	return cc.Conn.WriteJSON(v)
+}
+
+// WriteMessage sends a raw WebSocket frame with serialized write protection.
+func (cc *ClientConn) WriteMessage(messageType int, data []byte) error {
+	cc.WriteMu.Lock()
+	defer cc.WriteMu.Unlock()
+	return cc.Conn.WriteMessage(messageType, data)
+}
+
+// WritePing sends an RFC 6455 Ping frame with serialized write protection.
+func (cc *ClientConn) WritePing() error {
+	cc.WriteMu.Lock()
+	defer cc.WriteMu.Unlock()
+	return cc.Conn.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(5*time.Second))
 }
 
 // Close safely closes the WebSocket connection.
@@ -121,6 +153,15 @@ type Hub struct {
 	clients       map[uint32]*ClientConn
 	deviceClients map[string]map[uint32]*ClientConn
 
+	// Active preview subscribers (deviceID -> clientID -> ClientConn)
+	// Decoupled from WebRTC deviceClients to prevent lifecycle conflation.
+	previewSubscribersMu sync.RWMutex
+	previewSubscribers   map[string]map[uint32]*ClientConn
+
+	// CoreService State Machine & Reference Trackers (Phase R3)
+	coreTrackersMu sync.RWMutex
+	coreTrackers   map[string]*DeviceCoreTracker
+
 	// Monotonically increasing atomic client ID generator (IMPLEMENTATION_CHOICE)
 	nextClientID uint32
 }
@@ -146,12 +187,29 @@ func NewHub(deviceReg *devices.Registry, authMgr *auth.Authenticator, sharesStor
 			},
 			EnableCompression: false,
 		},
-		devices:       make(map[string]*DeviceConn),
-		agents:        make(map[string]*AgentConn),
-		clients:       make(map[uint32]*ClientConn),
-		deviceClients: make(map[string]map[uint32]*ClientConn),
-		nextClientID:  0,
+		devices:            make(map[string]*DeviceConn),
+		agents:             make(map[string]*AgentConn),
+		clients:            make(map[uint32]*ClientConn),
+		deviceClients:      make(map[string]map[uint32]*ClientConn),
+		previewSubscribers: make(map[string]map[uint32]*ClientConn),
+		coreTrackers:       make(map[string]*DeviceCoreTracker),
+		nextClientID:       0,
 	}
+}
+
+// GetCoreTracker retrieves or creates the DeviceCoreTracker for a device.
+func (h *Hub) GetCoreTracker(deviceID string) *DeviceCoreTracker {
+	if deviceID == "" {
+		return nil
+	}
+	h.coreTrackersMu.Lock()
+	defer h.coreTrackersMu.Unlock()
+	tr, ok := h.coreTrackers[deviceID]
+	if !ok {
+		tr = NewDeviceCoreTracker(deviceID)
+		h.coreTrackers[deviceID] = tr
+	}
+	return tr
 }
 
 // SetICEServers updates the ICE server configuration pushed to connecting peers.
@@ -332,4 +390,179 @@ func (h *Hub) GetClientConn(clientID uint32) (*ClientConn, bool) {
 	defer h.clientsMu.RUnlock()
 	cc, exists := h.clients[clientID]
 	return cc, exists
+}
+
+// SubscribePreview registers a client connection as a subscriber for device preview stream.
+// Returns wasFirst = true if this is the first subscriber for the device.
+func (h *Hub) SubscribePreview(clientID uint32, deviceID string) bool {
+	h.previewSubscribersMu.Lock()
+	defer h.previewSubscribersMu.Unlock()
+
+	h.clientsMu.RLock()
+	cc, ok := h.clients[clientID]
+	h.clientsMu.RUnlock()
+	if !ok || cc == nil {
+		return false
+	}
+
+	subs, exists := h.previewSubscribers[deviceID]
+	wasFirst := false
+	if !exists {
+		subs = make(map[uint32]*ClientConn)
+		h.previewSubscribers[deviceID] = subs
+		wasFirst = true
+	} else if len(subs) == 0 {
+		wasFirst = true
+	}
+	subs[clientID] = cc
+	return wasFirst
+}
+
+// UnsubscribePreview removes a client from a device's preview subscribers.
+// Returns wasLast = true if subscriber count reached zero.
+func (h *Hub) UnsubscribePreview(clientID uint32, deviceID string) bool {
+	h.previewSubscribersMu.Lock()
+	defer h.previewSubscribersMu.Unlock()
+
+	subs, exists := h.previewSubscribers[deviceID]
+	if !exists {
+		return false
+	}
+	delete(subs, clientID)
+	if len(subs) == 0 {
+		delete(h.previewSubscribers, deviceID)
+		return true
+	}
+	return false
+}
+
+// UnsubscribeClientFromAllPreviews removes a client from all preview subscriptions upon disconnect.
+// Returns the list of device IDs whose subscriber count dropped to zero.
+func (h *Hub) UnsubscribeClientFromAllPreviews(clientID uint32) []string {
+	h.previewSubscribersMu.Lock()
+	defer h.previewSubscribersMu.Unlock()
+
+	var emptyDevices []string
+	for devID, subs := range h.previewSubscribers {
+		if _, ok := subs[clientID]; ok {
+			delete(subs, clientID)
+			if len(subs) == 0 {
+				delete(h.previewSubscribers, devID)
+				emptyDevices = append(emptyDevices, devID)
+			}
+		}
+	}
+	return emptyDevices
+}
+
+// RelayBinaryPreviewToSubscribers routes PREV binary frames to authorized subscribers.
+// Strictly verifies header format and matches boundDeviceID.
+func (h *Hub) RelayBinaryPreviewToSubscribers(boundDeviceID string, data []byte) error {
+	frameDeviceID, err := ParsePreviewDeviceID(data)
+	if err != nil {
+		return err
+	}
+	if boundDeviceID == "" || frameDeviceID != boundDeviceID {
+		return ErrPreviewDeviceMismatch
+	}
+
+	h.previewSubscribersMu.RLock()
+	subs, exists := h.previewSubscribers[boundDeviceID]
+	if !exists || len(subs) == 0 {
+		h.previewSubscribersMu.RUnlock()
+		return nil
+	}
+	targets := make([]*ClientConn, 0, len(subs))
+	for _, cc := range subs {
+		targets = append(targets, cc)
+	}
+	h.previewSubscribersMu.RUnlock()
+
+	for _, cc := range targets {
+		if devices.CanAccessDevice(cc.UserRole, cc.AssignedDevices, boundDeviceID) {
+			_ = cc.WriteMessage(websocket.BinaryMessage, data)
+		}
+	}
+	return nil
+}
+
+// RelayToAgent forwards a message directly to the registered agent of a target device.
+func (h *Hub) RelayToAgent(deviceID string, msg interface{}) error {
+	h.agentsMu.RLock()
+	ac, exists := h.agents[deviceID]
+	h.agentsMu.RUnlock()
+	if !exists || ac == nil {
+		return fmt.Errorf("agent for device %s not connected", deviceID)
+	}
+	return ac.WriteJSON(msg)
+}
+
+// RelayGroupControl broadcasts or dispatches group control events to target devices.
+func (h *Hub) RelayGroupControl(userRole string, assignedDevices []string, targetDevices []string, event map[string]interface{}, username string) {
+	for _, devID := range targetDevices {
+		if !devices.CanAccessDevice(userRole, assignedDevices, devID) {
+			log.Printf("[GroupControl] User %q does not have permission for device %s, dropping event", username, devID)
+			continue
+		}
+		h.agentsMu.RLock()
+		ac, exists := h.agents[devID]
+		h.agentsMu.RUnlock()
+		if !exists || ac == nil {
+			log.Printf("[GroupControl] Device %s agent is offline, cannot forward event (user: %q)", devID, username)
+			continue
+		}
+		// Canonicalize event payload for agent compatibility:
+		// - If type is "scroll", alias to "inject_scroll"
+		// - Alias scrollH/scrollV to scroll_h/scroll_v
+		normEvent := make(map[string]interface{}, len(event)+4)
+		for k, v := range event {
+			normEvent[k] = v
+		}
+		if evType, ok := normEvent["type"].(string); ok && evType == "scroll" {
+			normEvent["type"] = "inject_scroll"
+		}
+		if sh, ok := normEvent["scrollH"]; ok && normEvent["scroll_h"] == nil {
+			normEvent["scroll_h"] = sh
+		}
+		if sv, ok := normEvent["scrollV"]; ok && normEvent["scroll_v"] == nil {
+			normEvent["scroll_v"] = sv
+		}
+
+		seq, hasSeq := normEvent["control_seq"]
+		if !hasSeq {
+			seq = "none"
+		}
+		log.Printf("[CTRL] seq=%v event=%v type=TOOLBAR relay user=%q dev=%s", seq, normEvent["type"], username, devID)
+
+		envelope := map[string]interface{}{
+			"message_type": "group_control_event",
+			"event":        normEvent,
+		}
+		if err := ac.WriteJSON(envelope); err != nil {
+			log.Printf("[GroupControl] Error forwarding event to device %s: %v", devID, err)
+		} else {
+			log.Printf("[GroupControl] Forwarded group_control_event (%v) to device %s: %+v", normEvent["type"], devID, normEvent)
+		}
+	}
+}
+
+// BroadcastSnapshotUpdate pushes base64 snapshot updates to authorized client sessions.
+func (h *Hub) BroadcastSnapshotUpdate(deviceID string, data string) {
+	h.clientsMu.RLock()
+	clientList := make([]*ClientConn, 0, len(h.clients))
+	for _, client := range h.clients {
+		clientList = append(clientList, client)
+	}
+	h.clientsMu.RUnlock()
+
+	msg := SnapshotUpdateMessage{
+		MessageType: "snapshot_update",
+		DeviceID:    deviceID,
+		Data:        data,
+	}
+	for _, client := range clientList {
+		if devices.CanAccessDevice(client.UserRole, client.AssignedDevices, deviceID) {
+			_ = client.WriteJSON(msg)
+		}
+	}
 }

@@ -13,6 +13,7 @@ package transport
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ import (
 // client binding, and signaling relay for /connect_client.
 func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 	// Pre-upgrade authentication check (REQUIRED before Upgrade per TRANSPORT_AUTH_MATRIX.json)
-	userRole, assignedDevices, authed := h.authenticateClient(r)
+	username, userRole, assignedDevices, authed := h.authenticateClient(r)
 	if !authed {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -43,6 +44,7 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 	clientID := h.AllocateClientID()
 	clientConn := &ClientConn{
 		ClientID:        clientID,
+		Username:        username,
 		UserRole:        userRole,
 		AssignedDevices: assignedDevices,
 		Conn:            ws,
@@ -52,8 +54,59 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 
 	var boundDeviceID string
 
+	// Ping ticker to keep connection alive when client is passively consuming WebRTC stream
+	pingTicker := time.NewTicker(20 * time.Second)
+	stopPing := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-pingTicker.C:
+				if err := clientConn.WritePing(); err != nil {
+					return
+				}
+			case <-stopPing:
+				return
+			}
+		}
+	}()
+
 	// Ensure cleanup executes once on close/EOF/error
 	defer func() {
+		pingTicker.Stop()
+		close(stopPing)
+
+		// Clean up preview subscriptions with debounce protection (Phase R3)
+		emptyDevices := h.UnsubscribeClientFromAllPreviews(clientID)
+		for _, devID := range emptyDevices {
+			tracker := h.GetCoreTracker(devID)
+			if tracker != nil {
+				tracker.OnStopPreviewSubscriber(clientID, 1500*time.Millisecond, func() {
+					stopMsg := StopPreviewMessage{
+						MessageType: "stop_preview",
+						Type:        "stop_preview",
+						DeviceID:    devID,
+					}
+					_ = h.RelayToAgent(devID, stopMsg)
+					log.Printf("[Signaling] Client %d disconnected, debounced auto-stopped preview on empty device %s", clientID, devID)
+				})
+			} else {
+				stopMsg := StopPreviewMessage{
+					MessageType: "stop_preview",
+					Type:        "stop_preview",
+					DeviceID:    devID,
+				}
+				_ = h.RelayToAgent(devID, stopMsg)
+				log.Printf("[Signaling] Client %d disconnected, auto-stopped preview on empty device %s", clientID, devID)
+			}
+		}
+
+		if boundDeviceID != "" {
+			if tracker := h.GetCoreTracker(boundDeviceID); tracker != nil {
+				tracker.OnRemoveControlClient(clientID)
+				tracker.OnRemoveWebRTCClient(clientID)
+			}
+		}
+
 		h.CleanupClient(boundDeviceID, clientConn)
 	}()
 
@@ -137,9 +190,144 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 				targetDev = fwd.DeviceID
 			}
 			_ = h.RelayClientToAgent(targetDev, clientID, fwd.Payload)
+
+		case "start_preview":
+			var req StartPreviewMessage
+			if err := json.Unmarshal(data, &req); err != nil {
+				continue
+			}
+			devID := req.DeviceID
+			if devID == "" {
+				devID = boundDeviceID
+			}
+			if devID == "" {
+				continue
+			}
+			if !devices.CanAccessDevice(clientConn.UserRole, clientConn.AssignedDevices, devID) {
+				log.Printf("[Signaling] Client %d unauthorized for start_preview on %s", clientID, devID)
+				continue
+			}
+
+			tracker := h.GetCoreTracker(devID)
+			if tracker != nil {
+				tracker.OnStartPreviewSubscriber(clientID)
+			}
+
+			wasFirst := h.SubscribePreview(clientID, devID)
+			if wasFirst {
+				req.DeviceID = devID
+				req.MessageType = "start_preview"
+				req.Type = "start_preview"
+				if err := h.RelayToAgent(devID, req); err != nil {
+					log.Printf("[Signaling] Failed to relay start_preview to %s: %v, rolling back subscription", devID, err)
+					h.UnsubscribePreview(clientID, devID)
+				} else {
+					log.Printf("[Signaling] Forwarding start_preview to %s: fps=%v, max_size=%v, bitrate=%v, stay_awake=%v",
+						devID, req.FPS, req.MaxSize, req.Bitrate, req.StayAwake)
+				}
+			} else {
+				log.Printf("[Signaling] Client %d subscribed to existing preview stream on %s", clientID, devID)
+			}
+
+		case "stop_preview":
+			var req StopPreviewMessage
+			if err := json.Unmarshal(data, &req); err != nil {
+				continue
+			}
+			devID := req.DeviceID
+			if devID == "" {
+				devID = boundDeviceID
+			}
+			if devID == "" {
+				continue
+			}
+
+			tracker := h.GetCoreTracker(devID)
+			if tracker != nil {
+				tracker.OnStopPreviewSubscriber(clientID, 1500*time.Millisecond, func() {
+					wasLast := h.UnsubscribePreview(clientID, devID)
+					if wasLast {
+						req.DeviceID = devID
+						req.MessageType = "stop_preview"
+						req.Type = "stop_preview"
+						_ = h.RelayToAgent(devID, req)
+						log.Printf("[Signaling] Forwarding debounced stop_preview to %s", devID)
+					}
+				})
+			} else {
+				wasLast := h.UnsubscribePreview(clientID, devID)
+				if wasLast {
+					req.DeviceID = devID
+					req.MessageType = "stop_preview"
+					req.Type = "stop_preview"
+					_ = h.RelayToAgent(devID, req)
+					log.Printf("[Signaling] Forwarding stop_preview to %s", devID)
+				}
+			}
+
+		case "group_control_event":
+			var env GroupControlEnvelope
+			if err := json.Unmarshal(data, &env); err != nil {
+				continue
+			}
+			targetDevs := env.TargetDeviceIDs
+			if len(targetDevs) == 0 && boundDeviceID != "" {
+				targetDevs = []string{boundDeviceID}
+			}
+			h.RelayGroupControl(clientConn.UserRole, clientConn.AssignedDevices, targetDevs, env.Event, clientConn.Username)
+
+		case "command":
+			var cmd CommandMessage
+			if err := json.Unmarshal(data, &cmd); err != nil {
+				continue
+			}
+			devID := cmd.DeviceID
+			if devID == "" {
+				devID = boundDeviceID
+			}
+
+			var seq interface{} = "none"
+			var rawMap map[string]interface{}
+			if err := json.Unmarshal(data, &rawMap); err == nil {
+				if s, ok := rawMap["control_seq"]; ok {
+					seq = s
+				}
+			}
+			log.Printf("[CTRL] seq=%v event=command type=TOOLBAR relay client=%d dev=%s cmd=%q", seq, clientID, devID, cmd.Command)
+
+			if devID != "" && devices.CanAccessDevice(clientConn.UserRole, clientConn.AssignedDevices, devID) {
+				_ = h.RelayToAgent(devID, cmd)
+			}
+
+		case "inject_data":
+			var inj InjectDataMessage
+			if err := json.Unmarshal(data, &inj); err != nil {
+				continue
+			}
+			targetDevs := inj.TargetDeviceIDs
+			if len(targetDevs) == 0 && boundDeviceID != "" {
+				targetDevs = []string{boundDeviceID}
+			}
+			for _, devID := range targetDevs {
+				if devices.CanAccessDevice(clientConn.UserRole, clientConn.AssignedDevices, devID) {
+					_ = h.RelayToAgent(devID, inj)
+				}
+			}
+
+		case "quit_agent":
+			var qa QuitAgentMessage
+			if err := json.Unmarshal(data, &qa); err != nil {
+				continue
+			}
+			devID := qa.DeviceID
+			if devID == "" {
+				devID = boundDeviceID
+			}
+			if devID != "" && devices.CanAccessDevice(clientConn.UserRole, clientConn.AssignedDevices, devID) {
+				_ = h.RelayToAgent(devID, qa)
+			}
 		}
 	}
-
 }
 
 // authenticateClient inspects request headers and query parameters for valid credentials.
@@ -147,7 +335,7 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 // 1. Authorization: Bearer <token>
 // 2. ?token=<token>
 // 3. ?share_token=<token>
-func (h *Hub) authenticateClient(r *http.Request) (role string, assignedDevices []string, ok bool) {
+func (h *Hub) authenticateClient(r *http.Request) (username string, role string, assignedDevices []string, ok bool) {
 	// Source 1: Authorization header
 	authHeader := r.Header.Get("Authorization")
 	token := ""
@@ -166,11 +354,11 @@ func (h *Hub) authenticateClient(r *http.Request) (role string, assignedDevices 
 	}
 
 	if h.authMgr != nil {
-		if username, err := h.authMgr.ValidateToken(token); err == nil {
-			if profile, err := h.authMgr.GetUserProfile(username); err == nil && profile != nil {
-				return profile.Role, profile.AssignedDevices, true
+		if uname, err := h.authMgr.ValidateToken(token); err == nil {
+			if profile, err := h.authMgr.GetUserProfile(uname); err == nil && profile != nil {
+				return uname, profile.Role, profile.AssignedDevices, true
 			}
-			return "user", nil, true
+			return uname, "admin", []string{"*"}, true
 		}
 	}
 
@@ -181,12 +369,11 @@ func (h *Hub) authenticateClient(r *http.Request) (role string, assignedDevices 
 			// Validate share expiration
 			if share.ExpiresAt.IsZero() || share.ExpiresAt.After(time.Now()) {
 				// Share token grants guest access scoped strictly to assigned device
-				return "guest", []string{share.DeviceID}, true
+				return "guest", "guest", []string{share.DeviceID}, true
 			}
 		}
 	}
 
-
-	return "", nil, false
+	return "", "", nil, false
 }
 

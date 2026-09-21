@@ -13,6 +13,7 @@ package transport
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -55,6 +56,22 @@ func (h *Hub) HandleRegisterAgent(w http.ResponseWriter, r *http.Request) {
 
 		// Refresh read deadline on every incoming frame
 		_ = ws.SetReadDeadline(time.Now().Add(60 * time.Second))
+
+		// Handle BinaryMessage: PREV frame preview stream
+		if messageType == websocket.BinaryMessage {
+			frameDeviceID, err := ParsePreviewDeviceID(data)
+			if err != nil {
+				log.Printf("[Agent] Invalid PREV binary frame from agent: %v", err)
+				continue
+			}
+			// Enforce boundDeviceID parity to prevent spoofing
+			if boundDeviceID == "" || frameDeviceID != boundDeviceID {
+				log.Printf("[Agent] PREV frame device_id mismatch (frame=%q, bound=%q), dropping", frameDeviceID, boundDeviceID)
+				continue
+			}
+			_ = h.RelayBinaryPreviewToSubscribers(boundDeviceID, data)
+			continue
+		}
 
 		if messageType != websocket.TextMessage {
 			continue
@@ -117,7 +134,28 @@ func (h *Hub) HandleRegisterAgent(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			_ = h.RelayAgentToClient(boundDeviceID, fwd.ClientID, fwd.Payload)
+
+		case "command_result":
+			var cr CommandResultMessage
+			if err := json.Unmarshal(data, &cr); err != nil {
+				continue
+			}
+			if cr.ClientID != 0 {
+				_ = h.RelayAgentToClient(boundDeviceID, cr.ClientID, data)
+			}
+
+		case "snapshot_update":
+			var sn SnapshotUpdateMessage
+			if err := json.Unmarshal(data, &sn); err != nil {
+				continue
+			}
+			devID := sn.DeviceID
+			if devID == "" {
+				devID = boundDeviceID
+			}
+			if devID != "" {
+				h.BroadcastSnapshotUpdate(devID, sn.Data)
+			}
 		}
 	}
-
 }

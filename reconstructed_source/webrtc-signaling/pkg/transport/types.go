@@ -10,7 +10,9 @@
 package transport
 
 import (
+	"encoding/binary"
 	"encoding/json"
+	"errors"
 
 	"cloudphone-signaling/pkg/types"
 )
@@ -101,3 +103,106 @@ type GenericInboundEnvelope struct {
 	DeviceID    string `json:"device_id"`
 	ClientID    uint32 `json:"client_id"`
 }
+
+// StartPreviewMessage represents client request to start screen preview streaming.
+// Classification: RECONSTRUCTED_FROM_BINARY.
+type StartPreviewMessage struct {
+	MessageType string `json:"message_type,omitempty"`
+	Type        string `json:"type,omitempty"`
+	DeviceID    string `json:"device_id"`
+	FPS         int    `json:"fps,omitempty"`
+	MaxSize     int    `json:"max_size,omitempty"`
+	Bitrate     int    `json:"bitrate,omitempty"`
+	StayAwake   bool   `json:"stay_awake,omitempty"`
+}
+
+// StopPreviewMessage represents client request to terminate preview streaming.
+// Classification: RECONSTRUCTED_FROM_BINARY.
+type StopPreviewMessage struct {
+	MessageType string `json:"message_type,omitempty"`
+	Type        string `json:"type,omitempty"`
+	DeviceID    string `json:"device_id"`
+}
+
+// GroupControlEnvelope represents multi-device or single-device control events (touch, keycode, scroll, text).
+// Classification: RECONSTRUCTED_FROM_PROTOCOL.
+type GroupControlEnvelope struct {
+	MessageType     string                 `json:"message_type"`
+	TargetDeviceIDs []string               `json:"target_device_ids"`
+	Event           map[string]interface{} `json:"event"`
+}
+
+// CommandMessage represents a shell/adb command request dispatched to the agent.
+// Classification: RECONSTRUCTED_FROM_BINARY.
+type CommandMessage struct {
+	MessageType string `json:"message_type"`
+	DeviceID    string `json:"device_id"`
+	RequestID   string `json:"request_id"`
+	Command     string `json:"command"`
+}
+
+// CommandResultMessage represents the agent's execution response for a command.
+// Classification: RECONSTRUCTED_FROM_BINARY.
+type CommandResultMessage struct {
+	MessageType string `json:"message_type"`
+	ClientID    uint32 `json:"client_id,omitempty"`
+	RequestID   string `json:"request_id"`
+	Output      string `json:"output"`
+	Error       string `json:"error,omitempty"`
+}
+
+// InjectDataMessage represents custom channel data injection.
+// Classification: RECONSTRUCTED_FROM_BINARY.
+type InjectDataMessage struct {
+	MessageType     string   `json:"message_type"`
+	TargetDeviceIDs []string `json:"target_device_ids,omitempty"`
+	Channel         string   `json:"channel"`
+	Payload         string   `json:"payload"`
+}
+
+// QuitAgentMessage represents a request to gracefully terminate the agent process.
+// Classification: RECONSTRUCTED_FROM_BINARY.
+type QuitAgentMessage struct {
+	MessageType string `json:"message_type"`
+	DeviceID    string `json:"device_id"`
+}
+
+// SnapshotUpdateMessage represents base64 snapshot pushed from agent.
+// Classification: RECONSTRUCTED_FROM_BINARY.
+type SnapshotUpdateMessage struct {
+	MessageType string `json:"message_type"`
+	DeviceID    string `json:"device_id"`
+	Data        string `json:"data"`
+}
+
+// Preview Frame Binary Layout & Errors
+// Layout: [magic: 4B ("PREV")][device_id: 32B (null-padded)][key: 1B][pts: 8B (BE uint64)][len: 4B (BE uint32)][payload: NALU]
+var (
+	ErrInvalidPreviewFrame   = errors.New("preview frame smaller than 49 bytes")
+	ErrInvalidPreviewMagic   = errors.New("invalid preview magic header")
+	ErrInvalidPreviewLength  = errors.New("payload length exceeds frame buffer")
+	ErrPreviewDeviceMismatch = errors.New("preview device_id does not match bound agent device")
+)
+
+// ParsePreviewDeviceID parses and extracts device_id from a PREV binary frame.
+func ParsePreviewDeviceID(data []byte) (string, error) {
+	if len(data) < 49 {
+		return "", ErrInvalidPreviewFrame
+	}
+	if string(data[:4]) != "PREV" {
+		return "", ErrInvalidPreviewMagic
+	}
+	payloadLen := binary.BigEndian.Uint32(data[45:49])
+	if int(payloadLen) > len(data)-49 {
+		return "", ErrInvalidPreviewLength
+	}
+	rawID := data[4:36]
+	for i, b := range rawID {
+		if b == 0 {
+			rawID = rawID[:i]
+			break
+		}
+	}
+	return string(rawID), nil
+}
+

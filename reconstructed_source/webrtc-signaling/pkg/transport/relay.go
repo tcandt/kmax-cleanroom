@@ -12,6 +12,7 @@ package transport
 import (
 	"encoding/json"
 	"errors"
+	"log"
 )
 
 var (
@@ -38,6 +39,11 @@ func (h *Hub) RelayClientToAgent(deviceID string, clientID uint32, payload json.
 		Payload:     payload,
 	}
 
+	if tracker := h.GetCoreTracker(deviceID); tracker != nil {
+		tracker.OnAddWebRTCClient(clientID)
+	}
+
+	log.Printf("[Signaling-Relay] Forwarding client %d -> agent %s: %s", clientID, deviceID, string(payload))
 	return agentConn.WriteJSON(envelope)
 }
 
@@ -46,10 +52,12 @@ func (h *Hub) RelayClientToAgent(deviceID string, clientID uint32, payload json.
 // The payload is wrapped into a device_msg envelope before delivery to the client.
 func (h *Hub) RelayAgentToClient(deviceID string, clientID uint32, payload json.RawMessage) error {
 	if clientID == 0 {
+		log.Printf("[Signaling-Relay] RelayAgentToClient error: clientID is 0 for device %s", deviceID)
 		return ErrInvalidEnvelope
 	}
 	clientConn, ok := h.GetClientConn(clientID)
 	if !ok || clientConn == nil {
+		log.Printf("[Signaling-Relay] RelayAgentToClient error: target client %d not found for device %s", clientID, deviceID)
 		return ErrPeerNotFound
 	}
 
@@ -59,5 +67,6 @@ func (h *Hub) RelayAgentToClient(deviceID string, clientID uint32, payload json.
 		Payload:     payload,
 	}
 
+	log.Printf("[Signaling-Relay] Forwarding agent %s -> client %d: %s", deviceID, clientID, string(payload))
 	return clientConn.WriteJSON(envelope)
 }

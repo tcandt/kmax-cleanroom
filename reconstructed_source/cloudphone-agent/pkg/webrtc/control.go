@@ -11,6 +11,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"log"
 	"sync"
 )
 
@@ -114,9 +115,9 @@ type TextEvent struct {
 	Text string `json:"text"`
 }
 
-// ScrollEvent represents scroll input sent over input-channel.
-type ScrollEvent struct {
-	Type     string  `json:"type"`
+// CanonicalScrollEvent represents the normalized scroll event passed to the scrcpy encoder.
+type CanonicalScrollEvent struct {
+	Type     string  `json:"type,omitempty"`
 	Seq      int64   `json:"seq,omitempty"`
 	ClientTs int64   `json:"client_ts_ms,omitempty"`
 	X        int32   `json:"x"`
@@ -127,6 +128,70 @@ type ScrollEvent struct {
 	H        uint16  `json:"h,omitempty"`
 	ScrollH  float64 `json:"scroll_h"`
 	ScrollV  float64 `json:"scroll_v"`
+}
+
+// ScrollEvent aliases CanonicalScrollEvent for compatibility.
+type ScrollEvent = CanonicalScrollEvent
+
+// RawScrollDTO captures both WebRTC (snake_case) and WebSocket (camelCase) scroll payloads.
+// WebRTC sends: type=inject_scroll, scroll_h, scroll_v, w, h
+// WebSocket sends: type=scroll, scrollH, scrollV, w, h, action
+type RawScrollDTO struct {
+	Type         string   `json:"type"`
+	Seq          int64    `json:"seq,omitempty"`
+	ClientTs     int64    `json:"client_ts_ms,omitempty"`
+	Action       int      `json:"action,omitempty"`
+	X            int32    `json:"x"`
+	Y            int32    `json:"y"`
+	Width        uint16   `json:"width,omitempty"`
+	Height       uint16   `json:"height,omitempty"`
+	W            uint16   `json:"w,omitempty"`
+	H            uint16   `json:"h,omitempty"`
+	ScrollHSnake *float64 `json:"scroll_h,omitempty"`
+	ScrollVSnake *float64 `json:"scroll_v,omitempty"`
+	ScrollHCamel *float64 `json:"scrollH,omitempty"`
+	ScrollVCamel *float64 `json:"scrollV,omitempty"`
+}
+
+// NormalizeScrollEvent resolves snake_case vs camelCase fields and dimension aliases,
+// outputting a CanonicalScrollEvent so only the scrcpy encoder processes the canonical event.
+func NormalizeScrollEvent(raw *RawScrollDTO) *CanonicalScrollEvent {
+	w := raw.Width
+	if w == 0 {
+		w = raw.W
+	}
+	h := raw.Height
+	if h == 0 {
+		h = raw.H
+	}
+
+	var scrollH float64
+	if raw.ScrollHSnake != nil {
+		scrollH = *raw.ScrollHSnake
+	} else if raw.ScrollHCamel != nil {
+		scrollH = *raw.ScrollHCamel
+	}
+
+	var scrollV float64
+	if raw.ScrollVSnake != nil {
+		scrollV = *raw.ScrollVSnake
+	} else if raw.ScrollVCamel != nil {
+		scrollV = *raw.ScrollVCamel
+	}
+
+	return &CanonicalScrollEvent{
+		Type:     "inject_scroll",
+		Seq:      raw.Seq,
+		ClientTs: raw.ClientTs,
+		X:        raw.X,
+		Y:        raw.Y,
+		Width:    w,
+		Height:   h,
+		W:        w,
+		H:        h,
+		ScrollH:  scrollH,
+		ScrollV:  scrollV,
+	}
 }
 
 // HardKeyboardEvent represents opening hard keyboard settings.
@@ -247,6 +312,15 @@ func HandleInputMessage(raw []byte, sink ControlSink) error {
 		return fmt.Errorf("unmarshal envelope error: %w", err)
 	}
 
+	var rawMap map[string]interface{}
+	var seq interface{} = "none"
+	if err := json.Unmarshal(raw, &rawMap); err == nil {
+		if s, ok := rawMap["control_seq"]; ok {
+			seq = s
+		}
+	}
+	log.Printf("[CTRL] seq=%v event=%v type=DIRECT_TOUCH recv", seq, env.Type)
+
 	var frame []byte
 	switch env.Type {
 	case "inject_touch", "touch":
@@ -256,26 +330,27 @@ func HandleInputMessage(raw []byte, sink ControlSink) error {
 		}
 		frame = EncodeTouchEvent(&ev)
 
-	case "inject_keycode":
+	case "inject_keycode", "keycode":
 		var ev KeycodeEvent
 		if err := json.Unmarshal(raw, &ev); err != nil {
 			return fmt.Errorf("unmarshal keycode error: %w", err)
 		}
 		frame = EncodeKeycodeEvent(&ev)
 
-	case "inject_text":
+	case "inject_text", "text":
 		var ev TextEvent
 		if err := json.Unmarshal(raw, &ev); err != nil {
 			return fmt.Errorf("unmarshal text error: %w", err)
 		}
 		frame = EncodeTextEvent(&ev)
 
-	case "inject_scroll":
-		var ev ScrollEvent
-		if err := json.Unmarshal(raw, &ev); err != nil {
+	case "inject_scroll", "scroll":
+		var rawDTO RawScrollDTO
+		if err := json.Unmarshal(raw, &rawDTO); err != nil {
 			return fmt.Errorf("unmarshal scroll error: %w", err)
 		}
-		frame = EncodeScrollEvent(&ev)
+		canonical := NormalizeScrollEvent(&rawDTO)
+		frame = EncodeScrollEvent(canonical)
 
 	case "hard_keyboard":
 		frame = EncodeHardKeyboardEvent()
@@ -286,7 +361,10 @@ func HandleInputMessage(raw []byte, sink ControlSink) error {
 	}
 
 	if len(frame) > 0 {
-		return sink.WriteControlMessage(frame)
+		log.Printf("[CTRL] seq=%v write begin", seq)
+		err := sink.WriteControlMessage(frame)
+		log.Printf("[CTRL] seq=%v write end err=%v", seq, err)
+		return err
 	}
 	return nil
 }
