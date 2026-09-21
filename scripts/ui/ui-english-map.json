@@ -10,7 +10,8 @@
     "replace": "m(\"button\",{class:\"retry-btn\",dataAction:\"retry\",\"data-action\":\"retry\",onClick:KS},\"Retry\")",
     "riskLevel": "HIGH",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "test.selector.switch_ws",
@@ -23,7 +24,8 @@
     "replace": "Xe(\" \"+ee(Ye.value?\"Switch to WebRTC\":\"Switch to WebSocket\"),1)",
     "riskLevel": "HIGH",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "test.selector.switch_ws_title",
@@ -36,7 +38,8 @@
     "replace": "m(\"button\",{class:Be([\"sidebar-btn\",{active:Ye.value}]),dataAction:\"switch-stream\",\"data-action\":\"switch-stream\",onClick:Vt,title:Ye.value?\"Currently WebSocket, click to switch to WebRTC\":\"Currently WebRTC, click to switch to WebSocket\"}",
     "riskLevel": "HIGH",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.brand_text",
@@ -49,7 +52,8 @@
     "replace": "<span class=\"nav-brand-text\">Cloud Phone</span>",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.collapse_title",
@@ -62,7 +66,8 @@
     "replace": "title:B.value?\"Collapse sidebar\":\"Expand sidebar\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.devices",
@@ -75,7 +80,8 @@
     "replace": "m(\"span\",{class:\"nav-item-text\"},\"Devices\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.dashboard",
@@ -88,7 +94,8 @@
     "replace": "<span class=\"nav-item-text\">Dashboard</span>",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.group_control",
@@ -101,7 +108,8 @@
     "replace": "<span class=\"nav-item-text\">Group Control</span>",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.files",
@@ -114,7 +122,8 @@
     "replace": "m(\"span\",{class:\"nav-item-text\"},\"Files\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.deploy",
@@ -127,7 +136,8 @@
     "replace": "<span class=\"nav-item-text\">Deploy</span>",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.terminal",
@@ -140,7 +150,8 @@
     "replace": "m(\"span\",{class:\"nav-item-text\"},\"Terminal\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.peripherals",
@@ -153,7 +164,8 @@
     "replace": "m(\"span\",{class:\"nav-item-text\"},\"Peripherals\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.shares",
@@ -166,7 +178,8 @@
     "replace": "<span class=\"nav-item-text\">Share</span>",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.shares_title",
@@ -179,7 +192,8 @@
     "replace": "title:\"Share & License Management\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.management",
@@ -192,7 +206,8 @@
     "replace": "<span class=\"nav-item-text\">Settings</span>",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.logout",
@@ -205,7 +220,8 @@
     "replace": "class:\"nav-item logout-nav-item\",title:\"Sign out\"},[...te[60]||(te[60]=[ci('<svg class=\"nav-item-icon-svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"></path><polyline points=\"16 17 21 12 16 7\"></polyline><line x1=\"21\" y1=\"12\" x2=\"9\" y2=\"12\"></line></svg><span class=\"nav-item-text\">Sign out</span>',2)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.tags_title",
@@ -218,7 +234,8 @@
     "replace": "te[62]||(te[62]=m(\"span\",null,\"Tags\",-1))",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.manage_tags",
@@ -231,7 +248,8 @@
     "replace": "m(\"span\",{class:\"manage-text\"},\"Manage\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.all_devices",
@@ -244,7 +262,8 @@
     "replace": "te[64]||(te[64]=m(\"span\",{class:\"nav-tag-name\"},\"All devices\",-1))",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.recent_devices",
@@ -257,7 +276,8 @@
     "replace": "title:\"Devices added in the last 30 minutes\",onClick:re},[te[65]||(te[65]=m(\"span\",{class:\"nav-tag-dot recent\"},null,-1)),te[66]||(te[66]=m(\"span\",{class:\"nav-tag-name\"},\"Recently added\",-1))",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.offline_devices",
@@ -270,7 +290,8 @@
     "replace": "title:\"Offline devices\",onClick:$},[te[67]||(te[67]=m(\"span\",{class:\"nav-tag-dot offline\"},null,-1)),te[68]||(te[68]=m(\"span\",{class:\"nav-tag-name\"},\"Offline devices\",-1))",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "shell.nav.version_prefix",
@@ -283,7 +304,8 @@
     "replace": "B.value?\"Version \"+u.value:u.value.split(\"-\")[0]",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.search_placeholder",
@@ -296,7 +318,8 @@
     "replace": "placeholder:\"Search devices or tags\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.refresh_title",
@@ -309,7 +332,8 @@
     "replace": "title:\"Refresh device list\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.view_mode_toggle",
@@ -322,7 +346,8 @@
     "replace": "title:v.value===\"grid\"?\"Switch to list view\":\"Switch to card view\",\"aria-label\":\"Switch view\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.group_control_mode_title",
@@ -335,7 +360,8 @@
     "replace": "class:\"gc-brand-badge\"},\"⚡ Group Control\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.select_all_online",
@@ -348,7 +374,8 @@
     "replace": "m(\"button\",{class:\"gc-btn\",onClick:Re(O,[\"stop\"]),title:\"Select all online devices\"},\" Select All Online \")",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.clear_selection",
@@ -361,7 +388,8 @@
     "replace": "m(\"button\",{class:\"gc-btn\",onClick:Re(K,[\"stop\"]),title:\"Clear all selected devices\"},\" Clear Selection \")",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.select_by_tag",
@@ -374,7 +402,8 @@
     "replace": "m(\"span\",null,\"Select by Tag ▾\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.no_tags_available",
@@ -387,7 +416,8 @@
     "replace": "\"No tags available\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.selected_slaves_count",
@@ -400,7 +430,8 @@
     "replace": "\"Selected \"+ee(Ae(r).selectedSlaveIds.length)+\" devices\"",
     "riskLevel": "MEDIUM",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.preview_control_label",
@@ -413,7 +444,8 @@
     "replace": "\"Direct Preview \"+ee(Ae(e).globalInteractiveMode?\"Enabled\":\"Disabled\")",
     "riskLevel": "MEDIUM",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.batch_tag_btn",
@@ -426,7 +458,8 @@
     "replace": "onClick:P[29]||(P[29]=ue=>Qi(\"batch\")),title:\"Batch tag selected devices\"},\" 🏷 Batch Tag \"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.view.exit_group_control_btn",
@@ -439,7 +472,8 @@
     "replace": "onClick:P[30]||(P[30]=ue=>Ae(r).toggleGroupControl(!1)),title:\"Exit group control mode\"},\" Exit Group Control ✕ \"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.table.device_id",
@@ -452,7 +486,8 @@
     "replace": "title:\"Click to sort\"},[P[89]||(P[89]=Xe(\" Device ID \",-1)),m(\"span\",vJ,ee(je(\"id\")),1)])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.table.status",
@@ -465,7 +500,8 @@
     "replace": "title:\"Click to sort\"},[P[90]||(P[90]=Xe(\" Status \",-1)),m(\"span\",gJ,ee(je(\"status\")),1)])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.table.connections",
@@ -478,7 +514,8 @@
     "replace": "class:\"th col-clients\"},\"Connections\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.table.load",
@@ -491,7 +528,8 @@
     "replace": "title:\"Click to sort by CPU\"},[P[91]||(P[91]=Xe(\" System Load \",-1)),m(\"span\",pJ,ee(je(\"cpu\")),1)])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.table.tags",
@@ -504,7 +542,8 @@
     "replace": "m(\"div\",{class:\"th col-tags\"},\"Tags\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.table.actions",
@@ -517,7 +556,8 @@
     "replace": "m(\"div\",{class:\"th col-actions\"},\"Actions\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.license.badge_expression",
@@ -530,7 +570,8 @@
     "replace": "c.value?`Licensed · ${Ce}/${Ke} devices · ${l.value} days remaining`:d.value?`Promotion · ${Ce}/${Ke} devices`:`Free · ${Ce}/${Ke} devices`",
     "riskLevel": "HIGH",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.license.tooltip_expression",
@@ -543,7 +584,8 @@
     "replace": "c.value?`License expires: ${s.value||\"-\"}, click to manage`:d.value?`Promo until ${s.value}, reverts to ${v.value} devices after`:\"Free license, click to manage\"",
     "riskLevel": "HIGH",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.license.limit_warning",
@@ -556,7 +598,8 @@
     "replace": "\"⚠️ Device limit reached (\"+ee(l.value)+\"/\"+ee(Ae(e).licenseMaxDevices)+\"), new devices cannot connect.\"",
     "riskLevel": "MEDIUM",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "devices.license.limit_upgrade_btn",
@@ -569,7 +612,8 @@
     "replace": "class:\"limit-upgrade-btn\",onClick:P[24]||(P[24]=ue=>o.value=!0)},\"Upgrade License\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.toolbar.live_osd",
@@ -582,7 +626,8 @@
     "replace": "class:\"osd-badge live-dot\"},\"● Live\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.toolbar.fullscreen_title",
@@ -595,7 +640,8 @@
     "replace": "title:\"Full Screen\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.toolbar.web_fullscreen",
@@ -608,7 +654,8 @@
     "replace": "class:Be([\"webfullscreen-fab\",{\"is-active\":I.value}]),onClick:ng,title:I.value?\"Exit Fullscreen (Esc)\":\"Fullscreen View\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.toolbar.pip_title",
@@ -621,7 +668,8 @@
     "replace": "class:\"pip-fab\",onClick:J8,title:Bl.value?\"Exit Picture-in-Picture\":\"Picture-in-Picture\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.toolbar.mobile_close_title",
@@ -634,7 +682,8 @@
     "replace": "class:\"mobile-close-fab\",onClick:Y[0]||(Y[0]=pe=>Ae(n).clearActiveDevice()),title:\"Close Connection\"},\" ✕ \"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.power_btn",
@@ -647,7 +696,8 @@
     "replace": "class:\"sidebar-btn\",onClick:Y[28]||(Y[28]=pe=>Nn(\"input keyevent 26\")),title:\"Power\"},[...Y[95]||(Y[95]=[m(\"svg\",{class:\"icon\",viewBox:\"0 0 24 24\"},[m(\"path\",{d:\"M18.36 6.64a9 9 0 1 1-12.73 0\"}),m(\"line\",{x1:\"12\",y1:\"2\",x2:\"12\",y2:\"12\"})],-1),m(\"span\",{class:\"btn-text\"},\"Power\",-1)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.home_btn",
@@ -660,7 +710,8 @@
     "replace": "m(\"span\",{class:\"btn-text\"},\"Home\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.back_btn",
@@ -673,7 +724,8 @@
     "replace": "m(\"span\",{class:\"btn-text\"},\"Back\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.vol_up_btn",
@@ -686,7 +738,8 @@
     "replace": "class:\"sidebar-btn\",onClick:Y[31]||(Y[31]=pe=>Nn(\"input keyevent 24\")),title:\"Volume Up\"},[...Y[98]||(Y[98]=[ci('<svg class=\"icon\" viewBox=\"0 0 24 24\" data-v-4055fcfa><polygon points=\"11 5 6 9 2 9 2 15 6 15 11 19 11 5\" data-v-4055fcfa></polygon><line x1=\"19\" y1=\"9\" x2=\"19\" y2=\"15\" data-v-4055fcfa></line><line x1=\"16\" y1=\"12\" x2=\"22\" y2=\"12\" data-v-4055fcfa></line></svg><span class=\"btn-text\" data-v-4055fcfa>Vol +</span>',2)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.vol_down_btn",
@@ -699,7 +752,8 @@
     "replace": "class:\"sidebar-btn\",onClick:Y[32]||(Y[32]=pe=>Nn(\"input keyevent 25\")),title:\"Volume Down\"},[...Y[99]||(Y[99]=[m(\"svg\",{class:\"icon\",viewBox:\"0 0 24 24\"},[m(\"polygon\",{points:\"11 5 6 9 2 9 2 15 6 15 11 19 11 5\"}),m(\"line\",{x1:\"19\",y1:\"12\",x2:\"15\",y2:\"12\"})],-1),m(\"span\",{class:\"btn-text\"},\"Vol -\",-1)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.mute_toggle",
@@ -712,7 +766,8 @@
     "replace": "onClick:ag,title:q.value?\"Unmute\":\"Mute\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.mute_label",
@@ -725,7 +780,8 @@
     "replace": "m(\"span\",s7,ee(q.value?\"Unmute\":\"Mute\"),1)",
     "riskLevel": "MEDIUM",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.console_title",
@@ -738,7 +794,8 @@
     "replace": "onClick:Ie,title:\"Console\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.keymap_title",
@@ -751,7 +808,8 @@
     "replace": "title:\"Key Mapping\"},[...Y[103]||(Y[103]=[m(\"svg\",{class:\"icon\",viewBox:\"0 0 24 24\"},[m(\"circle\",{cx:\"12\",cy:\"12\",r:\"10\"}),m(\"circle\",{cx:\"12\",cy:\"12\",r:\"3\"})],-1),m(\"span\",{class:\"btn-text\"},\"Keymap\",-1)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.key_hints_toggle",
@@ -764,7 +822,8 @@
     "replace": "title:Ae(Gt).showKeyHints?\"Hide Key Hints\":\"Show Key Hints\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.hints_text",
@@ -777,7 +836,8 @@
     "replace": "m(\"span\",{class:\"btn-text\"},\"Hints\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.clipboard_send",
@@ -790,7 +850,8 @@
     "replace": "title:\"Send Clipboard to Device\"},[...Y[107]||(Y[107]=[m(\"svg\",{class:\"icon\",viewBox:\"0 0 24 24\"},[m(\"path\",{d:\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"}),m(\"rect\",{x:\"8\",y:\"2\",width:\"8\",height:\"4\",rx:\"1\",ry:\"1\"})],-1),m(\"span\",{class:\"btn-text\"},\"Clip ->\",-1)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.clipboard_get",
@@ -803,7 +864,8 @@
     "replace": "title:\"Get Clipboard from Device\"},[...Y[108]||(Y[108]=[ci('<svg class=\"icon\" viewBox=\"0 0 24 24\" data-v-4055fcfa><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\" data-v-4055fcfa></path><rect x=\"8\" y=\"2\" width=\"8\" height=\"4\" rx=\"1\" ry=\"1\" data-v-4055fcfa></rect><path d=\"M12 11v6M9 14l3 3 3-3\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" data-v-4055fcfa></path></svg><span class=\"btn-text\" data-v-4055fcfa><- Clip</span>',2)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.add_btn",
@@ -816,7 +878,8 @@
     "replace": "title:\"Add Key\"},[...Y[111]||(Y[111]=[m(\"svg\",{class:\"icon\",viewBox:\"0 0 24 24\"},[m(\"line\",{x1:\"12\",y1:\"5\",x2:\"12\",y2:\"19\"}),m(\"line\",{x1:\"5\",y1:\"12\",x2:\"19\",y2:\"12\"})],-1),m(\"span\",{class:\"btn-text\"},\"Add\",-1)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.exit_agent",
@@ -829,7 +892,8 @@
     "replace": "title:\"Exit Agent\"},[...Y[112]||(Y[112]=[ci('<svg class=\"icon\" viewBox=\"0 0 24 24\" data-v-4055fcfa><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\" data-v-4055fcfa></rect><line x1=\"9\" y1=\"9\" x2=\"15\" y2=\"15\" data-v-4055fcfa></line><line x1=\"15\" y1=\"9\" x2=\"9\" y2=\"15\" data-v-4055fcfa></line></svg><span class=\"btn-text\" data-v-4055fcfa>Exit</span>',2)])])",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "client.sidebar.connection_settings",
@@ -842,7 +906,8 @@
     "replace": "class:\"sidebar-btn\",onClick:Y[35]||(Y[35]=pe=>b.value=!0),title:\"Settings\"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "camera.flyout.lens_section",
@@ -855,7 +920,8 @@
     "replace": "class:\"fab-section-title\"},\"Camera\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "camera.flyout.resolution_section",
@@ -868,7 +934,8 @@
     "replace": "class:\"fab-section-title\"},\"Resolution\",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "camera.flyout.disconnect_camera",
@@ -881,7 +948,8 @@
     "replace": "Xe(\" Disconnect Camera \",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "camera.flyout.camera_settings",
@@ -894,7 +962,8 @@
     "replace": "Xe(\" Camera Settings \",-1)",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "camera.flyout.mirror_btn",
@@ -907,7 +976,8 @@
     "replace": "\" ↔️ Mirror \"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "camera.flyout.capture_btn",
@@ -920,7 +990,8 @@
     "replace": "\" 📸 Capture (JPG) \"",
     "riskLevel": "LOW",
     "expectedOccurrences": 1,
-    "actualOccurrences": 1
+    "actualOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "protected.mode.display",
@@ -930,7 +1001,8 @@
     "context": "Core signaling and agent device mode identifier",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 156
+    "expectedOccurrences": 156,
+    "phase": "v1"
   },
   {
     "id": "protected.mode.camera",
@@ -940,7 +1012,8 @@
     "context": "Core signaling and agent camera mode identifier",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 176
+    "expectedOccurrences": 176,
+    "phase": "v1"
   },
   {
     "id": "protected.mode.websocket",
@@ -950,7 +1023,8 @@
     "context": "Core signaling and agent stream mode identifier",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 15
+    "expectedOccurrences": 15,
+    "phase": "v1"
   },
   {
     "id": "protected.channel.input",
@@ -960,7 +1034,8 @@
     "context": "WebRTC DataChannel input identifier",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 3
+    "expectedOccurrences": 3,
+    "phase": "v1"
   },
   {
     "id": "protected.channel.clipboard",
@@ -970,7 +1045,8 @@
     "context": "WebRTC DataChannel clipboard identifier",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 3
+    "expectedOccurrences": 3,
+    "phase": "v1"
   },
   {
     "id": "protected.diagnostic.geometry",
@@ -980,7 +1056,8 @@
     "context": "Coordinate mapping diagnostic marker",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 1
+    "expectedOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "protected.diagnostic.touch_map",
@@ -990,7 +1067,8 @@
     "context": "Touch event injection diagnostic marker",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 1
+    "expectedOccurrences": 1,
+    "phase": "v1"
   },
   {
     "id": "protected.diagnostic.lifecycle",
@@ -1000,7 +1078,8 @@
     "context": "WebRTC/WebSocket lifecycle diagnostic marker",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 3
+    "expectedOccurrences": 3,
+    "phase": "v1"
   },
   {
     "id": "protected.diagnostic.webrtc_hold",
@@ -1010,6 +1089,1911 @@
     "context": "Commit e44dd2d CoreService preservation marker",
     "riskLevel": "CRITICAL",
     "isProtected": true,
-    "expectedOccurrences": 2
+    "expectedOccurrences": 2,
+    "phase": "v1"
+  },
+  {
+    "id": "e6.header.page.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "密管理\":I.value?\"批量任务群控\":C.value?\"用户权限管理\":\"云虚机矩阵\"",
+    "targetEn": "密管理\":I.value?\"Batch Task Group Control\":C.value?\"User Permissions\":\"Cloud Phone Matrix\"",
+    "context": "E6_HEADER_PAGE_TITLE",
+    "anchor": "密管理\":I.value?\"批量任务群控\":C.value?",
+    "match": "密管理\":I.value?\"批量任务群控\":C.value?\"用户权限管理\":\"云虚机矩阵\"",
+    "replace": "密管理\":I.value?\"Batch Task Group Control\":C.value?\"User Permissions\":\"Cloud Phone Matrix\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.header.online.chip",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\" \"+ee(Ae(e).onlineDevices.length)+\" 台在线 \",1)",
+    "targetEn": "Xe(\" \"+ee(Ae(e).onlineDevices.length)+\" Online \",1)",
+    "context": "E6_HEADER_ONLINE_CHIP",
+    "anchor": "Xe(\" \"+ee(Ae(e).onlineDevices.",
+    "match": "Xe(\" \"+ee(Ae(e).onlineDevices.length)+\" 台在线 \",1)",
+    "replace": "Xe(\" \"+ee(Ae(e).onlineDevices.length)+\" Online \",1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.header.online.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"当前在线虚机数量\"",
+    "targetEn": "title:\"Currently online devices\"",
+    "context": "E6_HEADER_ONLINE_TITLE",
+    "anchor": "title:\"当前在线虚机数量\"",
+    "match": "title:\"当前在线虚机数量\"",
+    "replace": "title:\"Currently online devices\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.search.placeholder",
+    "phase": "e6",
+    "category": "A",
+    "source": "placeholder:\"搜索虚机名称、IP、ID或标签... (⌘K)\"",
+    "targetEn": "placeholder:\"Search device name, IP, ID or tag... (⌘K)\"",
+    "context": "E6_SEARCH_PLACEHOLDER",
+    "anchor": "placeholder:\"搜索虚机名称、IP、ID或标签..",
+    "match": "placeholder:\"搜索虚机名称、IP、ID或标签... (⌘K)\"",
+    "replace": "placeholder:\"Search device name, IP, ID or tag... (⌘K)\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.display.options.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"btn-text\"},\"显示选项 ▾\",-1)",
+    "targetEn": "m(\"span\",{class:\"btn-text\"},\"Display Options ▾\",-1)",
+    "context": "E6_DISPLAY_OPTIONS_BTN",
+    "anchor": "m(\"span\",{class:\"btn-text\"},\"显",
+    "match": "m(\"span\",{class:\"btn-text\"},\"显示选项 ▾\",-1)",
+    "replace": "m(\"span\",{class:\"btn-text\"},\"Display Options ▾\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.display.options.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"视图与画面预览设置\"",
+    "targetEn": "title:\"View and preview settings\"",
+    "context": "E6_DISPLAY_OPTIONS_TITLE",
+    "anchor": "title:\"视图与画面预览设置\"",
+    "match": "title:\"视图与画面预览设置\"",
+    "replace": "title:\"View and preview settings\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.group.control.btn.dynamic",
+    "phase": "e6",
+    "category": "A",
+    "source": "ee(Ae(n).isGroupControlActive?\"退出群控\":\"群控\")",
+    "targetEn": "ee(Ae(n).isGroupControlActive?\"Exit Group Control\":\"Group Control\")",
+    "context": "E6_GROUP_CONTROL_BTN_DYNAMIC",
+    "anchor": "ee(Ae(n).isGroupControlActive?",
+    "match": "ee(Ae(n).isGroupControlActive?\"退出群控\":\"群控\")",
+    "replace": "ee(Ae(n).isGroupControlActive?\"Exit Group Control\":\"Group Control\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.group.control.title.dynamic",
+    "phase": "e6",
+    "category": "A",
+    "source": "Ae(n).isGroupControlActive?\"退出群控模式\":\"进入群控模式 (支持全选与按标签勾选从机)\"",
+    "targetEn": "Ae(n).isGroupControlActive?\"Exit group control mode\":\"Enter group control mode (select all or by tag)\"",
+    "context": "E6_GROUP_CONTROL_TITLE_DYNAMIC",
+    "anchor": "Ae(n).isGroupControlActive?\"退出",
+    "match": "Ae(n).isGroupControlActive?\"退出群控模式\":\"进入群控模式 (支持全选与按标签勾选从机)\"",
+    "replace": "Ae(n).isGroupControlActive?\"Exit group control mode\":\"Enter group control mode (select all or by tag)\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.topbar.tags.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"设备标签管理\"",
+    "targetEn": "title:\"Device tag management\"",
+    "context": "E6_TOPBAR_TAGS_TITLE",
+    "anchor": "title:\"设备标签管理\"",
+    "match": "title:\"设备标签管理\"",
+    "replace": "title:\"Device tag management\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.topbar.settings.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"全局默认设置\"",
+    "targetEn": "title:\"Global settings\"",
+    "context": "E6_TOPBAR_SETTINGS_TITLE",
+    "anchor": "title:\"全局默认设置\"",
+    "match": "title:\"全局默认设置\"",
+    "replace": "title:\"Global settings\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.nav.tag.all.text.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "(P[65]=m(\"span\",{class:\"tag-name\"},\"全部设备\",-1))",
+    "targetEn": "(P[65]=m(\"span\",{class:\"tag-name\"},\"All Devices\",-1))",
+    "context": "E6_NAV_TAG_ALL_TEXT_GRID",
+    "anchor": "(P[65]=m(\"span\",{class:\"tag-na",
+    "match": "(P[65]=m(\"span\",{class:\"tag-name\"},\"全部设备\",-1))",
+    "replace": "(P[65]=m(\"span\",{class:\"tag-name\"},\"All Devices\",-1))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.nav.tag.all.text.mobile",
+    "phase": "e6",
+    "category": "A",
+    "source": "(P[56]=m(\"span\",{class:\"mh-item-name\"},\"全部设备\",-1))",
+    "targetEn": "(P[56]=m(\"span\",{class:\"mh-item-name\"},\"All Devices\",-1))",
+    "context": "E6_NAV_TAG_ALL_TEXT_MOBILE",
+    "anchor": "(P[56]=m(\"span\",{class:\"mh-ite",
+    "match": "(P[56]=m(\"span\",{class:\"mh-item-name\"},\"全部设备\",-1))",
+    "replace": "(P[56]=m(\"span\",{class:\"mh-item-name\"},\"All Devices\",-1))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.nav.tag.all.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"全部设备\"",
+    "targetEn": "title:\"All Devices\"",
+    "context": "E6_NAV_TAG_ALL_TITLE",
+    "anchor": "title:\"全部设备\"",
+    "match": "title:\"全部设备\"",
+    "replace": "title:\"All Devices\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.nav.tag.offline.text.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "(P[67]=m(\"span\",{class:\"tag-name\"},\"离线设备\",-1))",
+    "targetEn": "(P[67]=m(\"span\",{class:\"tag-name\"},\"Offline Devices\",-1))",
+    "context": "E6_NAV_TAG_OFFLINE_TEXT_GRID",
+    "anchor": "(P[67]=m(\"span\",{class:\"tag-na",
+    "match": "(P[67]=m(\"span\",{class:\"tag-name\"},\"离线设备\",-1))",
+    "replace": "(P[67]=m(\"span\",{class:\"tag-name\"},\"Offline Devices\",-1))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.nav.tag.offline.text.mobile",
+    "phase": "e6",
+    "category": "A",
+    "source": "(P[58]=m(\"span\",{class:\"mh-item-name\"},\"离线设备\",-1))",
+    "targetEn": "(P[58]=m(\"span\",{class:\"mh-item-name\"},\"Offline Devices\",-1))",
+    "context": "E6_NAV_TAG_OFFLINE_TEXT_MOBILE",
+    "anchor": "(P[58]=m(\"span\",{class:\"mh-ite",
+    "match": "(P[58]=m(\"span\",{class:\"mh-item-name\"},\"离线设备\",-1))",
+    "replace": "(P[58]=m(\"span\",{class:\"mh-item-name\"},\"Offline Devices\",-1))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.play.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "ae[17]=[m(\"span\",{class:\"play-hint\"},\"进入控制\",-1)]",
+    "targetEn": "ae[17]=[m(\"span\",{class:\"play-hint\"},\"Enter Control\",-1)]",
+    "context": "E6_CARD_PLAY_HINT",
+    "anchor": "ae[17]=[m(\"span\",{class:\"play-",
+    "match": "ae[17]=[m(\"span\",{class:\"play-hint\"},\"进入控制\",-1)]",
+    "replace": "ae[17]=[m(\"span\",{class:\"play-hint\"},\"Enter Control\",-1)]",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.list.play.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"进入控制\"",
+    "targetEn": "title:\"Enter Control\"",
+    "context": "E6_CARD_LIST_PLAY_TITLE",
+    "anchor": "title:\"进入控制\"",
+    "match": "title:\"进入控制\"",
+    "replace": "title:\"Enter Control\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.title.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "menu-btn\",onClick:Re(W,[\"stop\"]),title:\"更多操作\"",
+    "targetEn": "menu-btn\",onClick:Re(W,[\"stop\"]),title:\"More actions\"",
+    "context": "E6_CARD_MENU_TITLE_GRID",
+    "anchor": "menu-btn\",onClick:Re(W,[\"stop\"",
+    "match": "menu-btn\",onClick:Re(W,[\"stop\"]),title:\"更多操作\"",
+    "replace": "menu-btn\",onClick:Re(W,[\"stop\"]),title:\"More actions\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.title.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "more-btn\",onClick:Re(D,[\"stop\"]),title:\"更多操作\"",
+    "targetEn": "more-btn\",onClick:Re(D,[\"stop\"]),title:\"More actions\"",
+    "context": "E6_CARD_MENU_TITLE_LIST",
+    "anchor": "more-btn\",onClick:Re(D,[\"stop\"",
+    "match": "more-btn\",onClick:Re(D,[\"stop\"]),title:\"更多操作\"",
+    "replace": "more-btn\",onClick:Re(D,[\"stop\"]),title:\"More actions\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.multi.connect.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\" 加入多机直连 \",-1)",
+    "targetEn": "Xe(\" Add to Multi-Device Control \",-1)",
+    "context": "E6_CARD_MENU_MULTI_CONNECT_GRID",
+    "anchor": "Xe(\" 加入多机直连 \",-1)",
+    "match": "Xe(\" 加入多机直连 \",-1)",
+    "replace": "Xe(\" Add to Multi-Device Control \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.multi.connect.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"加入多机直连\"",
+    "targetEn": "title:\"Add to Multi-Device Control\"",
+    "context": "E6_CARD_MENU_MULTI_CONNECT_LIST",
+    "anchor": "title:\"加入多机直连\"",
+    "match": "title:\"加入多机直连\"",
+    "replace": "title:\"Add to Multi-Device Control\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.ws.stream.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "ae[24]||(ae[24]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket 投屏 \",-1)])",
+    "targetEn": "ae[24]||(ae[24]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket Stream \",-1)])",
+    "context": "E6_CARD_MENU_WS_STREAM_GRID",
+    "anchor": "ae[24]||(ae[24]=[m(\"svg\",{view",
+    "match": "ae[24]||(ae[24]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket 投屏 \",-1)])",
+    "replace": "ae[24]||(ae[24]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket Stream \",-1)])",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.ws.stream.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "ne[15]||(ne[15]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket 投屏 \",-1)])",
+    "targetEn": "ne[15]||(ne[15]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket Stream \",-1)])",
+    "context": "E6_CARD_MENU_WS_STREAM_LIST",
+    "anchor": "ne[15]||(ne[15]=[m(\"svg\",{view",
+    "match": "ne[15]||(ne[15]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket 投屏 \",-1)])",
+    "replace": "ne[15]||(ne[15]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"polygon\",{points:\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"})],-1),Xe(\" WebSocket Stream \",-1)])",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.camera.mode.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "ae[25]||(ae[25]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" 摄像头监控模式 \",-1)])",
+    "targetEn": "ae[25]||(ae[25]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" Camera Monitoring Mode \",-1)])",
+    "context": "E6_CARD_MENU_CAMERA_MODE_GRID",
+    "anchor": "ae[25]||(ae[25]=[m(\"svg\",{view",
+    "match": "ae[25]||(ae[25]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" 摄像头监控模式 \",-1)])",
+    "replace": "ae[25]||(ae[25]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" Camera Monitoring Mode \",-1)])",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.camera.mode.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "ne[16]||(ne[16]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" 摄像头监控模式 \",-1)])",
+    "targetEn": "ne[16]||(ne[16]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" Camera Monitoring Mode \",-1)])",
+    "context": "E6_CARD_MENU_CAMERA_MODE_LIST",
+    "anchor": "ne[16]||(ne[16]=[m(\"svg\",{view",
+    "match": "ne[16]||(ne[16]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" 摄像头监控模式 \",-1)])",
+    "replace": "ne[16]||(ne[16]=[m(\"svg\",{viewBox:\"0 0 24 24\",fill:\"none\",stroke:\"currentColor\",\"stroke-width\":\"1.5\"},[m(\"path\",{d:\"M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z\"}),m(\"circle\",{cx:\"12\",cy:\"13\",r:\"4\"})],-1),Xe(\" Camera Monitoring Mode \",-1)])",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.conn.settings.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "09a1.65 1.65 0 0 0-1.51 1z\"})],-1),Xe(\" 连接设置 \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "targetEn": "09a1.65 1.65 0 0 0-1.51 1z\"})],-1),Xe(\" Connection Settings \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "context": "E6_CARD_MENU_CONN_SETTINGS_GRID",
+    "anchor": "09a1.65 1.65 0 0 0-1.51 1z\"})]",
+    "match": "09a1.65 1.65 0 0 0-1.51 1z\"})],-1),Xe(\" 连接设置 \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "replace": "09a1.65 1.65 0 0 0-1.51 1z\"})],-1),Xe(\" Connection Settings \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.conn.settings.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "09a1.65 1.65 0 0 0-1.51-1z\"})],-1),Xe(\" 连接设置 \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "targetEn": "09a1.65 1.65 0 0 0-1.51-1z\"})],-1),Xe(\" Connection Settings \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "context": "E6_CARD_MENU_CONN_SETTINGS_LIST",
+    "anchor": "09a1.65 1.65 0 0 0-1.51-1z\"})]",
+    "match": "09a1.65 1.65 0 0 0-1.51-1z\"})],-1),Xe(\" 连接设置 \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "replace": "09a1.65 1.65 0 0 0-1.51-1z\"})],-1),Xe(\" Connection Settings \",-1)])]),Ae(o).isAdmin?(N(),F(\"button\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.conn.settings.btn.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "ction-btn icon-action\",onClick:L,title:\"连接设置\"",
+    "targetEn": "ction-btn icon-action\",onClick:L,title:\"Connection Settings\"",
+    "context": "E6_CARD_MENU_CONN_SETTINGS_BTN_LIST",
+    "anchor": "ction-btn icon-action\",onClick",
+    "match": "ction-btn icon-action\",onClick:L,title:\"连接设置\"",
+    "replace": "ction-btn icon-action\",onClick:L,title:\"Connection Settings\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.share.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "2=\"10.49\" data-v-db3f51f1></line></svg> 分享设备 / 卡密 ",
+    "targetEn": "2=\"10.49\" data-v-db3f51f1></line></svg> Share Device / Card Key ",
+    "context": "E6_CARD_MENU_SHARE_GRID",
+    "anchor": "2=\"10.49\" data-v-db3f51f1></li",
+    "match": "2=\"10.49\" data-v-db3f51f1></line></svg> 分享设备 / 卡密 ",
+    "replace": "2=\"10.49\" data-v-db3f51f1></line></svg> Share Device / Card Key ",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.share.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "2=\"10.49\" data-v-be0a256f></line></svg> 分享设备 / 卡密 ",
+    "targetEn": "2=\"10.49\" data-v-be0a256f></line></svg> Share Device / Card Key ",
+    "context": "E6_CARD_MENU_SHARE_LIST",
+    "anchor": "2=\"10.49\" data-v-be0a256f></li",
+    "match": "2=\"10.49\" data-v-be0a256f></line></svg> 分享设备 / 卡密 ",
+    "replace": "2=\"10.49\" data-v-be0a256f></line></svg> Share Device / Card Key ",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.edit.tags.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" 编辑标签 \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:Re(H,[\"stop\"])",
+    "targetEn": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" Edit Tags \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:Re(H,[\"stop\"])",
+    "context": "E6_CARD_MENU_EDIT_TAGS_GRID",
+    "anchor": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" 编",
+    "match": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" 编辑标签 \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:Re(H,[\"stop\"])",
+    "replace": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" Edit Tags \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:Re(H,[\"stop\"])",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.edit.tags.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" 编辑标签 \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:T",
+    "targetEn": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" Edit Tags \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:T",
+    "context": "E6_CARD_MENU_EDIT_TAGS_LIST",
+    "anchor": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" 编",
+    "match": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" 编辑标签 \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:T",
+    "replace": "cy:\"8.5\",r:\"1.5\"})],-1),Xe(\" Edit Tags \",-1)])]),m(\"button\",{class:\"menu-item danger\",onClick:T",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.exit.agent.grid",
+    "phase": "e6",
+    "category": "A",
+    "source": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" 退出 Agent \",-1)])],8,_V)",
+    "targetEn": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" Exit Agent \",-1)])],8,_V)",
+    "context": "E6_CARD_MENU_EXIT_AGENT_GRID",
+    "anchor": "M8 2v6M12 4.5a6 6 0 11-8 0\"})]",
+    "match": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" 退出 Agent \",-1)])],8,_V)",
+    "replace": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" Exit Agent \",-1)])],8,_V)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.menu.exit.agent.list",
+    "phase": "e6",
+    "category": "A",
+    "source": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" 退出 Agent \",-1)])],8,dY)",
+    "targetEn": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" Exit Agent \",-1)])],8,dY)",
+    "context": "E6_CARD_MENU_EXIT_AGENT_LIST",
+    "anchor": "M8 2v6M12 4.5a6 6 0 11-8 0\"})]",
+    "match": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" 退出 Agent \",-1)])],8,dY)",
+    "replace": "M8 2v6M12 4.5a6 6 0 11-8 0\"})],-1),Xe(\" Exit Agent \",-1)])],8,dY)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.header",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"div\",{class:\"dropdown-panel-title\"},\"画面与预览设置\",-1)",
+    "targetEn": "m(\"div\",{class:\"dropdown-panel-title\"},\"Screen & Preview Settings\",-1)",
+    "context": "E6_DISP_POP_HEADER",
+    "anchor": "m(\"div\",{class:\"dropdown-panel",
+    "match": "m(\"div\",{class:\"dropdown-panel-title\"},\"画面与预览设置\",-1)",
+    "replace": "m(\"div\",{class:\"dropdown-panel-title\"},\"Screen & Preview Settings\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.realtime.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "te[73]=m(\"span\",{class:\"switch-title\"},\"高频实时预览\",-1)",
+    "targetEn": "te[73]=m(\"span\",{class:\"switch-title\"},\"High-frequency Real-time Preview\",-1)",
+    "context": "E6_DISP_POP_REALTIME_LABEL",
+    "anchor": "te[73]=m(\"span\",{class:\"switch",
+    "match": "te[73]=m(\"span\",{class:\"switch-title\"},\"高频实时预览\",-1)",
+    "replace": "te[73]=m(\"span\",{class:\"switch-title\"},\"High-frequency Real-time Preview\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.realtime.desc.1",
+    "phase": "e6",
+    "category": "A",
+    "source": "={class:\"switch-label mh-switch\",title:\"开启后，可视区域内的虚机将使用 WebCodecs 硬件加速播放 10fps 实时预览\"},lq",
+    "targetEn": "={class:\"switch-label mh-switch\",title:\"When enabled, visible devices will play 10fps real-time preview with WebCodecs hardware acceleration\"},lq",
+    "context": "E6_DISP_POP_REALTIME_DESC_1",
+    "anchor": "={class:\"switch-label mh-switc",
+    "match": "={class:\"switch-label mh-switch\",title:\"开启后，可视区域内的虚机将使用 WebCodecs 硬件加速播放 10fps 实时预览\"},lq",
+    "replace": "={class:\"switch-label mh-switch\",title:\"When enabled, visible devices will play 10fps real-time preview with WebCodecs hardware acceleration\"},lq",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.realtime.desc.2",
+    "phase": "e6",
+    "category": "A",
+    "source": "switch\"},DDe={class:\"switch-row\",title:\"开启后，可视区域内的虚机将使用 WebCodecs 硬件加速播放 10fps 实时预览\"},xD",
+    "targetEn": "switch\"},DDe={class:\"switch-row\",title:\"When enabled, visible devices will play 10fps real-time preview with WebCodecs hardware acceleration\"},xD",
+    "context": "E6_DISP_POP_REALTIME_DESC_2",
+    "anchor": "switch\"},DDe={class:\"switch-ro",
+    "match": "switch\"},DDe={class:\"switch-row\",title:\"开启后，可视区域内的虚机将使用 WebCodecs 硬件加速播放 10fps 实时预览\"},xD",
+    "replace": "switch\"},DDe={class:\"switch-row\",title:\"When enabled, visible devices will play 10fps real-time preview with WebCodecs hardware acceleration\"},xD",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.touch.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "te[74]=m(\"span\",{class:\"switch-title\"},\"预览直接触控\",-1)",
+    "targetEn": "te[74]=m(\"span\",{class:\"switch-title\"},\"Direct Preview Interaction\",-1)",
+    "context": "E6_DISP_POP_TOUCH_LABEL",
+    "anchor": "te[74]=m(\"span\",{class:\"switch",
+    "match": "te[74]=m(\"span\",{class:\"switch-title\"},\"预览直接触控\",-1)",
+    "replace": "te[74]=m(\"span\",{class:\"switch-title\"},\"Direct Preview Interaction\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.touch.desc",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"开启后可直接在卡片上触控操作 (需先开启高频预览)\"",
+    "targetEn": "title:\"When enabled, allows direct input on cards (requires high-frequency preview)\"",
+    "context": "E6_DISP_POP_TOUCH_DESC",
+    "anchor": "title:\"开启后可直接在卡片上触控操作 (需先开启高频预",
+    "match": "title:\"开启后可直接在卡片上触控操作 (需先开启高频预览)\"",
+    "replace": "title:\"When enabled, allows direct input on cards (requires high-frequency preview)\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.card.size",
+    "phase": "e6",
+    "category": "A",
+    "source": "(te[75]=m(\"span\",null,\"卡片大小\",-1))",
+    "targetEn": "(te[75]=m(\"span\",null,\"Card Size\",-1))",
+    "context": "E6_DISP_POP_CARD_SIZE",
+    "anchor": "(te[75]=m(\"span\",null,\"卡片大小\",-",
+    "match": "(te[75]=m(\"span\",null,\"卡片大小\",-1))",
+    "replace": "(te[75]=m(\"span\",null,\"Card Size\",-1))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.compact.160",
+    "phase": "e6",
+    "category": "A",
+    "source": "ke=>Ae(e).setCardSize(160))},\"紧凑 (160px)\",2)",
+    "targetEn": "ke=>Ae(e).setCardSize(160))},\"Compact (160px)\",2)",
+    "context": "E6_DISP_POP_COMPACT_160",
+    "anchor": "ke=>Ae(e).setCardSize(160))},\"",
+    "match": "ke=>Ae(e).setCardSize(160))},\"紧凑 (160px)\",2)",
+    "replace": "ke=>Ae(e).setCardSize(160))},\"Compact (160px)\",2)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.std.220",
+    "phase": "e6",
+    "category": "A",
+    "source": "ke=>Ae(e).setCardSize(220))},\"标准 (220px)\",2)",
+    "targetEn": "ke=>Ae(e).setCardSize(220))},\"Standard (220px)\",2)",
+    "context": "E6_DISP_POP_STD_220",
+    "anchor": "ke=>Ae(e).setCardSize(220))},\"",
+    "match": "ke=>Ae(e).setCardSize(220))},\"标准 (220px)\",2)",
+    "replace": "ke=>Ae(e).setCardSize(220))},\"Standard (220px)\",2)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.comfort.320",
+    "phase": "e6",
+    "category": "A",
+    "source": "ke=>Ae(e).setCardSize(320))},\"舒适 (320px)\",2)",
+    "targetEn": "ke=>Ae(e).setCardSize(320))},\"Comfortable (320px)\",2)",
+    "context": "E6_DISP_POP_COMFORT_320",
+    "anchor": "ke=>Ae(e).setCardSize(320))},\"",
+    "match": "ke=>Ae(e).setCardSize(320))},\"舒适 (320px)\",2)",
+    "replace": "ke=>Ae(e).setCardSize(320))},\"Comfortable (320px)\",2)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.grid.view",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\" 卡片宫格 \",-1)",
+    "targetEn": "Xe(\" Grid View \",-1)",
+    "context": "E6_DISP_POP_GRID_VIEW",
+    "anchor": "Xe(\" 卡片宫格 \",-1)",
+    "match": "Xe(\" 卡片宫格 \",-1)",
+    "replace": "Xe(\" Grid View \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.disp.pop.list.view",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\" 高密列表 \",-1)",
+    "targetEn": "Xe(\" Compact List \",-1)",
+    "context": "E6_DISP_POP_LIST_VIEW",
+    "anchor": "Xe(\" 高密列表 \",-1)",
+    "match": "Xe(\" 高密列表 \",-1)",
+    "replace": "Xe(\" Compact List \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.brand.and.count",
+    "phase": "e6",
+    "category": "A",
+    "source": "ass:\"brand-title\"},\"多机直连\",-1)),m(\"span\",b2e,ee(t.value.length)+\" 台\",1)]),m(\"div\",D2",
+    "targetEn": "ass:\"brand-title\"},\"Multi-Device Control\",-1)),m(\"span\",b2e,ee(t.value.length)+\" devices\",1)]),m(\"div\",D2",
+    "context": "E6_MULTI_BRAND_AND_COUNT",
+    "anchor": "ass:\"brand-title\"},\"多机直连\",-1))",
+    "match": "ass:\"brand-title\"},\"多机直连\",-1)),m(\"span\",b2e,ee(t.value.length)+\" 台\",1)]),m(\"div\",D2",
+    "replace": "ass:\"brand-title\"},\"Multi-Device Control\",-1)),m(\"span\",b2e,ee(t.value.length)+\" devices\",1)]),m(\"div\",D2",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.close.workspace",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"关闭多机直连工作台\"",
+    "targetEn": "title:\"Close multi-device control workspace\"",
+    "context": "E6_MULTI_CLOSE_WORKSPACE",
+    "anchor": "title:\"关闭多机直连工作台\"",
+    "match": "title:\"关闭多机直连工作台\"",
+    "replace": "title:\"Close multi-device control workspace\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.close.all.top",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"点击关闭全部多机直连\"",
+    "targetEn": "title:\"Click to close all multi-device control\"",
+    "context": "E6_MULTI_CLOSE_ALL_TOP",
+    "anchor": "title:\"点击关闭全部多机直连\"",
+    "match": "title:\"点击关闭全部多机直连\"",
+    "replace": "title:\"Click to close all multi-device control\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.top.tab.text",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",PDe,\"多机直连 (\"+ee(Ae(e).activeDeviceIds.length)+\") ✕\",1)",
+    "targetEn": "m(\"span\",PDe,\"Multi-Device (\"+ee(Ae(e).activeDeviceIds.length)+\") ✕\",1)",
+    "context": "E6_MULTI_TOP_TAB_TEXT",
+    "anchor": "m(\"span\",PDe,\"多机直连 (\"+ee(Ae(e)",
+    "match": "m(\"span\",PDe,\"多机直连 (\"+ee(Ae(e).activeDeviceIds.length)+\") ✕\",1)",
+    "replace": "m(\"span\",PDe,\"Multi-Device (\"+ee(Ae(e).activeDeviceIds.length)+\") ✕\",1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.add.device.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\" 添加虚机 \",-1)",
+    "targetEn": "Xe(\" Add Device \",-1)",
+    "context": "E6_MULTI_ADD_DEVICE_BTN",
+    "anchor": "Xe(\" 添加虚机 \",-1)",
+    "match": "Xe(\" 添加虚机 \",-1)",
+    "replace": "Xe(\" Add Device \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.tile.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"网格平铺分屏\"",
+    "targetEn": "title:\"Grid tile split screen\"",
+    "context": "E6_MULTI_TILE_TITLE",
+    "anchor": "title:\"网格平铺分屏\"",
+    "match": "title:\"网格平铺分屏\"",
+    "replace": "title:\"Grid tile split screen\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.tile.lbl",
+    "phase": "e6",
+    "category": "A",
+    "source": "平铺</span>',2",
+    "targetEn": "Tile</span>',2",
+    "context": "E6_MULTI_TILE_LBL",
+    "anchor": "平铺</span>',2",
+    "match": "平铺</span>',2",
+    "replace": "Tile</span>',2",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.float.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"自由多浮窗桌面\"",
+    "targetEn": "title:\"Free floating window desktop\"",
+    "context": "E6_MULTI_FLOAT_TITLE",
+    "anchor": "title:\"自由多浮窗桌面\"",
+    "match": "title:\"自由多浮窗桌面\"",
+    "replace": "title:\"Free floating window desktop\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.float.lbl",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"btn-lbl\"},\"浮窗\",-1)",
+    "targetEn": "m(\"span\",{class:\"btn-lbl\"},\"Float\",-1)",
+    "context": "E6_MULTI_FLOAT_LBL",
+    "anchor": "m(\"span\",{class:\"btn-lbl\"},\"浮窗",
+    "match": "m(\"span\",{class:\"btn-lbl\"},\"浮窗\",-1)",
+    "replace": "m(\"span\",{class:\"btn-lbl\"},\"Float\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.exclusive.focus",
+    "phase": "e6",
+    "category": "A",
+    "source": "ee(a.value===\"exclusive\"?\"焦点独占\":\"混音模式\")",
+    "targetEn": "ee(a.value===\"exclusive\"?\"Exclusive Focus\":\"Audio Mixing\")",
+    "context": "E6_MULTI_EXCLUSIVE_FOCUS",
+    "anchor": "ee(a.value===\"exclusive\"?\"焦点独占",
+    "match": "ee(a.value===\"exclusive\"?\"焦点独占\":\"混音模式\")",
+    "replace": "ee(a.value===\"exclusive\"?\"Exclusive Focus\":\"Audio Mixing\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.master.cancel.chip",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\" \"+ee(Ae(o).isGroupControlActive?\"取消群控\":\"群控主控\"),1)",
+    "targetEn": "Xe(\" \"+ee(Ae(o).isGroupControlActive?\"Cancel Group Control\":\"Master Control\"),1)",
+    "context": "E6_MULTI_MASTER_CANCEL_CHIP",
+    "anchor": "Xe(\" \"+ee(Ae(o).isGroupControl",
+    "match": "Xe(\" \"+ee(Ae(o).isGroupControlActive?\"取消群控\":\"群控主控\"),1)",
+    "replace": "Xe(\" \"+ee(Ae(o).isGroupControlActive?\"Cancel Group Control\":\"Master Control\"),1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.master.cancel.text",
+    "phase": "e6",
+    "category": "A",
+    "source": "7,ee(Ae(o).isGroupControlActive?\"取消群控\":\"群控主控\"),1)],10,e7)",
+    "targetEn": "7,ee(Ae(o).isGroupControlActive?\"Cancel Group Control\":\"Master Control\"),1)],10,e7)",
+    "context": "E6_MULTI_MASTER_CANCEL_TEXT",
+    "anchor": "7,ee(Ae(o).isGroupControlActiv",
+    "match": "7,ee(Ae(o).isGroupControlActive?\"取消群控\":\"群控主控\"),1)],10,e7)",
+    "replace": "7,ee(Ae(o).isGroupControlActive?\"Cancel Group Control\":\"Master Control\"),1)],10,e7)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.master.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:Ae(o).isGroupControlActive?\"退出群控主控模式\":\"设为群控主控机\"",
+    "targetEn": "title:Ae(o).isGroupControlActive?\"Exit master control mode\":\"Set as master control device\"",
+    "context": "E6_MULTI_MASTER_TITLE",
+    "anchor": "title:Ae(o).isGroupControlActi",
+    "match": "title:Ae(o).isGroupControlActive?\"退出群控主控模式\":\"设为群控主控机\"",
+    "replace": "title:Ae(o).isGroupControlActive?\"Exit master control mode\":\"Set as master control device\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.master.pill",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"master-indicator-pill\"},\"群控·主控端\",-1)",
+    "targetEn": "m(\"span\",{class:\"master-indicator-pill\"},\"Group Control · Master\",-1)",
+    "context": "E6_MULTI_MASTER_PILL",
+    "anchor": "m(\"span\",{class:\"master-indica",
+    "match": "m(\"span\",{class:\"master-indicator-pill\"},\"群控·主控端\",-1)",
+    "replace": "m(\"span\",{class:\"master-indicator-pill\"},\"Group Control · Master\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.terminal.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"btn-text\"},\"终端\",-1)",
+    "targetEn": "m(\"span\",{class:\"btn-text\"},\"Terminal\",-1)",
+    "context": "E6_MULTI_TERMINAL_BTN",
+    "anchor": "m(\"span\",{class:\"btn-text\"},\"终",
+    "match": "m(\"span\",{class:\"btn-text\"},\"终端\",-1)",
+    "replace": "m(\"span\",{class:\"btn-text\"},\"Terminal\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.dialog.header",
+    "phase": "e6",
+    "category": "A",
+    "source": "ee(i.mode===\"assign\"?\"批量设置标签\":\"标签管理\")",
+    "targetEn": "ee(i.mode===\"assign\"?\"Batch Tag Assignment\":\"Tag Management\")",
+    "context": "E6_TAG_DIALOG_HEADER",
+    "anchor": "ee(i.mode===\"assign\"?\"批量设置标签\":",
+    "match": "ee(i.mode===\"assign\"?\"批量设置标签\":\"标签管理\")",
+    "replace": "ee(i.mode===\"assign\"?\"Batch Tag Assignment\":\"Tag Management\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.header.count.badge",
+    "phase": "e6",
+    "category": "A",
+    "source": "\",null,\"标签\",-1)),m(\"span\",null,ee(Ae(n).tags.length)+\" 个\",1)])",
+    "targetEn": "\",null,\"Tags\",-1)),m(\"span\",null,ee(Ae(n).tags.length)+\" items\",1)])",
+    "context": "E6_TAG_HEADER_COUNT_BADGE",
+    "anchor": "\",null,\"标签\",-1)),m(\"span\",null",
+    "match": "\",null,\"标签\",-1)),m(\"span\",null,ee(Ae(n).tags.length)+\" 个\",1)])",
+    "replace": "\",null,\"Tags\",-1)),m(\"span\",null,ee(Ae(n).tags.length)+\" items\",1)])",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.dialog.empty",
+    "phase": "e6",
+    "category": "A",
+    "source": "Ae(n).tags.length===0?(N(),F(\"div\",mY,\" 还没有标签 \"))",
+    "targetEn": "Ae(n).tags.length===0?(N(),F(\"div\",mY,\" No tags yet \"))",
+    "context": "E6_TAG_DIALOG_EMPTY",
+    "anchor": "Ae(n).tags.length===0?(N(),F(\"",
+    "match": "Ae(n).tags.length===0?(N(),F(\"div\",mY,\" 还没有标签 \"))",
+    "replace": "Ae(n).tags.length===0?(N(),F(\"div\",mY,\" No tags yet \"))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.device.assign",
+    "phase": "e6",
+    "category": "A",
+    "source": "(D[10]=m(\"h3\",null,\"设备分配\",-1))",
+    "targetEn": "(D[10]=m(\"h3\",null,\"Device Assignment\",-1))",
+    "context": "E6_TAG_DEVICE_ASSIGN",
+    "anchor": "(D[10]=m(\"h3\",null,\"设备分配\",-1))",
+    "match": "(D[10]=m(\"h3\",null,\"设备分配\",-1))",
+    "replace": "(D[10]=m(\"h3\",null,\"Device Assignment\",-1))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.selected.count",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",null,\"已选 \"+ee(a.value.length)+\" 台\",1)",
+    "targetEn": "m(\"span\",null,ee(a.value.length)+\" selected\",1)",
+    "context": "E6_TAG_SELECTED_COUNT",
+    "anchor": "m(\"span\",null,\"已选 \"+ee(a.value",
+    "match": "m(\"span\",null,\"已选 \"+ee(a.value.length)+\" 台\",1)",
+    "replace": "m(\"span\",null,ee(a.value.length)+\" selected\",1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.select.all",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",null,\"全选 (\"+ee(i.devices.length)+\")\",1)",
+    "targetEn": "m(\"span\",null,\"Select All (\"+ee(i.devices.length)+\")\",1)",
+    "context": "E6_TAG_SELECT_ALL",
+    "anchor": "m(\"span\",null,\"全选 (\"+ee(i.devi",
+    "match": "m(\"span\",null,\"全选 (\"+ee(i.devices.length)+\")\",1)",
+    "replace": "m(\"span\",null,\"Select All (\"+ee(i.devices.length)+\")\",1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.name.placeholder",
+    "phase": "e6",
+    "category": "A",
+    "source": "placeholder:\"新标签名称\"",
+    "targetEn": "placeholder:\"New tag name\"",
+    "context": "E6_TAG_NAME_PLACEHOLDER",
+    "anchor": "placeholder:\"新标签名称\"",
+    "match": "placeholder:\"新标签名称\"",
+    "replace": "placeholder:\"New tag name\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.color.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"标签颜色\"",
+    "targetEn": "title:\"Tag color\"",
+    "context": "E6_TAG_COLOR_TITLE",
+    "anchor": "title:\"标签颜色\"",
+    "match": "title:\"标签颜色\"",
+    "replace": "title:\"Tag color\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.create.first.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "Ae(n).tags.length===0?(N(),F(\"div\",NY,\" 先创建标签 \"))",
+    "targetEn": "Ae(n).tags.length===0?(N(),F(\"div\",NY,\" Create a tag first \"))",
+    "context": "E6_TAG_CREATE_FIRST_HINT",
+    "anchor": "Ae(n).tags.length===0?(N(),F(\"",
+    "match": "Ae(n).tags.length===0?(N(),F(\"div\",NY,\" 先创建标签 \"))",
+    "replace": "Ae(n).tags.length===0?(N(),F(\"div\",NY,\" Create a tag first \"))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.center.subtitle",
+    "phase": "e6",
+    "category": "A",
+    "source": "($[26]=m(\"h2\",null,\"👥 用户管理与控制中心\",-1))",
+    "targetEn": "($[26]=m(\"h2\",null,\"👥 User Management & Control Center\",-1))",
+    "context": "E6_USER_CENTER_SUBTITLE",
+    "anchor": "($[26]=m(\"h2\",null,\"👥 用户管理与控制",
+    "match": "($[26]=m(\"h2\",null,\"👥 用户管理与控制中心\",-1))",
+    "replace": "($[26]=m(\"h2\",null,\"👥 User Management & Control Center\",-1))",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.count.chip",
+    "phase": "e6",
+    "category": "A",
+    "source": "B_e,\"共 \"+ee(r.value.length)+\" 个用户\",1)",
+    "targetEn": "B_e,\"Total \"+ee(r.value.length)+\" users\",1)",
+    "context": "E6_USER_COUNT_CHIP",
+    "anchor": "B_e,\"共 \"+ee(r.value.length)+\" ",
+    "match": "B_e,\"共 \"+ee(r.value.length)+\" 个用户\",1)",
+    "replace": "B_e,\"Total \"+ee(r.value.length)+\" users\",1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.create.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"button\",{class:\"create-user-btn\",onClick:R},\"+ 新建用户\")",
+    "targetEn": "m(\"button\",{class:\"create-user-btn\",onClick:R},\"+ New User\")",
+    "context": "E6_USER_CREATE_BTN",
+    "anchor": "m(\"button\",{class:\"create-user",
+    "match": "m(\"button\",{class:\"create-user-btn\",onClick:R},\"+ 新建用户\")",
+    "replace": "m(\"button\",{class:\"create-user-btn\",onClick:R},\"+ New User\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.role.badge.dynamic",
+    "phase": "e6",
+    "category": "A",
+    "source": "ee(re.role===\"admin\"?\"管理员\":\"普通用户\")",
+    "targetEn": "ee(re.role===\"admin\"?\"Administrator\":\"Standard User\")",
+    "context": "E6_USER_ROLE_BADGE_DYNAMIC",
+    "anchor": "ee(re.role===\"admin\"?\"管理员\":\"普通",
+    "match": "ee(re.role===\"admin\"?\"管理员\":\"普通用户\")",
+    "replace": "ee(re.role===\"admin\"?\"Administrator\":\"Standard User\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.role.option.admin",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"option\",{value:\"admin\"},\"管理员\",-1)",
+    "targetEn": "m(\"option\",{value:\"admin\"},\"Administrator\",-1)",
+    "context": "E6_USER_ROLE_OPTION_ADMIN",
+    "anchor": "m(\"option\",{value:\"admin\"},\"管理",
+    "match": "m(\"option\",{value:\"admin\"},\"管理员\",-1)",
+    "replace": "m(\"option\",{value:\"admin\"},\"Administrator\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.role.option.user",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"option\",{value:\"user\"},\"普通用户\",-1)",
+    "targetEn": "m(\"option\",{value:\"user\"},\"Standard User\",-1)",
+    "context": "E6_USER_ROLE_OPTION_USER",
+    "anchor": "m(\"option\",{value:\"user\"},\"普通用",
+    "match": "m(\"option\",{value:\"user\"},\"普通用户\",-1)",
+    "replace": "m(\"option\",{value:\"user\"},\"Standard User\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.status.online.offline",
+    "phase": "e6",
+    "category": "A",
+    "source": "ee(re.online?\"在线\":\"离线\")",
+    "targetEn": "ee(re.online?\"Online\":\"Offline\")",
+    "context": "E6_USER_STATUS_ONLINE_OFFLINE",
+    "anchor": "ee(re.online?\"在线\":\"离线\")",
+    "match": "ee(re.online?\"在线\":\"离线\")",
+    "replace": "ee(re.online?\"Online\":\"Offline\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.table.columns",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"tr\",null,[m(\"th\",null,\"用户名\"),m(\"th\",null,\"角色\"),m(\"th\",null,\"在线状态\"),m(\"th\",null,\"有效期\"),m(\"th\",null,\"已分配设备\"),m(\"th\",null,\"当前控制\"),m(\"th\",null,\"备注\"),m(\"th\",null,\"操作\")])",
+    "targetEn": "m(\"tr\",null,[m(\"th\",null,\"Username\"),m(\"th\",null,\"Role\"),m(\"th\",null,\"Status\"),m(\"th\",null,\"Validity\"),m(\"th\",null,\"Assigned Devices\"),m(\"th\",null,\"Active Control\"),m(\"th\",null,\"Notes\"),m(\"th\",null,\"Actions\")])",
+    "context": "E6_USER_TABLE_COLUMNS",
+    "anchor": "m(\"tr\",null,[m(\"th\",null,\"用户名\"",
+    "match": "m(\"tr\",null,[m(\"th\",null,\"用户名\"),m(\"th\",null,\"角色\"),m(\"th\",null,\"在线状态\"),m(\"th\",null,\"有效期\"),m(\"th\",null,\"已分配设备\"),m(\"th\",null,\"当前控制\"),m(\"th\",null,\"备注\"),m(\"th\",null,\"操作\")])",
+    "replace": "m(\"tr\",null,[m(\"th\",null,\"Username\"),m(\"th\",null,\"Role\"),m(\"th\",null,\"Status\"),m(\"th\",null,\"Validity\"),m(\"th\",null,\"Assigned Devices\"),m(\"th\",null,\"Active Control\"),m(\"th\",null,\"Notes\"),m(\"th\",null,\"Actions\")])",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.device.count.unit",
+    "phase": "e6",
+    "category": "A",
+    "source": ":ce=>re.role!==\"admin\"&&D(re),title:\"点击分配设备\"},ee(re.assigned_devices?re.assigned_devices.length:0)+\" 台 \",11,L_e)",
+    "targetEn": ":ce=>re.role!==\"admin\"&&D(re),title:\"Click to assign device\"},ee(re.assigned_devices?re.assigned_devices.length:0)+\" devices \",11,L_e)",
+    "context": "E6_USER_DEVICE_COUNT_UNIT",
+    "anchor": ":ce=>re.role!==\"admin\"&&D(re),",
+    "match": ":ce=>re.role!==\"admin\"&&D(re),title:\"点击分配设备\"},ee(re.assigned_devices?re.assigned_devices.length:0)+\" 台 \",11,L_e)",
+    "replace": ":ce=>re.role!==\"admin\"&&D(re),title:\"Click to assign device\"},ee(re.assigned_devices?re.assigned_devices.length:0)+\" devices \",11,L_e)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.click.assign.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:re.note||\"无备注\"",
+    "targetEn": "title:re.note||\"No notes\"",
+    "context": "E6_USER_CLICK_ASSIGN_TITLE",
+    "anchor": "title:re.note||\"无备注\"",
+    "match": "title:re.note||\"无备注\"",
+    "replace": "title:re.note||\"No notes\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.kick.device.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"强行断开此设备的连接\"",
+    "targetEn": "title:\"Force disconnect this device\"",
+    "context": "E6_USER_KICK_DEVICE_TITLE",
+    "anchor": "title:\"强行断开此设备的连接\"",
+    "match": "title:\"强行断开此设备的连接\"",
+    "replace": "title:\"Force disconnect this device\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.user.select.prompt",
+    "phase": "e6",
+    "category": "A",
+    "source": "[Xe(\"请在左侧选择一个普通用户\"),m(\"br\"),Xe(\"为其分配云手机设备访问权\")]",
+    "targetEn": "[Xe(\"Please select a standard user on the left\"),m(\"br\"),Xe(\"to assign cloud phone device access permissions\")]",
+    "context": "E6_USER_SELECT_PROMPT",
+    "anchor": "[Xe(\"请在左侧选择一个普通用户\"),m(\"br\"),Xe",
+    "match": "[Xe(\"请在左侧选择一个普通用户\"),m(\"br\"),Xe(\"为其分配云手机设备访问权\")]",
+    "replace": "[Xe(\"Please select a standard user on the left\"),m(\"br\"),Xe(\"to assign cloud phone device access permissions\")]",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.detail.empty.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "[Xe(\"在左侧选择虚机\"),m(\"br\"),Xe(\"开启远程控制\")]",
+    "targetEn": "[Xe(\"Select a device on the left\"),m(\"br\"),Xe(\"Start remote control\")]",
+    "context": "E6_DETAIL_EMPTY_HINT",
+    "anchor": "[Xe(\"在左侧选择虚机\"),m(\"br\"),Xe(\"开启远",
+    "match": "[Xe(\"在左侧选择虚机\"),m(\"br\"),Xe(\"开启远程控制\")]",
+    "replace": "[Xe(\"Select a device on the left\"),m(\"br\"),Xe(\"Start remote control\")]",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.header.user.avatar.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:Ae(r).username+\" (\"+(Ae(r).role===\"admin\"?\"管理员\":\"普通用户\")+\")\"}",
+    "targetEn": "title:Ae(r).username+\" (\"+(Ae(r).role===\"admin\"?\"Administrator\":\"Standard User\")+\")\"}",
+    "context": "E6_HEADER_USER_AVATAR_TITLE",
+    "anchor": "title:Ae(r).username+\" (\"+(Ae(",
+    "match": "title:Ae(r).username+\" (\"+(Ae(r).role===\"admin\"?\"管理员\":\"普通用户\")+\")\"}",
+    "replace": "title:Ae(r).username+\" (\"+(Ae(r).role===\"admin\"?\"Administrator\":\"Standard User\")+\")\"}",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.header.user.role.badge",
+    "phase": "e6",
+    "category": "A",
+    "source": ":Be([\"user-role-badge\",Ae(r).role])},ee(Ae(r).role===\"admin\"?\"管理员\":\"普通用户\"),3)",
+    "targetEn": ":Be([\"user-role-badge\",Ae(r).role])},ee(Ae(r).role===\"admin\"?\"Administrator\":\"Standard User\"),3)",
+    "context": "E6_HEADER_USER_ROLE_BADGE",
+    "anchor": ":Be([\"user-role-badge\",Ae(r).r",
+    "match": ":Be([\"user-role-badge\",Ae(r).role])},ee(Ae(r).role===\"admin\"?\"管理员\":\"普通用户\"),3)",
+    "replace": ":Be([\"user-role-badge\",Ae(r).role])},ee(Ae(r).role===\"admin\"?\"Administrator\":\"Standard User\"),3)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.header.topbar.tags.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "y:\"8.5\",r:\"1.4\"})],-1),m(\"span\",{class:\"btn-text\"},\"标签\",-1)])]),Ae(r).isAdmin?(N(),F(\"button\",{",
+    "targetEn": "y:\"8.5\",r:\"1.4\"})],-1),m(\"span\",{class:\"btn-text\"},\"Tags\",-1)])]),Ae(r).isAdmin?(N(),F(\"button\",{",
+    "context": "E6_HEADER_TOPBAR_TAGS_BTN",
+    "anchor": "y:\"8.5\",r:\"1.4\"})],-1),m(\"span",
+    "match": "y:\"8.5\",r:\"1.4\"})],-1),m(\"span\",{class:\"btn-text\"},\"标签\",-1)])]),Ae(r).isAdmin?(N(),F(\"button\",{",
+    "replace": "y:\"8.5\",r:\"1.4\"})],-1),m(\"span\",{class:\"btn-text\"},\"Tags\",-1)])]),Ae(r).isAdmin?(N(),F(\"button\",{",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.header.topbar.settings.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": ".4.1-.8.1-1.2z\"})],-1),m(\"span\",{class:\"btn-text\"},\"设置\",-1)])])):de(\"\",!0)])):de(\"\",!0),R.value",
+    "targetEn": ".4.1-.8.1-1.2z\"})],-1),m(\"span\",{class:\"btn-text\"},\"Settings\",-1)])])):de(\"\",!0)])):de(\"\",!0),R.value",
+    "context": "E6_HEADER_TOPBAR_SETTINGS_BTN",
+    "anchor": ".4.1-.8.1-1.2z\"})],-1),m(\"span",
+    "match": ".4.1-.8.1-1.2z\"})],-1),m(\"span\",{class:\"btn-text\"},\"设置\",-1)])])):de(\"\",!0)])):de(\"\",!0),R.value",
+    "replace": ".4.1-.8.1-1.2z\"})],-1),m(\"span\",{class:\"btn-text\"},\"Settings\",-1)])])):de(\"\",!0)])):de(\"\",!0),R.value",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.secondary.bar.settings.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": " 0 0 0-1.51 1z\"})],-1),m(\"span\",{class:\"btn-text\"},\"设置\",-1)])]),m(\"div\",{class:\"sidebar-agent-v",
+    "targetEn": " 0 0 0-1.51 1z\"})],-1),m(\"span\",{class:\"btn-text\"},\"Settings\",-1)])]),m(\"div\",{class:\"sidebar-agent-v",
+    "context": "E6_SECONDARY_BAR_SETTINGS_BTN",
+    "anchor": " 0 0 0-1.51 1z\"})],-1),m(\"span",
+    "match": " 0 0 0-1.51 1z\"})],-1),m(\"span\",{class:\"btn-text\"},\"设置\",-1)])]),m(\"div\",{class:\"sidebar-agent-v",
+    "replace": " 0 0 0-1.51 1z\"})],-1),m(\"span\",{class:\"btn-text\"},\"Settings\",-1)])]),m(\"div\",{class:\"sidebar-agent-v",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.add.submit.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"button\",{class:\"primary-btn\",type:\"submit\"},\"新增\",-1)",
+    "targetEn": "m(\"button\",{class:\"primary-btn\",type:\"submit\"},\"Add\",-1)",
+    "context": "E6_TAG_ADD_SUBMIT_BTN",
+    "anchor": "m(\"button\",{class:\"primary-btn",
+    "match": "m(\"button\",{class:\"primary-btn\",type:\"submit\"},\"新增\",-1)",
+    "replace": "m(\"button\",{class:\"primary-btn\",type:\"submit\"},\"Add\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.tag.close.dialog.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "onClick:D[0]||(D[0]=x=>b.$emit(\"close\")),title:\"关闭\"}",
+    "targetEn": "onClick:D[0]||(D[0]=x=>b.$emit(\"close\")),title:\"Close\"}",
+    "context": "E6_TAG_CLOSE_DIALOG_TITLE",
+    "anchor": "onClick:D[0]||(D[0]=x=>b.$emit",
+    "match": "onClick:D[0]||(D[0]=x=>b.$emit(\"close\")),title:\"关闭\"}",
+    "replace": "onClick:D[0]||(D[0]=x=>b.$emit(\"close\")),title:\"Close\"}",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.close.window.title",
+    "phase": "e6",
+    "category": "A",
+    "source": ",{class:\"win-btn close\",onClick:B=>v(E),title:\"关闭\"},\"✕\",8,g2e)",
+    "targetEn": ",{class:\"win-btn close\",onClick:B=>v(E),title:\"Close\"},\"✕\",8,g2e)",
+    "context": "E6_MULTI_CLOSE_WINDOW_TITLE",
+    "anchor": ",{class:\"win-btn close\",onClic",
+    "match": ",{class:\"win-btn close\",onClick:B=>v(E),title:\"关闭\"},\"✕\",8,g2e)",
+    "replace": ",{class:\"win-btn close\",onClick:B=>v(E),title:\"Close\"},\"✕\",8,g2e)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.close.tab.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"pill-close\",onClick:Re(g=>Ae(e).closeDevice(v),[\"stop\"]),title:\"关闭\"},\"×\",8,k2e)",
+    "targetEn": "m(\"span\",{class:\"pill-close\",onClick:Re(g=>Ae(e).closeDevice(v),[\"stop\"]),title:\"Close\"},\"×\",8,k2e)",
+    "context": "E6_MULTI_CLOSE_TAB_TITLE",
+    "anchor": "m(\"span\",{class:\"pill-close\",o",
+    "match": "m(\"span\",{class:\"pill-close\",onClick:Re(g=>Ae(e).closeDevice(v),[\"stop\"]),title:\"关闭\"},\"×\",8,k2e)",
+    "replace": "m(\"span\",{class:\"pill-close\",onClick:Re(g=>Ae(e).closeDevice(v),[\"stop\"]),title:\"Close\"},\"×\",8,k2e)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.gc.interactive.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"开启后可直接在大盘预览画面上触控操作，无需进入详情页\"",
+    "targetEn": "title:\"When enabled, allows direct control on preview without opening details\"",
+    "context": "E6_GC_INTERACTIVE_TITLE",
+    "anchor": "title:\"开启后可直接在大盘预览画面上触控操作，无需进入",
+    "match": "title:\"开启后可直接在大盘预览画面上触控操作，无需进入详情页\"",
+    "replace": "title:\"When enabled, allows direct control on preview without opening details\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.modal.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"h3\",null,\"连接设置\")",
+    "targetEn": "m(\"h3\",null,\"Connection Settings\")",
+    "context": "E6_CONN_SETTINGS_MODAL_TITLE",
+    "anchor": "m(\"h3\",null,\"连接设置\")",
+    "match": "m(\"h3\",null,\"连接设置\")",
+    "replace": "m(\"h3\",null,\"Connection Settings\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.tab.video",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"tab-label\"},\"视频\",-1)",
+    "targetEn": "m(\"span\",{class:\"tab-label\"},\"Video\",-1)",
+    "context": "E6_CONN_SETTINGS_TAB_VIDEO",
+    "anchor": "m(\"span\",{class:\"tab-label\"},\"",
+    "match": "m(\"span\",{class:\"tab-label\"},\"视频\",-1)",
+    "replace": "m(\"span\",{class:\"tab-label\"},\"Video\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.tab.preview",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"tab-label\"},\"缩略预览\",-1)",
+    "targetEn": "m(\"span\",{class:\"tab-label\"},\"Thumbnail Preview\",-1)",
+    "context": "E6_CONN_SETTINGS_TAB_PREVIEW",
+    "anchor": "m(\"span\",{class:\"tab-label\"},\"",
+    "match": "m(\"span\",{class:\"tab-label\"},\"缩略预览\",-1)",
+    "replace": "m(\"span\",{class:\"tab-label\"},\"Thumbnail Preview\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.tab.audio",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"tab-label\"},\"音频\",-1)",
+    "targetEn": "m(\"span\",{class:\"tab-label\"},\"Audio\",-1)",
+    "context": "E6_CONN_SETTINGS_TAB_AUDIO",
+    "anchor": "m(\"span\",{class:\"tab-label\"},\"",
+    "match": "m(\"span\",{class:\"tab-label\"},\"音频\",-1)",
+    "replace": "m(\"span\",{class:\"tab-label\"},\"Audio\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.tab.advanced",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"span\",{class:\"tab-label\"},\"高级\",-1)",
+    "targetEn": "m(\"span\",{class:\"tab-label\"},\"Advanced\",-1)",
+    "context": "E6_CONN_SETTINGS_TAB_ADVANCED",
+    "anchor": "m(\"span\",{class:\"tab-label\"},\"",
+    "match": "m(\"span\",{class:\"tab-label\"},\"高级\",-1)",
+    "replace": "m(\"span\",{class:\"tab-label\"},\"Advanced\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.resolution.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\"分辨率限制 (Max Size) \",-1)",
+    "targetEn": "Xe(\"Max Resolution (Max Size) \",-1)",
+    "context": "E6_CONN_SETTINGS_RESOLUTION_LABEL",
+    "anchor": "Xe(\"分辨率限制 (Max Size) \",-1)",
+    "match": "Xe(\"分辨率限制 (Max Size) \",-1)",
+    "replace": "Xe(\"Max Resolution (Max Size) \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.resolution.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "0 为无限制。例如：1080 表示限制屏幕最长边为 1080px",
+    "targetEn": "0 for unlimited. E.g. 1080 limits longest side to 1080px",
+    "context": "E6_CONN_SETTINGS_RESOLUTION_HINT",
+    "anchor": "0 为无限制。例如：1080 表示限制屏幕最长边为 1080",
+    "match": "0 为无限制。例如：1080 表示限制屏幕最长边为 1080px",
+    "replace": "0 for unlimited. E.g. 1080 limits longest side to 1080px",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.fps.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\"帧率控制 (Max FPS) \",-1)",
+    "targetEn": "Xe(\"Frame Rate Limit (Max FPS) \",-1)",
+    "context": "E6_CONN_SETTINGS_FPS_LABEL",
+    "anchor": "Xe(\"帧率控制 (Max FPS) \",-1)",
+    "match": "Xe(\"帧率控制 (Max FPS) \",-1)",
+    "replace": "Xe(\"Frame Rate Limit (Max FPS) \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.fps.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "0 为无限制，推荐设置为 30 或 60 帧以保障流畅度",
+    "targetEn": "0 for unlimited, recommended 30 or 60 FPS for smoothness",
+    "context": "E6_CONN_SETTINGS_FPS_HINT",
+    "anchor": "0 为无限制，推荐设置为 30 或 60 帧以保障流畅度",
+    "match": "0 为无限制，推荐设置为 30 或 60 帧以保障流畅度",
+    "replace": "0 for unlimited, recommended 30 or 60 FPS for smoothness",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.bwe.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\"开启 BWE 拥塞控制 (WebRTC) \",-1)",
+    "targetEn": "Xe(\"Enable BWE Congestion Control (WebRTC) \",-1)",
+    "context": "E6_CONN_SETTINGS_BWE_LABEL",
+    "anchor": "Xe(\"开启 BWE 拥塞控制 (WebRTC) \",-1)",
+    "match": "Xe(\"开启 BWE 拥塞控制 (WebRTC) \",-1)",
+    "replace": "Xe(\"Enable BWE Congestion Control (WebRTC) \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.bwe.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "WebRTC 动态评估带宽并自适应码率（仅对 WebRTC 连接生效）",
+    "targetEn": "WebRTC dynamically assesses bandwidth and adapts bitrate (WebRTC only)",
+    "context": "E6_CONN_SETTINGS_BWE_HINT",
+    "anchor": "WebRTC 动态评估带宽并自适应码率（仅对 WebRTC ",
+    "match": "WebRTC 动态评估带宽并自适应码率（仅对 WebRTC 连接生效）",
+    "replace": "WebRTC dynamically assesses bandwidth and adapts bitrate (WebRTC only)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.min.bitrate.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"label\",null,\"WebRTC 最低码率下限 (Min Bitrate - Mbps)\",-1)",
+    "targetEn": "m(\"label\",null,\"WebRTC Min Bitrate (Mbps)\",-1)",
+    "context": "E6_CONN_SETTINGS_MIN_BITRATE_LABEL",
+    "anchor": "m(\"label\",null,\"WebRTC 最低码率下限 ",
+    "match": "m(\"label\",null,\"WebRTC 最低码率下限 (Min Bitrate - Mbps)\",-1)",
+    "replace": "m(\"label\",null,\"WebRTC Min Bitrate (Mbps)\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.min.bitrate.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "弱网环境下的画质兜底，默认：8 Mbps",
+    "targetEn": "Fallback quality under weak network, default: 8 Mbps",
+    "context": "E6_CONN_SETTINGS_MIN_BITRATE_HINT",
+    "anchor": "弱网环境下的画质兜底，默认：8 Mbps",
+    "match": "弱网环境下的画质兜底，默认：8 Mbps",
+    "replace": "Fallback quality under weak network, default: 8 Mbps",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.max.bitrate.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"label\",null,\"WebRTC 最高码率上限 (Max Bitrate - Mbps)\",-1)",
+    "targetEn": "m(\"label\",null,\"WebRTC Max Bitrate (Mbps)\",-1)",
+    "context": "E6_CONN_SETTINGS_MAX_BITRATE_LABEL",
+    "anchor": "m(\"label\",null,\"WebRTC 最高码率上限 ",
+    "match": "m(\"label\",null,\"WebRTC 最高码率上限 (Max Bitrate - Mbps)\",-1)",
+    "replace": "m(\"label\",null,\"WebRTC Max Bitrate (Mbps)\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.max.bitrate.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "极佳网络下的画质上限，默认：20 Mbps",
+    "targetEn": "Quality ceiling under excellent network, default: 20 Mbps",
+    "context": "E6_CONN_SETTINGS_MAX_BITRATE_HINT",
+    "anchor": "极佳网络下的画质上限，默认：20 Mbps",
+    "match": "极佳网络下的画质上限，默认：20 Mbps",
+    "replace": "Quality ceiling under excellent network, default: 20 Mbps",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.fixed.bitrate.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "Xe(\"固定画面码率 (Bitrate - Mbps) \",-1)",
+    "targetEn": "Xe(\"Fixed Bitrate (Bitrate - Mbps) \",-1)",
+    "context": "E6_CONN_SETTINGS_FIXED_BITRATE_LABEL",
+    "anchor": "Xe(\"固定画面码率 (Bitrate - Mbps) \",",
+    "match": "Xe(\"固定画面码率 (Bitrate - Mbps) \",-1)",
+    "replace": "Xe(\"Fixed Bitrate (Bitrate - Mbps) \",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.ws.stream.mode",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"strong\",null,\"WebSocket 投屏模式\")",
+    "targetEn": "m(\"strong\",null,\"WebSocket Stream Mode\")",
+    "context": "E6_CONN_SETTINGS_WS_STREAM_MODE",
+    "anchor": "m(\"strong\",null,\"WebSocket 投屏模",
+    "match": "m(\"strong\",null,\"WebSocket 投屏模式\")",
+    "replace": "m(\"strong\",null,\"WebSocket Stream Mode\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.fixed.bitrate.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "始终采用此固定码率推流；WebRTC 关闭 BWE 时亦以此固定码率为准（默认：4 Mbps）",
+    "targetEn": "Always stream at this fixed bitrate; also used when WebRTC BWE is disabled (default: 4 Mbps)",
+    "context": "E6_CONN_SETTINGS_FIXED_BITRATE_HINT",
+    "anchor": "始终采用此固定码率推流；WebRTC 关闭 BWE 时亦以此",
+    "match": "始终采用此固定码率推流；WebRTC 关闭 BWE 时亦以此固定码率为准（默认：4 Mbps）",
+    "replace": "Always stream at this fixed bitrate; also used when WebRTC BWE is disabled (default: 4 Mbps)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.render.engine.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"label\",null,\"视频渲染引擎 (Render Engine)\",-1)",
+    "targetEn": "m(\"label\",null,\"Video Render Engine (Render Engine)\",-1)",
+    "context": "E6_CONN_SETTINGS_RENDER_ENGINE_LABEL",
+    "anchor": "m(\"label\",null,\"视频渲染引擎 (Render",
+    "match": "m(\"label\",null,\"视频渲染引擎 (Render Engine)\",-1)",
+    "replace": "m(\"label\",null,\"Video Render Engine (Render Engine)\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.render.html5.opt",
+    "phase": "e6",
+    "category": "A",
+    "source": "📺 标准 HTML5 模式 (推荐 / <video> 标签 / 兼容性最佳 / 支持画中画)",
+    "targetEn": "📺 Standard HTML5 Mode (Recommended / <video> tag / Best compatibility / PiP support)",
+    "context": "E6_CONN_SETTINGS_RENDER_HTML5_OPT",
+    "anchor": "📺 标准 HTML5 模式 (推荐 / <video> 标",
+    "match": "📺 标准 HTML5 模式 (推荐 / <video> 标签 / 兼容性最佳 / 支持画中画)",
+    "replace": "📺 Standard HTML5 Mode (Recommended / <video> tag / Best compatibility / PiP support)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.render.webcodecs.opt",
+    "phase": "e6",
+    "category": "A",
+    "source": "🚀 WebCodecs 极速锁相模式 (实验性 / Canvas 显存直通 / 极低延迟)",
+    "targetEn": "🚀 WebCodecs Ultra-low Latency Mode (Experimental / Canvas direct / Minimal latency)",
+    "context": "E6_CONN_SETTINGS_RENDER_WEBCODECS_OPT",
+    "anchor": "🚀 WebCodecs 极速锁相模式 (实验性 / Can",
+    "match": "🚀 WebCodecs 极速锁相模式 (实验性 / Canvas 显存直通 / 极低延迟)",
+    "replace": "🚀 WebCodecs Ultra-low Latency Mode (Experimental / Canvas direct / Minimal latency)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.render.engine.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "标准模式兼容所有设备与画中画；WebCodecs 模式绕过浏览器 DOM 调度与 JitterBuffer，直通显示器 VSync 锁相渲染",
+    "targetEn": "Standard mode supports all devices and PiP; WebCodecs mode bypasses DOM scheduling and JitterBuffer for VSync direct rendering",
+    "context": "E6_CONN_SETTINGS_RENDER_ENGINE_HINT",
+    "anchor": "标准模式兼容所有设备与画中画；WebCodecs 模式绕过浏",
+    "match": "标准模式兼容所有设备与画中画；WebCodecs 模式绕过浏览器 DOM 调度与 JitterBuffer，直通显示器 VSync 锁相渲染",
+    "replace": "Standard mode supports all devices and PiP; WebCodecs mode bypasses DOM scheduling and JitterBuffer for VSync direct rendering",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.codec.options.label",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"label\",null,\"编码器参数 (video_codec_options)\",-1)",
+    "targetEn": "m(\"label\",null,\"Encoder Options (video_codec_options)\",-1)",
+    "context": "E6_CONN_SETTINGS_CODEC_OPTIONS_LABEL",
+    "anchor": "m(\"label\",null,\"编码器参数 (video_c",
+    "match": "m(\"label\",null,\"编码器参数 (video_codec_options)\",-1)",
+    "replace": "m(\"label\",null,\"Encoder Options (video_codec_options)\",-1)",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.codec.options.hint",
+    "phase": "e6",
+    "category": "A",
+    "source": "用于控制 scrcpy 视频流的编码量化参数，留空则由 Agent 默认决定",
+    "targetEn": "Controls scrcpy video stream encoding parameters; leave empty for Agent default",
+    "context": "E6_CONN_SETTINGS_CODEC_OPTIONS_HINT",
+    "anchor": "用于控制 scrcpy 视频流的编码量化参数，留空则由 Ag",
+    "match": "用于控制 scrcpy 视频流的编码量化参数，留空则由 Agent 默认决定",
+    "replace": "Controls scrcpy video stream encoding parameters; leave empty for Agent default",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.codec.options.placeholder",
+    "phase": "e6",
+    "category": "A",
+    "source": "placeholder:\"例如: intra-refresh-period=30,i-frame-interval=2\"",
+    "targetEn": "placeholder:\"E.g.: intra-refresh-period=30,i-frame-interval=2\"",
+    "context": "E6_CONN_SETTINGS_CODEC_OPTIONS_PLACEHOLDER",
+    "anchor": "placeholder:\"例如: intra-refresh",
+    "match": "placeholder:\"例如: intra-refresh-period=30,i-frame-interval=2\"",
+    "replace": "placeholder:\"E.g.: intra-refresh-period=30,i-frame-interval=2\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.cancel.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "m(\"button\",{class:\"btn btn-secondary\",onClick:c[30]||(c[30]=A=>u.$emit(\"close\"))},\"取消\")",
+    "targetEn": "m(\"button\",{class:\"btn btn-secondary\",onClick:c[30]||(c[30]=A=>u.$emit(\"close\"))},\"Cancel\")",
+    "context": "E6_CONN_SETTINGS_CANCEL_BTN",
+    "anchor": "m(\"button\",{class:\"btn btn-sec",
+    "match": "m(\"button\",{class:\"btn btn-secondary\",onClick:c[30]||(c[30]=A=>u.$emit(\"close\"))},\"取消\")",
+    "replace": "m(\"button\",{class:\"btn btn-secondary\",onClick:c[30]||(c[30]=A=>u.$emit(\"close\"))},\"Cancel\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.conn.settings.save.btn",
+    "phase": "e6",
+    "category": "A",
+    "source": "ee(i.isGlobal?\"保存全局设置\":i.isConnected?\"保存并重新连接\":\"保存并连接\")",
+    "targetEn": "ee(i.isGlobal?\"Save Global Settings\":i.isConnected?\"Save & Reconnect\":\"Save & Connect\")",
+    "context": "E6_CONN_SETTINGS_SAVE_BTN",
+    "anchor": "ee(i.isGlobal?\"保存全局设置\":i.isCon",
+    "match": "ee(i.isGlobal?\"保存全局设置\":i.isConnected?\"保存并重新连接\":\"保存并连接\")",
+    "replace": "ee(i.isGlobal?\"Save Global Settings\":i.isConnected?\"Save & Reconnect\":\"Save & Connect\")",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.in.use.time.func",
+    "phase": "e6",
+    "category": "A",
+    "source": "if(Ie==null||Ie<0)return\"永久\";if(Ie===0)return\"已到期\";",
+    "targetEn": "if(Ie==null||Ie<0)return\"Permanent\";if(Ie===0)return\"Expired\";",
+    "context": "E6_CARD_IN_USE_TIME_FUNC",
+    "anchor": "if(Ie==null||Ie<0)return\"永久\";i",
+    "match": "if(Ie==null||Ie<0)return\"永久\";if(Ie===0)return\"已到期\";",
+    "replace": "if(Ie==null||Ie<0)return\"Permanent\";if(Ie===0)return\"Expired\";",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.row.in.use.time.func",
+    "phase": "e6",
+    "category": "A",
+    "source": "if(W==null||W<0)return\"永久\";if(W===0)return\"已到期\";",
+    "targetEn": "if(W==null||W<0)return\"Permanent\";if(W===0)return\"Expired\";",
+    "context": "E6_ROW_IN_USE_TIME_FUNC",
+    "anchor": "if(W==null||W<0)return\"永久\";if(",
+    "match": "if(W==null||W<0)return\"永久\";if(W===0)return\"已到期\";",
+    "replace": "if(W==null||W<0)return\"Permanent\";if(W===0)return\"Expired\";",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.card.in.use.client.hover",
+    "phase": "e6",
+    "category": "A",
+    "source": "return Ie.length?`当前接入：\n${Ie.join(`\n`)}`:`当前有 ${t.device.clientCount} 个连接`",
+    "targetEn": "return Ie.length?`Active access:\n${Ie.join(`\n`)}`:`Currently ${t.device.clientCount} connections`",
+    "context": "E6_CARD_IN_USE_CLIENT_HOVER",
+    "anchor": "return Ie.length?`当前接入：\n${Ie.j",
+    "match": "return Ie.length?`当前接入：\n${Ie.join(`\n`)}`:`当前有 ${t.device.clientCount} 个连接`",
+    "replace": "return Ie.length?`Active access:\n${Ie.join(`\n`)}`:`Currently ${t.device.clientCount} connections`",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.row.in.use.client.hover",
+    "phase": "e6",
+    "category": "A",
+    "source": "return W.length?`当前接入：\n${W.join(`\n`)}`:`当前有 ${t.device.clientCount||0} 个连接`",
+    "targetEn": "return W.length?`Active access:\n${W.join(`\n`)}`:`Currently ${t.device.clientCount||0} connections`",
+    "context": "E6_ROW_IN_USE_CLIENT_HOVER",
+    "anchor": "return W.length?`当前接入：\n${W.joi",
+    "match": "return W.length?`当前接入：\n${W.join(`\n`)}`:`当前有 ${t.device.clientCount||0} 个连接`",
+    "replace": "return W.length?`Active access:\n${W.join(`\n`)}`:`Currently ${t.device.clientCount||0} connections`",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.tabs.btn.lbl",
+    "phase": "e6",
+    "category": "A",
+    "source": "x2:\"20\",y2:\"9\"})],-1),m(\"span\",{class:\"btn-lbl\"},\"标签\",-1)])],2),m(\"button\",{class:Be([\"layout-mo",
+    "targetEn": "x2:\"20\",y2:\"9\"})],-1),m(\"span\",{class:\"btn-lbl\"},\"Tabs\",-1)])],2),m(\"button\",{class:Be([\"layout-mo",
+    "context": "E6_MULTI_TABS_BTN_LBL",
+    "anchor": "x2:\"20\",y2:\"9\"})],-1),m(\"span\"",
+    "match": "x2:\"20\",y2:\"9\"})],-1),m(\"span\",{class:\"btn-lbl\"},\"标签\",-1)])],2),m(\"button\",{class:Be([\"layout-mo",
+    "replace": "x2:\"20\",y2:\"9\"})],-1),m(\"span\",{class:\"btn-lbl\"},\"Tabs\",-1)])],2),m(\"button\",{class:Be([\"layout-mo",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.add.more.devices.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"添加更多虚机加入直连\"",
+    "targetEn": "title:\"Add more devices to direct connection\"",
+    "context": "E6_MULTI_ADD_MORE_DEVICES_TITLE",
+    "anchor": "title:\"添加更多虚机加入直连\"",
+    "match": "title:\"添加更多虚机加入直连\"",
+    "replace": "title:\"Add more devices to direct connection\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.tabs.view.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"多标签页视图\"",
+    "targetEn": "title:\"Multi-tab view\"",
+    "context": "E6_MULTI_TABS_VIEW_TITLE",
+    "anchor": "title:\"多标签页视图\"",
+    "match": "title:\"多标签页视图\"",
+    "replace": "title:\"Multi-tab view\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.audio.policy.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:a.value===\"exclusive\"?\"当前策略: 焦点设备独占音频 (点击切为全部混音)\":\"当前策略: 自由混音模式\"",
+    "targetEn": "title:a.value===\"exclusive\"?\"Current policy: Focus exclusive audio (click for mixed audio)\":\"Current policy: Mixed audio mode\"",
+    "context": "E6_MULTI_AUDIO_POLICY_TITLE",
+    "anchor": "title:a.value===\"exclusive\"?\"当",
+    "match": "title:a.value===\"exclusive\"?\"当前策略: 焦点设备独占音频 (点击切为全部混音)\":\"当前策略: 自由混音模式\"",
+    "replace": "title:a.value===\"exclusive\"?\"Current policy: Focus exclusive audio (click for mixed audio)\":\"Current policy: Mixed audio mode\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.mute.btn.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:u.value?\"取消静音\":\"静音\"",
+    "targetEn": "title:u.value?\"Unmute\":\"Mute\"",
+    "context": "E6_MULTI_MUTE_BTN_TITLE",
+    "anchor": "title:u.value?\"取消静音\":\"静音\"",
+    "match": "title:u.value?\"取消静音\":\"静音\"",
+    "replace": "title:u.value?\"Unmute\":\"Mute\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.multi.close.device.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"关闭此虚机直连\"",
+    "targetEn": "title:\"Close device direct connection\"",
+    "context": "E6_MULTI_CLOSE_DEVICE_TITLE",
+    "anchor": "title:\"关闭此虚机直连\"",
+    "match": "title:\"关闭此虚机直连\"",
+    "replace": "title:\"Close device direct connection\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.telemetry.rtt.jb.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"网络延迟(RTT) + 缓冲(JB) + 解码 + 云端处理\"",
+    "targetEn": "title:\"Network latency (RTT) + buffer (JB) + decoding + cloud processing\"",
+    "context": "E6_TELEMETRY_RTT_JB_TITLE",
+    "anchor": "title:\"网络延迟(RTT) + 缓冲(JB) + 解码",
+    "match": "title:\"网络延迟(RTT) + 缓冲(JB) + 解码 + 云端处理\"",
+    "replace": "title:\"Network latency (RTT) + buffer (JB) + decoding + cloud processing\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.telemetry.rtt.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:\"网络往返延迟\"",
+    "targetEn": "title:\"Round-trip time (RTT)\"",
+    "context": "E6_TELEMETRY_RTT_TITLE",
+    "anchor": "title:\"网络往返延迟\"",
+    "match": "title:\"网络往返延迟\"",
+    "replace": "title:\"Round-trip time (RTT)\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.telemetry.bitrate.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:`当前视频接收码率 (目标: ${oe.value.targetBitrate||R.value.bitrate||4",
+    "targetEn": "title:`Current video receive bitrate (target: ${oe.value.targetBitrate||R.value.bitrate||4",
+    "context": "E6_TELEMETRY_BITRATE_TITLE",
+    "anchor": "title:`当前视频接收码率 (目标: ${oe.valu",
+    "match": "title:`当前视频接收码率 (目标: ${oe.value.targetBitrate||R.value.bitrate||4",
+    "replace": "title:`Current video receive bitrate (target: ${oe.value.targetBitrate||R.value.bitrate||4",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.telemetry.transport.type.title",
+    "phase": "e6",
+    "category": "A",
+    "source": "title:Ye.value?\"WebSocket TCP 纯流传输\":\"WebRTC 传输通道类型\"",
+    "targetEn": "title:Ye.value?\"WebSocket TCP Stream\":\"WebRTC Transport Channel Type\"",
+    "context": "E6_TELEMETRY_TRANSPORT_TYPE_TITLE",
+    "anchor": "title:Ye.value?\"WebSocket TCP ",
+    "match": "title:Ye.value?\"WebSocket TCP 纯流传输\":\"WebRTC 传输通道类型\"",
+    "replace": "title:Ye.value?\"WebSocket TCP Stream\":\"WebRTC Transport Channel Type\"",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.telemetry.agent.version.title.1",
+    "phase": "e6",
+    "category": "A",
+    "source": "class:\"fab-agent-version\",title:\"Agent 完整版本号: \"+P.value",
+    "targetEn": "class:\"fab-agent-version\",title:\"Agent full version: \"+P.value",
+    "context": "E6_TELEMETRY_AGENT_VERSION_TITLE_1",
+    "anchor": "class:\"fab-agent-version\",titl",
+    "match": "class:\"fab-agent-version\",title:\"Agent 完整版本号: \"+P.value",
+    "replace": "class:\"fab-agent-version\",title:\"Agent full version: \"+P.value",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
+  },
+  {
+    "id": "e6.telemetry.agent.version.title.2",
+    "phase": "e6",
+    "category": "A",
+    "source": "class:\"sidebar-agent-version\",title:\"Agent 完整版本号: \"+P.value",
+    "targetEn": "class:\"sidebar-agent-version\",title:\"Agent full version: \"+P.value",
+    "context": "E6_TELEMETRY_AGENT_VERSION_TITLE_2",
+    "anchor": "class:\"sidebar-agent-version\",",
+    "match": "class:\"sidebar-agent-version\",title:\"Agent 完整版本号: \"+P.value",
+    "replace": "class:\"sidebar-agent-version\",title:\"Agent full version: \"+P.value",
+    "riskLevel": "LOW",
+    "expectedOccurrences": 1,
+    "actualOccurrences": 1
   }
 ]

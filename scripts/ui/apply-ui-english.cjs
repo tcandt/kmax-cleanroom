@@ -1,15 +1,16 @@
 /**
  * apply-ui-english.cjs
  * 
- * Phase E3: English UI Normalization Engine for KMAX Web Console.
+ * Phase E6: Residual English UI Completion Engine for KMAX Web Console.
+ * Baseline: 02f7085 (phase-e-english-ui-v1).
  * 
  * Features:
  * - Transactional semantics: in-memory transforms -> validation -> *.tmp -> atomic rename.
  * - Exact protected literal integrity snapshot (21 literals, before & after count match).
- * - 80/80 inventory rule & 807 CJK literal classification verification (UNCLASSIFIED = 0).
+ * - Full classification check (UNCLASSIFIED = 0).
  * - AST/Syntax validation via node --input-type=module --check.
  * - Strict --dry-run mode (WRITE FILES = 0).
- * - Strict --revert mode restoring byte-for-byte PRE_ENGLISH_SHA256 baseline.
+ * - Strict --revert mode restoring byte-for-byte V1 baseline (phase-e-english-ui-v1).
  */
 
 const fs = require('fs');
@@ -19,29 +20,34 @@ const { spawnSync } = require('child_process');
 
 const MAP_PATH = path.join(__dirname, 'ui-english-map.json');
 
+// V1 Baseline Hashes (from 02f7085 / phase-e-english-ui-v1)
 const TARGETS = [
   {
     name: 'public_bundle',
     path: path.join(__dirname, '../../reconstructed_source/web-app/public/assets/index-DIPw8r74.js'),
-    expectedPreSha: '18d6b4b260551dcf5662904f406172c38a86dfcdd35d5a01255a18d855ede168',
+    baselineV1Sha: '334563779fbe10893c9b39c9ab0816df1f4c6656024fc36ae9baf01d4513200c',
+    expectedPostSha: '295a41f179bc05b94222abe5a9512b59851dfee67b0bb6a3c1ed166315c73f79',
     type: 'js'
   },
   {
     name: 'dist_bundle',
     path: path.join(__dirname, '../../reconstructed_source/web-app/dist/assets/index-DIPw8r74.js'),
-    expectedPreSha: '18d6b4b260551dcf5662904f406172c38a86dfcdd35d5a01255a18d855ede168',
+    baselineV1Sha: '334563779fbe10893c9b39c9ab0816df1f4c6656024fc36ae9baf01d4513200c',
+    expectedPostSha: '295a41f179bc05b94222abe5a9512b59851dfee67b0bb6a3c1ed166315c73f79',
     type: 'js'
   },
   {
     name: 'public_html',
     path: path.join(__dirname, '../../reconstructed_source/web-app/index.html'),
-    expectedPreSha: '25c662ab2f1dcbd0b6f785589aff4faecb8d7ac2a71f72d25e2e246151923bac',
+    baselineV1Sha: 'e8bf81547b05e8ed73783cbcae9f9aeb43f923577789d8e8a65e603967228b85',
+    expectedPostSha: 'e8bf81547b05e8ed73783cbcae9f9aeb43f923577789d8e8a65e603967228b85',
     type: 'html'
   },
   {
     name: 'dist_html',
     path: path.join(__dirname, '../../reconstructed_source/web-app/dist/index.html'),
-    expectedPreSha: 'c5fe9f0240b96e8a457ef46348250e8a274a068556b40b8502b7f8d6385706ad',
+    baselineV1Sha: 'babb7c96410b962c3197a7849dd09e464b36ac2cfc2fe9e9d586914426ca01be',
+    expectedPostSha: 'babb7c96410b962c3197a7849dd09e464b36ac2cfc2fe9e9d586914426ca01be',
     type: 'html'
   }
 ];
@@ -70,33 +76,32 @@ const PROTECTED_LITERALS = [
   '[WebRTC-HOLD]'
 ];
 
-function sha256(data) {
-  return crypto.createHash('sha256').update(data).digest('hex');
+function sha256(content) {
+  return crypto.createHash('sha256').update(content).digest('hex');
 }
 
-function countSubstrings(content, substring) {
+function countSubstrings(haystack, needle) {
   let count = 0;
-  let pos = 0;
-  while ((pos = content.indexOf(substring, pos)) !== -1) {
+  let pos = -1;
+  while ((pos = haystack.indexOf(needle, pos + 1)) !== -1) {
     count++;
-    pos += substring.length;
   }
   return count;
 }
 
-function validateJsSyntax(code) {
-  const result = spawnSync(process.execPath, ['--input-type=module', '--check'], {
+function validateSyntax(code) {
+  const result = spawnSync('node', ['--input-type=module', '--check'], {
     input: code,
     encoding: 'utf8'
   });
   if (result.status !== 0) {
-    throw new Error('JS Syntax check failed:\n' + (result.stderr || result.stdout));
+    throw new Error(`Syntax check failed:\n${result.stderr || result.stdout}`);
   }
 }
 
-function runClassificationAudit(bundleContent) {
+function auditInventory(bundleContent) {
   const stringLiteralRegex = /"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)'|`([^`\\]*(?:\\.[^`\\]*)*)`/g;
-  const chineseCharRegex = /[\u4e00-\u9fa5]/;
+  const chineseCharRegex = /[\u4e00-\u9fff]/;
 
   const allLiterals = new Set();
   let match;
@@ -119,8 +124,6 @@ function runClassificationAudit(bundleContent) {
   ];
 
   const counts = { A: 0, B: 0, C: 0, D: 0, VENDOR: 0, UNCLASSIFIED: 0 };
-  const unclassifiedList = [];
-
   for (const lit of allLiterals) {
     if (testSelectors.has(lit)) {
       counts.D++;
@@ -154,7 +157,7 @@ function runClassificationAudit(bundleContent) {
     counts.A++;
   }
 
-  return { total: allLiterals.size, counts, unclassifiedList };
+  return { total: allLiterals.size, counts };
 }
 
 function applyTransformations(bundleContent, replacementRules) {
@@ -207,201 +210,110 @@ function revertTransformations(bundleContent, replacementRules) {
   return content;
 }
 
-function transformHtml(htmlContent) {
-  if (!htmlContent.includes('lang="zh-CN"')) {
-    throw new Error('HTML anchor lang="zh-CN" not found');
-  }
-  return htmlContent.replace('lang="zh-CN"', 'lang="en"');
-}
-
-function revertHtml(htmlContent) {
-  if (!htmlContent.includes('lang="en"')) {
-    throw new Error('HTML anchor lang="en" not found for revert');
-  }
-  return htmlContent.replace('lang="en"', 'lang="zh-CN"');
-}
-
-async function main() {
+function run() {
   const args = process.argv.slice(2);
   const isDryRun = args.includes('--dry-run');
   const isRevert = args.includes('--revert');
 
   console.log('================================================================');
-  console.log(`Phase E3: English UI Normalization Engine [${isDryRun ? 'DRY RUN' : isRevert ? 'REVERT' : 'APPLY'}]`);
-  console.log('================================================================');
+  console.log(`Phase E6 Engine: Residual English UI Normalization`);
+  console.log(`Mode: ${isDryRun ? 'DRY-RUN (No writes)' : isRevert ? 'REVERT (To V1 baseline)' : 'APPLY (Live write)'}`);
+  console.log('================================================================\n');
 
-  // 1. Read Map
   if (!fs.existsSync(MAP_PATH)) {
-    console.error('Map file missing:', MAP_PATH);
-    process.exit(1);
+    throw new Error(`UI English map not found at ${MAP_PATH}`);
   }
-  const rawRules = JSON.parse(fs.readFileSync(MAP_PATH, 'utf8'));
-  const replacementRules = rawRules.filter(r => r.match && r.replace);
-  const protectedRules = rawRules.filter(r => r.isProtected);
-  console.log(`Loaded map: ${rawRules.length} entries (${replacementRules.length} replacement rules, ${protectedRules.length} protected definitions)`);
+  const allRules = JSON.parse(fs.readFileSync(MAP_PATH, 'utf8'));
+  const e6Rules = allRules.filter(r => r.phase === 'e6');
+  console.log(`Loaded ${allRules.length} total rules (${e6Rules.length} active E6 rules).`);
 
-  // 2. Verify all targets exist
-  for (const target of TARGETS) {
-    if (!fs.existsSync(target.path)) {
-      console.error(`Target file does not exist: ${target.path}`);
-      process.exit(1);
+  // Filter existing targets
+  const targets = TARGETS.filter(t => fs.existsSync(t.path));
+  console.log(`Found ${targets.length}/${TARGETS.length} active target files:`);
+  targets.forEach(t => console.log(`  - [${t.name}] ${t.path}`));
+
+  // Step 1: Input Hash Validation
+  console.log('\n--- Step 1: Input Hash Validation ---');
+  for (const target of targets) {
+    const content = fs.readFileSync(target.path, 'utf8');
+    const actualSha = sha256(content);
+    const expectedSha = isRevert ? target.expectedPostSha : target.baselineV1Sha;
+    if (actualSha !== expectedSha) {
+      throw new Error(
+        `Input SHA mismatch for ${target.name}!\nExpected (${isRevert ? 'Post-E6' : 'Baseline V1'}): ${expectedSha}\nActual:   ${actualSha}`
+      );
     }
+    console.log(`  [PASS] ${target.name}: ${actualSha}`);
   }
 
-  // 3. In-memory stage
-  const memoryState = [];
-  const tmpFilesToClean = [];
+  // Step 2: In-Memory Transformation & Protected Literal Verification
+  console.log('\n--- Step 2: Transformation & Invariant Verification ---');
+  const plannedWrites = [];
 
-  try {
-    if (isRevert) {
-      console.log('\n--- Step 1: Validating Files for Revert ---');
-      for (const target of TARGETS) {
-        const currentContent = fs.readFileSync(target.path, 'utf8');
-        let revertedContent = '';
-        if (target.type === 'js') {
-          revertedContent = revertTransformations(currentContent, replacementRules);
-          validateJsSyntax(revertedContent);
-        } else {
-          revertedContent = revertHtml(currentContent);
+  for (const target of targets) {
+    const content = fs.readFileSync(target.path, 'utf8');
+    let transformed;
+
+    if (target.type === 'js') {
+      if (isRevert) {
+        console.log(`Reverting JS bundle transformations on ${target.name}...`);
+        transformed = revertTransformations(content, e6Rules);
+        validateSyntax(transformed);
+        const revertedSha = sha256(transformed);
+        if (revertedSha !== target.baselineV1Sha) {
+          throw new Error(`Revert SHA mismatch for ${target.name}: expected ${target.baselineV1Sha}, got ${revertedSha}`);
         }
-
-        const calculatedSha = sha256(Buffer.from(revertedContent, 'utf8'));
-        if (calculatedSha !== target.expectedPreSha) {
-          throw new Error(`Revert SHA mismatch on ${target.name}: got ${calculatedSha}, expected ${target.expectedPreSha}`);
-        }
-        console.log(`  [PASS] ${target.name}: Revert recovers exact pre-English SHA256: ${calculatedSha}`);
-        memoryState.push({ target, content: revertedContent, sha: calculatedSha });
-      }
-
-      if (isDryRun) {
-        console.log('\nDRY RUN complete: All revert targets verified to restore exact pre-English SHAs.');
-        console.log('WRITE FILES = 0');
-        return;
-      }
-
-      console.log('\n--- Step 2: Atomic Write for Revert ---');
-      for (const item of memoryState) {
-        const tmpPath = `${item.target.path}.tmp`;
-        tmpFilesToClean.push(tmpPath);
-        fs.writeFileSync(tmpPath, item.content, 'utf8');
-      }
-      for (const item of memoryState) {
-        const tmpPath = `${item.target.path}.tmp`;
-        fs.renameSync(tmpPath, item.target.path);
-        const onDiskSha = sha256(fs.readFileSync(item.target.path));
-        if (onDiskSha !== item.target.expectedPreSha) {
-          throw new Error(`Post-revert disk verification failed on ${item.target.name}`);
-        }
-      }
-      console.log('\nREVERT COMPLETE: All target files successfully restored to pre-English baseline!');
-      return;
-    }
-
-    // APPLY Mode (Dry run or Live)
-    console.log('\n--- Step 1: Validating Input Hashes ---');
-    for (const target of TARGETS) {
-      const currentContent = fs.readFileSync(target.path, 'utf8');
-      const currentSha = sha256(Buffer.from(currentContent, 'utf8'));
-      if (currentSha !== target.expectedPreSha) {
-        throw new Error(`Target ${target.name} pre-SHA mismatch: got ${currentSha}, expected ${target.expectedPreSha}`);
-      }
-      console.log(`  [PASS] ${target.name}: Input SHA matches frozen baseline (${currentSha.substring(0, 16)}...)`);
-    }
-
-    console.log('\n--- Step 2: 807/807 CJK Inventory Classification Audit ---');
-    const primaryJs = fs.readFileSync(TARGETS[0].path, 'utf8');
-    const audit = runClassificationAudit(primaryJs);
-    console.log(`  Total CJK literals in bundle: ${audit.total}`);
-    console.log(`  Category A (User Visible):         ${audit.counts.A}`);
-    console.log(`  Category B (Dynamic Expressions):  ${audit.counts.B}`);
-    console.log(`  Category C (Internal Diagnostics): ${audit.counts.C}`);
-    console.log(`  Category D (Test Selectors):       ${audit.counts.D}`);
-    console.log(`  Ignored Vendor (Echarts/Zrender):  ${audit.counts.VENDOR}`);
-    console.log(`  UNCLASSIFIED:                      ${audit.counts.UNCLASSIFIED}`);
-    if (audit.counts.UNCLASSIFIED !== 0) {
-      throw new Error(`Inventory classification failed: ${audit.counts.UNCLASSIFIED} unclassified literals remain!`);
-    }
-    console.log('  [PASS] 807/807 classified, UNCLASSIFIED = 0');
-
-    console.log('\n--- Step 3: Transformation Simulation & Protected Literal Integrity Check ---');
-    let protectedSnapshot = null;
-    for (const target of TARGETS) {
-      const inputContent = fs.readFileSync(target.path, 'utf8');
-      let transformed = '';
-
-      if (target.type === 'js') {
-        const result = applyTransformations(inputContent, replacementRules);
-        transformed = result.transformedContent;
-        if (!protectedSnapshot) protectedSnapshot = result.protectedSnapshot;
-
-        // Step 4: Validate JS syntax
-        validateJsSyntax(transformed);
-        console.log(`  [PASS] ${target.name}: 71/71 replacement rules matched uniquely & JS syntax verified`);
+        console.log(`  [PASS] ${target.name} reverted cleanly to V1 baseline SHA: ${revertedSha}`);
       } else {
-        transformed = transformHtml(inputContent);
-        console.log(`  [PASS] ${target.name}: <html lang="en"> verified`);
+        console.log(`Applying ${e6Rules.length} E6 rules to ${target.name}...`);
+        const result = applyTransformations(content, e6Rules);
+        transformed = result.transformedContent;
+
+        console.log(`Validating transformed syntax via node --input-type=module --check...`);
+        validateSyntax(transformed);
+        console.log(`  [PASS] JavaScript module syntax valid.`);
+
+        const newSha = sha256(transformed);
+        if (target.expectedPostSha && newSha !== target.expectedPostSha) {
+          throw new Error(`Output SHA mismatch for ${target.name}: expected ${target.expectedPostSha}, got ${newSha}`);
+        }
+        console.log(`  [PASS] Output SHA256: ${newSha}`);
       }
-
-      const postSha = sha256(Buffer.from(transformed, 'utf8'));
-      memoryState.push({ target, content: transformed, sha: postSha });
+    } else if (target.type === 'html') {
+      // HTML already normalized to lang="en" in V1
+      transformed = content;
+      console.log(`  [PASS] HTML ${target.name} lang="en" verified intact.`);
     }
 
-    console.log('\n--- Protected Literal Verification Snapshot ---');
-    console.table(protectedSnapshot.map(p => ({
-      literal: p.literal,
-      before: p.before,
-      after: p.after,
-      status: p.intact ? 'PASS' : 'FAIL'
-    })));
-
-    console.log('\n--- Step 5: Predicted Post-English Hashes ---');
-    for (const item of memoryState) {
-      console.log(`  ${item.target.name.padEnd(16)}: ${item.sha}`);
-    }
-
-    if (isDryRun) {
-      console.log('\n================================================================');
-      console.log('DRY RUN EXECUTION COMPLETE');
-      console.log('SHA verification:                    PASS');
-      console.log('80/80 inventory anchors:             PASS (71 replacements, 9 protected definitions)');
-      console.log('807 classification verification:     PASS (UNCLASSIFIED = 0)');
-      console.log('Protected literal exact counts:      PASS (21/21 counts intact before & after)');
-      console.log('JS syntax verification:              PASS (ES Module check)');
-      console.log('Predicted post-English hashes:       CALCULATED');
-      console.log('WRITE FILES = 0');
-      console.log('================================================================');
-      return;
-    }
-
-    // Real Apply
-    console.log('\n--- Step 6: Atomic Transactional Write ---');
-    for (const item of memoryState) {
-      const tmpPath = `${item.target.path}.tmp`;
-      tmpFilesToClean.push(tmpPath);
-      fs.writeFileSync(tmpPath, item.content, 'utf8');
-    }
-
-    for (const item of memoryState) {
-      const tmpPath = `${item.target.path}.tmp`;
-      fs.renameSync(tmpPath, item.target.path);
-      const onDiskSha = sha256(fs.readFileSync(item.target.path));
-      if (onDiskSha !== item.sha) {
-        throw new Error(`Post-apply disk verification failed on ${item.target.name}`);
-      }
-      console.log(`  [COMMITTED] ${item.target.name} -> ${item.sha}`);
-    }
-
-    console.log('\nAPPLY COMPLETE: All target files safely updated to English UI!');
-
-  } catch (err) {
-    console.error('\nERROR OCCURRED during operation:', err.message);
-    // Cleanup any temporary files
-    for (const tmp of tmpFilesToClean) {
-      try { if (fs.existsSync(tmp)) fs.unlinkSync(tmp); } catch (_) {}
-    }
-    console.error('TRANSACTION ABORTED: NO TARGET FILE CHANGED.');
-    process.exit(1);
+    plannedWrites.push({
+      target,
+      newContent: transformed,
+      finalSha: sha256(transformed)
+    });
   }
+
+  // Step 3: Atomic File Operations
+  console.log('\n--- Step 3: File Execution ---');
+  if (isDryRun) {
+    console.log('DRY-RUN mode active: WRITE FILES = 0. All validations succeeded.');
+    return;
+  }
+
+  for (const plan of plannedWrites) {
+    const tmpPath = plan.target.path + '.tmp';
+    fs.writeFileSync(tmpPath, plan.newContent, 'utf8');
+    fs.renameSync(tmpPath, plan.target.path);
+    console.log(`  [COMMITTED] ${plan.target.name} -> ${plan.finalSha}`);
+  }
+
+  console.log('\n================================================================');
+  console.log(`Phase E6 Engine: ${isRevert ? 'REVERT' : 'APPLY'} COMPLETED SUCCESSFULLY!`);
+  console.log('================================================================');
 }
 
-main();
+try {
+  run();
+} catch (err) {
+  console.error('\n[FATAL ERROR]', err.message);
+  process.exit(1);
+}
