@@ -83,6 +83,64 @@
     return window.__streamStats;
   };
 
+  // --- R5.4: Browser Display Refresh Rate Detection via rAF ---
+  window.__browserRefreshRate = null;
+  function measureBrowserRefresh() {
+    let frameCount = 0;
+    let startTime = performance.now();
+    function onRaf(ts) {
+      frameCount++;
+      if (frameCount < 60) {
+        requestAnimationFrame(onRaf);
+      } else {
+        const elapsed = ts - startTime;
+        const hz = Math.round((frameCount / (elapsed / 1000)) * 10) / 10;
+        window.__browserRefreshRate = {
+          refreshHz: hz,
+          sampleDurationMs: Math.round(elapsed),
+          samples: frameCount
+        };
+        console.log(`[FPS-DIAG] Browser display refresh rate sampled: ${hz} Hz`);
+      }
+    }
+    requestAnimationFrame(onRaf);
+  }
+  if (typeof requestAnimationFrame !== 'undefined') {
+    measureBrowserRefresh();
+  }
+
+  // --- R5.4: Comprehensive FPS Diagnostic Dump ---
+  window.__dumpFpsDiag = function() {
+    let settingsS7 = null;
+    let settingsGlobal = null;
+    try {
+      settingsS7 = JSON.parse(localStorage.getItem('cloudphone_settings_Samsung_S7') || 'null');
+      settingsGlobal = JSON.parse(localStorage.getItem('cloudphone_settings') || 'null');
+    } catch(e) {}
+
+    const diag = {
+      timestamp: Date.now(),
+      settings: {
+        global: settingsGlobal,
+        samsung_s7: settingsS7
+      },
+      lastOfferConfig: window.__lastFpsConfig || null,
+      streamStats: window.__streamStats || null,
+      browserDisplayRefresh: window.__browserRefreshRate || null
+    };
+
+    console.group('[FPS-DIAGNOSTIC DUMP]');
+    console.log('Runtime Settings (Samsung_S7):', diag.settings.samsung_s7);
+    console.log('Last Request-Offer Payload:', diag.lastOfferConfig);
+    console.log('Realtime Stream Stats:', diag.streamStats);
+    console.log('Browser Display Refresh:', diag.browserDisplayRefresh);
+    if (diag.streamStats) {
+      console.log(`4-Tier FPS: SRC ${diag.streamStats.srcFps ?? '-'} | RX ${diag.streamStats.rxFps ?? '-'} | DEC ${diag.streamStats.decodeFps ?? '-'} | PRES ${diag.streamStats.presentFps ?? '-'}`);
+    }
+    console.groupEnd();
+    return diag;
+  };
+
   // --- R5.1b: Native DOM Input Observability Hook ---
   window.__recordInput = function(info) {
     const sess = info.session ?? window.__activeSessionId ?? '-';
