@@ -55,12 +55,13 @@ type HandoffInfo struct {
 
 // DeviceCoreTracker tracks reference ownership and manages transitions for a device.
 type DeviceCoreTracker struct {
-	mu            sync.Mutex
-	deviceID      string
-	state         CoreState
-	consumers     DeviceConsumers
-	stopDebounce  *time.Timer
-	activeHandoff *HandoffInfo
+	mu             sync.Mutex
+	deviceID       string
+	state          CoreState
+	consumers      DeviceConsumers
+	stopDebounce   *time.Timer
+	webrtcDebounce *time.Timer
+	activeHandoff  *HandoffInfo
 }
 
 // NewDeviceCoreTracker creates a tracker for a specific device.
@@ -73,6 +74,44 @@ func NewDeviceCoreTracker(deviceID string) *DeviceCoreTracker {
 			WS:      make(map[uint32]ConsumerRef),
 			Control: make(map[uint32]ConsumerRef),
 		},
+	}
+}
+
+// State returns the current CoreState under mutex lock.
+func (t *DeviceCoreTracker) State() CoreState {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	return t.state
+}
+
+// ScheduleWebRTCDisconnect registers a debounced client_disconnected dispatch.
+func (t *DeviceCoreTracker) ScheduleWebRTCDisconnect(clientID uint32, debounce time.Duration, onExpire func()) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	if t.webrtcDebounce != nil {
+		t.webrtcDebounce.Stop()
+	}
+
+	t.webrtcDebounce = time.AfterFunc(debounce, func() {
+		t.mu.Lock()
+		t.webrtcDebounce = nil
+		t.mu.Unlock()
+		if onExpire != nil {
+			onExpire()
+		}
+	})
+	log.Printf("[CORE] dev=%s scheduled debounced client_disconnected for client %d (%v)", t.deviceID, clientID, debounce)
+}
+
+// CancelWebRTCDisconnect cancels any pending debounced client_disconnected timer.
+func (t *DeviceCoreTracker) CancelWebRTCDisconnect() {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if t.webrtcDebounce != nil {
+		t.webrtcDebounce.Stop()
+		t.webrtcDebounce = nil
+		log.Printf("[CORE] dev=%s cancelled pending webrtc disconnect debounce", t.deviceID)
 	}
 }
 
@@ -110,6 +149,11 @@ func (t *DeviceCoreTracker) OnStartPreviewSubscriber(clientID uint32, generation
 		t.stopDebounce.Stop()
 		t.stopDebounce = nil
 		log.Printf("[CORE] dev=%s cancelled pending stopDebounce timer due to incoming preview client %d", t.deviceID, clientID)
+	}
+	if t.webrtcDebounce != nil {
+		t.webrtcDebounce.Stop()
+		t.webrtcDebounce = nil
+		log.Printf("[CORE] dev=%s cancelled pending webrtcDebounce due to incoming preview client %d", t.deviceID, clientID)
 	}
 
 	wasEmpty := len(t.consumers.WS) == 0
@@ -175,6 +219,11 @@ func (t *DeviceCoreTracker) OnAddWebRTCClient(clientID uint32, generation uint64
 	if t.stopDebounce != nil {
 		t.stopDebounce.Stop()
 		t.stopDebounce = nil
+	}
+	if t.webrtcDebounce != nil {
+		t.webrtcDebounce.Stop()
+		t.webrtcDebounce = nil
+		log.Printf("[CORE] dev=%s cancelled pending webrtcDebounce due to incoming webrtc client %d", t.deviceID, clientID)
 	}
 
 	t.consumers.WebRTC[clientID] = ConsumerRef{

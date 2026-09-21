@@ -499,6 +499,14 @@ func (h *Hub) UnsubscribeClientFromAllPreviews(clientID uint32) []string {
 	return emptyDevices
 }
 
+// HasPreviewSubscribers reports whether deviceID has any active preview subscribers.
+func (h *Hub) HasPreviewSubscribers(deviceID string) bool {
+	h.previewSubscribersMu.RLock()
+	defer h.previewSubscribersMu.RUnlock()
+	subs, exists := h.previewSubscribers[deviceID]
+	return exists && len(subs) > 0
+}
+
 // RelayBinaryPreviewToSubscribers routes PREV binary frames to authorized subscribers.
 // Strictly verifies header format and matches boundDeviceID.
 func (h *Hub) RelayBinaryPreviewToSubscribers(boundDeviceID string, data []byte) error {

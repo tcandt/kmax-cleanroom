@@ -339,7 +339,14 @@ func (h *Hub) HandleConnectClient(w http.ResponseWriter, r *http.Request) {
 					if tracker := h.GetCoreTracker(devID); tracker != nil {
 						tracker.UpdateHandoffState("ROLLBACK")
 					}
-					log.Printf("[Signaling] Client %d reported stream_failed: dev=%s mode=%s gen=%d attempt=%d reason=%s",
+					// Auto-clear agent preview state on stream failure to prevent "already-previewing" deadlock
+					stopMsg := StopPreviewMessage{
+						MessageType: "stop_preview",
+						Type:        "stop_preview",
+						DeviceID:    devID,
+					}
+					_ = h.RelayToAgent(devID, stopMsg)
+					log.Printf("[Signaling] Client %d reported stream_failed: dev=%s mode=%s gen=%d attempt=%d reason=%s (dispatched stop_preview reset)",
 						clientID, devID, req.Mode, req.Generation, req.AttemptID, req.Reason)
 				}
 			}

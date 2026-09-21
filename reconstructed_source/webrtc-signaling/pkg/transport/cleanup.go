@@ -10,7 +10,10 @@
 
 package transport
 
-import "log"
+import (
+	"log"
+	"time"
+)
 
 // CleanupDevice performs deterministic and idempotent teardown of a device connection.
 // Safely closes the socket, removes registration from the hub, marks device offline in registry,
@@ -76,23 +79,43 @@ func (h *Hub) CleanupClient(deviceID string, cc *ClientConn) {
 				dev.Mu.Unlock()
 			}
 
-			// Stale Cleanup Guard:
-			// Check if this cleanup is from an older generation.
-			// If a newer live consumer exists OR a handoff is active, suppress destructive agent notifications!
+			// Stale Cleanup Guard & WebRTC Disconnect Debounce:
+			// If a newer live consumer exists, a handoff is active, or preview is subscribed,
+			// suppress destructive agent notifications. Debounce remaining disconnects to protect mode-switch races.
 			tracker := h.GetCoreTracker(deviceID)
 			currentGen := h.GetDeviceGeneration(deviceID)
 			isStale := cc.Generation > 0 && cc.Generation < currentGen
 
 			shouldNotifyAgent := cc.IsWebRTC
-			if isStale && tracker != nil {
-				if tracker.HasNewerLiveConsumer(cc.Generation) || tracker.HasActiveHandoff() {
-					log.Printf("[Signaling] Suppressing client_disconnected for stale client %d (gen %d < current %d) on %s: newer session active",
+			if cc.IsWebRTC && tracker != nil {
+				hasActiveOther := tracker.HasActiveConsumers() || tracker.HasActiveHandoff() || h.HasPreviewSubscribers(deviceID) || tracker.HasNewerLiveConsumer(cc.Generation)
+				if hasActiveOther || isStale {
+					log.Printf("[Signaling] Suppressing client_disconnected for client %d (gen %d, current %d) on %s: active session/handoff present",
 						cc.ClientID, cc.Generation, currentGen, deviceID)
 					shouldNotifyAgent = false
+				} else {
+					// Debounce WebRTC disconnect by 1500ms to protect against mode-switch & reload teardown storms!
+					shouldNotifyAgent = false
+					clientID := cc.ClientID
+					tracker.ScheduleWebRTCDisconnect(clientID, 1500*time.Millisecond, func() {
+						// Re-verify after debounce delay
+						if tracker.HasActiveConsumers() || tracker.HasActiveHandoff() || h.HasPreviewSubscribers(deviceID) || tracker.HasNewerLiveConsumer(cc.Generation) {
+							log.Printf("[Signaling] Suppressed debounced client_disconnected for client %d on %s: new consumer/handoff arrived", clientID, deviceID)
+							return
+						}
+						if ag, ok := h.GetAgentConn(deviceID); ok && ag != nil {
+							log.Printf("[Signaling] Dispatched debounced client_disconnected for client %d on %s", clientID, deviceID)
+							_ = ag.WriteJSON(map[string]interface{}{
+								"message_type": "client_disconnected",
+								"device_id":    deviceID,
+								"client_id":    clientID,
+							})
+						}
+					})
 				}
 			}
 
-			// Notify agent of client disconnection ONLY for genuine WebRTC session owners
+			// Synchronous fallback notification (only if not debounced and not suppressed)
 			if shouldNotifyAgent {
 				if ag, ok := h.GetAgentConn(deviceID); ok && ag != nil {
 					_ = ag.WriteJSON(map[string]interface{}{
