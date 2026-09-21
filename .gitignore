@@ -40,6 +40,8 @@ storage-tool*
 # Frontend & runtime data
 dist/
 **/dist/
+dist-src/
+**/dist-src/
 data/
 **/data/
 .idea/
