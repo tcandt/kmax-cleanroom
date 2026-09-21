@@ -530,9 +530,17 @@ func (h *Hub) RelayGroupControl(userRole string, assignedDevices []string, targe
 
 		seq, hasSeq := normEvent["control_seq"]
 		if !hasSeq {
-			seq = "none"
+			seq, hasSeq = normEvent["seq"]
+			if !hasSeq {
+				seq = "none"
+			}
 		}
-		log.Printf("[CTRL] seq=%v event=%v type=TOOLBAR relay user=%q dev=%s", seq, normEvent["type"], username, devID)
+		t2 := time.Now().UnixMilli()
+		var lagT2T1 string
+		if clientTs, ok := normEvent["client_ts_ms"].(float64); ok && clientTs > 0 {
+			lagT2T1 = fmt.Sprintf(" lag_t2_t1=%dms", t2-int64(clientTs))
+		}
+		log.Printf("[CTRL] seq=%v event=%v type=RELAY relay user=%q dev=%s t2=%d%s", seq, normEvent["type"], username, devID, t2, lagT2T1)
 
 		envelope := map[string]interface{}{
 			"message_type": "group_control_event",

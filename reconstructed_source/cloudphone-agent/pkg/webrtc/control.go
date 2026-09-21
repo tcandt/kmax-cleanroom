@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 )
 
 // Scrcpy ControlMessage types matching com.android.helper.control.ControlMessage
@@ -314,12 +315,23 @@ func HandleInputMessage(raw []byte, sink ControlSink) error {
 
 	var rawMap map[string]interface{}
 	var seq interface{} = "none"
+	var clientTs int64
 	if err := json.Unmarshal(raw, &rawMap); err == nil {
 		if s, ok := rawMap["control_seq"]; ok {
 			seq = s
+		} else if s, ok := rawMap["seq"]; ok {
+			seq = s
+		}
+		if ts, ok := rawMap["client_ts_ms"].(float64); ok {
+			clientTs = int64(ts)
 		}
 	}
-	log.Printf("[CTRL] seq=%v event=%v type=DIRECT_TOUCH recv", seq, env.Type)
+	t3 := time.Now().UnixMilli()
+	var lagStr string
+	if clientTs > 0 {
+		lagStr = fmt.Sprintf(" lag_t3_t1=%dms", t3-clientTs)
+	}
+	log.Printf("[CTRL] seq=%v event=%v type=DIRECT_TOUCH recv t3=%d%s", seq, env.Type, t3, lagStr)
 
 	var frame []byte
 	switch env.Type {
@@ -361,9 +373,14 @@ func HandleInputMessage(raw []byte, sink ControlSink) error {
 	}
 
 	if len(frame) > 0 {
-		log.Printf("[CTRL] seq=%v write begin", seq)
+		tBegin := time.Now().UnixMilli()
 		err := sink.WriteControlMessage(frame)
-		log.Printf("[CTRL] seq=%v write end err=%v", seq, err)
+		t4 := time.Now().UnixMilli()
+		var totalLagStr string
+		if clientTs > 0 {
+			totalLagStr = fmt.Sprintf(" total_lag_ms=%d", t4-clientTs)
+		}
+		log.Printf("[CTRL] seq=%v write end err=%v uds_write_ms=%d t4=%d%s", seq, err, t4-tBegin, t4, totalLagStr)
 		return err
 	}
 	return nil
