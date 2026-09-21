@@ -21,17 +21,23 @@ http.get('http://127.0.0.1:9222/json', (res) => {
       // Find mode button and click it to switch back to WebRTC
       const code = `
         (() => {
-          const btn = Array.from(document.querySelectorAll('button.sidebar-btn')).find(b => {
-            const t = b.innerText || '';
-            const title = b.getAttribute('title') || '';
-            return t.includes('WS') || title.includes('WebRTC') || title.includes('display');
-          });
+          const btn =
+            document.querySelector('button.sidebar-btn[title*="WebSocket"]') ||
+            document.querySelector('button.sidebar-btn[title*="WebRTC"]') ||
+            Array.from(document.querySelectorAll('button.sidebar-btn')).find(b => {
+              const text = b.textContent || '';
+              const title = b.getAttribute('title') || '';
+              return /WebSocket|WebRTC|投屏|切换|Switch/i.test(text + ' ' + title);
+            });
           if (btn) {
             btn.click();
             return { clicked: true, title: btn.getAttribute('title'), text: btn.innerText };
           }
-          // Alternative: find any button with title mentioning 切换
-          const anyBtn = Array.from(document.querySelectorAll('button')).find(b => (b.getAttribute('title') || '').includes('切换'));
+          const anyBtn = Array.from(document.querySelectorAll('button')).find(b => {
+            const text = b.textContent || '';
+            const title = b.getAttribute('title') || '';
+            return /WebSocket|WebRTC|投屏|切换|Switch/i.test(text + ' ' + title);
+          });
           if (anyBtn) {
             anyBtn.click();
             return { clicked: true, title: anyBtn.getAttribute('title'), text: anyBtn.innerText };

@@ -17,7 +17,9 @@ http.get('http://127.0.0.1:9222/json', (res) => {
           const btns = Array.from(document.querySelectorAll('*')).filter(el => {
             const t = el.innerText || '';
             const title = el.getAttribute('title') || '';
-            return t.includes('WS') || t.includes('投屏') || title.includes('WS') || title.includes('投屏') || title.includes('WebSocket');
+            const isSidebarBtn = el.classList && el.classList.contains('sidebar-btn');
+            const matchesTextOrTitle = /WebSocket|WebRTC|投屏|切换|Switch/.test(t + ' ' + title);
+            return (isSidebarBtn && matchesTextOrTitle) || /WebSocket|投屏/.test(t + ' ' + title);
           }).map(el => ({
             tag: el.tagName,
             cls: el.className,

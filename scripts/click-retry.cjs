@@ -10,8 +10,11 @@ http.get('http://127.0.0.1:9222/json', (res) => {
     const ws = new WebSocket(target.webSocketDebuggerUrl);
     ws.onopen = () => {
       const code = `
-        (() => {
-          const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText && b.innerText.includes('重试'));
+          const btn =
+            document.querySelector('button.retry-btn') ||
+            Array.from(document.querySelectorAll('button')).find(
+              b => ['Retry', '重试'].includes((b.textContent || '').trim())
+            );
           if (btn) {
             btn.click();
             return 'clicked';
